@@ -9,7 +9,7 @@ import { formatAuditEventLine } from './audit-event.presenter';
 describe('formatAuditEventLine', () => {
   it('forms a French line for holiday removal from typed values', () => {
     const line = formatAuditEventLine({
-      action: AuditAction.SUPPRESSION,
+      action: AuditAction.DELETION,
       subject: AuditSubject.COMPANY_CALENDAR_HOLIDAY,
       before: holidayValue({
         id: 'h1',
@@ -17,7 +17,6 @@ describe('formatAuditEventLine', () => {
         label: 'Fête nationale',
       }),
       after: null,
-      occurredAt: new Date('2026-07-01'),
     });
     expect(line).toContain('Fête nationale');
     expect(line).toContain('2026-07-14');

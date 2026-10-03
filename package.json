@@ -14,7 +14,7 @@
     "graph": "nx graph",
     "postinstall": "pnpm prisma:generate",
     "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
-    "prisma:migrate": "prisma migrate dev --schema apps/api/prisma/schema.prisma"
+    "prisma:push": "prisma db push --schema apps/api/prisma/schema.prisma"
   },
   "private": true,
   "devDependencies": {
@@ -37,6 +37,7 @@
     "@nx/workspace": "23.2.0",
     "@swc/helpers": "~0.5.18",
     "@tailwindcss/postcss": "^4.3.3",
+    "@tanstack/router-vite-plugin": "^1.167.38",
     "@testing-library/dom": "10.4.0",
     "@testing-library/react": "16.3.0",
     "@types/aws-lambda": "^8.10.163",

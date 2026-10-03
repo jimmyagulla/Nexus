@@ -1,9 +1,14 @@
-import { createRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+import { APP_ROUTES } from '@hexagonal-monorepo-template/ports';
+import { companySettingsController } from '../../di';
 import { SettingsPage } from '../views/SettingsPage';
-import { rootRoute } from './__root';
 
-export const parametresRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/parametres',
-  component: SettingsPage,
+type SettingsMatchesCatalog = typeof APP_ROUTES.settings extends '/parametres'
+  ? true
+  : never;
+const settingsMatchesCatalog: SettingsMatchesCatalog = true;
+void settingsMatchesCatalog;
+
+export const Route = createFileRoute('/parametres')({
+  component: () => <SettingsPage controller={companySettingsController} />,
 });

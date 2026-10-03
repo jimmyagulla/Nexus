@@ -1,8 +1,8 @@
-/** Valeurs alignées sur l'enum Prisma `AuditAction` (apps/api/prisma). */
+/** Values match the Prisma enum `AuditAction`. */
 export const AuditAction = {
-  MODIFICATION: 'modification',
-  AJOUT: 'ajout',
-  SUPPRESSION: 'suppression',
+  MODIFICATION: 'MODIFICATION',
+  ADDITION: 'ADDITION',
+  DELETION: 'DELETION',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

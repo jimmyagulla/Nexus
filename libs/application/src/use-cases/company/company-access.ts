@@ -1,8 +1,7 @@
 import {
   assertSameCompany,
-  BusinessError,
-  BusinessErrorCode,
   Company,
+  ErrorMessage,
 } from '@hexagonal-monorepo-template/domain';
 import { ICompanyRepository } from '@hexagonal-monorepo-template/ports';
 
@@ -14,7 +13,7 @@ export async function requireAccessibleCompany(
   assertSameCompany(companyId, actorCompanyId);
   const company = await companies.findById(companyId);
   if (company === null) {
-    throw new BusinessError(BusinessErrorCode.NON_AUTORISE);
+    throw new Error(ErrorMessage.NON_AUTORISE);
   }
   return company;
 }

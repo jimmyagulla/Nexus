@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BusinessError } from '../errors/business-error';
-import { BusinessErrorCode } from '../errors/business-error-codes';
+import { ErrorMessage } from '../errors/error-message';
 import { Company } from './company';
 import { CompanyCalendar } from './company-calendar';
 import { Weekday } from '../value-objects/weekday';
@@ -40,13 +39,11 @@ describe('CompanyCalendar', () => {
   it('rejects an empty holiday label', () => {
     expect(() =>
       CompanyCalendar.addHoliday(Company.create('Acme'), '2026-07-14', '  '),
-    ).toThrow(BusinessError);
+    ).toThrow(Error);
     try {
       CompanyCalendar.addHoliday(Company.create('Acme'), '2026-07-14', '');
     } catch (error) {
-      expect((error as BusinessError).code).toBe(
-        BusinessErrorCode.INFORMATION_OBLIGATOIRE,
-      );
+      expect((error as Error).message).toBe(ErrorMessage.INFORMATION_OBLIGATOIRE);
     }
   });
 });

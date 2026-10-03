@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CompanyModule } from './company/company.module';
+import { CompanySettingsModule } from './company-settings/company-settings.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { AuthGuard } from '../adapters/http/common/guards/auth.guard';
@@ -10,7 +11,7 @@ import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exceptio
 import { API_CONFIG, loadApiConfig, type ApiConfig } from './config/load-api-config';
 
 @Module({
-  imports: [PrismaModule, CompanyModule],
+  imports: [PrismaModule, CompanyModule, CompanySettingsModule],
   providers: [
     {
       provide: API_CONFIG,

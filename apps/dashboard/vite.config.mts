@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
+import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
+
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/dashboard',
@@ -15,7 +17,15 @@ export default defineConfig(() => ({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
+  plugins: [
+    react(),
+    TanStackRouterVite({
+      routesDirectory: './src/infrastructure/ui/routes',
+      generatedRouteTree: './src/routeTree.gen.ts',
+    }),
+    nxViteTsPaths(),
+    nxCopyAssetsPlugin(['*.md']),
+  ],
   build: {
     outDir: '../../dist/apps/dashboard',
     emptyOutDir: true,

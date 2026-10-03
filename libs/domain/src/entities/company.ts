@@ -1,5 +1,4 @@
-import { BusinessError } from '../errors/business-error';
-import { BusinessErrorCode } from '../errors/business-error-codes';
+import { ErrorMessage } from '../errors/error-message';
 import {
   DEFAULT_NON_WORKING_WEEKDAYS,
   type Weekday,
@@ -19,7 +18,7 @@ export class Company {
   static create(name: string): Company {
     const trimmed = name.trim();
     if (trimmed.length === 0) {
-      throw new BusinessError(BusinessErrorCode.INFORMATION_OBLIGATOIRE);
+      throw new Error(ErrorMessage.INFORMATION_OBLIGATOIRE);
     }
     companySequence += 1;
     return new Company(
@@ -47,7 +46,7 @@ export class Company {
   rename(name: string): Company {
     const trimmed = name.trim();
     if (trimmed.length === 0) {
-      throw new BusinessError(BusinessErrorCode.INFORMATION_OBLIGATOIRE);
+      throw new Error(ErrorMessage.INFORMATION_OBLIGATOIRE);
     }
     return new Company(
       this.id,

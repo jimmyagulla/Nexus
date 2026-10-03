@@ -1,50 +1,93 @@
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/infrastructure/prisma/generated"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-enum AuditAction {
-  modification
-  ajout
-  suppression
-}
-
-enum AuditSubject {
-  company_name
-  company_calendar_non_working_weekdays
-  company_calendar_holiday
-}
-
-model Company {
-  id                 String       @id
-  name               String
-  nonWorkingWeekdays String
-  holidays           Holiday[]
-  auditEvents        AuditEvent[]
-}
-
-model Holiday {
-  id        String  @id
-  companyId String
-  date      String
-  label     String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-}
-
-model AuditEvent {
-  id         String       @id @default(cuid())
-  companyId  String
-  action     AuditAction
-  subject    AuditSubject
-  before     String?
-  after      String?
-  actorId    String?
-  occurredAt DateTime
-  company    Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
-}
-
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infrastructure/prisma/generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Weekday {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum AuditAction {
+  MODIFICATION
+  ADDITION
+  DELETION
+}
+
+enum AuditSubject {
+  COMPANY_NAME
+  COMPANY_CALENDAR_NON_WORKING_WEEKDAYS
+  COMPANY_CALENDAR_HOLIDAY
+}
+
+enum AuditSide {
+  BEFORE
+  AFTER
+}
+
+model Company {
+  id                 String                     @id
+  name               String
+  holidays           Holiday[]
+  nonWorkingWeekdays CompanyNonWorkingWeekday[]
+  auditEvents        AuditEvent[]
+}
+
+model CompanyNonWorkingWeekday {
+  companyId String
+  weekday   Weekday
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@id([companyId, weekday])
+}
+
+model Holiday {
+  id        String  @id
+  companyId String
+  date      String
+  label     String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id         String          @id @default(cuid())
+  companyId  String
+  action     AuditAction
+  subject    AuditSubject
+  actorId    String?
+  occurredAt DateTime
+  company    Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  snapshots  AuditSnapshot[]
+}
+
+model AuditSnapshot {
+  id           String                 @id @default(cuid())
+  eventId      String
+  side         AuditSide
+  companyName  String?
+  holidayId    String?
+  holidayDate  String?
+  holidayLabel String?
+  event        AuditEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  weekdays     AuditSnapshotWeekday[]
+
+  @@unique([eventId, side])
+}
+
+model AuditSnapshotWeekday {
+  snapshotId String
+  weekday    Weekday
+  snapshot   AuditSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@id([snapshotId, weekday])
+}

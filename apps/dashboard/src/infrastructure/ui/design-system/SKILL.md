@@ -1,9 +1,9 @@
 ---
 name: design-system
-description: Usage directives for the dashboard design system. Enforces consistency by requiring the use of theme tokens over hardcoded values.
+description: Usage directives for the Lumi design system. Enforces consistency by requiring the use of theme tokens over hardcoded values.
 ---
 
-# Design System Directives
+# Design System Directives (Lumi)
 
 This application follows a strict design system to ensure visual consistency and maintainability.
 

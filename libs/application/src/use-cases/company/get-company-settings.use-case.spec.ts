@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { BusinessError } from '@hexagonal-monorepo-template/domain';
 import { InMemoryCompanyRepository } from '@hexagonal-monorepo-template/adapters';
 import { CreateCompanyUseCase } from './create-company.use-case';
 import { GetCompanySettingsUseCase } from './get-company-settings.use-case';
@@ -26,6 +25,6 @@ describe('GetCompanySettingsUseCase', () => {
         companyId: companyA.id,
         actorCompanyId: companyB.id,
       }),
-    ).rejects.toBeInstanceOf(BusinessError);
+    ).rejects.toBeInstanceOf(Error);
   });
 });

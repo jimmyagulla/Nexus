@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BusinessError } from '../errors/business-error';
-import { BusinessErrorCode } from '../errors/business-error-codes';
+import { ErrorMessage } from '../errors/error-message';
 import { Company } from './company';
 import { Weekday } from '../value-objects/weekday';
 
@@ -18,14 +17,12 @@ describe('Company', () => {
   });
 
   it('rejects an empty name with INFORMATION_OBLIGATOIRE', () => {
-    expect(() => Company.create('   ')).toThrow(BusinessError);
+    expect(() => Company.create('   ')).toThrow(Error);
     try {
       Company.create('');
     } catch (error) {
-      expect(error).toBeInstanceOf(BusinessError);
-      expect((error as BusinessError).code).toBe(
-        BusinessErrorCode.INFORMATION_OBLIGATOIRE,
-      );
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe(ErrorMessage.INFORMATION_OBLIGATOIRE);
     }
   });
 });

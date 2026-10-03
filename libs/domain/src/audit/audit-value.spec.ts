@@ -20,7 +20,7 @@ describe('AuditValue serialization', () => {
 
   it('round-trips weekdays', () => {
     const value = {
-      kind: 'company_calendar_non_working_weekdays' as const,
+      kind: 'COMPANY_CALENDAR_NON_WORKING_WEEKDAYS' as const,
       weekdays: [Weekday.SATURDAY, Weekday.SUNDAY],
     };
     const parsed = parseAuditValue(serializeAuditValue(value));

@@ -8,16 +8,16 @@ import {
 } from '../../../infrastructure/prisma/generated';
 
 const ACTION_TO_PRISMA: Record<DomainAuditAction, PrismaAuditAction> = {
-  modification: PrismaAuditAction.modification,
-  ajout: PrismaAuditAction.ajout,
-  suppression: PrismaAuditAction.suppression,
+  MODIFICATION: PrismaAuditAction.MODIFICATION,
+  ADDITION: PrismaAuditAction.ADDITION,
+  DELETION: PrismaAuditAction.DELETION,
 };
 
 const SUBJECT_TO_PRISMA: Record<DomainAuditSubject, PrismaAuditSubject> = {
-  company_name: PrismaAuditSubject.company_name,
-  company_calendar_non_working_weekdays:
-    PrismaAuditSubject.company_calendar_non_working_weekdays,
-  company_calendar_holiday: PrismaAuditSubject.company_calendar_holiday,
+  COMPANY_NAME: PrismaAuditSubject.COMPANY_NAME,
+  COMPANY_CALENDAR_NON_WORKING_WEEKDAYS:
+    PrismaAuditSubject.COMPANY_CALENDAR_NON_WORKING_WEEKDAYS,
+  COMPANY_CALENDAR_HOLIDAY: PrismaAuditSubject.COMPANY_CALENDAR_HOLIDAY,
 };
 
 export function toPrismaAuditAction(

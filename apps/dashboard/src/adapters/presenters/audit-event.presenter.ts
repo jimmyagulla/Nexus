@@ -1,66 +1,48 @@
 import {
   AuditAction,
   AuditSubject,
-  type AuditEvent,
   type AuditValue,
 } from '@hexagonal-monorepo-template/domain';
 
-/** Entrée presenter : même forme qu’un événement domaine (sans persistance). */
-export type AuditEventView = Pick<
-  AuditEvent,
-  'action' | 'subject' | 'before' | 'after' | 'occurredAt'
-> & { actorLabel?: string };
+export type AuditEventView = {
+  action: AuditAction;
+  subject: AuditSubject;
+  before: AuditValue | null;
+  after: AuditValue | null;
+  actorLabel?: string;
+};
 
-export function formatAuditEventLine(event: AuditEventView): string {
-  const actor = event.actorLabel ?? "L'employeur";
-  if (
-    event.subject === AuditSubject.COMPANY_NAME &&
-    event.action === AuditAction.MODIFICATION &&
-    event.before?.kind === AuditSubject.COMPANY_NAME &&
-    event.after?.kind === AuditSubject.COMPANY_NAME
-  ) {
-    return `${actor} a modifié le nom de l'entreprise (${event.before.name} → ${event.after.name}).`;
-  }
-  if (
-    event.subject === AuditSubject.COMPANY_CALENDAR_NON_WORKING_WEEKDAYS &&
-    event.action === AuditAction.MODIFICATION
-  ) {
-    return `${actor} a modifié les jours habituels non travaillés.`;
-  }
-  if (
-    event.subject === AuditSubject.COMPANY_CALENDAR_HOLIDAY &&
-    event.action === AuditAction.AJOUT &&
-    event.after?.kind === AuditSubject.COMPANY_CALENDAR_HOLIDAY
-  ) {
-    return `${actor} a ajouté le jour férié ${event.after.label} (${event.after.date}).`;
-  }
-  if (
-    event.subject === AuditSubject.COMPANY_CALENDAR_HOLIDAY &&
-    event.action === AuditAction.SUPPRESSION &&
-    event.before?.kind === AuditSubject.COMPANY_CALENDAR_HOLIDAY
-  ) {
-    return `${actor} a retiré le jour férié ${event.before.label} (${event.before.date}).`;
-  }
-  if (
-    event.subject === AuditSubject.COMPANY_CALENDAR_HOLIDAY &&
-    event.action === AuditAction.MODIFICATION &&
-    event.before?.kind === AuditSubject.COMPANY_CALENDAR_HOLIDAY &&
-    event.after?.kind === AuditSubject.COMPANY_CALENDAR_HOLIDAY
-  ) {
-    return `${actor} a modifié le jour férié ${event.before.label}.`;
-  }
-  return `${actor} — ${event.action} — ${event.subject}`;
+type LineFormatter = (event: AuditEventView) => string;
+
+function actorOf(event: AuditEventView): string {
+  return event.actorLabel ?? "L'employeur";
 }
 
-export function formatAuditValueSummary(value: AuditValue): string {
-  switch (value.kind) {
-    case AuditSubject.COMPANY_NAME:
-      return value.name;
-    case AuditSubject.COMPANY_CALENDAR_NON_WORKING_WEEKDAYS:
-      return value.weekdays.join(',');
-    case AuditSubject.COMPANY_CALENDAR_HOLIDAY:
-      return `${value.date} — ${value.label}`;
-    default:
-      return value.kind;
-  }
+function holidayLabel(value: AuditValue | null): string {
+  return value?.kind === AuditSubject.COMPANY_CALENDAR_HOLIDAY
+    ? `${value.label} (${value.date})`
+    : '';
+}
+
+const LINE_BY_EVENT: Partial<Record<`${AuditAction}:${AuditSubject}`, LineFormatter>> = {
+  [`${AuditAction.MODIFICATION}:${AuditSubject.COMPANY_NAME}`]: (event) => {
+    const before =
+      event.before?.kind === AuditSubject.COMPANY_NAME ? event.before.name : '';
+    const after =
+      event.after?.kind === AuditSubject.COMPANY_NAME ? event.after.name : '';
+    return `${actorOf(event)} a modifié le nom de l'entreprise (${before} → ${after}).`;
+  },
+  [`${AuditAction.MODIFICATION}:${AuditSubject.COMPANY_CALENDAR_NON_WORKING_WEEKDAYS}`]:
+    (event) => `${actorOf(event)} a modifié les jours habituels non travaillés.`,
+  [`${AuditAction.ADDITION}:${AuditSubject.COMPANY_CALENDAR_HOLIDAY}`]: (event) =>
+    `${actorOf(event)} a ajouté le jour férié ${holidayLabel(event.after)}.`,
+  [`${AuditAction.DELETION}:${AuditSubject.COMPANY_CALENDAR_HOLIDAY}`]: (event) =>
+    `${actorOf(event)} a retiré le jour férié ${holidayLabel(event.before)}.`,
+  [`${AuditAction.MODIFICATION}:${AuditSubject.COMPANY_CALENDAR_HOLIDAY}`]: (event) =>
+    `${actorOf(event)} a modifié le jour férié ${holidayLabel(event.before)}.`,
+};
+
+export function formatAuditEventLine(event: AuditEventView): string {
+  const format = LINE_BY_EVENT[`${event.action}:${event.subject}`];
+  return format ? format(event) : `${actorOf(event)} — ${event.action} — ${event.subject}`;
 }

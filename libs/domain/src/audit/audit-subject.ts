@@ -1,9 +1,9 @@
-/** Valeurs alignées sur l'enum Prisma `AuditSubject` (apps/api/prisma). */
+/** Values match the Prisma enum `AuditSubject`. */
 export const AuditSubject = {
-  COMPANY_NAME: 'company_name',
+  COMPANY_NAME: 'COMPANY_NAME',
   COMPANY_CALENDAR_NON_WORKING_WEEKDAYS:
-    'company_calendar_non_working_weekdays',
-  COMPANY_CALENDAR_HOLIDAY: 'company_calendar_holiday',
+    'COMPANY_CALENDAR_NON_WORKING_WEEKDAYS',
+  COMPANY_CALENDAR_HOLIDAY: 'COMPANY_CALENDAR_HOLIDAY',
 } as const;
 
 export type AuditSubject = (typeof AuditSubject)[keyof typeof AuditSubject];

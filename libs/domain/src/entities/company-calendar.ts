@@ -1,5 +1,4 @@
-import { BusinessError } from '../errors/business-error';
-import { BusinessErrorCode } from '../errors/business-error-codes';
+import { ErrorMessage } from '../errors/error-message';
 import { type Weekday } from '../value-objects/weekday';
 import { Company } from './company';
 import { Holiday } from './holiday';
@@ -8,7 +7,7 @@ export class CompanyCalendar {
   static addHoliday(company: Company, date: string, label: string): Company {
     const trimmed = label.trim();
     if (trimmed.length === 0) {
-      throw new BusinessError(BusinessErrorCode.INFORMATION_OBLIGATOIRE);
+      throw new Error(ErrorMessage.INFORMATION_OBLIGATOIRE);
     }
     return company.withHolidays([...company.holidays, Holiday.create(date, trimmed)]);
   }
@@ -21,7 +20,7 @@ export class CompanyCalendar {
   ): Company {
     const trimmed = label.trim();
     if (trimmed.length === 0) {
-      throw new BusinessError(BusinessErrorCode.INFORMATION_OBLIGATOIRE);
+      throw new Error(ErrorMessage.INFORMATION_OBLIGATOIRE);
     }
     const holidays = company.holidays.map((holiday) =>
       holiday.id === holidayId ? holiday.update(date, trimmed) : holiday,

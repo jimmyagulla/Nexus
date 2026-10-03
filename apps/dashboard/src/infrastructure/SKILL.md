@@ -2,7 +2,7 @@
 
 ## Rules
 - **UI Components (React/Vue/etc.)**: Must be "Humble Objects". (See [ui.SKILL.md](ui.SKILL.md))
-- **Technical Details**: API clients (Axios), Storage (LocalStorage), Framework config.
+- **Technical Details**: API clients (`FetchHttpClient` using `fetch`), Storage (LocalStorage), Framework config. Gateways must not call `fetch` themselves.
 - **UI Persistence (Zustand)**: Use for ALL UI-only state and non-server persistence (e.g., toasts, user preferences).
 - **DI for Stores**: Stores MUST use Dependency Injection for external resources. Example: `createSettingsStore(storage: KeyValueStorage)`.
 - **Storage**: All storage persistence MUST use the `KeyValueStorage` port.

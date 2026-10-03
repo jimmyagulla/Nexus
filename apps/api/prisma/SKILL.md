@@ -1,18 +1,26 @@
 ---
 name: api-db
-description: Règles de persistance Prisma pour apps/api.
+description: Technical persistence rules for any API that owns a Prisma schema.
 ---
 
-# API — base de données (Prisma)
+# Prisma schema
 
-## Audit
+The Prisma schema file is the only persistence contract. Do not add migration scripts, seed scripts, or a second schema.
 
-- Stocker des **événements typés** : `action` et `subject` en **enums Prisma** (`AuditAction`, `AuditSubject`), alignés 1:1 avec `libs/domain/src/audit/*` ; `before`, `after` (JSON `AuditValue`), `actorId`, `occurredAt`.
-- Ne pas ajouter d’action ou de subject en `String` libre : étendre les enums schéma + domaine + migration.
-- **Interdit** : toute colonne ou payload contenant une **phrase lisible**, un libellé UI, ou du texte métier formaté pour l’humain. La phrase du journal (E15) est construite côté **presenter** dashboard à partir des valeurs typées.
+## Typing
 
-## Général
+- A closed set of values is a Prisma `enum`. Do not store it as a free `String`.
+- Enum names are PascalCase. Enum values are `SCREAMING_SNAKE_CASE` English identifiers, which is the Prisma convention.
+- A list of enum values is a relation table whose column is that enum. Do not serialize the list into a text column.
+- A known structure is columns or related models. Do not use a JSON or opaque text column when the schema can express the fields.
+- Timestamps are `DateTime`. Technical identifiers are `String` or `@default(cuid())`.
+- Extending a closed set means editing the enum in the schema. Callers map to the generated client enum.
 
-- Schéma et migrations dans `apps/api/prisma/`.
-- Client généré dans `apps/api/src/infrastructure/prisma/generated` (non versionné).
-- Données métier structurées (JSON) = faits ; pas de copie de copywriting produit en base.
+## Forbidden columns
+
+- A column that stores text already formatted for display (a sentence, a UI label, a localized message).
+- A `String` column that repeats a value already represented by an enum.
+
+## Client
+
+- Generate the client from this schema into the API infrastructure folder. Do not commit the generated client.

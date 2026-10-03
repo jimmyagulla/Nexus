@@ -1,11 +1,10 @@
-import { BusinessError } from '../errors/business-error';
-import { BusinessErrorCode } from '../errors/business-error-codes';
+import { ErrorMessage } from '../errors/error-message';
 
 export function assertSameCompany(
   resourceCompanyId: string,
   actorCompanyId: string,
 ): void {
   if (resourceCompanyId !== actorCompanyId) {
-    throw new BusinessError(BusinessErrorCode.NON_AUTORISE);
+    throw new Error(ErrorMessage.NON_AUTORISE);
   }
 }

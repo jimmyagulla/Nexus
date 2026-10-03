@@ -1,9 +1,9 @@
 ---
-name: dashboard-steering
-description: Enforces Clean Architecture for the dashboard application.
+name: finance-tracker-steering
+description: Enforces Clean Architecture for the finance-tracker application.
 ---
 
-# Dashboard Architecture
+# Finance Tracker Architecture (Lumi)
 
 This application follows the **Clean Architecture** principles as defined in the global `clean-architecture` skill.
 

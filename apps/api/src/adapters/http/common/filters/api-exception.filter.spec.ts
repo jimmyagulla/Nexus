@@ -1,5 +1,4 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
-import { BusinessError } from '@hexagonal-monorepo-template/domain';
 import { describe, it, expect, vi } from 'vitest';
 import { ApiExceptionFilter } from './api-exception.filter';
 
@@ -25,27 +24,6 @@ describe('ApiExceptionFilter', () => {
     expect(mockJson).toHaveBeenCalledWith({
       status: 404,
       message: 'Not Found',
-    });
-  });
-
-  it('formats BusinessError with referential message', () => {
-    const filter = new ApiExceptionFilter();
-    const exception = new BusinessError('NON_AUTORISE');
-
-    const mockJson = vi.fn();
-    const mockStatus = vi.fn().mockReturnValue({ json: mockJson });
-    const mockHost: ArgumentsHost = {
-      switchToHttp: vi.fn().mockReturnValue({
-        getResponse: vi.fn().mockReturnValue({ status: mockStatus }),
-      }),
-    } as unknown as ArgumentsHost;
-
-    filter.catch(exception, mockHost);
-
-    expect(mockStatus).toHaveBeenCalledWith(403);
-    expect(mockJson).toHaveBeenCalledWith({
-      status: 403,
-      message: "Vous n'avez pas accès à cet élément.",
     });
   });
 

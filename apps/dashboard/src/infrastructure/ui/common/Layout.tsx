@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { APP_ROUTES } from '@hexagonal-monorepo-template/ports';
 import { Link } from '@tanstack/react-router';
 import { LayoutDashboard, Settings } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -18,7 +19,7 @@ export function Layout({ children }: LayoutProps) {
         </div>
         <nav className="flex-1 px-4">
           <Link
-            to="/"
+            to={APP_ROUTES.home}
             className={cn(
               'flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
               'text-muted-foreground hover:bg-accent hover:text-primary',
@@ -29,7 +30,7 @@ export function Layout({ children }: LayoutProps) {
             Tableau de bord
           </Link>
           <Link
-            to="/parametres"
+            to={APP_ROUTES.settings}
             className={cn(
               'flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
               'text-muted-foreground hover:bg-accent hover:text-primary',
