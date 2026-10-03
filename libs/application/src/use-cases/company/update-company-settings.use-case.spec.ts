@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { Weekday } from '@hexagonal-monorepo-template/domain';
+import {
+  AuditAction,
+  AuditSubject,
+  holidayValue,
+  Weekday,
+} from '@hexagonal-monorepo-template/domain';
 import {
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
@@ -28,7 +33,15 @@ describe('UpdateCompanySettingsUseCase', () => {
     });
 
     expect(audit.entries).toHaveLength(2);
-    expect(audit.entries[1]?.before).toContain('Fête nationale');
+    expect(audit.entries[1]?.action).toBe(AuditAction.SUPPRESSION);
+    expect(audit.entries[1]?.subject).toBe(AuditSubject.COMPANY_CALENDAR_HOLIDAY);
+    expect(audit.entries[1]?.before).toEqual(
+      holidayValue({
+        id: holidayId,
+        date: '2026-07-14',
+        label: 'Fête nationale',
+      }),
+    );
     expect(audit.entries[1]?.after).toBeNull();
   });
 

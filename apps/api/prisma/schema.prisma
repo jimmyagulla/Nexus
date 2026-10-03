@@ -25,13 +25,13 @@ model Holiday {
 }
 
 model AuditEvent {
-  id             String   @id @default(cuid())
-  companyId      String
-  action         String
-  objectLabel    String
-  readablePhrase String
-  before         String?
-  after          String?
-  occurredAt     DateTime
-  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  companyId  String
+  action     String
+  subject    String
+  before     String?
+  after      String?
+  actorId    String?
+  occurredAt DateTime
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }

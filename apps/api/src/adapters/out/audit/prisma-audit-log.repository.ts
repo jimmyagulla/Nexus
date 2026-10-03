@@ -1,20 +1,23 @@
-import { AuditEntry } from '@hexagonal-monorepo-template/domain';
+import {
+  AuditEvent,
+  serializeAuditValue,
+} from '@hexagonal-monorepo-template/domain';
 import { IAuditLogRepository } from '@hexagonal-monorepo-template/ports';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 
 export class PrismaAuditLogRepository implements IAuditLogRepository {
   constructor(private readonly prisma: PrismaDb) {}
 
-  async append(entry: AuditEntry): Promise<void> {
+  async append(event: AuditEvent): Promise<void> {
     await this.prisma.auditEvent.create({
       data: {
-        companyId: entry.companyId,
-        action: entry.action,
-        objectLabel: entry.objectLabel,
-        readablePhrase: entry.readablePhrase,
-        before: entry.before,
-        after: entry.after,
-        occurredAt: entry.occurredAt,
+        companyId: event.companyId,
+        action: event.action,
+        subject: event.subject,
+        before: event.before ? serializeAuditValue(event.before) : null,
+        after: event.after ? serializeAuditValue(event.after) : null,
+        actorId: event.actorId,
+        occurredAt: event.occurredAt,
       },
     });
   }

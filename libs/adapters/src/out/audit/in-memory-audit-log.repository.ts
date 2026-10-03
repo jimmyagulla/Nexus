@@ -1,10 +1,10 @@
-import { AuditEntry } from '@hexagonal-monorepo-template/domain';
+import { AuditEvent } from '@hexagonal-monorepo-template/domain';
 import { IAuditLogRepository } from '@hexagonal-monorepo-template/ports';
 
 export class InMemoryAuditLogRepository implements IAuditLogRepository {
-  readonly entries: AuditEntry[] = [];
+  readonly entries: AuditEvent[] = [];
 
-  async append(entry: AuditEntry): Promise<void> {
-    this.entries.push(entry);
+  async append(event: AuditEvent): Promise<void> {
+    this.entries.push(event);
   }
 }

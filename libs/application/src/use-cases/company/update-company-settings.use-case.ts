@@ -1,7 +1,12 @@
 import {
-  AuditEntry,
+  AuditAction,
+  AuditEvent,
+  AuditSubject,
   Company,
   CompanyCalendar,
+  companyNameValue,
+  holidayValue,
+  nonWorkingWeekdaysValue,
 } from '@hexagonal-monorepo-template/domain';
 import {
   HolidayMutationCommand,
@@ -31,13 +36,12 @@ export class UpdateCompanySettingsUseCase
     const updated = current.rename(command.name);
     await this.companies.save(updated);
     await this.auditLog.append(
-      new AuditEntry(
+      new AuditEvent(
         updated.id,
-        'modification',
-        'Nom de l’entreprise',
-        `Le nom de l’entreprise est passé de « ${current.name} » à « ${updated.name} ».`,
-        current.name,
-        updated.name,
+        AuditAction.MODIFICATION,
+        AuditSubject.COMPANY_NAME,
+        companyNameValue(current.name),
+        companyNameValue(updated.name),
         new Date(),
       ),
     );
@@ -52,20 +56,18 @@ export class UpdateCompanySettingsUseCase
       command.actorCompanyId,
       this.companies,
     );
-    const before = JSON.stringify(current.nonWorkingWeekdays);
     const updated = CompanyCalendar.setNonWorkingWeekdays(
       current,
       command.weekdays,
     );
     await this.companies.save(updated);
     await this.auditLog.append(
-      new AuditEntry(
+      new AuditEvent(
         updated.id,
-        'modification',
-        'Calendrier',
-        'Les jours habituels non travaillés ont été modifiés.',
-        before,
-        JSON.stringify(updated.nonWorkingWeekdays),
+        AuditAction.MODIFICATION,
+        AuditSubject.COMPANY_CALENDAR_NON_WORKING_WEEKDAYS,
+        nonWorkingWeekdaysValue([...current.nonWorkingWeekdays]),
+        nonWorkingWeekdaysValue([...updated.nonWorkingWeekdays]),
         new Date(),
       ),
     );
@@ -85,17 +87,22 @@ export class UpdateCompanySettingsUseCase
     );
     const holiday = updated.holidays.at(-1);
     await this.companies.save(updated);
-    await this.auditLog.append(
-      new AuditEntry(
-        updated.id,
-        'ajout',
-        'Jour férié',
-        `Le jour férié « ${holiday?.label ?? command.label} » a été ajouté.`,
-        null,
-        `${command.date} — ${command.label}`,
-        new Date(),
-      ),
-    );
+    if (holiday !== undefined) {
+      await this.auditLog.append(
+        new AuditEvent(
+          updated.id,
+          AuditAction.AJOUT,
+          AuditSubject.COMPANY_CALENDAR_HOLIDAY,
+          null,
+          holidayValue({
+            id: holiday.id,
+            date: holiday.date,
+            label: holiday.label,
+          }),
+          new Date(),
+        ),
+      );
+    }
     return updated;
   }
 
@@ -109,8 +116,7 @@ export class UpdateCompanySettingsUseCase
       (holiday) => holiday.id === command.holidayId,
     );
     if (existing === undefined) {
-      const unchanged = current;
-      return unchanged;
+      return current;
     }
     const updated = CompanyCalendar.updateHoliday(
       current,
@@ -120,13 +126,20 @@ export class UpdateCompanySettingsUseCase
     );
     await this.companies.save(updated);
     await this.auditLog.append(
-      new AuditEntry(
+      new AuditEvent(
         updated.id,
-        'modification',
-        'Jour férié',
-        `Le jour férié « ${existing.label} » a été modifié.`,
-        `${existing.date} — ${existing.label}`,
-        `${command.date} — ${command.label}`,
+        AuditAction.MODIFICATION,
+        AuditSubject.COMPANY_CALENDAR_HOLIDAY,
+        holidayValue({
+          id: existing.id,
+          date: existing.date,
+          label: existing.label,
+        }),
+        holidayValue({
+          id: existing.id,
+          date: command.date,
+          label: command.label,
+        }),
         new Date(),
       ),
     );
@@ -146,12 +159,15 @@ export class UpdateCompanySettingsUseCase
     await this.companies.save(updated);
     if (existing !== undefined) {
       await this.auditLog.append(
-        new AuditEntry(
+        new AuditEvent(
           updated.id,
-          'suppression',
-          'Jour férié',
-          `Le jour férié « ${existing.label} » a été retiré du calendrier.`,
-          `${existing.date} — ${existing.label}`,
+          AuditAction.SUPPRESSION,
+          AuditSubject.COMPANY_CALENDAR_HOLIDAY,
+          holidayValue({
+            id: existing.id,
+            date: existing.date,
+            label: existing.label,
+          }),
           null,
           new Date(),
         ),
