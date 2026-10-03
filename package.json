@@ -11,7 +11,10 @@
     "test": "nx run-many -t test",
     "test:e2e": "nx e2e api-e2e",
     "lint": "nx run-many -t lint",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "postinstall": "pnpm prisma:generate",
+    "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema apps/api/prisma/schema.prisma"
   },
   "private": true,
   "devDependencies": {
@@ -51,6 +54,7 @@
     "jsonc-eslint-parser": "^2.1.0",
     "nx": "23.2.0",
     "postcss": "^8.5.28",
+    "prisma": "6.19.0",
     "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3",
     "tailwindcss-animate": "^1.0.7",
@@ -72,6 +76,7 @@
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/swagger": "^11.4.7",
+    "@prisma/client": "^6.19.0",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-label": "^2.1.15",
     "@radix-ui/react-progress": "^1.1.16",

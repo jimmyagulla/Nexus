@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infrastructure/prisma/generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                   String    @id
+  name                 String
+  nonWorkingWeekdays   String
+  holidays             Holiday[]
+  auditEvents          AuditEvent[]
+}
+
+model Holiday {
+  id        String  @id
+  companyId String
+  date      String
+  label     String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id             String   @id @default(cuid())
+  companyId      String
+  action         String
+  objectLabel    String
+  readablePhrase String
+  before         String?
+  after          String?
+  occurredAt     DateTime
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}

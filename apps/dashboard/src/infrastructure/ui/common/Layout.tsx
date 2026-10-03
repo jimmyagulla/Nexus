@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, Settings } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface LayoutProps {
@@ -27,6 +27,17 @@ export function Layout({ children }: LayoutProps) {
           >
             <LayoutDashboard className="mr-4 h-5 w-5" />
             Tableau de bord
+          </Link>
+          <Link
+            to="/parametres"
+            className={cn(
+              'flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
+              'text-muted-foreground hover:bg-accent hover:text-primary',
+              '[&.active]:bg-accent [&.active]:text-primary [&.active]:font-semibold',
+            )}
+          >
+            <Settings className="mr-4 h-5 w-5" />
+            Paramètres
           </Link>
         </nav>
       </aside>
