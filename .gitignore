@@ -26,9 +26,13 @@ node_modules
 
 # IDE - Cursor
 .cursor/*
-!.cursor/skills/*
+!.cursor/skills/
+!.cursor/skills/**
 
 # misc
+__pycache__/
+*.pyc
+*.pyo
 /.sass-cache
 /connect.lock
 /coverage

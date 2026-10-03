@@ -14,6 +14,8 @@ Priorité de réalisation : **1 en premier, 5 en dernier**. Le chiffre mesure le
 
 Règle de prise : parmi les stories dont les dépendances sont faites, prendre d'abord la plus petite priorité. À priorité égale, les stories qui ne se citent pas entre elles sont parallèles.
 
+Le statut en temps réel est dans [suivi.md](suivi.md) : à faire, en cours, terminée. Seul le skill `next-task` le modifie, pour que plusieurs agents prennent des unités différentes. Ne pas éditer ce statut à la main.
+
 ## Liste des user stories
 
 | Story                                                | Epic                      | Priorité | Besoin         | Dépend de          | Parallèle possible avec                |

@@ -1,0 +1,489 @@
+{
+  "schemaVersion": 1,
+  "items": {
+    "E01": {
+      "kind": "epic",
+      "title": "E01 — Entreprise",
+      "stories": [
+        "E01-US01"
+      ],
+      "priorite": 1,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E01-US01": {
+      "kind": "story",
+      "title": "E01-US01 — Entreprise, périmètre et calendrier",
+      "epic": "E01",
+      "priorite": 1,
+      "dependDe": [],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E02": {
+      "kind": "epic",
+      "title": "E02 — Accès et rôles",
+      "stories": [
+        "E02-US01",
+        "E02-US02",
+        "E02-US03"
+      ],
+      "priorite": 1,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E02-US01": {
+      "kind": "story",
+      "title": "E02-US01 — Comptes, connexion et rôles",
+      "epic": "E02",
+      "priorite": 1,
+      "dependDe": [
+        "E01-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E02-US02": {
+      "kind": "story",
+      "title": "E02-US02 — Double authentification du salarié",
+      "epic": "E02",
+      "priorite": 1,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E02-US03": {
+      "kind": "story",
+      "title": "E02-US03 — Gestion des accès utilisateurs",
+      "epic": "E02",
+      "priorite": 2,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E03": {
+      "kind": "epic",
+      "title": "E03 — Salariés",
+      "stories": [
+        "E03-US01",
+        "E03-US02"
+      ],
+      "priorite": 1,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E03-US01": {
+      "kind": "story",
+      "title": "E03-US01 — Fiche salarié et cycle de vie",
+      "epic": "E03",
+      "priorite": 1,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E03-US02": {
+      "kind": "story",
+      "title": "E03-US02 — Activation de l'espace salarié",
+      "epic": "E03",
+      "priorite": 1,
+      "dependDe": [
+        "E02-US02",
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E04": {
+      "kind": "epic",
+      "title": "E04 — Coffre documentaire",
+      "stories": [
+        "E04-US01",
+        "E04-US02"
+      ],
+      "priorite": 1,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E04-US01": {
+      "kind": "story",
+      "title": "E04-US01 — Coffre : dépôt employeur et consultation",
+      "epic": "E04",
+      "priorite": 1,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E04-US02": {
+      "kind": "story",
+      "title": "E04-US02 — Dépôt de documents par le salarié",
+      "epic": "E04",
+      "priorite": 2,
+      "dependDe": [
+        "E04-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E05": {
+      "kind": "epic",
+      "title": "E05 — Bulletins de salaire",
+      "stories": [
+        "E05-US01"
+      ],
+      "priorite": 1,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E05-US01": {
+      "kind": "story",
+      "title": "E05-US01 — Publier et consulter les bulletins",
+      "epic": "E05",
+      "priorite": 1,
+      "dependDe": [
+        "E04-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E06": {
+      "kind": "epic",
+      "title": "E06 — Présences",
+      "stories": [
+        "E06-US01"
+      ],
+      "priorite": 3,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E06-US01": {
+      "kind": "story",
+      "title": "E06-US01 — États de présence",
+      "epic": "E06",
+      "priorite": 3,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E07": {
+      "kind": "epic",
+      "title": "E07 — Congés et absences",
+      "stories": [
+        "E07-US01"
+      ],
+      "priorite": 3,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E07-US01": {
+      "kind": "story",
+      "title": "E07-US01 — Congés et absences",
+      "epic": "E07",
+      "priorite": 3,
+      "dependDe": [
+        "E01-US01",
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E08": {
+      "kind": "epic",
+      "title": "E08 — Heures supplémentaires",
+      "stories": [
+        "E08-US01"
+      ],
+      "priorite": 3,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E08-US01": {
+      "kind": "story",
+      "title": "E08-US01 — Heures supplémentaires",
+      "epic": "E08",
+      "priorite": 3,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E09": {
+      "kind": "epic",
+      "title": "E09 — Informations personnelles",
+      "stories": [
+        "E09-US01"
+      ],
+      "priorite": 3,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E09-US01": {
+      "kind": "story",
+      "title": "E09-US01 — Informations personnelles",
+      "epic": "E09",
+      "priorite": 3,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E10": {
+      "kind": "epic",
+      "title": "E10 — Notes de frais",
+      "stories": [
+        "E10-US01"
+      ],
+      "priorite": 4,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E10-US01": {
+      "kind": "story",
+      "title": "E10-US01 — Notes de frais",
+      "epic": "E10",
+      "priorite": 4,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E11": {
+      "kind": "epic",
+      "title": "E11 — Frais professionnels",
+      "stories": [
+        "E11-US01"
+      ],
+      "priorite": 4,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E11-US01": {
+      "kind": "story",
+      "title": "E11-US01 — Frais professionnels",
+      "epic": "E11",
+      "priorite": 4,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E12": {
+      "kind": "epic",
+      "title": "E12 — Cabinet comptable",
+      "stories": [
+        "E12-US01",
+        "E12-US02"
+      ],
+      "priorite": 5,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E12-US01": {
+      "kind": "story",
+      "title": "E12-US01 — Connexion du cabinet comptable",
+      "epic": "E12",
+      "priorite": 5,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E12-US02": {
+      "kind": "story",
+      "title": "E12-US02 — Échanges de documents avec le cabinet",
+      "epic": "E12",
+      "priorite": 5,
+      "dependDe": [
+        "E12-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E13": {
+      "kind": "epic",
+      "title": "E13 — Registre unique du personnel",
+      "stories": [
+        "E13-US01"
+      ],
+      "priorite": 4,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E13-US01": {
+      "kind": "story",
+      "title": "E13-US01 — Registre unique du personnel",
+      "epic": "E13",
+      "priorite": 4,
+      "dependDe": [
+        "E03-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E14": {
+      "kind": "epic",
+      "title": "E14 — Notifications",
+      "stories": [
+        "E14-US01"
+      ],
+      "priorite": 2,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E14-US01": {
+      "kind": "story",
+      "title": "E14-US01 — Notifications dans l'application",
+      "epic": "E14",
+      "priorite": 2,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E15": {
+      "kind": "epic",
+      "title": "E15 — Historique",
+      "stories": [
+        "E15-US01"
+      ],
+      "priorite": 3,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E15-US01": {
+      "kind": "story",
+      "title": "E15-US01 — Historique transverse",
+      "epic": "E15",
+      "priorite": 3,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E16": {
+      "kind": "epic",
+      "title": "E16 — Tableaux de bord",
+      "stories": [
+        "E16-US01",
+        "E16-US02"
+      ],
+      "priorite": 2,
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E16-US01": {
+      "kind": "story",
+      "title": "E16-US01 — Tableau de bord employeur",
+      "epic": "E16",
+      "priorite": 2,
+      "dependDe": [
+        "E02-US01"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    },
+    "E16-US02": {
+      "kind": "story",
+      "title": "E16-US02 — Tableau de bord salarié",
+      "epic": "E16",
+      "priorite": 2,
+      "dependDe": [
+        "E02-US02"
+      ],
+      "status": "a-faire",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
+    }
+  }
+}

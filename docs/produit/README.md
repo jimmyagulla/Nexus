@@ -7,7 +7,9 @@ Documentation métier du produit. Elle sert de source unique aux agents qui impl
 1. [Cahier des charges](cahier-des-charges/README.md) — intention, acteurs, domaines, parcours.
 2. [Règles retenues](referentiels/regles-retenues.md) — choix qui ferment les points laissés ouverts par le cahier des charges.
 3. Référentiels — contrats, statuts, permissions, navigation, notifications, indicateurs, messages.
-4. [Backlog](backlog/README.md) — epics, user stories priorisées, sous-tâches.
+4. [Backlog](backlog/README.md) — epics, user stories priorisées, sous-tâches, [suivi](backlog/suivi.md).
+
+Le skill projet `next-task` prend la prochaine epic réalisable, la réserve dans le suivi, et la réalise. `/next-task story` prend une seule user story.
 
 ## Rôle de chaque niveau
 
