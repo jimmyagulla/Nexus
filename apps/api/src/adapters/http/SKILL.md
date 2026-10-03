@@ -13,8 +13,14 @@ description: Imperative rules for in HTTP adapters.
 - Use `class-validator` and `class-transformer` only in DTOs.
 - Create Pipe factories in `pipes/`.
 
+## DTOs
+
+- One DTO class per file (`*.dto.ts`). File name matches the class (`GoalContributionResponseDto` → `goal-contribution-response.dto.ts`).
+- Nested / child DTOs used by a parent get their own file. A parent DTO imports them; it must not declare them in the same file.
+
 ## Forbidden
 
+- Export more than one DTO class from a `*.dto.ts` file.
 - Create an `in/` subfolder.
 - Register global components (`APP_PIPE`, `APP_GUARD`, etc.) here.
 - Instantiate `ValidationPipe` or call `validate()` in controllers.

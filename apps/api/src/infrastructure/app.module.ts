@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
-import { MockDbModule } from './mock-db/mock-db.module';
-import { HelloModule } from './greeting/hello.module';
 import { AuthGuard } from '../adapters/http/common/guards/auth.guard';
 import { AUTH_GUARD_OPTIONS } from '../adapters/http/common/guards/auth-guard-options';
 import { createValidationPipe } from '../adapters/http/common/pipes/create-validation.pipe';
@@ -10,7 +8,6 @@ import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exceptio
 import { API_CONFIG, loadApiConfig, type ApiConfig } from './config/load-api-config';
 
 @Module({
-  imports: [MockDbModule, HelloModule],
   providers: [
     {
       provide: API_CONFIG,

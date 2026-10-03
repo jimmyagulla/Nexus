@@ -4,10 +4,10 @@ import { request as httpRequest } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { createNestApp } from './create-app';
 
-async function getJson(
+async function getResponse(
   app: INestApplication,
   path: string,
-): Promise<{ status: number; body: unknown }> {
+): Promise<{ status: number; body: string }> {
   const server = app.getHttpServer();
   await new Promise<void>((resolve) => {
     server.listen(0, '127.0.0.1', resolve);
@@ -27,7 +27,7 @@ async function getJson(
           res.on('end', () => {
             resolve({
               status: res.statusCode ?? 0,
-              body: data ? JSON.parse(data) : undefined,
+              body: data,
             });
           });
         },
@@ -56,17 +56,13 @@ describe('createNestApp', () => {
     app = undefined;
   });
 
-  it('serves GET /api with the success envelope', async () => {
+  it('serves Swagger UI', async () => {
     app = await createNestApp();
     await app.init();
 
-    const { status, body } = await getJson(app, '/api');
+    const { status, body } = await getResponse(app, '/api/docs');
 
     expect(status).toBe(200);
-    expect(body).toEqual({
-      status: 200,
-      message: 'Success',
-      data: { message: 'Hello API' },
-    });
+    expect(body).toContain('Swagger');
   });
 });

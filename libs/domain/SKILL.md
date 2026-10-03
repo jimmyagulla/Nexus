@@ -8,7 +8,9 @@ description: Domain layer isolation for libs/domain.
 ## Allowed
 
 - Define entities, value objects, and stateless domain services.
+- Define business constants (e.g., `DEFAULT_CATEGORIES`, tax rates).
 - Implement business behaviors and invariants.
+- **Business Logic Placement**: For tasks not requiring external calls, implement them here.
 
 ## Forbidden
 

@@ -8,13 +8,13 @@ import {
 
 describe('buildSuccessEnvelope', () => {
   it('wraps plain data with status 200 and default success message', () => {
-    const data = { message: 'Hello API' };
+    const data = { id: 'sample' };
     const envelope = buildSuccessEnvelope(data, 200);
 
     expect(envelope).toEqual({
       status: 200,
       message: 'Success',
-      data: { message: 'Hello API' },
+      data: { id: 'sample' },
     });
   });
 

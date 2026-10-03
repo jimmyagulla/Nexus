@@ -1,9 +1,0 @@
-{
-  "extends": "../../tools/workspace/tsconfig.app.json",
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.spec.ts"
-  ]
-}

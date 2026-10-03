@@ -10,6 +10,7 @@ description: Composition root for apps/api.
 - Configure `AppModule` and global NestJS wiring (providers, imports).
 - Bind in ports to use cases.
 - Bind out ports to adapters and infrastructure clients via `useFactory` and `inject`.
+- Own Prisma (schema, generated client, `PrismaModule`) in this app. Do not put Prisma under `libs/`.
 - Register global NestJS artifacts via `APP_*` tokens (`APP_PIPE`, `APP_GUARD`, etc.).
 - Assemble `ApiConfig` via `loadApiConfig` (uses infrastructure env parsers). Provide it as `API_CONFIG`.
 - Derive `AUTH_GUARD_OPTIONS` from `ApiConfig` (`useFactory` + `inject`).
@@ -41,6 +42,6 @@ description: Composition root for apps/api.
 
 - Perform dependency injection only in this layer.
 - One wiring module per feature here (`<feature>.module.ts`): controller(s) + port/adapter bindings via `useFactory`. `new` lives only in these modules.
-- Technical clients (e.g., `MockDb`) remain generic and business-agnostic: provide them once via a dedicated `@Global()` module (`<client>.module.ts`), never with business seeds. The feature injects the client and seeds its own data in its factory.
+- Technical clients (e.g. Prisma) remain generic and business-agnostic: provide them once via a dedicated `@Global()` module (`<client>.module.ts`).
 - `AppModule` aggregates: `imports` of technical (`@Global()`) and feature modules + registration of global components (`APP_*`). No inline feature binding.
 - Systematically use adapter factories for global component configuration.

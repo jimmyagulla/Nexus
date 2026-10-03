@@ -84,7 +84,8 @@ See [nx-dep-constraints.md](nx-dep-constraints.md).
 
 ## Checklist before validating a file
 
-1. **Which folder/layer?**
+1. **Red-Green-Refactor (TDD)**: Every new feature or bugfix MUST be accompanied by unit tests (Vitest). Follow the TDD cycle.
+2. **Which folder/layer?**
 2. **Imports match the table?** Illegal import = error. Fix it; do not justify it.
 3. **Cross-boundary objects injected, not constructed?**
 4. **Business logic outside `domain/`?** Move it.

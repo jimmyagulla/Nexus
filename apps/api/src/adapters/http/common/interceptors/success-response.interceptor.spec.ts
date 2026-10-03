@@ -22,7 +22,7 @@ describe('SuccessResponseInterceptor', () => {
     } as ExecutionContext;
 
     const mockCallHandler = {
-      handle: () => of({ message: 'Hello API' }),
+      handle: () => of({ id: 'sample' }),
     } as CallHandler;
 
     const result = await new Promise((resolve) => {
@@ -34,7 +34,7 @@ describe('SuccessResponseInterceptor', () => {
     expect(result).toEqual({
       status: 200,
       message: 'Success',
-      data: { message: 'Hello API' },
+      data: { id: 'sample' },
     });
   });
 

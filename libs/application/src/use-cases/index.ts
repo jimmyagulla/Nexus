@@ -1,1 +1,0 @@
-export * from './greeting/get-hello.use-case';

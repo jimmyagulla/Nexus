@@ -1,1 +1,1 @@
-export * from "./entities/greeting";
+export {};

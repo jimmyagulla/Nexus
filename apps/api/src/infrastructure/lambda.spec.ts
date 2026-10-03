@@ -57,22 +57,18 @@ describe('lambda handler', () => {
     await resetLambdaServerCache();
   });
 
-  it('returns the success envelope for GET /api', async () => {
-    const result = await handler(httpApiGetEvent('/api'), lambdaContext(), () => undefined);
+  it('serves Swagger UI for GET /api/docs', async () => {
+    const result = await handler(httpApiGetEvent('/api/docs'), lambdaContext(), () => undefined);
 
     expect(result).toMatchObject({
       statusCode: 200,
     });
-    expect(JSON.parse((result as { body: string }).body)).toEqual({
-      status: 200,
-      message: 'Success',
-      data: { message: 'Hello API' },
-    });
+    expect((result as { body: string }).body).toContain('Swagger');
   });
 
   it('bootstraps Nest only once across invocations', async () => {
     const createSpy = vi.spyOn(NestFactory, 'create');
-    const event = httpApiGetEvent('/api');
+    const event = httpApiGetEvent('/api/docs');
     const context = lambdaContext();
 
     await handler(event, context, () => undefined);

@@ -7,7 +7,7 @@ description: Technical client boundaries for libs/infrastructure.
 
 ## Allowed
 
-- Implement technical clients (DB Wrappers, SDKs, MockDb).
+- Implement technical clients (DB wrappers, SDKs).
 - Return raw records.
 - Parse environment strings into primitives (`parsePort`, `parseBool`, `readOptional`). Throw when a value is present and invalid.
 
