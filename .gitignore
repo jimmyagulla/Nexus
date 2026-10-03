@@ -46,8 +46,10 @@ testem.log
 .DS_Store
 Thumbs.db
 
-apps/api/prisma/*.db
-apps/api/prisma/*.db-journal
+apps/api/.env
+apps/api/prisma/**/*.db
+apps/api/prisma/**/*.db-journal
+apps/api/prisma/apps/
 apps/api/src/infrastructure/prisma/generated
 
 .nx/cache
