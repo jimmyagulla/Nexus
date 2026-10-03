@@ -4,7 +4,7 @@ import {
   type AuditValue,
 } from '@hexagonal-monorepo-template/domain';
 import { IAuditLogRepository } from '@hexagonal-monorepo-template/ports';
-import { AuditSide } from '../../../infrastructure/prisma/generated';
+import { AuditSide } from '../../../infrastructure/prisma/prisma-client';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import {
   toPrismaAuditAction,

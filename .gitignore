@@ -50,7 +50,7 @@ apps/api/.env
 apps/api/prisma/**/*.db
 apps/api/prisma/**/*.db-journal
 apps/api/prisma/apps/
-apps/api/src/infrastructure/prisma/generated
+apps/api/src/infrastructure/prisma/prisma-client
 
 .nx/cache
 .nx/workspace-data

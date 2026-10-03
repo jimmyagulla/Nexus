@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CompanyHolidaysModule } from './company-holidays/company-holidays.module';
 import { CompanyModule } from './company/company.module';
 import { CompanySettingsModule } from './company-settings/company-settings.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -11,7 +12,12 @@ import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exceptio
 import { API_CONFIG, loadApiConfig, type ApiConfig } from './config/load-api-config';
 
 @Module({
-  imports: [PrismaModule, CompanyModule, CompanySettingsModule],
+  imports: [
+    PrismaModule,
+    CompanyModule,
+    CompanySettingsModule,
+    CompanyHolidaysModule,
+  ],
   providers: [
     {
       provide: API_CONFIG,

@@ -9,7 +9,8 @@ export default [
     {
         ignores: [
             "**/dist",
-            "**/out-tsc"
+            "**/out-tsc",
+            "**/prisma-client/**"
         ]
     },
     {

@@ -1,9 +1,9 @@
 ---
 name: design-system
-description: Usage directives for the Lumi design system. Enforces consistency by requiring the use of theme tokens over hardcoded values.
+description: Usage directives for the Nexus design system. Enforces consistency by requiring the use of theme tokens over hardcoded values.
 ---
 
-# Design System Directives (Lumi)
+# Design System Directives
 
 This application follows a strict design system to ensure visual consistency and maintainability.
 

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CompanySettingsController } from '../../../adapters/controllers/company-settings.controller';
+import { CompanySettingsController } from '../../../adapters/controllers/company-settings/company-settings.controller';
 import { setCompanyId } from '../stores/company-session.store';
 import { companySettingsQueryKey } from './useGetCompanySettings';
 

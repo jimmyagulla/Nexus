@@ -4,11 +4,11 @@ import {
   AuditSubject,
   holidayValue,
 } from '@hexagonal-monorepo-template/domain';
-import { formatAuditEventLine } from './audit-event.presenter';
+import { AuditEventPresenter } from './audit-event.presenter';
 
-describe('formatAuditEventLine', () => {
+describe('AuditEventPresenter', () => {
   it('forms a French line for holiday removal from typed values', () => {
-    const line = formatAuditEventLine({
+    const line = new AuditEventPresenter().present({
       action: AuditAction.DELETION,
       subject: AuditSubject.COMPANY_CALENDAR_HOLIDAY,
       before: holidayValue({

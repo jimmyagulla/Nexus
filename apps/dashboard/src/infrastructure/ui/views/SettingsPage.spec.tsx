@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { CompanySettingsController } from '../../../adapters/controllers/company-settings.controller';
+import { CompanySettingsController } from '../../../adapters/controllers/company-settings/company-settings.controller';
 import { SettingsPage } from './SettingsPage';
 
 vi.mock('../stores/company-session.store', () => ({

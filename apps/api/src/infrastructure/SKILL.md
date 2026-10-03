@@ -10,7 +10,7 @@ description: Composition root for apps/api.
 - Configure `AppModule` and global NestJS wiring (providers, imports).
 - Bind in ports to use cases.
 - Bind out ports to adapters and infrastructure clients via `useFactory` and `inject`.
-- Own Prisma (schema, generated client, `PrismaModule`) in this app. Do not put Prisma under `libs/`.
+- Own Prisma (schema, `prisma-client`, `PrismaModule`) in this app. Do not put Prisma under `libs/`.
 - Register global NestJS artifacts via `APP_*` tokens (`APP_PIPE`, `APP_GUARD`, etc.).
 - Assemble `ApiConfig` via `loadApiConfig` (uses infrastructure env parsers). Provide it as `API_CONFIG`.
 - Derive `AUTH_GUARD_OPTIONS` from `ApiConfig` (`useFactory` + `inject`).

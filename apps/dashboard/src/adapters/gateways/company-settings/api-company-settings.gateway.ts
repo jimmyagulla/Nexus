@@ -3,12 +3,12 @@ import {
   ApiResponse,
   companyPath,
   CompanySettingsDto,
-  CompanySettingsGateway,
+  CompanySettingsRepository,
   HttpClient,
 } from '@hexagonal-monorepo-template/ports';
 import { unwrapResponse } from '@hexagonal-monorepo-template/infrastructure';
 
-export class ApiCompanySettingsGateway implements CompanySettingsGateway {
+export class ApiCompanySettingsGateway implements CompanySettingsRepository {
   constructor(private readonly httpClient: HttpClient) {}
 
   async create(name: string): Promise<CompanySettingsDto> {

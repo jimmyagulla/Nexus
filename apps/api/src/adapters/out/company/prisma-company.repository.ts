@@ -1,31 +1,8 @@
-import {
-  Company,
-  Holiday,
-  type Weekday,
-} from '@hexagonal-monorepo-template/domain';
+import { Company } from '@hexagonal-monorepo-template/domain';
 import { ICompanyRepository } from '@hexagonal-monorepo-template/ports';
-import { Weekday as PrismaWeekday } from '../../../infrastructure/prisma/generated';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
-import { fromPrismaWeekday, toPrismaWeekday } from '../weekday-prisma.mapper';
-
-function toDomain(row: {
-  id: string;
-  name: string;
-  nonWorkingWeekdays: { weekday: PrismaWeekday }[];
-  holidays: { id: string; date: string; label: string }[];
-}): Company {
-  const weekdays: Weekday[] = row.nonWorkingWeekdays.map((entry) =>
-    fromPrismaWeekday(entry.weekday),
-  );
-  return Company.restore({
-    id: row.id,
-    name: row.name,
-    nonWorkingWeekdays: weekdays,
-    holidays: row.holidays.map((holiday) =>
-      Holiday.restore(holiday.id, holiday.date, holiday.label),
-    ),
-  });
-}
+import { toPrismaWeekday } from '../weekday-prisma.mapper';
+import { toDomain } from './prisma-company.mapper';
 
 export class PrismaCompanyRepository implements ICompanyRepository {
   constructor(private readonly prisma: PrismaDb) {}

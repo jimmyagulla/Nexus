@@ -1,12 +1,12 @@
 import {
   CompanySettingsDto,
-  CompanySettingsGateway,
+  CompanySettingsRepository,
 } from '@hexagonal-monorepo-template/ports';
 
 export class CreateCompanyFromClientUseCase {
-  constructor(private readonly gateway: CompanySettingsGateway) {}
+  constructor(private readonly repository: CompanySettingsRepository) {}
 
   execute(name: string): Promise<CompanySettingsDto> {
-    return this.gateway.create(name);
+    return this.repository.create(name);
   }
 }

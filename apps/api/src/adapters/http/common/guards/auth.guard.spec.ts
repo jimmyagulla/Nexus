@@ -1,3 +1,4 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthGuardOptions } from './auth-guard-options';
 
@@ -11,12 +12,10 @@ describe('AuthGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('denies access when allowed is false', () => {
+  it('rejects an unauthenticated caller with 401', () => {
     const options: AuthGuardOptions = { allowed: false };
     const guard = new AuthGuard(options);
 
-    const result = guard.canActivate();
-
-    expect(result).toBe(false);
+    expect(() => guard.canActivate()).toThrow(UnauthorizedException);
   });
 });

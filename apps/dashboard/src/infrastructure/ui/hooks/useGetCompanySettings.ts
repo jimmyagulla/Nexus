@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { CompanySettingsController } from '../../../adapters/controllers/company-settings.controller';
+import { CompanySettingsController } from '../../../adapters/controllers/company-settings/company-settings.controller';
 
 export const companySettingsQueryKey = (companyId: string) =>
   ['company-settings', companyId] as const;

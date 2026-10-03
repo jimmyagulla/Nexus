@@ -5,6 +5,21 @@ description: Enforces hexagonal architecture for all libraries in the libs/ fold
 
 The content of this folder must follow hexagonal architecture.
 
+## Where code lives
+
+Pure TypeScript use cases, ports, domain, and pure TypeScript adapters live in `libs/`.
+
+Code that is specific to one application stays in that application's `apps/` tree:
+
+- Controllers
+- Presenters
+- View models
+- Routing
+- HTTP-specific code
+- UI-specific code
+- Configuration and wiring
+- Gateways specific to that application
+
 # Hexagonal Architecture
 
 ## Golden rule

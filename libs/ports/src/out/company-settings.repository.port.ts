@@ -5,7 +5,7 @@ export type CompanySettingsDto = {
   holidays: { id: string; date: string; label: string }[];
 };
 
-export interface CompanySettingsGateway {
+export interface CompanySettingsRepository {
   create(name: string): Promise<CompanySettingsDto>;
   find(companyId: string): Promise<CompanySettingsDto>;
   updateName(companyId: string, name: string): Promise<CompanySettingsDto>;
@@ -18,8 +18,7 @@ export interface CompanySettingsGateway {
     date: string,
     label: string,
   ): Promise<CompanySettingsDto>;
-  removeHoliday(
-    companyId: string,
-    holidayId: string,
-  ): Promise<CompanySettingsDto>;
+  removeHoliday(companyId: string, holidayId: string): Promise<CompanySettingsDto>;
 }
+
+export const ICompanySettingsRepository = Symbol('CompanySettingsRepository');

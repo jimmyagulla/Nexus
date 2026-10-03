@@ -40,6 +40,14 @@ description: Imperative rules for in HTTP adapters.
 - Use `@ApiProperty` in DTOs for each field.
 - Ensure strict correspondence between documentation and implementation.
 
+## Errors
+
+- A controller returns the success payload and lets failures propagate.
+- Do not catch domain errors to convert them, and do not add a helper that maps arbitrary errors to HTTP exceptions.
+- `ApiExceptionFilter` maps a known domain error: forbidden access is 403, missing required information is 400. The response message stays the domain phrase.
+- An authentication refusal is 401, thrown as `UnauthorizedException` from the auth guard.
+- An unexpected error that is not an `HttpException` stays 500 with a generic message.
+
 ## Response Envelope
 
 - Delegate success encapsulation to `SuccessResponseInterceptor`.

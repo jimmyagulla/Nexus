@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { CompanySettingsController } from '../../../adapters/controllers/company-settings.controller';
+import { CompanySettingsController } from '../../../adapters/controllers/company-settings/company-settings.controller';
 import { useCreateCompany } from '../hooks/useCreateCompany';
 import { useGetCompanySettings } from '../hooks/useGetCompanySettings';
 import { getCompanyId } from '../stores/company-session.store';

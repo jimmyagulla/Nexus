@@ -14,7 +14,7 @@ The Prisma schema file is the only persistence contract. Do not add migration sc
 - A list of enum values is a relation table whose column is that enum. Do not serialize the list into a text column.
 - A known structure is columns or related models. Do not use a JSON or opaque text column when the schema can express the fields.
 - Timestamps are `DateTime`. Technical identifiers are `String` or `@default(cuid())`.
-- Extending a closed set means editing the enum in the schema. Callers map to the generated client enum.
+- Extending a closed set means editing the enum in the schema. Callers map to the `prisma-client` enum.
 
 ## Forbidden columns
 
@@ -23,4 +23,4 @@ The Prisma schema file is the only persistence contract. Do not add migration sc
 
 ## Client
 
-- Generate the client from this schema into the API infrastructure folder. Do not commit the generated client.
+- Generate the client from this schema into `apps/api/src/infrastructure/prisma/prisma-client`. Do not commit `prisma-client`. ESLint ignores that folder.

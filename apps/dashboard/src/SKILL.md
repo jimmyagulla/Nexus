@@ -1,23 +1,32 @@
 ---
-name: finance-tracker-steering
-description: Enforces Clean Architecture for the finance-tracker application.
+name: nexus-dashboard
+description: Enforces Clean Architecture for the Nexus dashboard.
 ---
 
-# Finance Tracker Architecture (Lumi)
+# Nexus dashboard
 
-This application follows the **Clean Architecture** principles as defined in the global `clean-architecture` skill.
+This application follows Clean Architecture. Pure TypeScript use cases, ports, domain, and pure TypeScript adapters live in `libs/`. This app keeps only what is specific to it.
 
-## Layers
+## Stays in this app
 
-1. **Domain**: Pure business rules and entities.
-2. **Application**: Use cases and orchestration.
-3. **Adapters**: Presenters, Gateways, and Controllers.
-4. **Infrastructure**: UI (React), Network (API clients), and Storage.
+- Controllers
+- Presenters
+- View models
+- Routing
+- HTTP-specific code
+- UI-specific code
+- Configuration and wiring
+- Gateways specific to this application
+
+## Layers in this app
+
+1. **Adapters**: presenters, gateways, and controllers.
+2. **Infrastructure**: UI (React), composition, and framework config.
 
 ## Principles
 
-- **Dependencies point inwards**: `UI -> Adapters -> Application -> Domain`.
-- **Humble Objects**: UI components must be logic-free.
-- **Dependency Injection**: Use ports (interfaces) for external concerns.
+- Dependencies point inwards: UI → adapters → application (`libs`) → domain (`libs`).
+- UI components are humble objects.
+- Inject ports for external concerns.
 
 For detailed rules, see the `SKILL.md` file in each layer directory.

@@ -8,6 +8,7 @@ description: Global or common HTTP guards for apps/api.
 ## Allowed
 
 - Implement shared `CanActivate` guards.
+- Refuse an unauthenticated caller by throwing `UnauthorizedException` (401). Do not return `false` for that refusal.
 - Inject ports to validate cross-cutting access policies.
 
 ## Forbidden

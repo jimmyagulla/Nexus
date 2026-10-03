@@ -1,4 +1,9 @@
-import { Injectable, Inject, CanActivate } from '@nestjs/common';
+import {
+  CanActivate,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AUTH_GUARD_OPTIONS, AuthGuardOptions } from './auth-guard-options';
 
 @Injectable()
@@ -9,6 +14,9 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    return this.options.allowed;
+    if (!this.options.allowed) {
+      throw new UnauthorizedException();
+    }
+    return true;
   }
 }

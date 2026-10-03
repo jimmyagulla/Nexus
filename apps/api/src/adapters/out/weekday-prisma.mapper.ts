@@ -1,5 +1,5 @@
 import { Weekday as DomainWeekday } from '@hexagonal-monorepo-template/domain';
-import { Weekday as PrismaWeekday } from '../../infrastructure/prisma/generated';
+import { Weekday as PrismaWeekday } from '../../infrastructure/prisma/prisma-client';
 
 const TO_PRISMA: Record<DomainWeekday, PrismaWeekday> = {
   0: PrismaWeekday.SUNDAY,

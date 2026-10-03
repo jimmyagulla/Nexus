@@ -1,12 +1,12 @@
 import {
   CompanySettingsDto,
-  CompanySettingsGateway,
+  CompanySettingsRepository,
 } from '@hexagonal-monorepo-template/ports';
 
 export class UpdateNonWorkingWeekdaysFromClientUseCase {
-  constructor(private readonly gateway: CompanySettingsGateway) {}
+  constructor(private readonly repository: CompanySettingsRepository) {}
 
   execute(companyId: string, weekdays: number[]): Promise<CompanySettingsDto> {
-    return this.gateway.updateNonWorkingWeekdays(companyId, weekdays);
+    return this.repository.updateNonWorkingWeekdays(companyId, weekdays);
   }
 }

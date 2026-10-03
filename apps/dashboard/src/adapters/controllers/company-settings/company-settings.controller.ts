@@ -1,10 +1,12 @@
+import {
+  AddCompanyHolidayFromClientUseCase,
+  CreateCompanyFromClientUseCase,
+  LoadCompanySettingsUseCase,
+  RemoveCompanyHolidayFromClientUseCase,
+  UpdateCompanyNameFromClientUseCase,
+  UpdateNonWorkingWeekdaysFromClientUseCase,
+} from '@hexagonal-monorepo-template/application';
 import { CompanySettingsDto } from '@hexagonal-monorepo-template/ports';
-import { AddCompanyHolidayFromClientUseCase } from '../../application/company-settings/add-company-holiday-from-client.use-case';
-import { CreateCompanyFromClientUseCase } from '../../application/company-settings/create-company-from-client.use-case';
-import { LoadCompanySettingsUseCase } from '../../application/company-settings/load-company-settings.use-case';
-import { RemoveCompanyHolidayFromClientUseCase } from '../../application/company-settings/remove-company-holiday-from-client.use-case';
-import { UpdateCompanyNameFromClientUseCase } from '../../application/company-settings/update-company-name-from-client.use-case';
-import { UpdateNonWorkingWeekdaysFromClientUseCase } from '../../application/company-settings/update-non-working-weekdays-from-client.use-case';
 
 export class CompanySettingsController {
   constructor(

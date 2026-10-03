@@ -5,7 +5,7 @@ import {
 import {
   AuditAction as PrismaAuditAction,
   AuditSubject as PrismaAuditSubject,
-} from '../../../infrastructure/prisma/generated';
+} from '../../../infrastructure/prisma/prisma-client';
 
 const ACTION_TO_PRISMA: Record<DomainAuditAction, PrismaAuditAction> = {
   MODIFICATION: PrismaAuditAction.MODIFICATION,

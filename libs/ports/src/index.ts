@@ -11,4 +11,4 @@ export * from './in/update-company-name.port';
 export * from './in/update-non-working-weekdays.port';
 export * from './out/audit-log.repository.port';
 export * from './out/company.repository.port';
-export * from './out/company-settings.gateway.port';
+export * from './out/company-settings.repository.port';
