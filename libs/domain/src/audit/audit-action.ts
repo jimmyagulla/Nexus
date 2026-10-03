@@ -1,4 +1,4 @@
-/** Actions du contrat d'audit (referentiel contrats-partages). */
+/** Valeurs alignées sur l'enum Prisma `AuditAction` (apps/api/prisma). */
 export const AuditAction = {
   MODIFICATION: 'modification',
   AJOUT: 'ajout',
@@ -6,3 +6,7 @@ export const AuditAction = {
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
+
+export function isAuditAction(value: string): value is AuditAction {
+  return (Object.values(AuditAction) as string[]).includes(value);
+}

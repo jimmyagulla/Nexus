@@ -1,37 +1,50 @@
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/infrastructure/prisma/generated"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-model Company {
-  id                   String    @id
-  name                 String
-  nonWorkingWeekdays   String
-  holidays             Holiday[]
-  auditEvents          AuditEvent[]
-}
-
-model Holiday {
-  id        String  @id
-  companyId String
-  date      String
-  label     String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-}
-
-model AuditEvent {
-  id         String   @id @default(cuid())
-  companyId  String
-  action     String
-  subject    String
-  before     String?
-  after      String?
-  actorId    String?
-  occurredAt DateTime
-  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-}
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infrastructure/prisma/generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AuditAction {
+  modification
+  ajout
+  suppression
+}
+
+enum AuditSubject {
+  company_name
+  company_calendar_non_working_weekdays
+  company_calendar_holiday
+}
+
+model Company {
+  id                 String       @id
+  name               String
+  nonWorkingWeekdays String
+  holidays           Holiday[]
+  auditEvents        AuditEvent[]
+}
+
+model Holiday {
+  id        String  @id
+  companyId String
+  date      String
+  label     String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id         String       @id @default(cuid())
+  companyId  String
+  action     AuditAction
+  subject    AuditSubject
+  before     String?
+  after      String?
+  actorId    String?
+  occurredAt DateTime
+  company    Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
