@@ -44,6 +44,8 @@ Environment (see `.env.example`; no dotenv loader — export them or set them in
 - `AUTH_ALLOWED` — mock auth gate, `true`/`false`/`1`/`0` (default `true`)
 - `API_GLOBAL_PREFIX` — Nest global prefix (default `api`)
 
+Produit RH : cahier des charges, référentiels et user stories priorisées dans [`docs/produit`](docs/produit/README.md).
+
 New features: ask the agent to scaffold a hexagonal slice (project skill `.cursor/skills/hexagonal-slice`).
 
 The sample out client is in-memory (process-local). It resets on cold start and is not shared across instances. Replace it with an external store before relying on durable or shared writes.
