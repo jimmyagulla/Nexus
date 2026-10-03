@@ -1,0 +1,51 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": false,
+    "types": ["node"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules",
+      "./tools/workspace/types"
+    ],
+    "paths": {
+      "@hexagonal-monorepo-template/adapters": [
+        "./libs/adapters/src/index.ts"
+      ],
+      "@hexagonal-monorepo-template/application": [
+        "./libs/application/src/index.ts"
+      ],
+      "@hexagonal-monorepo-template/domain": [
+        "./libs/domain/src/index.ts"
+      ],
+      "@hexagonal-monorepo-template/infrastructure": [
+        "./libs/infrastructure/src/index.ts"
+      ],
+      "@hexagonal-monorepo-template/ports": [
+        "./libs/ports/src/index.ts"
+      ]
+    }
+  },
+  "files": [
+    "./tools/workspace/types/node-env/index.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": ["node", "vitest/globals"]
+  },
+  "include": [
+    "./config/**/*.spec.ts",
+    "./config/**/*.d.ts",
+    "./config/**/*.d.mts",
+    "./types/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.mjs"
+  ]
+}

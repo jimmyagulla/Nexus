@@ -1,0 +1,34 @@
+const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
+const { join } = require('path');
+
+module.exports = {
+  output: {
+    path: join(__dirname, '../../dist/apps/api'),
+    clean: true,
+    library: {
+      type: 'commonjs2',
+    },
+    ...(process.env.NODE_ENV !== 'production' && {
+      devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+    }),
+  },
+  plugins: [
+    new NxAppWebpackPlugin({
+      target: 'node',
+      compiler: 'tsc',
+      main: './src/main.ts',
+      additionalEntryPoints: [
+        {
+          entryName: 'lambda',
+          entryPath: './src/infrastructure/lambda.ts',
+        },
+      ],
+      tsConfig: './tsconfig.app.json',
+      assets: ["./src/assets"],
+      optimization: false,
+      outputHashing: 'none',
+      generatePackageJson: true,
+      sourceMap: true,
+    })
+  ],
+};

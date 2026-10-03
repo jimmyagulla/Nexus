@@ -1,0 +1,7 @@
+import { killPort } from "@nx/node/utils";
+
+export default async function globalTeardown() {
+  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+  await killPort(port);
+  console.log(globalThis.__TEARDOWN_MESSAGE__);
+}

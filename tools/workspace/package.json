@@ -1,0 +1,25 @@
+{
+  "name": "@hexagonal-monorepo-template/workspace",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Shared TypeScript, ESLint, Vitest config, and Nx inference for hexagonal libs.",
+  "exports": {
+    "./eslint": "./config/eslint.base.mjs",
+    "./eslint/library": "./config/eslint.library.mjs",
+    "./vitest/node": "./config/vitest.node.mjs",
+    "./nx-plugin": "./config/nx-plugin.mjs"
+  },
+  "nx": {
+    "name": "workspace",
+    "tags": ["type:tool"],
+    "targets": {
+      "test": {
+        "command": "vitest run --config tools/workspace/config/vitest.config.mts",
+        "cache": true,
+        "inputs": ["default"],
+        "outputs": ["{workspaceRoot}/coverage/tools/workspace"]
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tools/workspace/tsconfig.spec.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "types": [
+      "node",
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client"
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

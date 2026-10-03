@@ -1,0 +1,78 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "defaultBase": "master",
+  "analytics": false,
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/vitest.config.{js,ts,mjs,mts}",
+      "!{projectRoot}/vite.config.{js,ts,mjs,mts}",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/test-setup.[jt]s"
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/tools/workspace/**/*",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/eslint.config.mjs",
+      "{workspaceRoot}/vitest.config.mts"
+    ]
+  },
+  "plugins": [
+    "./tools/workspace/config/nx-plugin.mjs",
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test",
+        "ciTargetName": "test-ci",
+        "testMode": "run"
+      },
+      "exclude": [
+        "apps/api-e2e/**/*",
+        "tools/workspace/config/**/*"
+      ]
+    },
+    {
+      "plugin": "@nx/vitest",
+      "include": [
+        "apps/api-e2e/**/*"
+      ],
+      "options": {
+        "testTargetName": "e2e",
+        "testMode": "run"
+      }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  ],
+  "generators": {
+    "@nx/js:library": {
+      "unitTestRunner": "vitest"
+    },
+    "@nx/nest:application": {
+      "unitTestRunner": "vitest"
+    }
+  }
+}

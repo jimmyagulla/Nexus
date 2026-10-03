@@ -1,0 +1,5 @@
+{
+  "extends": "../tools/workspace/tsconfig.lib.json",
+  "include": ["./*/src/**/*.ts"],
+  "exclude": ["./**/*.spec.ts", "./**/*.test.ts"]
+}

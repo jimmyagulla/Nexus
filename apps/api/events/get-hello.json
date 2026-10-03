@@ -1,0 +1,29 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /api",
+  "rawPath": "/api",
+  "rawQueryString": "",
+  "headers": {
+    "accept": "application/json",
+    "host": "localhost"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "api-id",
+    "domainName": "localhost",
+    "domainPrefix": "localhost",
+    "http": {
+      "method": "GET",
+      "path": "/api",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "127.0.0.1",
+      "userAgent": "invoke-lambda"
+    },
+    "requestId": "local",
+    "routeKey": "GET /api",
+    "stage": "$default",
+    "time": "12/Mar/2020:19:03:58 +0000",
+    "timeEpoch": 1583348638390
+  },
+  "isBase64Encoded": false
+}
