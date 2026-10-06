@@ -118,10 +118,9 @@ describe('extractErrorMessage', () => {
     expect(message).toBe('error 1, error 2');
   });
 
-  it('returns "Internal server error" for plain Error instances', () => {
-    const exception = new Error('sensitive error message');
-    const message = extractErrorMessage(exception);
+  it('returns the domain error code for known errors', () => {
+    const message = extractErrorMessage(new Error('ACCESS_DENIED'));
 
-    expect(message).toBe('Internal server error');
+    expect(message).toBe('ACCESS_DENIED');
   });
 });

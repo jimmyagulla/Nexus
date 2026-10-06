@@ -1,4 +1,3 @@
-/**
- * Composition root. Feature wiring is registered here as slices are added.
- */
-export {};
+import { composeCompanySettings } from './composition/company-settings.composition';
+
+export const companySettingsController = composeCompanySettings();

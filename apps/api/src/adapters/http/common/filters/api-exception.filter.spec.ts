@@ -50,4 +50,23 @@ describe('ApiExceptionFilter', () => {
       message: 'Internal server error',
     });
   });
+
+  it('maps ACCESS_DENIED domain errors to 403', () => {
+    const filter = new ApiExceptionFilter();
+    const mockJson = vi.fn();
+    const mockStatus = vi.fn().mockReturnValue({ json: mockJson });
+    const mockHost: ArgumentsHost = {
+      switchToHttp: vi.fn().mockReturnValue({
+        getResponse: vi.fn().mockReturnValue({ status: mockStatus }),
+      }),
+    } as unknown as ArgumentsHost;
+
+    filter.catch(new Error('ACCESS_DENIED'), mockHost);
+
+    expect(mockStatus).toHaveBeenCalledWith(403);
+    expect(mockJson).toHaveBeenCalledWith({
+      status: 403,
+      message: 'ACCESS_DENIED',
+    });
+  });
 });

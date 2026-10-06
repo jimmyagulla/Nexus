@@ -13,7 +13,7 @@ description: Composition root for apps/api.
 - Own Prisma (schema, generated client, `PrismaModule`) in this app. Do not put Prisma under `libs/`.
 - Register global NestJS artifacts via `APP_*` tokens (`APP_PIPE`, `APP_GUARD`, etc.).
 - Assemble `ApiConfig` via `loadApiConfig` (uses infrastructure env parsers). Provide it as `API_CONFIG`.
-- Derive `AUTH_GUARD_OPTIONS` from `ApiConfig` (`useFactory` + `inject`).
+- Bind `IJwtVerifier` from `ApiConfig` (`useFactory` + `inject`).
 - Call `loadApiConfig` from the HTTP listen entry for `port` / `globalPrefix` (never read `process.env` elsewhere).
 - Dual-bootstrap the same in HTTP: a long-lived listen entry and a serverless handler, both in this composition root.
 - Provide a single factory that configures the Nest app (global prefix, API docs) without starting a server or initializing the HTTP transport.
@@ -28,7 +28,7 @@ description: Composition root for apps/api.
 - Use `eslint-disable` comments.
 - Duplicate pipe configuration if a factory already exists.
 - Read `process.env` outside `loadApiConfig`.
-- Hardcode `AUTH_GUARD_OPTIONS` with `useValue` when `ApiConfig` exists.
+- Hardcode `IJwtVerifier` with `useValue` when `ApiConfig` exists.
 - Call `listen` (or bind a port) from the serverless entry.
 - Recreate the Nest app on every invocation. Cache the instance **outside** the handler (warm start).
 - Treat an in-memory / process-local store as shared truth. It does not survive cold starts or scale-out. Durable state belongs on an out client outside the process.

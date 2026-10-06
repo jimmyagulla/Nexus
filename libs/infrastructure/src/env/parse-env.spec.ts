@@ -1,4 +1,4 @@
-import { parseBool, parsePort, readOptional } from './parse-env';
+import { parseBool, parsePort, parsePersistence, readOptional } from './parse-env';
 
 describe('parsePort', () => {
   it('parses a numeric port string', () => {
@@ -65,3 +65,20 @@ describe('readOptional', () => {
     expect(readOptional('   ')).toBeUndefined();
   });
 });
+
+describe('parsePersistence', () => {
+  it('returns the fallback when missing', () => {
+    expect(parsePersistence(undefined, 'memory')).toBe('memory');
+  });
+
+  it('parses postgres', () => {
+    expect(parsePersistence('postgres', 'memory')).toBe('postgres');
+  });
+
+  it('throws when the value is unknown', () => {
+    expect(() => parsePersistence('sqlite', 'memory')).toThrow(
+      'Invalid persistence: sqlite',
+    );
+  });
+});
+

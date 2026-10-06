@@ -16,6 +16,7 @@ export async function createNestApp(
     .setDescription('The Hexagonal Monorepo API description')
     .setVersion('1.0')
     .addTag('api')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swagger);
   SwaggerModule.setup(`${config.globalPrefix}/docs`, app, document);

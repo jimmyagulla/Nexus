@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infrastructure/prisma/prisma-client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum AuditAction {
+  MODIFICATION
+  ADDITION
+  DELETION
+}
+
+enum AuditSubject {
+  COMPANY_NAME
+  COMPANY_NON_WORKING_WEEKDAY
+  COMPANY_PUBLIC_HOLIDAY
+}
+
+enum AuditSide {
+  BEFORE
+  AFTER
+}
+
+model Company {
+  id                   String                   @id
+  name                 String
+  nonWorkingWeekdays   CompanyNonWorkingWeekday[]
+  publicHolidays       CompanyPublicHoliday[]
+  auditEvents          AuditEvent[]
+}
+
+model CompanyNonWorkingWeekday {
+  companyId String
+  dayOfWeek DayOfWeek
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@id([companyId, dayOfWeek])
+}
+
+model PublicHoliday {
+  id        String                 @id
+  date      String
+  label     String
+  companies CompanyPublicHoliday[]
+
+  @@unique([date, label])
+}
+
+model CompanyPublicHoliday {
+  companyId       String
+  publicHolidayId String
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  publicHoliday   PublicHoliday @relation(fields: [publicHolidayId], references: [id], onDelete: Restrict)
+
+  @@id([companyId, publicHolidayId])
+}
+
+model AuditEvent {
+  id         String          @id
+  companyId  String
+  actorId    String
+  occurredAt DateTime
+  action     AuditAction
+  subject    AuditSubject
+  company    Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  snapshots  AuditSnapshot[]
+}
+
+model AuditSnapshot {
+  id              String                 @id
+  eventId         String
+  side            AuditSide
+  companyName     String?
+  publicHolidayId String?
+  holidayDate     String?
+  holidayLabel    String?
+  event           AuditEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  daysOfWeek      AuditSnapshotDayOfWeek[]
+
+  @@unique([eventId, side])
+}
+
+model AuditSnapshotDayOfWeek {
+  snapshotId String
+  dayOfWeek  DayOfWeek
+  snapshot   AuditSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@id([snapshotId, dayOfWeek])
+}

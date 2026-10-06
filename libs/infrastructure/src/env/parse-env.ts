@@ -37,3 +37,18 @@ export function readOptional(value: string | undefined): string | undefined {
   const trimmed = value.trim();
   return trimmed === '' ? undefined : trimmed;
 }
+
+export function parsePersistence(
+  value: string | undefined,
+  fallback: 'memory' | 'postgres',
+): 'memory' | 'postgres' {
+  if (value === undefined || value === '') {
+    return fallback;
+  }
+
+  if (value === 'memory' || value === 'postgres') {
+    return value;
+  }
+
+  throw new Error(`Invalid persistence: ${value}`);
+}

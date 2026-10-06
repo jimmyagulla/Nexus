@@ -1,25 +1,41 @@
 import { loadApiConfig } from './load-api-config';
 
 describe('loadApiConfig', () => {
-  it('returns defaults when env is empty', () => {
+  it('returns memory persistence by default', () => {
     expect(loadApiConfig({})).toEqual({
       port: 3000,
-      authAllowed: true,
       globalPrefix: 'api',
+      persistence: 'memory',
+      databaseUrl: undefined,
+      directUrl: undefined,
+      supabaseUrl: undefined,
+      supabaseJwksUrl: undefined,
+      supabaseServiceRoleKey: undefined,
     });
   });
 
-  it('parses PORT, AUTH_ALLOWED, and API_GLOBAL_PREFIX', () => {
+  it('parses PORT, prefix, persistence and supabase urls', () => {
     expect(
       loadApiConfig({
         PORT: '8080',
-        AUTH_ALLOWED: 'false',
         API_GLOBAL_PREFIX: 'v1',
+        PERSISTENCE: 'postgres',
+        DATABASE_URL: 'postgres://db',
+        DIRECT_URL: 'postgres://direct',
+        SUPABASE_URL: 'https://example.supabase.co',
+        SUPABASE_JWKS_URL: 'https://example.supabase.co/auth/v1/.well-known/jwks.json',
+        SUPABASE_SERVICE_ROLE_KEY: 'service',
       }),
     ).toEqual({
       port: 8080,
-      authAllowed: false,
       globalPrefix: 'v1',
+      persistence: 'postgres',
+      databaseUrl: 'postgres://db',
+      directUrl: 'postgres://direct',
+      supabaseUrl: 'https://example.supabase.co',
+      supabaseJwksUrl:
+        'https://example.supabase.co/auth/v1/.well-known/jwks.json',
+      supabaseServiceRoleKey: 'service',
     });
   });
 
@@ -27,9 +43,9 @@ describe('loadApiConfig', () => {
     expect(() => loadApiConfig({ PORT: 'abc' })).toThrow('Invalid port: abc');
   });
 
-  it('throws when AUTH_ALLOWED is invalid', () => {
-    expect(() => loadApiConfig({ AUTH_ALLOWED: 'maybe' })).toThrow(
-      'Invalid boolean: maybe',
+  it('throws when postgres persistence has no DATABASE_URL', () => {
+    expect(() => loadApiConfig({ PERSISTENCE: 'postgres' })).toThrow(
+      'Invalid DATABASE_URL: value is empty',
     );
   });
 

@@ -1,7 +1,9 @@
 import { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, Settings } from 'lucide-react';
+import { AppRoutes } from '@hexagonal-monorepo-template/ports';
 import { cn } from '../lib/utils';
+import { fr } from '../i18n/fr';
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,12 +15,12 @@ export function Layout({ children }: LayoutProps) {
       <aside className="hidden md:flex flex-col w-72 bg-card border-r border-border">
         <div className="p-8">
           <h1 className="text-2xl font-bold tracking-tight text-primary">
-            Dashboard
+            Nexus
           </h1>
         </div>
-        <nav className="flex-1 px-4">
+        <nav className="flex-1 px-4 space-y-1">
           <Link
-            to="/"
+            to={AppRoutes.home}
             className={cn(
               'flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
               'text-muted-foreground hover:bg-accent hover:text-primary',
@@ -26,7 +28,18 @@ export function Layout({ children }: LayoutProps) {
             )}
           >
             <LayoutDashboard className="mr-4 h-5 w-5" />
-            Tableau de bord
+            {fr.navigation.dashboard}
+          </Link>
+          <Link
+            to={AppRoutes.settings}
+            className={cn(
+              'flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
+              'text-muted-foreground hover:bg-accent hover:text-primary',
+              '[&.active]:bg-accent [&.active]:text-primary [&.active]:font-semibold',
+            )}
+          >
+            <Settings className="mr-4 h-5 w-5" />
+            {fr.navigation.settings}
           </Link>
         </nav>
       </aside>
