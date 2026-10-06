@@ -11,6 +11,7 @@ describe('loadApiConfig', () => {
       supabaseUrl: undefined,
       supabaseJwksUrl: undefined,
       supabaseServiceRoleKey: undefined,
+      authDisabled: false,
     });
   });
 
@@ -36,6 +37,7 @@ describe('loadApiConfig', () => {
       supabaseJwksUrl:
         'https://example.supabase.co/auth/v1/.well-known/jwks.json',
       supabaseServiceRoleKey: 'service',
+      authDisabled: false,
     });
   });
 
@@ -53,5 +55,15 @@ describe('loadApiConfig', () => {
     expect(() => loadApiConfig({ API_GLOBAL_PREFIX: '   ' })).toThrow(
       'Invalid API_GLOBAL_PREFIX: value is empty',
     );
+  });
+
+  it('keeps authentication enabled by default', () => {
+    expect(loadApiConfig({}).authDisabled).toBe(false);
+  });
+
+  it('disables authentication only when AUTH_DISABLED is true', () => {
+    expect(loadApiConfig({ AUTH_DISABLED: 'true' }).authDisabled).toBe(true);
+    expect(loadApiConfig({ AUTH_DISABLED: 'false' }).authDisabled).toBe(false);
+    expect(loadApiConfig({ AUTH_DISABLED: '   ' }).authDisabled).toBe(false);
   });
 });

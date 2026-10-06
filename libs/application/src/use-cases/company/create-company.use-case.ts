@@ -1,5 +1,6 @@
 import {
   ActorContext,
+  assertCompanyCreationAllowed,
   Company,
   CompanyName,
 } from '@hexagonal-monorepo-template/domain';
@@ -21,6 +22,7 @@ export class CreateCompanyUseCase implements ICreateCompany {
     actor: ActorContext;
     name: string;
   }): Promise<Company> {
+    assertCompanyCreationAllowed(input.actor);
     const company = Company.create(
       this.ids.next(),
       CompanyName.parse(input.name),

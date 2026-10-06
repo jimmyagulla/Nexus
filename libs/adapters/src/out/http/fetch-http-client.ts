@@ -26,9 +26,20 @@ export class FetchHttpClient implements IHttpClient {
     if (!result.ok) {
       throw new Error(readErrorCode(result.body));
     }
-    const envelope = result.body as { data: T };
-    return envelope.data;
+    if (!isSuccessEnvelope<T>(result.body)) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+    return result.body.data;
   }
+}
+
+function isSuccessEnvelope<T>(body: unknown): body is { data: T } {
+  return (
+    typeof body === 'object' &&
+    body !== null &&
+    'data' in body &&
+    body.data !== undefined
+  );
 }
 
 function readErrorCode(body: unknown): string {

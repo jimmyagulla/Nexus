@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { IJwtVerifier } from '@hexagonal-monorepo-template/ports';
-import { AuthGuard } from '../adapters/http/common/guards/auth.guard';
+import { AuthGuard } from '../adapters/http/common/guards/auth/auth.guard';
 import { createValidationPipe } from '../adapters/http/common/pipes/create-validation.pipe';
 import { SuccessResponseInterceptor } from '../adapters/http/common/interceptors/success-response.interceptor';
 import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exception.filter';
 import { API_CONFIG, loadApiConfig, type ApiConfig } from './config/load-api-config';
-import { JoseJwtVerifier } from '../adapters/out/auth/jose-jwt-verifier';
+import { SupabaseJwtVerifier } from '../adapters/out/auth/supabase-jwt-verifier';
 import { DenyAllJwtVerifier } from '../adapters/out/auth/deny-all-jwt-verifier';
-import { CompanyModule } from './company/company.module';
-import { PrismaModule } from './prisma/prisma.module';
 import { ApiConfigModule } from './config/api-config.module';
+import { AuditModule } from './audit/audit.module';
+import { ClockModule } from './clock/clock.module';
+import { CompanyModule } from './company/company.module';
+import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
+import { CompanySettingsModule } from './company-settings/company-settings.module';
+import { IdGeneratorModule } from './id/id-generator.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 const persistence = loadApiConfig().persistence;
 
@@ -18,7 +23,12 @@ const persistence = loadApiConfig().persistence;
   imports: [
     ApiConfigModule,
     ...(persistence === 'postgres' ? [PrismaModule] : []),
+    ClockModule,
+    IdGeneratorModule,
+    AuditModule,
     CompanyModule,
+    CompanySettingsModule,
+    CompanyPublicHolidaysModule,
   ],
   providers: [
     {
@@ -27,7 +37,7 @@ const persistence = loadApiConfig().persistence;
         if (config.supabaseJwksUrl === undefined) {
           return new DenyAllJwtVerifier();
         }
-        return new JoseJwtVerifier(config.supabaseJwksUrl);
+        return new SupabaseJwtVerifier(config.supabaseJwksUrl);
       },
       inject: [API_CONFIG],
     },

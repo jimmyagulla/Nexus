@@ -16,6 +16,17 @@ export class CompanyCalendar {
     return new CompanyCalendar([...new Set(days)], this.publicHolidays);
   }
 
+  requirePublicHoliday(publicHolidayId: string): CompanyPublicHoliday {
+    const retained = this.publicHolidays.find(
+      (holiday) => holiday.publicHoliday.id === publicHolidayId,
+    );
+    if (retained === undefined) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+
+    return retained;
+  }
+
   addPublicHoliday(holiday: CompanyPublicHoliday): CompanyCalendar {
     if (
       this.publicHolidays.some((current) =>

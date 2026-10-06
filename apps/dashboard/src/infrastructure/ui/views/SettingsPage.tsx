@@ -1,74 +1,64 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  CompanySettingsSnapshot,
-  DayOfWeek,
-} from '@hexagonal-monorepo-template/domain';
-import {
-  presentCompanySettings,
-  presentError,
-} from '../../../adapters/presenters/company-settings.presenter';
-import { SettingsView } from '../features/company-settings/SettingsView';
+import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
+import { CompanySettingsComposition } from '../../composition/company-settings.composition';
+import { useAddPublicHoliday } from '../hooks/useAddPublicHoliday';
+import { useGetCompanySettings } from '../hooks/useGetCompanySettings';
+import { useRemovePublicHoliday } from '../hooks/useRemovePublicHoliday';
+import { useRenameCompany } from '../hooks/useRenameCompany';
+import { useSetNonWorkingWeekdays } from '../hooks/useSetNonWorkingWeekdays';
 import { fr } from '../i18n/fr';
+import { Settings } from './Settings';
 
-export type CompanySettingsApi = {
-  getSettings(): Promise<CompanySettingsSnapshot>;
-  renameCompany(name: string): Promise<CompanySettingsSnapshot>;
-  updateNonWorkingWeekdays(
-    weekdays: readonly DayOfWeek[],
-  ): Promise<CompanySettingsSnapshot>;
-  addPublicHoliday(input: {
-    date: string;
-    label: string;
-  }): Promise<CompanySettingsSnapshot>;
-  removePublicHoliday(publicHolidayId: string): Promise<CompanySettingsSnapshot>;
-};
+interface SettingsPageProps {
+  deps: CompanySettingsComposition;
+}
 
-type SettingsPageProps = {
-  controller: CompanySettingsApi;
-};
+export function SettingsPage({ deps }: SettingsPageProps) {
+  const settings = useGetCompanySettings(deps);
+  const rename = useRenameCompany(deps);
+  const weekdays = useSetNonWorkingWeekdays(deps);
+  const addHoliday = useAddPublicHoliday(deps);
+  const removeHoliday = useRemovePublicHoliday(deps);
 
-export function SettingsPage({ controller }: SettingsPageProps) {
-  const queryClient = useQueryClient();
-  const settingsQuery = useQuery({
-    queryKey: ['company-settings'],
-    queryFn: () => controller.getSettings(),
-  });
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ['company-settings'] });
-
-  const rename = useMutation({
-    mutationFn: (name: string) => controller.renameCompany(name),
-    onSuccess: invalidate,
-  });
-  const weekdays = useMutation({
-    mutationFn: (days: DayOfWeek[]) =>
-      controller.updateNonWorkingWeekdays(days),
-    onSuccess: invalidate,
-  });
-  const addHoliday = useMutation({
-    mutationFn: (input: { date: string; label: string }) =>
-      controller.addPublicHoliday(input),
-    onSuccess: invalidate,
-  });
-  const removeHoliday = useMutation({
-    mutationFn: (id: string) => controller.removePublicHoliday(id),
-    onSuccess: invalidate,
-  });
-
-  if (settingsQuery.isPending) {
+  if (settings.isPending) {
     return <p>{fr.loading}</p>;
   }
-  if (settingsQuery.isError) {
-    return <p>{presentError(settingsQuery.error)}</p>;
+
+  if (settings.isError) {
+    return <p>{deps.errorPresenter.present(settings.error)}</p>;
   }
 
   return (
-    <SettingsView
-      model={presentCompanySettings(settingsQuery.data)}
-      onRename={(name) => rename.mutateAsync(name)}
-      onSaveWeekdays={(days) => weekdays.mutateAsync(days)}
-      onAddHoliday={(input) => addHoliday.mutateAsync(input)}
-      onRemoveHoliday={(id) => removeHoliday.mutateAsync(id)}
+    <Settings
+      model={settings.data}
+      errorPresenter={deps.errorPresenter}
+      renameError={refusalOf(deps.errorPresenter, rename)}
+      onRename={async (name) => {
+        await accepted(rename.mutateAsync(name));
+      }}
+      weekdaysError={refusalOf(deps.errorPresenter, weekdays)}
+      onSaveWeekdays={async (days) => {
+        await accepted(weekdays.mutateAsync(days));
+      }}
+      addHolidayError={refusalOf(deps.errorPresenter, addHoliday)}
+      onAddHoliday={(values) => accepted(addHoliday.mutateAsync(values))}
+      removeHolidayError={refusalOf(deps.errorPresenter, removeHoliday)}
+      onRemoveHoliday={(publicHolidayId) =>
+        removeHoliday.mutate(publicHolidayId)
+      }
     />
+  );
+}
+
+function refusalOf(
+  presenter: ErrorPresenter,
+  mutation: { isError: boolean; error: unknown },
+): string | null {
+  return mutation.isError ? presenter.present(mutation.error) : null;
+}
+
+function accepted(mutation: Promise<unknown>): Promise<boolean> {
+  return mutation.then(
+    () => true,
+    () => false,
   );
 }

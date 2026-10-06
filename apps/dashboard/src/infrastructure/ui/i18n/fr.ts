@@ -6,6 +6,9 @@ export const fr = {
     settings: 'Paramètres',
   },
   loading: 'Chargement…',
+  home: {
+    title: 'Dashboard',
+  },
   settings: {
     title: 'Paramètres',
     name: 'Nom',
@@ -14,6 +17,8 @@ export const fr = {
     saveWeekdays: 'Enregistrer les jours',
     publicHolidays: 'Jours fériés',
     addHoliday: 'Ajouter',
+    addHolidayTitle: 'Ajouter un jour férié',
+    noPublicHolidays: 'Aucun jour férié retenu.',
     removeHoliday: 'Retirer',
     date: 'Date',
     label: 'Libellé',

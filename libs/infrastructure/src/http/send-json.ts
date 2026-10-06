@@ -16,7 +16,7 @@ export async function sendJson(input: JsonRequest): Promise<JsonResponse> {
     'Content-Type': 'application/json',
   };
   if (input.token !== undefined) {
-    headers.Authorization = `Bearer ${input.token}`;
+    headers['Authorization'] = `Bearer ${input.token}`;
   }
 
   const response = await fetch(input.url, {

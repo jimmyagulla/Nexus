@@ -1,25 +1,45 @@
-import { FetchHttpClient } from '@hexagonal-monorepo-template/adapters';
-import { LoadCompanySettingsUseCase } from '../../application/load-company-settings.use-case';
 import {
-  AddCompanyPublicHolidayFromClientUseCase,
-  RemoveCompanyPublicHolidayFromClientUseCase,
-  RenameCompanyFromClientUseCase,
-  SetNonWorkingWeekdaysFromClientUseCase,
-} from '../../application/company-settings.use-cases';
+  AddCompanyPublicHolidayFromSessionUseCase,
+  GetCompanySettingsFromSessionUseCase,
+  RemoveCompanyPublicHolidayFromSessionUseCase,
+  RenameCompanyFromSessionUseCase,
+  SetNonWorkingWeekdaysFromSessionUseCase,
+} from '@hexagonal-monorepo-template/application';
+import {
+  IHttpClient,
+  ISessionGateway,
+} from '@hexagonal-monorepo-template/ports';
 import { CompanySettingsController } from '../../adapters/controllers/company-settings.controller';
+import { ApiCompanyPublicHolidaysGateway } from '../../adapters/gateways/api-company-public-holidays.gateway';
 import { ApiCompanySettingsGateway } from '../../adapters/gateways/api-company-settings.gateway';
-import { SupabaseSessionGateway } from '../../adapters/gateways/supabase-session.gateway';
+import { CompanySettingsPresenter } from '../../adapters/presenters/company-settings.presenter';
+import { ErrorPresenter } from '../../adapters/presenters/error.presenter';
 
-export function composeCompanySettings(): CompanySettingsController {
-  const sessions = SupabaseSessionGateway.fromEnv();
-  const companies = new ApiCompanySettingsGateway(
-    new FetchHttpClient(import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'),
-  );
-  return new CompanySettingsController(
-    new LoadCompanySettingsUseCase(sessions, companies),
-    new RenameCompanyFromClientUseCase(sessions, companies),
-    new SetNonWorkingWeekdaysFromClientUseCase(sessions, companies),
-    new AddCompanyPublicHolidayFromClientUseCase(sessions, companies),
-    new RemoveCompanyPublicHolidayFromClientUseCase(sessions, companies),
-  );
+export type CompanySettingsComposition = {
+  controller: CompanySettingsController;
+  presenter: CompanySettingsPresenter;
+  errorPresenter: ErrorPresenter;
+};
+
+export function createCompanySettingsComposition(
+  httpClient: IHttpClient,
+  sessions: ISessionGateway,
+): CompanySettingsComposition {
+  const companySettings = new ApiCompanySettingsGateway(httpClient);
+  const publicHolidays = new ApiCompanyPublicHolidaysGateway(httpClient);
+
+  return {
+    controller: new CompanySettingsController(
+      new GetCompanySettingsFromSessionUseCase(sessions, companySettings),
+      new RenameCompanyFromSessionUseCase(sessions, companySettings),
+      new SetNonWorkingWeekdaysFromSessionUseCase(sessions, companySettings),
+      new AddCompanyPublicHolidayFromSessionUseCase(sessions, publicHolidays),
+      new RemoveCompanyPublicHolidayFromSessionUseCase(
+        sessions,
+        publicHolidays,
+      ),
+    ),
+    presenter: new CompanySettingsPresenter(),
+    errorPresenter: new ErrorPresenter(),
+  };
 }

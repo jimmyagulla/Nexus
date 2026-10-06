@@ -16,13 +16,13 @@ import {
   IRemoveCompanyPublicHoliday,
   IUpdateCompanyPublicHoliday,
 } from '@hexagonal-monorepo-template/ports';
-import { Actor } from '../common/guards/actor.decorator';
-import { Roles } from '../common/guards/roles.decorator';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { CompanyScopeGuard } from '../common/guards/company-scope.guard';
-import { toCompanySettingsResponse } from '../company/company-settings.mapper';
-import { CompanySettingsResponseDto } from '../company/dto/company-settings-response.dto';
-import { PublicHolidayRequestDto } from '../company/dto/public-holiday-request.dto';
+import { Actor } from '../common/guards/auth/actor.decorator';
+import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
+import { Roles } from '../common/guards/roles/roles.decorator';
+import { RolesGuard } from '../common/guards/roles/roles.guard';
+import { toCompanySettingsResponse } from '../company-settings/company-settings.mapper';
+import { CompanySettingsResponseDto } from '../company-settings/dto/company-settings-response.dto';
+import { PublicHolidayRequestDto } from './dto/public-holiday-request.dto';
 
 @ApiTags('company')
 @ApiBearerAuth()

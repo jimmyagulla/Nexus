@@ -29,6 +29,8 @@ node_modules
 !.cursor/skills/
 !.cursor/skills/**
 
+.env
+
 # misc
 __pycache__/
 *.pyc

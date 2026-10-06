@@ -1,3 +1,14 @@
-import { composeCompanySettings } from './composition/company-settings.composition';
+import { createCompanySettingsComposition } from './composition/company-settings.composition';
+import type { CompanySettingsComposition } from './composition/company-settings.composition';
+import { createHttpClient } from './network/create-http-client';
+import { createSessionGateway } from './session/create-session-gateway';
 
-export const companySettingsController = composeCompanySettings();
+let companySettingsComposition: CompanySettingsComposition | undefined;
+
+export function getCompanySettingsComposition(): CompanySettingsComposition {
+  companySettingsComposition ??= createCompanySettingsComposition(
+    createHttpClient(),
+    createSessionGateway(),
+  );
+  return companySettingsComposition;
+}

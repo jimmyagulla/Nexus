@@ -1,12 +1,21 @@
 import { Test } from '@nestjs/testing';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER, ModulesContainer } from '@nestjs/core';
+import {
+  IAddCompanyPublicHoliday,
+  ICreateCompany,
+  IGetCompanySettings,
+  IJwtVerifier,
+  IRemoveCompanyPublicHoliday,
+  IRenameCompany,
+  ISetNonWorkingWeekdays,
+  IUpdateCompanyPublicHoliday,
+} from '@hexagonal-monorepo-template/ports';
 import { AppModule } from './app.module';
-import { AuthGuard } from '../adapters/http/common/guards/auth.guard';
+import { AuthGuard } from '../adapters/http/common/guards/auth/auth.guard';
 import { createValidationPipe } from '../adapters/http/common/pipes/create-validation.pipe';
 import { SuccessResponseInterceptor } from '../adapters/http/common/interceptors/success-response.interceptor';
 import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exception.filter';
 import { API_CONFIG, loadApiConfig } from './config/load-api-config';
-import { IJwtVerifier } from '@hexagonal-monorepo-template/ports';
 
 describe('AppModule', () => {
   it('registers AuthGuard as APP_GUARD', async () => {
@@ -59,6 +68,20 @@ describe('AppModule', () => {
       .compile();
 
     expect(moduleRef.get(IJwtVerifier)).toBeDefined();
+  });
+
+  it('wires every company in port across the feature modules', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    expect(moduleRef.get(ICreateCompany)).toBeDefined();
+    expect(moduleRef.get(IRenameCompany)).toBeDefined();
+    expect(moduleRef.get(IGetCompanySettings)).toBeDefined();
+    expect(moduleRef.get(ISetNonWorkingWeekdays)).toBeDefined();
+    expect(moduleRef.get(IAddCompanyPublicHoliday)).toBeDefined();
+    expect(moduleRef.get(IUpdateCompanyPublicHoliday)).toBeDefined();
+    expect(moduleRef.get(IRemoveCompanyPublicHoliday)).toBeDefined();
   });
 
   it('registers SuccessResponseInterceptor as APP_INTERCEPTOR', () => {

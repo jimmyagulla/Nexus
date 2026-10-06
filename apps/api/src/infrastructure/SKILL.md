@@ -1,6 +1,10 @@
 ---
 name: api-infrastructure
-description: Composition root for apps/api.
+description: >-
+  Composition root for the API app: wiring modules, global registrations,
+  configuration assembly, bootstrap entries. Use when binding a port to an
+  implementation, adding or editing a wiring module, registering a global
+  framework artifact, or touching the app bootstrap.
 ---
 
 # API Infrastructure
@@ -40,8 +44,8 @@ description: Composition root for apps/api.
 
 ## Wiring
 
-- Perform dependency injection only in this layer.
-- One wiring module per feature here (`<feature>.module.ts`): controller(s) + port/adapter bindings via `useFactory`. `new` lives only in these modules.
+- Perform dependency injection only in this layer. This holds for every implementation of a port, in-memory ones included — skill `no-test-doubles`.
+- One wiring module per domain entity here (`<entity>.module.ts`): controller(s) + port/adapter bindings via `useFactory`. `new` lives only in these modules. Never wire two entities in one module — skill `domain-aligned-modules`.
 - Technical clients (e.g. Prisma) remain generic and business-agnostic: provide them once via a dedicated `@Global()` module (`<client>.module.ts`).
 - `AppModule` aggregates: `imports` of technical (`@Global()`) and feature modules + registration of global components (`APP_*`). No inline feature binding.
 - Systematically use adapter factories for global component configuration.

@@ -2,8 +2,9 @@ import {
   ActorContext,
   AuditAction,
   AuditSubject,
-  CompanySettingsSnapshot,
+  Company,
   CompanyName,
+  CompanySettingsSnapshot,
   requireAccessibleCompany,
   toCompanySettingsSnapshot,
 } from '@hexagonal-monorepo-template/domain';
@@ -28,23 +29,44 @@ export class RenameCompanyUseCase implements IRenameCompany {
     companyId: string;
     name: string;
   }): Promise<CompanySettingsSnapshot> {
-    const company = await requireAccessibleCompany(
+    const company = await this.loadAccessibleCompany(
+      input.actor,
       input.companyId,
-      input.actor.companyId,
-      (id) => this.companies.findById(id),
     );
-    const next = company.rename(CompanyName.parse(input.name));
-    await this.companies.save(next);
-    await this.audits.append({
+    const renamed = await this.applyName(company, input.name);
+    await this.recordRename(input.actor, company, renamed);
+    return toCompanySettingsSnapshot(renamed);
+  }
+
+  private loadAccessibleCompany(
+    actor: ActorContext,
+    companyId: string,
+  ): Promise<Company> {
+    return requireAccessibleCompany(companyId, actor.companyId, (id) =>
+      this.companies.findById(id),
+    );
+  }
+
+  private async applyName(company: Company, name: string): Promise<Company> {
+    const renamed = company.rename(CompanyName.parse(name));
+    await this.companies.save(renamed);
+    return renamed;
+  }
+
+  private recordRename(
+    actor: ActorContext,
+    before: Company,
+    after: Company,
+  ): Promise<void> {
+    return this.audits.append({
       id: this.ids.next(),
-      companyId: company.id,
-      actorId: input.actor.userId,
+      companyId: after.id,
+      actorId: actor.userId,
       occurredAt: this.clock.now(),
       action: AuditAction.MODIFICATION,
       subject: AuditSubject.COMPANY_NAME,
-      before: { companyName: company.name.value },
-      after: { companyName: next.name.value },
+      before: { companyName: before.name.value },
+      after: { companyName: after.name.value },
     });
-    return toCompanySettingsSnapshot(next);
   }
 }

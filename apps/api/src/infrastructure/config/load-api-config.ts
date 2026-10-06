@@ -15,6 +15,7 @@ export type ApiConfig = {
   supabaseUrl?: string;
   supabaseJwksUrl?: string;
   supabaseServiceRoleKey?: string;
+  authDisabled: boolean;
 };
 
 export const API_CONFIG = Symbol('API_CONFIG');
@@ -47,5 +48,6 @@ export function loadApiConfig(
     supabaseUrl,
     supabaseJwksUrl,
     supabaseServiceRoleKey,
+    authDisabled: readOptional(env.AUTH_DISABLED) === 'true',
   };
 }

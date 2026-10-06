@@ -1,83 +1,46 @@
 import { Module } from '@nestjs/common';
 import {
-  AddCompanyPublicHolidayUseCase,
   CreateCompanyUseCase,
-  GetCompanySettingsUseCase,
-  RemoveCompanyPublicHolidayUseCase,
   RenameCompanyUseCase,
-  SetNonWorkingWeekdaysUseCase,
-  UpdateCompanyPublicHolidayUseCase,
 } from '@hexagonal-monorepo-template/application';
 import {
-  InMemoryAuditLogRepository,
   InMemoryCompanyIdentityBinder,
   InMemoryCompanyRepository,
-  InMemoryPublicHolidayRepository,
-  SystemClock,
-  UuidGenerator,
+  localDevCompany,
 } from '@hexagonal-monorepo-template/adapters';
 import {
-  IAddCompanyPublicHoliday,
   IAuditLogRepository,
   IClock,
   ICompanyIdentityBinder,
   ICompanyRepository,
   ICreateCompany,
-  IGetCompanySettings,
   IIdGenerator,
-  IPublicHolidayRepository,
-  IRemoveCompanyPublicHoliday,
   IRenameCompany,
-  ISetNonWorkingWeekdays,
-  IUpdateCompanyPublicHoliday,
 } from '@hexagonal-monorepo-template/ports';
 import { CompanyController } from '../../adapters/http/company/company.controller';
-import { CompanyPublicHolidaysController } from '../../adapters/http/company-public-holidays/company-public-holidays.controller';
 import { PrismaCompanyRepository } from '../../adapters/out/company/prisma-company.repository';
-import { PrismaPublicHolidayRepository } from '../../adapters/out/public-holiday/prisma-public-holiday.repository';
-import { PrismaAuditLogRepository } from '../../adapters/out/audit/prisma-audit-log.repository';
 import { SupabaseCompanyIdentityBinder } from '../../adapters/out/identity/supabase-company-identity-binder';
+import { AuditModule } from '../audit/audit.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
-  controllers: [CompanyController, CompanyPublicHolidaysController],
+  imports: [AuditModule],
+  controllers: [CompanyController],
   providers: [
-    {
-      provide: IClock,
-      useFactory: () => new SystemClock(),
-    },
-    {
-      provide: IIdGenerator,
-      useFactory: () => new UuidGenerator(),
-    },
     {
       provide: ICompanyRepository,
       useFactory: (config: ApiConfig, prisma?: PrismaDb) => {
         if (config.persistence === 'postgres' && prisma !== undefined) {
           return new PrismaCompanyRepository(prisma);
         }
+        if (config.authDisabled) {
+          const company = localDevCompany();
+          return new InMemoryCompanyRepository(
+            new Map([[company.id, company]]),
+          );
+        }
         return new InMemoryCompanyRepository();
-      },
-      inject: [API_CONFIG, { token: IPrismaDb, optional: true }],
-    },
-    {
-      provide: IPublicHolidayRepository,
-      useFactory: (config: ApiConfig, prisma?: PrismaDb) => {
-        if (config.persistence === 'postgres' && prisma !== undefined) {
-          return new PrismaPublicHolidayRepository(prisma);
-        }
-        return new InMemoryPublicHolidayRepository();
-      },
-      inject: [API_CONFIG, { token: IPrismaDb, optional: true }],
-    },
-    {
-      provide: IAuditLogRepository,
-      useFactory: (config: ApiConfig, prisma?: PrismaDb) => {
-        if (config.persistence === 'postgres' && prisma !== undefined) {
-          return new PrismaAuditLogRepository(prisma);
-        }
-        return new InMemoryAuditLogRepository();
       },
       inject: [API_CONFIG, { token: IPrismaDb, optional: true }],
     },
@@ -88,10 +51,10 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
           config.supabaseUrl !== undefined &&
           config.supabaseServiceRoleKey !== undefined
         ) {
-          return new SupabaseCompanyIdentityBinder(
-            config.supabaseUrl,
-            config.supabaseServiceRoleKey,
-          );
+          return new SupabaseCompanyIdentityBinder({
+            url: config.supabaseUrl,
+            serviceRoleKey: config.supabaseServiceRoleKey,
+          });
         }
         return new InMemoryCompanyIdentityBinder();
       },
@@ -107,12 +70,6 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       inject: [ICompanyRepository, IIdGenerator, ICompanyIdentityBinder],
     },
     {
-      provide: IGetCompanySettings,
-      useFactory: (companies: ICompanyRepository) =>
-        new GetCompanySettingsUseCase(companies),
-      inject: [ICompanyRepository],
-    },
-    {
       provide: IRenameCompany,
       useFactory: (
         companies: ICompanyRepository,
@@ -122,74 +79,7 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       ) => new RenameCompanyUseCase(companies, audits, ids, clock),
       inject: [ICompanyRepository, IAuditLogRepository, IIdGenerator, IClock],
     },
-    {
-      provide: ISetNonWorkingWeekdays,
-      useFactory: (
-        companies: ICompanyRepository,
-        audits: IAuditLogRepository,
-        ids: IIdGenerator,
-        clock: IClock,
-      ) => new SetNonWorkingWeekdaysUseCase(companies, audits, ids, clock),
-      inject: [ICompanyRepository, IAuditLogRepository, IIdGenerator, IClock],
-    },
-    {
-      provide: IAddCompanyPublicHoliday,
-      useFactory: (
-        companies: ICompanyRepository,
-        publicHolidays: IPublicHolidayRepository,
-        audits: IAuditLogRepository,
-        ids: IIdGenerator,
-        clock: IClock,
-      ) =>
-        new AddCompanyPublicHolidayUseCase(
-          companies,
-          publicHolidays,
-          audits,
-          ids,
-          clock,
-        ),
-      inject: [
-        ICompanyRepository,
-        IPublicHolidayRepository,
-        IAuditLogRepository,
-        IIdGenerator,
-        IClock,
-      ],
-    },
-    {
-      provide: IUpdateCompanyPublicHoliday,
-      useFactory: (
-        companies: ICompanyRepository,
-        publicHolidays: IPublicHolidayRepository,
-        audits: IAuditLogRepository,
-        ids: IIdGenerator,
-        clock: IClock,
-      ) =>
-        new UpdateCompanyPublicHolidayUseCase(
-          companies,
-          publicHolidays,
-          audits,
-          ids,
-          clock,
-        ),
-      inject: [
-        ICompanyRepository,
-        IPublicHolidayRepository,
-        IAuditLogRepository,
-        IIdGenerator,
-        IClock,
-      ],
-    },
-    {
-      provide: IRemoveCompanyPublicHoliday,
-      useFactory: (
-        companies: ICompanyRepository,
-        audits: IAuditLogRepository,
-        ids: IIdGenerator,
-        clock: IClock,
-      ) => new RemoveCompanyPublicHolidayUseCase(companies, audits, ids, clock),
-      inject: [ICompanyRepository, IAuditLogRepository, IIdGenerator, IClock],
-    },
   ],
+  exports: [ICompanyRepository],
 })
 export class CompanyModule {}
