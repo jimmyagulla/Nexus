@@ -1,70 +1,43 @@
-import { FormEvent, useState } from 'react';
-import { CompanySettingsController } from '../../../adapters/controllers/company-settings/company-settings.controller';
+import { useState } from 'react';
+import { AuditEventView } from '../../../adapters/presenters/audit-event/audit-event.presenter';
+import { useAddCompanyHoliday } from '../hooks/useAddCompanyHoliday';
 import { useCreateCompany } from '../hooks/useCreateCompany';
-import { useGetCompanySettings } from '../hooks/useGetCompanySettings';
+import {
+  useGetCompanySettings,
+  UseGetCompanySettingsDeps,
+} from '../hooks/useGetCompanySettings';
+import { useRemoveCompanyHoliday } from '../hooks/useRemoveCompanyHoliday';
+import { useRenameCompany } from '../hooks/useRenameCompany';
+import { useUpdateNonWorkingWeekdays } from '../hooks/useUpdateNonWorkingWeekdays';
 import { getCompanyId } from '../stores/company-session.store';
 import { SettingsView } from './SettingsView';
 
-const WEEKDAYS = [
-  { value: 1, label: 'Lundi' },
-  { value: 2, label: 'Mardi' },
-  { value: 3, label: 'Mercredi' },
-  { value: 4, label: 'Jeudi' },
-  { value: 5, label: 'Vendredi' },
-  { value: 6, label: 'Samedi' },
-  { value: 0, label: 'Dimanche' },
-];
+type SettingsPageProps = UseGetCompanySettingsDeps & {
+  controller: UseGetCompanySettingsDeps['controller'] &
+    Parameters<typeof useCreateCompany>[0]['controller'] &
+    Parameters<typeof useRenameCompany>[0]['controller'] &
+    Parameters<typeof useUpdateNonWorkingWeekdays>[0]['controller'] &
+    Parameters<typeof useAddCompanyHoliday>[0]['controller'] &
+    Parameters<typeof useRemoveCompanyHoliday>[0]['controller'];
+  auditPresenter: {
+    presentMany: (events: readonly AuditEventView[]) => string[];
+  };
+  auditEvents?: readonly AuditEventView[];
+};
 
 export function SettingsPage({
   controller,
-}: {
-  controller: CompanySettingsController;
-}) {
+  presenter,
+  auditPresenter,
+  auditEvents = [],
+}: SettingsPageProps) {
   const [companyId, setCurrentId] = useState(getCompanyId());
-  const [name, setName] = useState('');
-  const [holidayDate, setHolidayDate] = useState('');
-  const [holidayLabel, setHolidayLabel] = useState('');
-  const settingsQuery = useGetCompanySettings(companyId, controller);
-  const createCompany = useCreateCompany(controller);
-
-  async function onCreate(event: FormEvent) {
-    event.preventDefault();
-    const created = await createCompany.mutateAsync(name);
-    setCurrentId(created.id);
-    setName(created.name);
-  }
-
-  async function onRename(event: FormEvent) {
-    event.preventDefault();
-    if (companyId === null) return;
-    await controller.rename(companyId, name);
-    await settingsQuery.refetch();
-  }
-
-  async function onToggleWeekday(weekday: number) {
-    const current = settingsQuery.data;
-    if (current === undefined || companyId === null) return;
-    const selected = new Set(current.nonWorkingWeekdays);
-    if (selected.has(weekday)) selected.delete(weekday);
-    else selected.add(weekday);
-    await controller.setWeekdays(companyId, [...selected].sort((a, b) => a - b));
-    await settingsQuery.refetch();
-  }
-
-  async function onAddHoliday(event: FormEvent) {
-    event.preventDefault();
-    if (companyId === null) return;
-    await controller.addPublicHoliday(companyId, holidayDate, holidayLabel);
-    setHolidayDate('');
-    setHolidayLabel('');
-    await settingsQuery.refetch();
-  }
-
-  async function onRemoveHoliday(holidayId: string) {
-    if (companyId === null) return;
-    await controller.removePublicHoliday(companyId, holidayId);
-    await settingsQuery.refetch();
-  }
+  const settingsQuery = useGetCompanySettings(companyId, { controller, presenter });
+  const createCompany = useCreateCompany({ controller });
+  const renameCompany = useRenameCompany({ controller });
+  const updateWeekdays = useUpdateNonWorkingWeekdays({ controller });
+  const addHoliday = useAddCompanyHoliday({ controller });
+  const removeHoliday = useRemoveCompanyHoliday({ controller });
 
   if (companyId !== null && settingsQuery.isLoading) {
     return <p>Chargement…</p>;
@@ -77,18 +50,39 @@ export function SettingsPage({
   return (
     <SettingsView
       settings={settingsQuery.data ?? null}
-      weekdays={WEEKDAYS}
-      name={name || settingsQuery.data?.name || ''}
-      holidayDate={holidayDate}
-      holidayLabel={holidayLabel}
-      onNameChange={setName}
-      onHolidayDateChange={setHolidayDate}
-      onHolidayLabelChange={setHolidayLabel}
-      onCreate={onCreate}
-      onRename={onRename}
-      onToggleWeekday={onToggleWeekday}
-      onAddHoliday={onAddHoliday}
-      onRemoveHoliday={onRemoveHoliday}
+      auditLines={auditPresenter.presentMany(auditEvents)}
+      onCreate={async (values) => {
+        const created = await createCompany.mutateAsync(values);
+        setCurrentId(created.id);
+      }}
+      onRename={(values) => {
+        if (companyId === null) {
+          return;
+        }
+        renameCompany.mutate({ companyId, name: values.name });
+      }}
+      onWeekdaysChange={(weekdays) => {
+        if (companyId === null) {
+          return;
+        }
+        updateWeekdays.mutate({ companyId, weekdays });
+      }}
+      onAddHoliday={(values) => {
+        if (companyId === null) {
+          return;
+        }
+        addHoliday.mutate({
+          companyId,
+          date: values.date,
+          label: values.label,
+        });
+      }}
+      onRemoveHoliday={(holidayId) => {
+        if (companyId === null) {
+          return;
+        }
+        removeHoliday.mutate({ companyId, holidayId });
+      }}
     />
   );
 }

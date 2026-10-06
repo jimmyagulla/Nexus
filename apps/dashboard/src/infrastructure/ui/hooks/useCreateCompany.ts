@@ -1,12 +1,24 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CompanySettingsController } from '../../../adapters/controllers/company-settings/company-settings.controller';
+import {
+  CompanySettingsSnapshot,
+  CreateCompanyFromClientCommand,
+} from '@hexagonal-monorepo-template/ports';
 import { setCompanyId } from '../stores/company-session.store';
 import { companySettingsQueryKey } from './useGetCompanySettings';
 
-export function useCreateCompany(controller: CompanySettingsController) {
+export interface UseCreateCompanyDeps {
+  controller: {
+    create: (
+      command: CreateCompanyFromClientCommand,
+    ) => Promise<CompanySettingsSnapshot>;
+  };
+}
+
+export function useCreateCompany({ controller }: UseCreateCompanyDeps) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => controller.create(name),
+    mutationFn: (command: CreateCompanyFromClientCommand) =>
+      controller.create(command),
     onSuccess: (created) => {
       setCompanyId(created.id);
       void queryClient.invalidateQueries({

@@ -1,51 +1,62 @@
 import {
-  AddCompanyHolidayFromClientUseCase,
-  CreateCompanyFromClientUseCase,
-  LoadCompanySettingsUseCase,
-  RemoveCompanyHolidayFromClientUseCase,
-  UpdateCompanyNameFromClientUseCase,
-  UpdateNonWorkingWeekdaysFromClientUseCase,
-} from '@hexagonal-monorepo-template/application';
-import { CompanySettingsDto } from '@hexagonal-monorepo-template/ports';
+  AddCompanyHolidayFromClientCommand,
+  CreateCompanyFromClientCommand,
+  IAddCompanyHolidayFromClient,
+  ICreateCompanyFromClient,
+  ILoadCompanySettingsFromClient,
+  IRemoveCompanyHolidayFromClient,
+  IUpdateCompanyNameFromClient,
+  IUpdateNonWorkingWeekdaysFromClient,
+  LoadCompanySettingsFromClientQuery,
+  RemoveCompanyHolidayFromClientCommand,
+  UpdateCompanyNameFromClientCommand,
+  UpdateNonWorkingWeekdaysFromClientCommand,
+  CompanySettingsSnapshot,
+} from '@hexagonal-monorepo-template/ports';
 
 export class CompanySettingsController {
   constructor(
-    private readonly loadSettings: LoadCompanySettingsUseCase,
-    private readonly createCompany: CreateCompanyFromClientUseCase,
-    private readonly updateName: UpdateCompanyNameFromClientUseCase,
-    private readonly updateWeekdays: UpdateNonWorkingWeekdaysFromClientUseCase,
-    private readonly addHoliday: AddCompanyHolidayFromClientUseCase,
-    private readonly removeHoliday: RemoveCompanyHolidayFromClientUseCase,
+    private readonly loadSettings: ILoadCompanySettingsFromClient,
+    private readonly createCompany: ICreateCompanyFromClient,
+    private readonly updateName: IUpdateCompanyNameFromClient,
+    private readonly updateWeekdays: IUpdateNonWorkingWeekdaysFromClient,
+    private readonly addHoliday: IAddCompanyHolidayFromClient,
+    private readonly removeHoliday: IRemoveCompanyHolidayFromClient,
   ) {}
 
-  load(companyId: string): Promise<CompanySettingsDto> {
-    return this.loadSettings.execute(companyId);
+  load(
+    query: LoadCompanySettingsFromClientQuery,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.loadSettings.execute(query);
   }
 
-  create(name: string): Promise<CompanySettingsDto> {
-    return this.createCompany.execute(name);
+  create(
+    command: CreateCompanyFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.createCompany.execute(command);
   }
 
-  rename(companyId: string, name: string): Promise<CompanySettingsDto> {
-    return this.updateName.execute(companyId, name);
+  rename(
+    command: UpdateCompanyNameFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.updateName.execute(command);
   }
 
-  setWeekdays(companyId: string, weekdays: number[]): Promise<CompanySettingsDto> {
-    return this.updateWeekdays.execute(companyId, weekdays);
+  setWeekdays(
+    command: UpdateNonWorkingWeekdaysFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.updateWeekdays.execute(command);
   }
 
   addPublicHoliday(
-    companyId: string,
-    date: string,
-    label: string,
-  ): Promise<CompanySettingsDto> {
-    return this.addHoliday.execute(companyId, date, label);
+    command: AddCompanyHolidayFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.addHoliday.execute(command);
   }
 
   removePublicHoliday(
-    companyId: string,
-    holidayId: string,
-  ): Promise<CompanySettingsDto> {
-    return this.removeHoliday.execute(companyId, holidayId);
+    command: RemoveCompanyHolidayFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.removeHoliday.execute(command);
   }
 }

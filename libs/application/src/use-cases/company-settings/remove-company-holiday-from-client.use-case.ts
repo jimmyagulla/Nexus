@@ -1,12 +1,18 @@
 import {
-  CompanySettingsDto,
   CompanySettingsRepository,
+  CompanySettingsSnapshot,
+  IRemoveCompanyHolidayFromClient,
+  RemoveCompanyHolidayFromClientCommand,
 } from '@hexagonal-monorepo-template/ports';
 
-export class RemoveCompanyHolidayFromClientUseCase {
+export class RemoveCompanyHolidayFromClientUseCase
+  implements IRemoveCompanyHolidayFromClient
+{
   constructor(private readonly repository: CompanySettingsRepository) {}
 
-  execute(companyId: string, holidayId: string): Promise<CompanySettingsDto> {
-    return this.repository.removeHoliday(companyId, holidayId);
+  execute(
+    command: RemoveCompanyHolidayFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.repository.removeHoliday(command.companyId, command.holidayId);
   }
 }

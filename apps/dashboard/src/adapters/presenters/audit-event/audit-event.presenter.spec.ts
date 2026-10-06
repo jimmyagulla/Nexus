@@ -21,4 +21,23 @@ describe('AuditEventPresenter', () => {
     expect(line).toContain('Fête nationale');
     expect(line).toContain('2026-07-14');
   });
+
+  it('presents each event as its own history line', () => {
+    const lines = new AuditEventPresenter().presentMany([
+      {
+        action: AuditAction.DELETION,
+        subject: AuditSubject.COMPANY_CALENDAR_HOLIDAY,
+        before: holidayValue({
+          id: 'h1',
+          date: '2026-07-14',
+          label: 'Fête nationale',
+        }),
+        after: null,
+      },
+    ]);
+
+    expect(lines).toEqual([
+      "L'employeur a retiré le jour férié Fête nationale (2026-07-14).",
+    ]);
+  });
 });

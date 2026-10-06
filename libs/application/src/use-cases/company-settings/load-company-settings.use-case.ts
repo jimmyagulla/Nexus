@@ -1,12 +1,16 @@
 import {
-  CompanySettingsDto,
   CompanySettingsRepository,
+  CompanySettingsSnapshot,
+  ILoadCompanySettingsFromClient,
+  LoadCompanySettingsFromClientQuery,
 } from '@hexagonal-monorepo-template/ports';
 
-export class LoadCompanySettingsUseCase {
+export class LoadCompanySettingsUseCase implements ILoadCompanySettingsFromClient {
   constructor(private readonly repository: CompanySettingsRepository) {}
 
-  execute(companyId: string): Promise<CompanySettingsDto> {
-    return this.repository.find(companyId);
+  execute(
+    query: LoadCompanySettingsFromClientQuery,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.repository.find(query.companyId);
   }
 }

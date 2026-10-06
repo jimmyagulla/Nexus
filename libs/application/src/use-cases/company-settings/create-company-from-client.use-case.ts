@@ -1,12 +1,16 @@
 import {
-  CompanySettingsDto,
   CompanySettingsRepository,
+  CompanySettingsSnapshot,
+  CreateCompanyFromClientCommand,
+  ICreateCompanyFromClient,
 } from '@hexagonal-monorepo-template/ports';
 
-export class CreateCompanyFromClientUseCase {
+export class CreateCompanyFromClientUseCase implements ICreateCompanyFromClient {
   constructor(private readonly repository: CompanySettingsRepository) {}
 
-  execute(name: string): Promise<CompanySettingsDto> {
-    return this.repository.create(name);
+  execute(
+    command: CreateCompanyFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.repository.create(command.name);
   }
 }

@@ -9,9 +9,13 @@ import {
 import { HttpClient } from '@hexagonal-monorepo-template/ports';
 import { CompanySettingsController } from '../../adapters/controllers/company-settings/company-settings.controller';
 import { ApiCompanySettingsGateway } from '../../adapters/gateways/company-settings/api-company-settings.gateway';
+import { AuditEventPresenter } from '../../adapters/presenters/audit-event/audit-event.presenter';
+import { CompanySettingsPresenter } from '../../adapters/presenters/company-settings/company-settings.presenter';
 
 export type CompanySettingsComposition = {
   controller: CompanySettingsController;
+  presenter: CompanySettingsPresenter;
+  auditPresenter: AuditEventPresenter;
 };
 
 export function createCompanySettingsComposition(
@@ -27,5 +31,7 @@ export function createCompanySettingsComposition(
       new AddCompanyHolidayFromClientUseCase(repository),
       new RemoveCompanyHolidayFromClientUseCase(repository),
     ),
+    presenter: new CompanySettingsPresenter(),
+    auditPresenter: new AuditEventPresenter(),
   };
 }

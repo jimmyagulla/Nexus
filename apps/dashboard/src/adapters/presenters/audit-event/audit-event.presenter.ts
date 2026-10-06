@@ -13,6 +13,10 @@ export type AuditEventView = {
 };
 
 export class AuditEventPresenter {
+  presentMany(events: readonly AuditEventView[]): string[] {
+    return events.map((event) => this.present(event));
+  }
+
   present(event: AuditEventView): string {
     const line = this.lineFor(event);
     if (line !== null) {

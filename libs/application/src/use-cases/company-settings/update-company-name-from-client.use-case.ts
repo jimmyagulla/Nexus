@@ -1,12 +1,18 @@
 import {
-  CompanySettingsDto,
   CompanySettingsRepository,
+  CompanySettingsSnapshot,
+  IUpdateCompanyNameFromClient,
+  UpdateCompanyNameFromClientCommand,
 } from '@hexagonal-monorepo-template/ports';
 
-export class UpdateCompanyNameFromClientUseCase {
+export class UpdateCompanyNameFromClientUseCase
+  implements IUpdateCompanyNameFromClient
+{
   constructor(private readonly repository: CompanySettingsRepository) {}
 
-  execute(companyId: string, name: string): Promise<CompanySettingsDto> {
-    return this.repository.updateName(companyId, name);
+  execute(
+    command: UpdateCompanyNameFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.repository.updateName(command.companyId, command.name);
   }
 }

@@ -1,12 +1,21 @@
 import {
-  CompanySettingsDto,
   CompanySettingsRepository,
+  CompanySettingsSnapshot,
+  IUpdateNonWorkingWeekdaysFromClient,
+  UpdateNonWorkingWeekdaysFromClientCommand,
 } from '@hexagonal-monorepo-template/ports';
 
-export class UpdateNonWorkingWeekdaysFromClientUseCase {
+export class UpdateNonWorkingWeekdaysFromClientUseCase
+  implements IUpdateNonWorkingWeekdaysFromClient
+{
   constructor(private readonly repository: CompanySettingsRepository) {}
 
-  execute(companyId: string, weekdays: number[]): Promise<CompanySettingsDto> {
-    return this.repository.updateNonWorkingWeekdays(companyId, weekdays);
+  execute(
+    command: UpdateNonWorkingWeekdaysFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.repository.updateNonWorkingWeekdays(
+      command.companyId,
+      command.weekdays,
+    );
   }
 }

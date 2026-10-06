@@ -1,16 +1,22 @@
 import {
-  CompanySettingsDto,
+  AddCompanyHolidayFromClientCommand,
   CompanySettingsRepository,
+  CompanySettingsSnapshot,
+  IAddCompanyHolidayFromClient,
 } from '@hexagonal-monorepo-template/ports';
 
-export class AddCompanyHolidayFromClientUseCase {
+export class AddCompanyHolidayFromClientUseCase
+  implements IAddCompanyHolidayFromClient
+{
   constructor(private readonly repository: CompanySettingsRepository) {}
 
   execute(
-    companyId: string,
-    date: string,
-    label: string,
-  ): Promise<CompanySettingsDto> {
-    return this.repository.addHoliday(companyId, date, label);
+    command: AddCompanyHolidayFromClientCommand,
+  ): Promise<CompanySettingsSnapshot> {
+    return this.repository.addHoliday(
+      command.companyId,
+      command.date,
+      command.label,
+    );
   }
 }
