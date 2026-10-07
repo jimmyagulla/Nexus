@@ -1,24 +1,32 @@
+---
+name: dashboard-screens
+description: >-
+  Splits every screen into a form file, a view file, and a page file, and
+  requires extracting any component that can be extracted. Use when creating or
+  editing a screen, a page, a view, a layout, or a repeated list item.
+---
+
 # UI Views and Pages (Infrastructure/UI)
 
-## Separation of Concerns: Page vs. View
+## Three files per screen (minimum)
 
-To ensure clean architecture and testability, we distinguish between **Page** components (Logic) and **View** components (Presentation).
+Every screen is split into at least three distinct files, however small the screen is.
 
-### Rules
+1. **Form** — the form and its validation schema, in their own files colocated with the screen. Rules: skill `dashboard-forms`.
+2. **View** (`*.tsx`) — the JSX layout and nothing else.
+   *   Receives everything by props: data, callbacks, controllers, presenters.
+   *   Expects data to be present and valid (Happy Path). No loading spinner, no fetch error message.
+   *   No hook that fetches, no instantiation, no formatting decision.
+   *   Easily testable in isolation or via Storybook.
+3. **Page** (`*Page.tsx`) — the entry point declared in the router.
+   *   Calls the hooks that fetch the data it needs, then renders the view.
+   *   MUST handle **Loading**, **Error**, and **Empty** states, and pass only Happy Path data to the view.
+   *   No layout markup of its own: the JSX belongs to the view.
 
-1.  **Page Components (`*Page.tsx`)**:
-*   Responsible for **data orchestration** (calling hooks like `useQuery`).
-*   MUST handle **Loading** and **Error** states.
-*   MUST handle **Empty** states if they require specific logic.
-*   Passes only the "Happy Path" data to the View component.
+Controllers and presenters arrive as props from the composition root — skill `dashboard-composition`.
 
-2.  **View Components (`*.tsx`)**:
-*   Pure **Presentational** components.
-*   Expect data to be present and valid (Happy Path).
-*   Should NOT contain loading spinners or error messages related to data fetching.
-*   Easily testable in isolation or via Storybook.
+## Split every component that can be split
 
-### Atomic Components
-
-- **Extraction**: Systematically extract repetitive elements into sub-components. 
-- *Example*: `TransactionCard.tsx` should be extracted from `Transactions.tsx` if the item logic grows or is reused.
+- A container and its repeated element are two components, in two files.
+- A view that renders a collection renders one child component per item. It never inlines the item markup.
+- Extract as soon as a block is repeatable, reusable, or nameable on its own. Do not wait for it to grow.

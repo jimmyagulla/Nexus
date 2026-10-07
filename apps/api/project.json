@@ -50,6 +50,27 @@
         "command": "node apps/api/scripts/invoke-lambda.cjs"
       }
     },
+    "prisma-generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma generate --schema apps/api/prisma/schema.prisma",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "prisma-push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma db push --schema apps/api/prisma/schema.prisma",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "prisma-pull": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma db pull --schema apps/api/prisma/schema.prisma",
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "serve": {
       "continuous": true,
       "executor": "@nx/js:node",

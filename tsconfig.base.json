@@ -36,6 +36,12 @@
       "@hexagonal-monorepo-template/infrastructure": [
         "./libs/infrastructure/src/index.ts"
       ],
+      "@hexagonal-monorepo-template/infrastructure/supabase/browser": [
+        "./libs/infrastructure/src/supabase/browser/index.ts"
+      ],
+      "@hexagonal-monorepo-template/infrastructure/supabase/server": [
+        "./libs/infrastructure/src/supabase/server/index.ts"
+      ],
       "@hexagonal-monorepo-template/ports": [
         "./libs/ports/src/index.ts"
       ]

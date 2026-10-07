@@ -18,5 +18,5 @@ description: Global or common HTTP guards for apps/api.
 
 ## Dependencies
 
-- Import: NestJS, `@hexagonal-monorepo-template/ports`.
+- Import: NestJS, `@hexagonal-monorepo-template/ports`, `@hexagonal-monorepo-template/domain`.
 - Never import: `@hexagonal-monorepo-template/application`.

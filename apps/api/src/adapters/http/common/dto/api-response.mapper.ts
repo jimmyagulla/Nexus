@@ -1,4 +1,5 @@
 import { HttpException } from '@nestjs/common';
+import { ErrorCode, isErrorCode } from '@hexagonal-monorepo-template/domain';
 import { ApiResult, ErrorEnvelope, SuccessEnvelope } from './api-response.types';
 
 function isApiResult(obj: unknown): obj is ApiResult<unknown> {
@@ -57,5 +58,18 @@ export function extractErrorMessage(exception: unknown): string {
     }
     return exception.message;
   }
+  if (exception instanceof Error && isErrorCode(exception.message)) {
+    return exception.message;
+  }
   return 'Internal server error';
+}
+
+export function httpStatusForError(exception: unknown): number {
+  if (exception instanceof HttpException) {
+    return exception.getStatus();
+  }
+  if (exception instanceof Error && isErrorCode(exception.message)) {
+    return exception.message === ErrorCode.ACCESS_DENIED ? 403 : 400;
+  }
+  return 500;
 }

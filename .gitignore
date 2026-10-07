@@ -29,6 +29,8 @@ node_modules
 !.cursor/skills/
 !.cursor/skills/**
 
+.env
+
 # misc
 __pycache__/
 *.pyc
@@ -53,3 +55,5 @@ Thumbs.db
 .claude/settings.local.json
 
 vitest.config.*.timestamp*
+
+apps/api/src/infrastructure/prisma/prisma-client

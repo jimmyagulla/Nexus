@@ -41,8 +41,10 @@ npm install
 Environment (see `.env.example`; no dotenv loader — export them or set them in the shell):
 
 - `PORT` — HTTP port (default `3000`)
-- `AUTH_ALLOWED` — auth gate, `true`/`false`/`1`/`0` (default `true`)
+- `PERSISTENCE` — `memory` (default) or `postgres`
 - `API_GLOBAL_PREFIX` — Nest global prefix (default `api`)
+- `DATABASE_URL` / `DIRECT_URL` — Postgres (required when `PERSISTENCE=postgres`)
+- `SUPABASE_URL` / `SUPABASE_JWKS_URL` / `SUPABASE_SERVICE_ROLE_KEY` — JWT verification and employer claim binding
 
 Produit RH : cahier des charges, référentiels et user stories priorisées dans [`docs/produit`](docs/produit/README.md).
 

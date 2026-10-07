@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
-import { Link } from '@tanstack/react-router';
-import { LayoutDashboard } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { LayoutDashboard, Settings } from 'lucide-react';
+import { AppRoutes } from '@hexagonal-monorepo-template/ports';
+import { fr } from '../i18n/fr';
+import { NavigationLink } from './NavigationLink';
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,21 +14,20 @@ export function Layout({ children }: LayoutProps) {
       <aside className="hidden md:flex flex-col w-72 bg-card border-r border-border">
         <div className="p-8">
           <h1 className="text-2xl font-bold tracking-tight text-primary">
-            Dashboard
+            Nexus
           </h1>
         </div>
-        <nav className="flex-1 px-4">
-          <Link
-            to="/"
-            className={cn(
-              'flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
-              'text-muted-foreground hover:bg-accent hover:text-primary',
-              '[&.active]:bg-accent [&.active]:text-primary [&.active]:font-semibold',
-            )}
-          >
-            <LayoutDashboard className="mr-4 h-5 w-5" />
-            Tableau de bord
-          </Link>
+        <nav className="flex-1 px-4 space-y-1">
+          <NavigationLink
+            to={AppRoutes.home}
+            icon={<LayoutDashboard className="h-5 w-5" />}
+            label={fr.navigation.dashboard}
+          />
+          <NavigationLink
+            to={AppRoutes.settings}
+            icon={<Settings className="h-5 w-5" />}
+            label={fr.navigation.settings}
+          />
         </nav>
       </aside>
       <main className="flex-1 overflow-y-auto p-8 bg-background">

@@ -1,3 +1,4 @@
+import './infrastructure/load-workspace-env.entry';
 import { Logger } from '@nestjs/common';
 import { createNestApp } from './infrastructure/create-app';
 import { loadApiConfig } from './infrastructure/config/load-api-config';
@@ -14,6 +15,11 @@ async function bootstrap() {
   Logger.log(
     `Swagger documentation is available on: http://localhost:${config.port}/${config.globalPrefix}/docs`,
   );
+  if (config.authDisabled) {
+    Logger.warn(
+      'Authentication is disabled. Requests run as the local in-memory employer.',
+    );
+  }
 }
 
 bootstrap();
