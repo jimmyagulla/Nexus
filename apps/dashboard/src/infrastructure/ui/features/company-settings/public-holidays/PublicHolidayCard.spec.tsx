@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { fr } from '../../i18n/fr';
+import { i18n } from '../../../i18n/i18n';
 import { PublicHolidayCard } from './PublicHolidayCard';
 
 function renderCard() {
@@ -38,7 +38,7 @@ describe('PublicHolidayCard', () => {
     const { removed } = renderCard();
 
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.removeHoliday }),
+      screen.getByRole('button', { name: i18n.messages.settings.removeHoliday }),
     );
 
     expect(removed).toEqual(['ph-1']);

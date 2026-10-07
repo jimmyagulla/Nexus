@@ -5,7 +5,7 @@ import { useGetCompanySettings } from '../hooks/useGetCompanySettings';
 import { useRemovePublicHoliday } from '../hooks/useRemovePublicHoliday';
 import { useRenameCompany } from '../hooks/useRenameCompany';
 import { useSetNonWorkingWeekdays } from '../hooks/useSetNonWorkingWeekdays';
-import { fr } from '../i18n/fr';
+import { i18n } from '../i18n/i18n';
 import { Settings } from './Settings';
 
 interface SettingsPageProps {
@@ -20,7 +20,7 @@ export function SettingsPage({ deps }: SettingsPageProps) {
   const removeHoliday = useRemovePublicHoliday(deps);
 
   if (settings.isPending) {
-    return <p>{fr.loading}</p>;
+    return <p>{i18n.messages.loading}</p>;
   }
 
   if (settings.isError) {

@@ -1,13 +1,13 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { DayOfWeek } from '@hexagonal-monorepo-template/domain';
-import type { WeekdayViewModel } from '../../../../adapters/presenters/company-settings.presenter';
-import { fr } from '../../i18n/fr';
+import type { WeekdayViewModel } from '../../../../../adapters/presenters/company-settings.presenter';
+import { i18n } from '../../../i18n/i18n';
 import { NonWorkingWeekdaysForm } from './NonWorkingWeekdaysForm';
 
 function weekdaysRetaining(...retained: DayOfWeek[]): WeekdayViewModel[] {
   return Object.values(DayOfWeek).map((value) => ({
     value,
-    label: fr.days[value],
+    label: i18n.messages.days[value],
     selected: retained.includes(value),
   }));
 }
@@ -36,10 +36,10 @@ function renderFormReporting(
   return {
     submitted,
     toggle: (weekday: DayOfWeek) =>
-      fireEvent.click(screen.getByLabelText(fr.days[weekday])),
+      fireEvent.click(screen.getByLabelText(i18n.messages.days[weekday])),
     save: () =>
       fireEvent.click(
-        screen.getByRole('button', { name: fr.settings.saveWeekdays }),
+        screen.getByRole('button', { name: i18n.messages.settings.saveWeekdays }),
       ),
   };
 }
@@ -55,7 +55,7 @@ describe('NonWorkingWeekdaysForm', () => {
     renderForm();
 
     Object.values(DayOfWeek).forEach((weekday) => {
-      expect(screen.getByLabelText(fr.days[weekday])).toBeTruthy();
+      expect(screen.getByLabelText(i18n.messages.days[weekday])).toBeTruthy();
     });
   });
 
@@ -114,10 +114,10 @@ describe('NonWorkingWeekdaysForm', () => {
   });
 
   it('shows the refusal its caller reports, next to the weekdays', () => {
-    renderFormReporting(fr.errors.ACCESS_DENIED, DayOfWeek.SUNDAY);
+    renderFormReporting(i18n.messages.errors.ACCESS_DENIED, DayOfWeek.SUNDAY);
 
     expect(screen.getByRole('alert').textContent).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 

@@ -1,13 +1,13 @@
 import { DayOfWeek } from '@hexagonal-monorepo-template/domain';
 import type { CompanySettingsViewModel } from '../../../adapters/presenters/company-settings.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
-import { SubmissionError } from '../common/SubmissionError';
-import { AddPublicHolidayDialog } from '../features/company-settings/AddPublicHolidayDialog';
-import { CompanyNameForm } from '../features/company-settings/CompanyNameForm';
-import { NonWorkingWeekdaysForm } from '../features/company-settings/NonWorkingWeekdaysForm';
-import { PublicHolidayList } from '../features/company-settings/PublicHolidayList';
-import type { PublicHolidayValues } from '../features/company-settings/public-holiday.schema';
-import { fr } from '../i18n/fr';
+import { SubmissionError } from '../common/errors/SubmissionError';
+import { CompanyNameForm } from '../features/company-settings/company-name/CompanyNameForm';
+import { NonWorkingWeekdaysForm } from '../features/company-settings/non-working-weekdays/NonWorkingWeekdaysForm';
+import { AddPublicHolidayDialog } from '../features/company-settings/public-holidays/AddPublicHolidayDialog';
+import { PublicHolidayList } from '../features/company-settings/public-holidays/PublicHolidayList';
+import type { PublicHolidayValues } from '../features/company-settings/public-holidays/public-holiday.schema';
+import { i18n } from '../i18n/i18n';
 
 interface SettingsProps {
   model: CompanySettingsViewModel;
@@ -36,7 +36,7 @@ export function Settings({
 }: SettingsProps) {
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">{fr.settings.title}</h1>
+      <h1 className="text-2xl font-semibold">{i18n.messages.settings.title}</h1>
 
       <CompanyNameForm
         name={model.name}
@@ -53,7 +53,7 @@ export function Settings({
       />
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">{fr.settings.publicHolidays}</h2>
+        <h2 className="text-xl font-semibold">{i18n.messages.settings.publicHolidays}</h2>
         <PublicHolidayList
           publicHolidays={model.publicHolidays}
           onRemove={onRemoveHoliday}

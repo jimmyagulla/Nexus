@@ -6,7 +6,7 @@ import {
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { CompanySettingsComposition } from './composition/company-settings.composition';
-import { fr } from './ui/i18n/fr';
+import { i18n } from './ui/i18n/i18n';
 
 type SessionRecord = {
   accessToken: string;
@@ -93,7 +93,7 @@ describe('dependency injection entry point', () => {
 
     expect(
       deps.errorPresenter.present(new Error(ErrorCode.ACCESS_DENIED)),
-    ).toBe(fr.errors.ACCESS_DENIED);
+    ).toBe(i18n.messages.errors.ACCESS_DENIED);
   });
 
   it('names the weekdays in french through the presenter it provides', async () => {
@@ -101,7 +101,7 @@ describe('dependency injection entry point', () => {
 
     expect(deps.presenter.present(snapshot).weekdays).toContainEqual({
       value: DayOfWeek.SUNDAY,
-      label: fr.days.SUNDAY,
+      label: i18n.messages.days.SUNDAY,
       selected: true,
     });
   });
