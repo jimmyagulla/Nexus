@@ -8,8 +8,11 @@ import {
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import { PrismaAuditLogRepository } from './prisma-audit-log.repository';
 
+const ASSIGNED_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 type SnapshotCreate = {
-  id: string;
+  id?: string;
   side: 'BEFORE' | 'AFTER';
   companyName?: string;
   publicHolidayId?: string;
@@ -20,7 +23,7 @@ type SnapshotCreate = {
 
 type EventCreateArgs = {
   data: {
-    id: string;
+    id?: string;
     companyId: string;
     actorId: string;
     occurredAt: Date;
@@ -50,11 +53,15 @@ type EventRow = {
   snapshots: SnapshotRow[];
 };
 
-type FakePrisma = { client: PrismaDb; rows: EventRow[] };
+type FakePrisma = {
+  client: PrismaDb;
+  rows: EventRow[];
+  created: EventCreateArgs[];
+};
 
 function toSnapshotRow(snapshot: SnapshotCreate): SnapshotRow {
   return {
-    id: snapshot.id,
+    id: snapshot.id ?? globalThis.crypto.randomUUID(),
     side: snapshot.side,
     companyName: snapshot.companyName ?? null,
     publicHolidayId: snapshot.publicHolidayId ?? null,
@@ -66,12 +73,18 @@ function toSnapshotRow(snapshot: SnapshotCreate): SnapshotRow {
 
 function createFakePrisma(): FakePrisma {
   const rows: EventRow[] = [];
+  const created: EventCreateArgs[] = [];
 
   const client = {
     auditEvent: {
       create: async (args: EventCreateArgs): Promise<void> => {
-        const { snapshots, ...event } = args.data;
-        rows.push({ ...event, snapshots: snapshots.create.map(toSnapshotRow) });
+        created.push(args);
+        const { snapshots, id, ...event } = args.data;
+        rows.push({
+          ...event,
+          id: id ?? globalThis.crypto.randomUUID(),
+          snapshots: snapshots.create.map(toSnapshotRow),
+        });
       },
       findMany: async (args: {
         where: { companyId: string };
@@ -82,7 +95,7 @@ function createFakePrisma(): FakePrisma {
     },
   };
 
-  return { client: client as unknown as PrismaDb, rows };
+  return { client: client as unknown as PrismaDb, rows, created };
 }
 
 function eventOf(overrides: Partial<AuditEvent> = {}): AuditEvent {
@@ -106,21 +119,41 @@ describe('PrismaAuditLogRepository', () => {
     const event = eventOf();
 
     await repository.append(event);
+    const [stored] = await repository.listByCompany('company-1');
 
-    await expect(repository.listByCompany('company-1')).resolves.toEqual([
-      event,
-    ]);
+    expect(stored?.id).toMatch(ASSIGNED_ID);
+    expect(stored).toMatchObject({
+      companyId: event.companyId,
+      actorId: event.actorId,
+      occurredAt: event.occurredAt,
+      action: event.action,
+      subject: event.subject,
+      before: event.before,
+      after: event.after,
+    });
   });
 
-  it('stores one record per side, identified after the event', async () => {
-    const { client, rows } = createFakePrisma();
+  it('omits identifiers so the database default applies', async () => {
+    const { client, created } = createFakePrisma();
 
     await new PrismaAuditLogRepository(client).append(eventOf());
 
-    expect(rows[0]?.snapshots.map((snapshot) => snapshot.id)).toEqual([
-      'event-1-before',
-      'event-1-after',
-    ]);
+    expect(created[0]?.data.id).toBeUndefined();
+    expect(
+      created[0]?.data.snapshots.create.map((snapshot) => snapshot.id),
+    ).toEqual([undefined, undefined]);
+  });
+
+  it('stores one record per side with a database id', async () => {
+    const { client, rows } = createFakePrisma();
+
+    await new PrismaAuditLogRepository(client).append(eventOf());
+    const ids = rows[0]?.snapshots.map((snapshot) => snapshot.id) ?? [];
+
+    expect(ids).toHaveLength(2);
+    expect(ids[0]).toMatch(ASSIGNED_ID);
+    expect(ids[1]).toMatch(ASSIGNED_ID);
+    expect(ids[0]).not.toBe(ids[1]);
   });
 
   it('keeps the days of week carried by a snapshot', async () => {
@@ -231,7 +264,12 @@ describe('PrismaAuditLogRepository', () => {
     await expect(
       repository
         .listByCompany('company-1')
-        .then((events) => events.map((event) => event.id)),
-    ).resolves.toEqual(['event-early', 'event-late']);
+        .then((events) =>
+          events.map((event) => event.occurredAt.toISOString()),
+        ),
+    ).resolves.toEqual([
+      '2026-03-01T10:00:00.000Z',
+      '2026-03-02T10:00:00.000Z',
+    ]);
   });
 });

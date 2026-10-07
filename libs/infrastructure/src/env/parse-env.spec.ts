@@ -1,4 +1,4 @@
-import { parseBool, parsePort, parsePersistence, readOptional } from './parse-env';
+import { parseBool, parsePort, parsePersistence } from './parse-env';
 
 describe('parsePort', () => {
   it('parses a numeric port string', () => {
@@ -66,20 +66,6 @@ describe('parseBool', () => {
 
   it('throws when the value is not a boolean', () => {
     expect(() => parseBool('yes', true)).toThrow('Invalid boolean: yes');
-  });
-});
-
-describe('readOptional', () => {
-  it('returns a trimmed string', () => {
-    expect(readOptional('  api  ')).toBe('api');
-  });
-
-  it('returns undefined when the value is missing', () => {
-    expect(readOptional(undefined)).toBeUndefined();
-  });
-
-  it('returns undefined when the value is blank', () => {
-    expect(readOptional('   ')).toBeUndefined();
   });
 });
 

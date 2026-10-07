@@ -2,7 +2,6 @@ import {
   FixedClock,
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
-  SequentialIdGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -49,7 +48,6 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
     const settings = await new RemoveCompanyPublicHolidayUseCase(
       companies,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     ).execute({ actor, companyId: 'c1', publicHolidayId: 'ph-1' });
 
@@ -65,26 +63,27 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
     await new RemoveCompanyPublicHolidayUseCase(
       companies,
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(now),
     ).execute({ actor, companyId: 'c1', publicHolidayId: 'ph-1' });
 
-    expect(await audits.listByCompany('c1')).toEqual([
-      {
-        id: 'id-1',
-        companyId: 'c1',
-        actorId: 'user-1',
-        occurredAt: now,
-        action: AuditAction.DELETION,
-        subject: AuditSubject.COMPANY_PUBLIC_HOLIDAY,
-        before: {
-          publicHolidayId: 'ph-1',
-          holidayDate: '2026-07-14',
-          holidayLabel: 'Bastille Day',
-        },
-        after: null,
+    const [event] = await audits.listByCompany('c1');
+
+    expect(event?.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+    expect(event).toMatchObject({
+      companyId: 'c1',
+      actorId: 'user-1',
+      occurredAt: now,
+      action: AuditAction.DELETION,
+      subject: AuditSubject.COMPANY_PUBLIC_HOLIDAY,
+      before: {
+        publicHolidayId: 'ph-1',
+        holidayDate: '2026-07-14',
+        holidayLabel: 'Bastille Day',
       },
-    ]);
+      after: null,
+    });
   });
 
   it('refuses a public holiday the company never retained', async () => {
@@ -93,7 +92,6 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
     const useCase = new RemoveCompanyPublicHolidayUseCase(
       companies,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -117,7 +115,6 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
     const useCase = new RemoveCompanyPublicHolidayUseCase(
       companies,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 

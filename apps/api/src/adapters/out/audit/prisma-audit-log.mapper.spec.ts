@@ -8,18 +8,13 @@ import {
 describe('toAuditSnapshotCreate', () => {
   it('turns a snapshot into a side-tagged record', () => {
     expect(
-      toAuditSnapshotCreate(
-        'BEFORE',
-        {
-          companyName: 'Acme',
-          publicHolidayId: 'holiday-1',
-          holidayDate: '2026-07-14',
-          holidayLabel: 'Fête',
-        },
-        'event-1-before',
-      ),
+      toAuditSnapshotCreate('BEFORE', {
+        companyName: 'Acme',
+        publicHolidayId: 'holiday-1',
+        holidayDate: '2026-07-14',
+        holidayLabel: 'Fête',
+      }),
     ).toEqual({
-      id: 'event-1-before',
       side: 'BEFORE',
       companyName: 'Acme',
       publicHolidayId: 'holiday-1',
@@ -30,11 +25,9 @@ describe('toAuditSnapshotCreate', () => {
   });
 
   it('nests the days of week as rows to create', () => {
-    const record = toAuditSnapshotCreate(
-      'AFTER',
-      { daysOfWeek: [DayOfWeek.SATURDAY, DayOfWeek.SUNDAY] },
-      'event-1-after',
-    );
+    const record = toAuditSnapshotCreate('AFTER', {
+      daysOfWeek: [DayOfWeek.SATURDAY, DayOfWeek.SUNDAY],
+    });
 
     expect(record.side).toBe('AFTER');
     expect(record.daysOfWeek).toEqual({
@@ -47,7 +40,7 @@ describe('toAuditSnapshotCreate', () => {
 
   it('nests an empty list of days of week as no row', () => {
     expect(
-      toAuditSnapshotCreate('AFTER', { daysOfWeek: [] }, 'event-1-after')
+      toAuditSnapshotCreate('AFTER', { daysOfWeek: [] })
         .daysOfWeek,
     ).toEqual({ create: [] });
   });

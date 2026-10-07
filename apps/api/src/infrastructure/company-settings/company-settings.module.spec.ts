@@ -8,7 +8,6 @@ import {
 } from '@hexagonal-monorepo-template/ports';
 import { ClockModule } from '../clock/clock.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
-import { IdGeneratorModule } from '../id/id-generator.module';
 import { CompanySettingsModule } from './company-settings.module';
 
 @Global()
@@ -27,7 +26,6 @@ function compile(): Promise<TestingModule> {
     imports: [
       testGlobals,
       ClockModule,
-      IdGeneratorModule,
       CompanySettingsModule,
     ],
   }).compile();

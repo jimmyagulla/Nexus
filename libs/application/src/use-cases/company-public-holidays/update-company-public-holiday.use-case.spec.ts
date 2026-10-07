@@ -3,7 +3,6 @@ import {
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
   InMemoryPublicHolidayRepository,
-  SequentialIdGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -26,6 +25,9 @@ const actor: ActorContext = {
 };
 
 const now = new Date('2026-10-06T10:00:00.000Z');
+
+const ASSIGNED_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const retained = new PublicHoliday(
   'ph-1',
@@ -53,7 +55,6 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       companies,
       publicHolidays,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     ).execute({
       actor,
@@ -64,8 +65,9 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
     });
 
     expect(settings.publicHolidays).toEqual([
-      { id: 'id-1', date: '2026-11-11', label: 'Armistice' },
+      expect.objectContaining({ date: '2026-11-11', label: 'Armistice' }),
     ]);
+    expect(settings.publicHolidays[0]?.id).toMatch(ASSIGNED_ID);
   });
 
   it('records the previous and the next public holiday', async () => {
@@ -75,11 +77,10 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
     await publicHolidays.save(retained);
     await companies.save(companyWithRetainedHoliday());
 
-    await new UpdateCompanyPublicHolidayUseCase(
+    const settings = await new UpdateCompanyPublicHolidayUseCase(
       companies,
       publicHolidays,
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(now),
     ).execute({
       actor,
@@ -88,27 +89,26 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       date: '2026-11-11',
       label: 'Armistice',
     });
+    const [event] = await audits.listByCompany('c1');
 
-    expect(await audits.listByCompany('c1')).toEqual([
-      {
-        id: 'id-2',
-        companyId: 'c1',
-        actorId: 'user-1',
-        occurredAt: now,
-        action: AuditAction.MODIFICATION,
-        subject: AuditSubject.COMPANY_PUBLIC_HOLIDAY,
-        before: {
-          publicHolidayId: 'ph-1',
-          holidayDate: '2026-07-14',
-          holidayLabel: 'Old',
-        },
-        after: {
-          publicHolidayId: 'id-1',
-          holidayDate: '2026-11-11',
-          holidayLabel: 'Armistice',
-        },
+    expect(event?.id).toMatch(ASSIGNED_ID);
+    expect(event).toMatchObject({
+      companyId: 'c1',
+      actorId: 'user-1',
+      occurredAt: now,
+      action: AuditAction.MODIFICATION,
+      subject: AuditSubject.COMPANY_PUBLIC_HOLIDAY,
+      before: {
+        publicHolidayId: 'ph-1',
+        holidayDate: '2026-07-14',
+        holidayLabel: 'Old',
       },
-    ]);
+      after: {
+        publicHolidayId: settings.publicHolidays[0]?.id,
+        holidayDate: '2026-11-11',
+        holidayLabel: 'Armistice',
+      },
+    });
   });
 
   it('reuses a public holiday already observed elsewhere', async () => {
@@ -127,7 +127,6 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       companies,
       publicHolidays,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     ).execute({
       actor,
@@ -149,7 +148,6 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -176,7 +174,6 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -198,7 +195,6 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -220,7 +216,6 @@ describe('UpdateCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 

@@ -11,7 +11,39 @@ const bastilleDay = new PublicHoliday(
   'Bastille Day',
 );
 
+const ASSIGNED_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 describe('InMemoryPublicHolidayRepository', () => {
+  it('assigns an id when inserting a public holiday', async () => {
+    const publicHolidays = new InMemoryPublicHolidayRepository();
+
+    const holiday = await publicHolidays.insert(
+      CalendarDate.parse('2026-07-14'),
+      'Bastille Day',
+    );
+
+    expect(holiday.id).toMatch(ASSIGNED_ID);
+    expect(holiday.date.value).toBe('2026-07-14');
+    expect(holiday.label).toBe('Bastille Day');
+    expect(await publicHolidays.findById(holiday.id)).toEqual(holiday);
+  });
+
+  it('assigns a different id to each inserted public holiday', async () => {
+    const publicHolidays = new InMemoryPublicHolidayRepository();
+
+    const first = await publicHolidays.insert(
+      CalendarDate.parse('2026-07-14'),
+      'Bastille Day',
+    );
+    const second = await publicHolidays.insert(
+      CalendarDate.parse('2026-12-25'),
+      'Christmas',
+    );
+
+    expect(first.id).not.toBe(second.id);
+  });
+
   it('saves and finds a public holiday by id', async () => {
     const publicHolidays = new InMemoryPublicHolidayRepository();
 

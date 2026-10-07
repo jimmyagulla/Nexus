@@ -2,7 +2,6 @@ import {
   FixedClock,
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
-  SequentialIdGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -32,15 +31,17 @@ describe('RenameCompanyUseCase', () => {
     const settings = await new RenameCompanyUseCase(
       companies,
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(now),
     ).execute({ actor, companyId: 'c1', name: 'Nexus' });
 
     expect(settings.name).toBe('Nexus');
     expect((await companies.findById('c1'))?.name.value).toBe('Nexus');
-    expect(await audits.listByCompany('c1')).toEqual([
-      {
-        id: 'id-1',
+    const [event] = await audits.listByCompany('c1');
+
+    expect(event?.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+    expect(event).toMatchObject({
         companyId: 'c1',
         actorId: 'user-1',
         occurredAt: now,
@@ -48,8 +49,7 @@ describe('RenameCompanyUseCase', () => {
         subject: AuditSubject.COMPANY_NAME,
         before: { companyName: 'Acme' },
         after: { companyName: 'Nexus' },
-      },
-    ]);
+    });
   });
 
   it('refuses a blank name and leaves the company untouched', async () => {
@@ -59,7 +59,6 @@ describe('RenameCompanyUseCase', () => {
     const useCase = new RenameCompanyUseCase(
       companies,
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -74,7 +73,6 @@ describe('RenameCompanyUseCase', () => {
     const useCase = new RenameCompanyUseCase(
       new InMemoryCompanyRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -89,7 +87,6 @@ describe('RenameCompanyUseCase', () => {
     const useCase = new RenameCompanyUseCase(
       companies,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
