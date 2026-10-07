@@ -5,7 +5,8 @@ import {
   ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
-import { fr } from './ui/i18n/fr';
+import { CompanySettingsComposition } from './composition/company-settings.composition';
+import { i18n } from './ui/i18n/i18n';
 
 type SessionRecord = {
   accessToken: string;
@@ -69,7 +70,7 @@ function installTransport(): void {
   );
 }
 
-async function companySettings() {
+async function companySettings(): Promise<CompanySettingsComposition> {
   return (await import('./di')).companySettingsComposition;
 }
 
@@ -112,7 +113,7 @@ describe('dependency injection entry point', () => {
 
     expect(
       deps.errorPresenter.present(new Error(ErrorCode.ACCESS_DENIED)),
-    ).toBe(fr.errors.ACCESS_DENIED);
+    ).toBe(i18n.messages.errors.ACCESS_DENIED);
   });
 
   it('names the weekdays in french through the presenter it provides', async () => {
@@ -120,7 +121,7 @@ describe('dependency injection entry point', () => {
 
     expect(deps.presenter.present(snapshot).weekdays).toContainEqual({
       value: DayOfWeek.SUNDAY,
-      label: fr.days.SUNDAY,
+      label: i18n.messages.days.SUNDAY,
       selected: true,
     });
   });

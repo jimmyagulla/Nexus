@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import { fr } from '../../i18n/fr';
+import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
+import { i18n } from '../../../i18n/i18n';
 import { AddPublicHolidayDialog } from './AddPublicHolidayDialog';
 import type { PublicHolidayValues } from './public-holiday.schema';
 
@@ -25,20 +25,20 @@ function renderDialog(
     submitted,
     open: () =>
       fireEvent.click(
-        screen.getByRole('button', { name: fr.settings.addHoliday }),
+        screen.getByRole('button', { name: i18n.messages.settings.addHoliday }),
       ),
     fill: (values: PublicHolidayValues) => {
-      fireEvent.change(screen.getByLabelText(fr.settings.date), {
+      fireEvent.change(screen.getByLabelText(i18n.messages.settings.date), {
         target: { value: values.date },
       });
-      fireEvent.change(screen.getByLabelText(fr.settings.label), {
+      fireEvent.change(screen.getByLabelText(i18n.messages.settings.label), {
         target: { value: values.label },
       });
     },
     confirm: () =>
       fireEvent.click(
         within(screen.getByRole('dialog')).getByRole('button', {
-          name: fr.settings.addHoliday,
+          name: i18n.messages.settings.addHoliday,
         }),
       ),
   };
@@ -49,14 +49,14 @@ describe('AddPublicHolidayDialog', () => {
     renderDialog();
 
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.queryByLabelText(fr.settings.date)).toBeNull();
+    expect(screen.queryByLabelText(i18n.messages.settings.date)).toBeNull();
   });
 
   it('offers to add a public holiday', () => {
     renderDialog();
 
     expect(
-      screen.getByRole('button', { name: fr.settings.addHoliday }),
+      screen.getByRole('button', { name: i18n.messages.settings.addHoliday }),
     ).toBeTruthy();
   });
 
@@ -66,8 +66,8 @@ describe('AddPublicHolidayDialog', () => {
     open();
 
     expect(screen.getByRole('dialog')).toBeTruthy();
-    expect(screen.getByLabelText(fr.settings.date)).toBeTruthy();
-    expect(screen.getByLabelText(fr.settings.label)).toBeTruthy();
+    expect(screen.getByLabelText(i18n.messages.settings.date)).toBeTruthy();
+    expect(screen.getByLabelText(i18n.messages.settings.label)).toBeTruthy();
   });
 
   it('names what the form is for', () => {
@@ -75,7 +75,7 @@ describe('AddPublicHolidayDialog', () => {
 
     open();
 
-    expect(screen.getByText(fr.settings.addHolidayTitle)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.settings.addHolidayTitle)).toBeTruthy();
   });
 
   it('hands the entered public holiday to its caller', async () => {
@@ -121,14 +121,14 @@ describe('AddPublicHolidayDialog', () => {
 
   it('shows the refusal its caller reports without closing', () => {
     const { open } = renderDialog({
-      submissionError: fr.errors.POTENTIAL_DUPLICATE,
+      submissionError: i18n.messages.errors.POTENTIAL_DUPLICATE,
     });
 
     open();
 
     const dialog = within(screen.getByRole('dialog'));
     expect(dialog.getByRole('alert').textContent).toBe(
-      fr.errors.POTENTIAL_DUPLICATE,
+      i18n.messages.errors.POTENTIAL_DUPLICATE,
     );
   });
 
@@ -139,7 +139,7 @@ describe('AddPublicHolidayDialog', () => {
     fill({ date: '', label: 'Fête nationale' });
     confirm();
 
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
     expect(screen.queryByRole('dialog')).toBeTruthy();
     expect(submitted).toEqual([]);
   });

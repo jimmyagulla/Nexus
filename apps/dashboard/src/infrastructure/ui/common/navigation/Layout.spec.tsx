@@ -7,8 +7,8 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router';
-import { AppRoutes } from '../routes/app-routes';
-import { fr } from '../i18n/fr';
+import { AppRoutes } from '../../routes/app-routes';
+import { i18n } from '../../i18n/i18n';
 import { Layout } from './Layout';
 
 async function renderLayoutAt(path: string, children: ReactNode) {
@@ -51,8 +51,8 @@ describe('Layout', () => {
   it('names its destinations in french', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
-    expect(screen.getByText(fr.navigation.dashboard)).toBeTruthy();
-    expect(screen.getByText(fr.navigation.settings)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.navigation.dashboard)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.navigation.settings)).toBeTruthy();
   });
 
   it('shows the content it wraps', async () => {

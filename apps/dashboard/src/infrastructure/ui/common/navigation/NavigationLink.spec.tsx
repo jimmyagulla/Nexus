@@ -7,7 +7,7 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router';
-import { AppRoutes } from '../routes/app-routes';
+import { AppRoutes } from '../../routes/app-routes';
 import { NavigationLink } from './NavigationLink';
 
 async function renderAt(path: string, ui: ReactNode) {

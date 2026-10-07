@@ -14,7 +14,6 @@ import {
   ICompanyIdentityBinder,
   ICompanyRepository,
   ICreateCompany,
-  IIdGenerator,
   IRenameCompany,
 } from '@hexagonal-monorepo-template/ports';
 import { CompanyController } from '../../adapters/http/company/company.controller';
@@ -64,20 +63,18 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       provide: ICreateCompany,
       useFactory: (
         companies: ICompanyRepository,
-        ids: IIdGenerator,
         identity: ICompanyIdentityBinder,
-      ) => new CreateCompanyUseCase(companies, ids, identity),
-      inject: [ICompanyRepository, IIdGenerator, ICompanyIdentityBinder],
+      ) => new CreateCompanyUseCase(companies, identity),
+      inject: [ICompanyRepository, ICompanyIdentityBinder],
     },
     {
       provide: IRenameCompany,
       useFactory: (
         companies: ICompanyRepository,
         audits: IAuditLogRepository,
-        ids: IIdGenerator,
         clock: IClock,
-      ) => new RenameCompanyUseCase(companies, audits, ids, clock),
-      inject: [ICompanyRepository, IAuditLogRepository, IIdGenerator, IClock],
+      ) => new RenameCompanyUseCase(companies, audits, clock),
+      inject: [ICompanyRepository, IAuditLogRepository, IClock],
     },
   ],
   exports: [ICompanyRepository],

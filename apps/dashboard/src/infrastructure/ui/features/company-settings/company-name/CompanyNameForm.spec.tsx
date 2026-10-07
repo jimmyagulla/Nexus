@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import { fr } from '../../i18n/fr';
+import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
+import { i18n } from '../../../i18n/i18n';
 import { CompanyNameForm } from './CompanyNameForm';
 
 function renderForm(name = 'Acme', submissionError: string | null = null) {
@@ -19,10 +19,10 @@ function renderForm(name = 'Acme', submissionError: string | null = null) {
 
   return {
     submitted,
-    field: screen.getByLabelText<HTMLInputElement>(fr.settings.name),
+    field: screen.getByLabelText<HTMLInputElement>(i18n.messages.settings.name),
     save: () =>
       fireEvent.click(
-        screen.getByRole('button', { name: fr.settings.saveName }),
+        screen.getByRole('button', { name: i18n.messages.settings.saveName }),
       ),
   };
 }
@@ -55,7 +55,7 @@ describe('CompanyNameForm', () => {
   it('stays quiet until the company name is submitted', () => {
     renderForm();
 
-    expect(screen.queryByText(fr.errors.REQUIRED_INFORMATION)).toBeNull();
+    expect(screen.queryByText(i18n.messages.errors.REQUIRED_INFORMATION)).toBeNull();
   });
 
   it('explains that an empty name is not enough', async () => {
@@ -65,7 +65,7 @@ describe('CompanyNameForm', () => {
     save();
 
     expect(
-      await screen.findByText(fr.errors.REQUIRED_INFORMATION),
+      await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION),
     ).toBeTruthy();
   });
 
@@ -75,7 +75,7 @@ describe('CompanyNameForm', () => {
     fireEvent.change(field, { target: { value: '' } });
     save();
 
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
     expect(submitted).toEqual([]);
   });
 
@@ -85,15 +85,15 @@ describe('CompanyNameForm', () => {
     fireEvent.change(field, { target: { value: '   ' } });
     save();
 
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
     expect(submitted).toEqual([]);
   });
 
   it('shows the refusal its caller reports, next to the name', async () => {
-    renderForm('Acme', fr.errors.ACCESS_DENIED);
+    renderForm('Acme', i18n.messages.errors.ACCESS_DENIED);
 
     expect(screen.getByRole('alert').textContent).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 
@@ -108,12 +108,12 @@ describe('CompanyNameForm', () => {
 
     fireEvent.change(field, { target: { value: '' } });
     save();
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
 
     fireEvent.change(field, { target: { value: 'Nexus' } });
 
     await waitFor(() =>
-      expect(screen.queryByText(fr.errors.REQUIRED_INFORMATION)).toBeNull(),
+      expect(screen.queryByText(i18n.messages.errors.REQUIRED_INFORMATION)).toBeNull(),
     );
   });
 });

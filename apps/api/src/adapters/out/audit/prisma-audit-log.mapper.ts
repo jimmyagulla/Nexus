@@ -14,10 +14,8 @@ export type PrismaAuditSnapshotRow = {
 export function toAuditSnapshotCreate(
   side: 'BEFORE' | 'AFTER',
   snapshot: AuditSnapshot,
-  id: string,
 ) {
   return {
-    id,
     side,
     companyName: snapshot.companyName,
     publicHolidayId: snapshot.publicHolidayId,

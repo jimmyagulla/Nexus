@@ -10,7 +10,7 @@ import {
   ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
-import { fr } from '../ui/i18n/fr';
+import { i18n } from '../ui/i18n/i18n';
 import {
   CompanySettingsComposition,
   createCompanySettingsComposition,
@@ -157,7 +157,7 @@ describe('createCompanySettingsComposition', () => {
     const { deps } = compositionFor();
 
     expect(deps.errorPresenter.present(new Error(ErrorCode.ACCESS_DENIED))).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 

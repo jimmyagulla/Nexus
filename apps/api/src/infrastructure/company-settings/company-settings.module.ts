@@ -8,7 +8,6 @@ import {
   IClock,
   ICompanyRepository,
   IGetCompanySettings,
-  IIdGenerator,
   ISetNonWorkingWeekdays,
 } from '@hexagonal-monorepo-template/ports';
 import { CompanySettingsController } from '../../adapters/http/company-settings/company-settings.controller';
@@ -30,10 +29,9 @@ import { CompanyModule } from '../company/company.module';
       useFactory: (
         companies: ICompanyRepository,
         audits: IAuditLogRepository,
-        ids: IIdGenerator,
         clock: IClock,
-      ) => new SetNonWorkingWeekdaysUseCase(companies, audits, ids, clock),
-      inject: [ICompanyRepository, IAuditLogRepository, IIdGenerator, IClock],
+      ) => new SetNonWorkingWeekdaysUseCase(companies, audits, clock),
+      inject: [ICompanyRepository, IAuditLogRepository, IClock],
     },
   ],
 })

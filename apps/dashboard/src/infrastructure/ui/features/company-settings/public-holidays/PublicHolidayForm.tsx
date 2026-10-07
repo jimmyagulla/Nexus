@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import { SubmissionError } from '../../common/SubmissionError';
-import { Button } from '../../shared/button';
-import { Input } from '../../shared/input';
-import { fr } from '../../i18n/fr';
+import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
+import { SubmissionError } from '../../../common/errors/SubmissionError';
+import { Button } from '../../../shared/button';
+import { Input } from '../../../shared/input';
+import { i18n } from '../../../i18n/i18n';
 import {
   publicHolidaySchema,
   type PublicHolidayValues,
@@ -39,14 +39,14 @@ export function PublicHolidayForm({
     >
       <div>
         <label className="block text-sm" htmlFor="holiday-date">
-          {fr.settings.date}
+          {i18n.messages.settings.date}
         </label>
         <Input id="holiday-date" type="date" {...form.register('date')} />
         {dateError ? <p>{errorPresenter.present(dateError.message)}</p> : null}
       </div>
       <div>
         <label className="block text-sm" htmlFor="holiday-label">
-          {fr.settings.label}
+          {i18n.messages.settings.label}
         </label>
         <Input id="holiday-label" {...form.register('label')} />
         {labelError ? (
@@ -54,7 +54,7 @@ export function PublicHolidayForm({
         ) : null}
       </div>
       <SubmissionError message={submissionError} />
-      <Button type="submit">{fr.settings.addHoliday}</Button>
+      <Button type="submit">{i18n.messages.settings.addHoliday}</Button>
     </form>
   );
 }

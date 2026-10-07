@@ -1,3 +1,5 @@
+import { readOptional } from '@hexagonal-monorepo-template/infrastructure';
+
 export type DashboardConfig = {
   apiUrl: string;
   supabaseUrl: string;
@@ -14,11 +16,6 @@ export function loadDashboardConfig(
     apiUrl: readOptional(env['VITE_API_URL']) ?? DEFAULT_API_URL,
     supabaseUrl: readOptional(env['VITE_SUPABASE_URL']) ?? '',
     supabaseAnonKey: readOptional(env['VITE_SUPABASE_ANON_KEY']) ?? '',
-    authDisabled: env['VITE_AUTH_DISABLED']?.trim() === 'true',
+    authDisabled: readOptional(env['VITE_AUTH_DISABLED']) === 'true',
   };
-}
-
-function readOptional(value: string | undefined): string | undefined {
-  const trimmed = value?.trim();
-  return trimmed === '' ? undefined : trimmed;
 }

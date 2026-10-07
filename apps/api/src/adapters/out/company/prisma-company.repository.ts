@@ -1,4 +1,8 @@
-import { Company } from '@hexagonal-monorepo-template/domain';
+import {
+  Company,
+  CompanyCalendar,
+  CompanyName,
+} from '@hexagonal-monorepo-template/domain';
 import { ICompanyRepository } from '@hexagonal-monorepo-template/ports';
 import { Prisma } from '../../../infrastructure/prisma/prisma-client';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
@@ -11,6 +15,21 @@ const companyInclude = {
 
 export class PrismaCompanyRepository implements ICompanyRepository {
   constructor(private readonly prisma: PrismaDb) {}
+
+  async insert(name: CompanyName): Promise<Company> {
+    const row = await this.prisma.company.create({
+      data: {
+        name: name.value,
+        nonWorkingWeekdays: {
+          create: CompanyCalendar.default().nonWorkingWeekdays.map(
+            (dayOfWeek) => ({ dayOfWeek }),
+          ),
+        },
+      },
+      include: companyInclude,
+    });
+    return toCompany(row);
+  }
 
   async save(company: Company): Promise<void> {
     await this.prisma.$transaction(async (tx) => {

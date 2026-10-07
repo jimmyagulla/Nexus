@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { PublicHolidayList } from './PublicHolidayList';
-import { fr } from '../../i18n/fr';
+import { i18n } from '../../../i18n/i18n';
 
 describe('PublicHolidayList', () => {
   it('announces an empty list', () => {
@@ -8,7 +8,7 @@ describe('PublicHolidayList', () => {
       <PublicHolidayList publicHolidays={[]} onRemove={() => undefined} />,
     );
 
-    expect(screen.getByText(fr.settings.noPublicHolidays)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.settings.noPublicHolidays)).toBeTruthy();
   });
 
   it('renders one card per public holiday', () => {
@@ -37,7 +37,7 @@ describe('PublicHolidayList', () => {
     );
 
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.removeHoliday }),
+      screen.getByRole('button', { name: i18n.messages.settings.removeHoliday }),
     );
 
     expect(removed).toEqual(['ph-1']);

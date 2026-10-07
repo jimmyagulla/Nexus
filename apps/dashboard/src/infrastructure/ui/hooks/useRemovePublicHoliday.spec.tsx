@@ -9,7 +9,7 @@ import { CompanySettingsController } from '../../../adapters/controllers/company
 import { CompanySettingsPresenter } from '../../../adapters/presenters/company-settings.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { CompanySettingsComposition } from '../../composition/company-settings.composition';
-import { fr } from '../i18n/fr';
+import { i18n } from '../i18n/i18n';
 import { useGetCompanySettings } from './useGetCompanySettings';
 import { useRemovePublicHoliday } from './useRemovePublicHoliday';
 
@@ -134,7 +134,7 @@ describe('useRemovePublicHoliday', () => {
 
     expect(
       deps.errorPresenter.present(result.current.removeHoliday.error),
-    ).toBe(fr.errors.ACCESS_DENIED);
+    ).toBe(i18n.messages.errors.ACCESS_DENIED);
   });
 
   it('leaves the calendar untouched when the removal is refused', async () => {

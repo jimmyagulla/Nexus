@@ -2,7 +2,6 @@ import {
   FixedClock,
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
-  SequentialIdGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -29,7 +28,6 @@ describe('SetNonWorkingWeekdaysUseCase', () => {
     const settings = await new SetNonWorkingWeekdaysUseCase(
       companies,
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(new Date('2026-10-06T10:00:00.000Z')),
     ).execute({
       actor,
@@ -54,7 +52,6 @@ describe('SetNonWorkingWeekdaysUseCase', () => {
     const settings = await new SetNonWorkingWeekdaysUseCase(
       companies,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(new Date('2026-10-06T10:00:00.000Z')),
     ).execute({
       actor,
@@ -72,7 +69,6 @@ describe('SetNonWorkingWeekdaysUseCase', () => {
     const useCase = new SetNonWorkingWeekdaysUseCase(
       companies,
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(new Date('2026-10-06T10:00:00.000Z')),
     );
 

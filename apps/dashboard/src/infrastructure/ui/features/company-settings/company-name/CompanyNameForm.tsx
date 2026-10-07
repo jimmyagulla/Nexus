@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import { SubmissionError } from '../../common/SubmissionError';
-import { Button } from '../../shared/button';
-import { Input } from '../../shared/input';
-import { fr } from '../../i18n/fr';
+import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
+import { SubmissionError } from '../../../common/errors/SubmissionError';
+import { Button } from '../../../shared/button';
+import { Input } from '../../../shared/input';
+import { i18n } from '../../../i18n/i18n';
 import { companyNameSchema, type CompanyNameValues } from './company-name.schema';
 
 interface CompanyNameFormProps {
@@ -34,12 +34,12 @@ export function CompanyNameForm({
       })}
     >
       <label className="block text-sm font-medium" htmlFor="company-name">
-        {fr.settings.name}
+        {i18n.messages.settings.name}
       </label>
       <Input id="company-name" {...form.register('name')} />
       {error ? <p>{errorPresenter.present(error.message)}</p> : null}
       <SubmissionError message={submissionError} />
-      <Button type="submit">{fr.settings.saveName}</Button>
+      <Button type="submit">{i18n.messages.settings.saveName}</Button>
     </form>
   );
 }

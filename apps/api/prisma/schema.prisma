@@ -37,7 +37,7 @@ enum AuditSide {
 }
 
 model Company {
-  id                   String                   @id
+  id                   String                   @id @default(uuid())
   name                 String
   nonWorkingWeekdays   CompanyNonWorkingWeekday[]
   publicHolidays       CompanyPublicHoliday[]
@@ -53,7 +53,7 @@ model CompanyNonWorkingWeekday {
 }
 
 model PublicHoliday {
-  id        String                 @id
+  id        String                 @id @default(uuid())
   date      String
   label     String
   companies CompanyPublicHoliday[]
@@ -71,7 +71,7 @@ model CompanyPublicHoliday {
 }
 
 model AuditEvent {
-  id         String          @id
+  id         String          @id @default(uuid())
   companyId  String
   actorId    String
   occurredAt DateTime
@@ -82,7 +82,7 @@ model AuditEvent {
 }
 
 model AuditSnapshot {
-  id              String                 @id
+  id              String                 @id @default(uuid())
   eventId         String
   side            AuditSide
   companyName     String?

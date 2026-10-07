@@ -9,7 +9,8 @@ description: Technical client boundaries for libs/infrastructure.
 
 - Implement technical clients (DB wrappers, SDKs).
 - Return raw records.
-- Parse environment strings into primitives (`parsePort`, `parseBool`, `readOptional`). Throw when a value is present and invalid.
+- Parse environment strings into primitives (`parsePort`, `parseBool`). Throw when a value is present and invalid.
+- Share pure string helpers such as `readOptional` outside `env/`, since they are not tied to environment variables.
 
 ## Forbidden
 
