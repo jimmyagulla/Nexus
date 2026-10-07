@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { DayOfWeek } from '@hexagonal-monorepo-template/domain';
-import { CompanySettingsPresenter } from './company-settings.presenter';
+import { en } from '../../infrastructure/ui/i18n/en';
 import { fr } from '../../infrastructure/ui/i18n/fr';
+import { I18n, i18n } from '../../infrastructure/ui/i18n/i18n';
+import { CompanySettingsPresenter } from './company-settings.presenter';
 
 const presenter = new CompanySettingsPresenter();
 
@@ -33,7 +35,7 @@ describe('CompanySettingsPresenter', () => {
     expect(view.weekdays).toHaveLength(7);
     expect(view.weekdays[0]).toEqual({
       value: DayOfWeek.SUNDAY,
-      label: fr.days.SUNDAY,
+      label: i18n.messages.days.SUNDAY,
       selected: false,
     });
   });
@@ -76,5 +78,22 @@ describe('CompanySettingsPresenter', () => {
     });
 
     expect(view).toMatchObject({ id: 'c1', name: 'Acme' });
+  });
+
+  it('names weekdays in the language of its i18n instance', () => {
+    const view = new CompanySettingsPresenter(new I18n({ fr, en }, 'en')).present(
+      {
+        id: 'c1',
+        name: 'Acme',
+        nonWorkingWeekdays: [],
+        publicHolidays: [],
+      },
+    );
+
+    expect(view.weekdays[0]).toEqual({
+      value: DayOfWeek.SUNDAY,
+      label: en.days.SUNDAY,
+      selected: false,
+    });
   });
 });

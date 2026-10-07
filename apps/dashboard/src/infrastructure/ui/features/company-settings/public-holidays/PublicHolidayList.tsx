@@ -1,5 +1,5 @@
-import type { PublicHolidayViewModel } from '../../../../adapters/presenters/company-settings.presenter';
-import { fr } from '../../i18n/fr';
+import type { PublicHolidayViewModel } from '../../../../../adapters/presenters/company-settings.presenter';
+import { i18n } from '../../../i18n/i18n';
 import { PublicHolidayCard } from './PublicHolidayCard';
 
 interface PublicHolidayListProps {
@@ -14,7 +14,7 @@ export function PublicHolidayList({
   if (publicHolidays.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        {fr.settings.noPublicHolidays}
+        {i18n.messages.settings.noPublicHolidays}
       </p>
     );
   }

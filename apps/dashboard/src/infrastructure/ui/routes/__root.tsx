@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { Layout } from '../common/Layout';
+import { Layout } from '../common/navigation/Layout';
 import { Toaster } from '../shared/toaster';
 
 export const rootRoute = createRootRoute({

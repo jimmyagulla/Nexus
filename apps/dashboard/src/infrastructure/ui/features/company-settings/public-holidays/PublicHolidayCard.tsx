@@ -1,6 +1,6 @@
-import type { PublicHolidayViewModel } from '../../../../adapters/presenters/company-settings.presenter';
-import { Button } from '../../shared/button';
-import { fr } from '../../i18n/fr';
+import type { PublicHolidayViewModel } from '../../../../../adapters/presenters/company-settings.presenter';
+import { Button } from '../../../shared/button';
+import { i18n } from '../../../i18n/i18n';
 
 interface PublicHolidayCardProps {
   publicHoliday: PublicHolidayViewModel;
@@ -21,7 +21,7 @@ export function PublicHolidayCard({
         variant="outline"
         onClick={() => onRemove(publicHoliday.id)}
       >
-        {fr.settings.removeHoliday}
+        {i18n.messages.settings.removeHoliday}
       </Button>
     </li>
   );

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import { Button } from '../../shared/button';
+import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
+import { Button } from '../../../shared/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../shared/dialog';
-import { fr } from '../../i18n/fr';
+} from '../../../shared/dialog';
+import { i18n } from '../../../i18n/i18n';
 import { PublicHolidayForm } from './PublicHolidayForm';
 import type { PublicHolidayValues } from './public-holiday.schema';
 
@@ -28,11 +28,11 @@ export function AddPublicHolidayDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button">{fr.settings.addHoliday}</Button>
+        <Button type="button">{i18n.messages.settings.addHoliday}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{fr.settings.addHolidayTitle}</DialogTitle>
+          <DialogTitle>{i18n.messages.settings.addHolidayTitle}</DialogTitle>
         </DialogHeader>
         <PublicHolidayForm
           errorPresenter={errorPresenter}

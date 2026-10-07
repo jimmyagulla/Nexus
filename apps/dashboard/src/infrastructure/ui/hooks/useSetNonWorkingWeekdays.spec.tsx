@@ -10,7 +10,7 @@ import { CompanySettingsController } from '../../../adapters/controllers/company
 import { CompanySettingsPresenter } from '../../../adapters/presenters/company-settings.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { CompanySettingsComposition } from '../../composition/company-settings.composition';
-import { fr } from '../i18n/fr';
+import { i18n } from '../i18n/i18n';
 import { useGetCompanySettings } from './useGetCompanySettings';
 import { useSetNonWorkingWeekdays } from './useSetNonWorkingWeekdays';
 
@@ -114,7 +114,7 @@ describe('useSetNonWorkingWeekdays', () => {
     await waitFor(() =>
       expect(result.current.settings.data?.weekdays).toContainEqual({
         value: DayOfWeek.SUNDAY,
-        label: fr.days.SUNDAY,
+        label: i18n.messages.days.SUNDAY,
         selected: true,
       }),
     );
@@ -144,7 +144,7 @@ describe('useSetNonWorkingWeekdays', () => {
     await waitFor(() => expect(result.current.weekdays.isError).toBe(true));
 
     expect(deps.errorPresenter.present(result.current.weekdays.error)).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 

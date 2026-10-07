@@ -9,7 +9,7 @@ import { CompanySettingsController } from '../../../adapters/controllers/company
 import { CompanySettingsPresenter } from '../../../adapters/presenters/company-settings.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { CompanySettingsComposition } from '../../composition/company-settings.composition';
-import { fr } from '../i18n/fr';
+import { i18n } from '../i18n/i18n';
 import { useAddPublicHoliday } from './useAddPublicHoliday';
 import { useGetCompanySettings } from './useGetCompanySettings';
 
@@ -151,7 +151,7 @@ describe('useAddPublicHoliday', () => {
     await waitFor(() => expect(result.current.addHoliday.isError).toBe(true));
 
     expect(deps.errorPresenter.present(result.current.addHoliday.error)).toBe(
-      fr.errors.POTENTIAL_DUPLICATE,
+      i18n.messages.errors.POTENTIAL_DUPLICATE,
     );
   });
 

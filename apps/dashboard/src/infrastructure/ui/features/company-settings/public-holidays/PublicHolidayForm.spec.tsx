@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import { fr } from '../../i18n/fr';
+import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
+import { i18n } from '../../../i18n/i18n';
 import { PublicHolidayForm } from './PublicHolidayForm';
 import type { PublicHolidayValues } from './public-holiday.schema';
 
@@ -21,8 +21,8 @@ function renderForm(
     />,
   );
 
-  const date = screen.getByLabelText<HTMLInputElement>(fr.settings.date);
-  const label = screen.getByLabelText<HTMLInputElement>(fr.settings.label);
+  const date = screen.getByLabelText<HTMLInputElement>(i18n.messages.settings.date);
+  const label = screen.getByLabelText<HTMLInputElement>(i18n.messages.settings.label);
 
   return {
     submitted,
@@ -34,7 +34,7 @@ function renderForm(
     },
     add: () =>
       fireEvent.click(
-        screen.getByRole('button', { name: fr.settings.addHoliday }),
+        screen.getByRole('button', { name: i18n.messages.settings.addHoliday }),
       ),
   };
 }
@@ -84,7 +84,7 @@ describe('PublicHolidayForm', () => {
   it('stays quiet until the public holiday is submitted', () => {
     renderForm();
 
-    expect(screen.queryByText(fr.errors.REQUIRED_INFORMATION)).toBeNull();
+    expect(screen.queryByText(i18n.messages.errors.REQUIRED_INFORMATION)).toBeNull();
   });
 
   it('explains that a missing date is not enough', async () => {
@@ -94,7 +94,7 @@ describe('PublicHolidayForm', () => {
     add();
 
     expect(
-      await screen.findByText(fr.errors.REQUIRED_INFORMATION),
+      await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION),
     ).toBeTruthy();
   });
 
@@ -104,7 +104,7 @@ describe('PublicHolidayForm', () => {
     fill({ date: '', label: 'Fête nationale' });
     add();
 
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
     expect(submitted).toEqual([]);
   });
 
@@ -114,7 +114,7 @@ describe('PublicHolidayForm', () => {
     fill({ date: '2026-07-14', label: '   ' });
     add();
 
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
     expect(submitted).toEqual([]);
   });
 
@@ -125,7 +125,7 @@ describe('PublicHolidayForm', () => {
 
     await waitFor(() =>
       expect(
-        screen.getAllByText(fr.errors.REQUIRED_INFORMATION),
+        screen.getAllByText(i18n.messages.errors.REQUIRED_INFORMATION),
       ).toHaveLength(2),
     );
   });
@@ -145,10 +145,10 @@ describe('PublicHolidayForm', () => {
   });
 
   it('shows the refusal its caller reports', () => {
-    renderForm({ submissionError: fr.errors.POTENTIAL_DUPLICATE });
+    renderForm({ submissionError: i18n.messages.errors.POTENTIAL_DUPLICATE });
 
     expect(screen.getByRole('alert').textContent).toBe(
-      fr.errors.POTENTIAL_DUPLICATE,
+      i18n.messages.errors.POTENTIAL_DUPLICATE,
     );
   });
 
@@ -164,7 +164,7 @@ describe('PublicHolidayForm', () => {
     fill({ date: '', label: 'Fête nationale' });
     add();
 
-    await screen.findByText(fr.errors.REQUIRED_INFORMATION);
+    await screen.findByText(i18n.messages.errors.REQUIRED_INFORMATION);
     expect([date.value, label.value]).toEqual(['', 'Fête nationale']);
   });
 });

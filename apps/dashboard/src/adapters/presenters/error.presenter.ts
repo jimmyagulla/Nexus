@@ -1,7 +1,12 @@
 import { ErrorCode, isErrorCode } from '@hexagonal-monorepo-template/domain';
-import { fr } from '../../infrastructure/ui/i18n/fr';
+import {
+  i18n as appI18n,
+  type I18n,
+} from '../../infrastructure/ui/i18n/i18n';
 
 export class ErrorPresenter {
+  constructor(private readonly i18n: I18n = appI18n) {}
+
   present(error: unknown): string {
     if (error instanceof Error) {
       return this.translate(error.message);
@@ -14,10 +19,12 @@ export class ErrorPresenter {
   }
 
   private translate(message: string): string {
-    return isErrorCode(message) ? fr.errors[message] : this.fallback();
+    return isErrorCode(message)
+      ? this.i18n.messages.errors[message]
+      : this.fallback();
   }
 
   private fallback(): string {
-    return fr.errors[ErrorCode.ACCESS_DENIED];
+    return this.i18n.messages.errors[ErrorCode.ACCESS_DENIED];
   }
 }

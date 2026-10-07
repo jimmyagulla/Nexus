@@ -2,8 +2,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { DayOfWeek } from '@hexagonal-monorepo-template/domain';
 import type { CompanySettingsViewModel } from '../../../adapters/presenters/company-settings.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
-import type { PublicHolidayValues } from '../features/company-settings/public-holiday.schema';
-import { fr } from '../i18n/fr';
+import type { PublicHolidayValues } from '../features/company-settings/public-holidays/public-holiday.schema';
+import { i18n } from '../i18n/i18n';
 import { Settings } from './Settings';
 
 const acme: CompanySettingsViewModel = {
@@ -11,7 +11,7 @@ const acme: CompanySettingsViewModel = {
   name: 'Acme',
   weekdays: Object.values(DayOfWeek).map((value) => ({
     value,
-    label: fr.days[value],
+    label: i18n.messages.days[value],
     selected: value === DayOfWeek.SUNDAY,
   })),
   selectedWeekdays: [DayOfWeek.SUNDAY],
@@ -64,10 +64,10 @@ describe('Settings', () => {
     renderSettings();
 
     expect(
-      screen.getByRole('heading', { name: fr.settings.title }),
+      screen.getByRole('heading', { name: i18n.messages.settings.title }),
     ).toBeTruthy();
     expect(
-      screen.getByRole('heading', { name: fr.settings.publicHolidays }),
+      screen.getByRole('heading', { name: i18n.messages.settings.publicHolidays }),
     ).toBeTruthy();
   });
 
@@ -75,10 +75,10 @@ describe('Settings', () => {
     renderSettings();
 
     expect(
-      screen.getByLabelText<HTMLInputElement>(fr.settings.name).value,
+      screen.getByLabelText<HTMLInputElement>(i18n.messages.settings.name).value,
     ).toBe('Acme');
     expect(
-      screen.getByLabelText<HTMLInputElement>(fr.days.SUNDAY).checked,
+      screen.getByLabelText<HTMLInputElement>(i18n.messages.days.SUNDAY).checked,
     ).toBe(true);
     expect(screen.getByText('14/07/2026 — Fête nationale')).toBeTruthy();
   });
@@ -86,11 +86,11 @@ describe('Settings', () => {
   it('hands the new company name to its caller', async () => {
     const { renamed } = renderSettings();
 
-    fireEvent.change(screen.getByLabelText(fr.settings.name), {
+    fireEvent.change(screen.getByLabelText(i18n.messages.settings.name), {
       target: { value: 'Nexus' },
     });
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.saveName }),
+      screen.getByRole('button', { name: i18n.messages.settings.saveName }),
     );
 
     await waitFor(() => expect(renamed).toEqual(['Nexus']));
@@ -99,9 +99,9 @@ describe('Settings', () => {
   it('hands the retained weekdays to its caller', async () => {
     const { savedWeekdays } = renderSettings();
 
-    fireEvent.click(screen.getByLabelText(fr.days.SATURDAY));
+    fireEvent.click(screen.getByLabelText(i18n.messages.days.SATURDAY));
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.saveWeekdays }),
+      screen.getByRole('button', { name: i18n.messages.settings.saveWeekdays }),
     );
 
     await waitFor(() =>
@@ -113,7 +113,7 @@ describe('Settings', () => {
     const { removedHolidays } = renderSettings();
 
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.removeHoliday }),
+      screen.getByRole('button', { name: i18n.messages.settings.removeHoliday }),
     );
 
     expect(removedHolidays).toEqual(['ph-1']);
@@ -122,7 +122,7 @@ describe('Settings', () => {
   it('announces an empty calendar', () => {
     renderSettings({ ...acme, publicHolidays: [] });
 
-    expect(screen.getByText(fr.settings.noPublicHolidays)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.settings.noPublicHolidays)).toBeTruthy();
   });
 
   it('surfaces every refusal it is handed', () => {

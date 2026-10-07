@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { LayoutDashboard, Settings } from 'lucide-react';
 import { AppRoutes } from '@hexagonal-monorepo-template/ports';
-import { fr } from '../i18n/fr';
+import { i18n } from '../../i18n/i18n';
 import { NavigationLink } from './NavigationLink';
 
 interface LayoutProps {
@@ -21,12 +21,12 @@ export function Layout({ children }: LayoutProps) {
           <NavigationLink
             to={AppRoutes.home}
             icon={<LayoutDashboard className="h-5 w-5" />}
-            label={fr.navigation.dashboard}
+            label={i18n.messages.navigation.dashboard}
           />
           <NavigationLink
             to={AppRoutes.settings}
             icon={<Settings className="h-5 w-5" />}
-            label={fr.navigation.settings}
+            label={i18n.messages.navigation.settings}
           />
         </nav>
       </aside>

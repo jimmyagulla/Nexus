@@ -2,7 +2,10 @@ import {
   CompanySettingsSnapshot,
   DayOfWeek,
 } from '@hexagonal-monorepo-template/domain';
-import { fr } from '../../infrastructure/ui/i18n/fr';
+import {
+  i18n as appI18n,
+  type I18n,
+} from '../../infrastructure/ui/i18n/i18n';
 
 export interface WeekdayViewModel {
   value: DayOfWeek;
@@ -25,6 +28,8 @@ export interface CompanySettingsViewModel {
 }
 
 export class CompanySettingsPresenter {
+  constructor(private readonly i18n: I18n = appI18n) {}
+
   present(snapshot: CompanySettingsSnapshot): CompanySettingsViewModel {
     return {
       id: snapshot.id,
@@ -42,7 +47,7 @@ export class CompanySettingsPresenter {
 
     return Object.values(DayOfWeek).map((value) => ({
       value,
-      label: fr.days[value],
+      label: this.i18n.messages.days[value],
       selected: selected.has(value),
     }));
   }

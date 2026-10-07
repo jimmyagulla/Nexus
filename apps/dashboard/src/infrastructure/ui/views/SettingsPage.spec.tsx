@@ -16,7 +16,7 @@ import { CompanySettingsPresenter } from '../../../adapters/presenters/company-s
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { CompanySettingsComposition } from '../../composition/company-settings.composition';
 import { SettingsPage } from './SettingsPage';
-import { fr } from '../i18n/fr';
+import { i18n } from '../i18n/i18n';
 
 type Refusals = {
   rename?: ErrorCode;
@@ -68,18 +68,18 @@ function settingsOf(snapshot: CompanySettingsSnapshot) {
 
 async function addHolidayThroughDialog() {
   fireEvent.click(
-    await screen.findByRole('button', { name: fr.settings.addHoliday }),
+    await screen.findByRole('button', { name: i18n.messages.settings.addHoliday }),
   );
 
   const dialog = within(screen.getByRole('dialog'));
-  fireEvent.change(dialog.getByLabelText(fr.settings.date), {
+  fireEvent.change(dialog.getByLabelText(i18n.messages.settings.date), {
     target: { value: '2026-07-14' },
   });
-  fireEvent.change(dialog.getByLabelText(fr.settings.label), {
+  fireEvent.change(dialog.getByLabelText(i18n.messages.settings.label), {
     target: { value: 'Fête nationale' },
   });
   fireEvent.click(
-    dialog.getByRole('button', { name: fr.settings.addHoliday }),
+    dialog.getByRole('button', { name: i18n.messages.settings.addHoliday }),
   );
 }
 
@@ -108,7 +108,7 @@ describe('SettingsPage', () => {
 
     expect(await screen.findByDisplayValue('Acme')).toBeTruthy();
     expect(
-      screen.getByRole('heading', { name: fr.settings.title }),
+      screen.getByRole('heading', { name: i18n.messages.settings.title }),
     ).toBeTruthy();
   });
 
@@ -140,7 +140,7 @@ describe('SettingsPage', () => {
     );
 
     expect(
-      await screen.findByText(fr.settings.noPublicHolidays),
+      await screen.findByText(i18n.messages.settings.noPublicHolidays),
     ).toBeTruthy();
   });
 
@@ -152,7 +152,7 @@ describe('SettingsPage', () => {
     );
 
     expect(
-      await screen.findByText(fr.errors.ACCESS_DENIED),
+      await screen.findByText(i18n.messages.errors.ACCESS_DENIED),
     ).toBeTruthy();
   });
 
@@ -161,15 +161,15 @@ describe('SettingsPage', () => {
       compositionOf(settingsOf(acme), { rename: ErrorCode.ACCESS_DENIED }),
     );
 
-    fireEvent.change(await screen.findByLabelText(fr.settings.name), {
+    fireEvent.change(await screen.findByLabelText(i18n.messages.settings.name), {
       target: { value: 'Nexus' },
     });
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.saveName }),
+      screen.getByRole('button', { name: i18n.messages.settings.saveName }),
     );
 
     expect((await screen.findByRole('alert')).textContent).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 
@@ -185,7 +185,7 @@ describe('SettingsPage', () => {
     expect(
       (await within(screen.getByRole('dialog')).findByRole('alert'))
         .textContent,
-    ).toBe(fr.errors.POTENTIAL_DUPLICATE);
+    ).toBe(i18n.messages.errors.POTENTIAL_DUPLICATE);
   });
 
   it('keeps the dialog open when the public holiday is refused', async () => {
@@ -200,7 +200,7 @@ describe('SettingsPage', () => {
     await within(screen.getByRole('dialog')).findByRole('alert');
     expect(
       within(screen.getByRole('dialog')).getByLabelText<HTMLInputElement>(
-        fr.settings.label,
+        i18n.messages.settings.label,
       ).value,
     ).toBe('Fête nationale');
   });
@@ -218,13 +218,13 @@ describe('SettingsPage', () => {
       compositionOf(settingsOf(acme), { weekdays: ErrorCode.ACCESS_DENIED }),
     );
 
-    fireEvent.click(await screen.findByLabelText(fr.days.SATURDAY));
+    fireEvent.click(await screen.findByLabelText(i18n.messages.days.SATURDAY));
     fireEvent.click(
-      screen.getByRole('button', { name: fr.settings.saveWeekdays }),
+      screen.getByRole('button', { name: i18n.messages.settings.saveWeekdays }),
     );
 
     expect((await screen.findByRole('alert')).textContent).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 
@@ -236,11 +236,11 @@ describe('SettingsPage', () => {
     );
 
     fireEvent.click(
-      await screen.findByRole('button', { name: fr.settings.removeHoliday }),
+      await screen.findByRole('button', { name: i18n.messages.settings.removeHoliday }),
     );
 
     expect((await screen.findByRole('alert')).textContent).toBe(
-      fr.errors.ACCESS_DENIED,
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 
@@ -252,7 +252,7 @@ describe('SettingsPage', () => {
     );
 
     fireEvent.click(
-      await screen.findByRole('button', { name: fr.settings.removeHoliday }),
+      await screen.findByRole('button', { name: i18n.messages.settings.removeHoliday }),
     );
 
     await screen.findByRole('alert');

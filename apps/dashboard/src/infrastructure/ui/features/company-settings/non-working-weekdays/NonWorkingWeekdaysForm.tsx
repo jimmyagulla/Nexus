@@ -1,15 +1,14 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DayOfWeek } from '@hexagonal-monorepo-template/domain';
-import type { WeekdayViewModel } from '../../../../adapters/presenters/company-settings.presenter';
-import { SubmissionError } from '../../common/SubmissionError';
-import { Button } from '../../shared/button';
-import { fr } from '../../i18n/fr';
+import type { WeekdayViewModel } from '../../../../../adapters/presenters/company-settings.presenter';
+import { SubmissionError } from '../../../common/errors/SubmissionError';
+import { Button } from '../../../shared/button';
+import { i18n } from '../../../i18n/i18n';
 import {
   nonWorkingWeekdaysSchema,
   type NonWorkingWeekdaysValues,
 } from './non-working-weekdays.schema';
-import { WeekdayCheckbox } from './WeekdayCheckbox';
 
 interface NonWorkingWeekdaysFormProps {
   weekdays: WeekdayViewModel[];
@@ -37,16 +36,22 @@ export function NonWorkingWeekdaysForm({
         await onSubmit(values.weekdays);
       })}
     >
-      <p className="text-sm font-medium">{fr.settings.nonWorkingWeekdays}</p>
+      <p className="text-sm font-medium">
+        {i18n.messages.settings.nonWorkingWeekdays}
+      </p>
       {weekdays.map((weekday) => (
-        <WeekdayCheckbox
-          key={weekday.value}
-          weekday={weekday}
-          registration={registration}
-        />
+        <label key={weekday.value} className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            value={weekday.value}
+            defaultChecked={weekday.selected}
+            {...registration}
+          />
+          {weekday.label}
+        </label>
       ))}
       <SubmissionError message={submissionError} />
-      <Button type="submit">{fr.settings.saveWeekdays}</Button>
+      <Button type="submit">{i18n.messages.settings.saveWeekdays}</Button>
     </form>
   );
 }
