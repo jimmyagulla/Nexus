@@ -3,9 +3,9 @@ import {
   isErrorCode,
 } from '@hexagonal-monorepo-template/domain';
 import { sendJson } from '@hexagonal-monorepo-template/infrastructure';
-import { HttpClient } from '@hexagonal-monorepo-template/ports';
+import { IHttpClient } from '@hexagonal-monorepo-template/ports';
 
-export class FetchHttpClient implements HttpClient {
+export class FetchHttpClient implements IHttpClient {
   constructor(private readonly baseUrl: string) {}
 
   get<T>(url: string, config?: unknown): Promise<T> {

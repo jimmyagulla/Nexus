@@ -9,8 +9,8 @@ import {
 import {
   API_ROUTES,
   companyPath,
-  HttpClient,
   ICompanyPublicHolidaysGateway,
+  IHttpClient,
 } from '@hexagonal-monorepo-template/ports';
 
 type PublicHolidayPayload = {
@@ -29,7 +29,7 @@ type CompanySettingsPayload = {
 export class ApiCompanyPublicHolidaysGateway
   implements ICompanyPublicHolidaysGateway
 {
-  constructor(private readonly httpClient: HttpClient) {}
+  constructor(private readonly httpClient: IHttpClient) {}
 
   async add(
     companyId: string,

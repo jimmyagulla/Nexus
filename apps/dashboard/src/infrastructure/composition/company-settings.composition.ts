@@ -10,7 +10,7 @@ import {
   ApiCompanySettingsGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
-  HttpClient,
+  IHttpClient,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
 import { CompanySettingsController } from '../../adapters/controllers/company-settings.controller';
@@ -24,7 +24,7 @@ export type CompanySettingsComposition = {
 };
 
 export function createCompanySettingsComposition(
-  httpClient: HttpClient,
+  httpClient: IHttpClient,
   sessions: ISessionGateway,
 ): CompanySettingsComposition {
   const companySettings = new ApiCompanySettingsGateway(httpClient);

@@ -1,5 +1,5 @@
 import { ErrorCode } from '@hexagonal-monorepo-template/domain';
-import { HttpClient } from '@hexagonal-monorepo-template/ports';
+import { IHttpClient } from '@hexagonal-monorepo-template/ports';
 
 export type RecordedHttpCall = {
   method: string;
@@ -8,7 +8,7 @@ export type RecordedHttpCall = {
   config?: unknown;
 };
 
-export class InMemoryHttpClient implements HttpClient {
+export class InMemoryHttpClient implements IHttpClient {
   readonly calls: RecordedHttpCall[] = [];
   private readonly replies = new Map<string, unknown>();
 
