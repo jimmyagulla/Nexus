@@ -29,15 +29,6 @@ export function parseBool(value: string | undefined, fallback: boolean): boolean
   }
 }
 
-export function readOptional(value: string | undefined): string | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-
-  const trimmed = value.trim();
-  return trimmed === '' ? undefined : trimmed;
-}
-
 export function parsePersistence(
   value: string | undefined,
   fallback: 'memory' | 'postgres',

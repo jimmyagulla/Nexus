@@ -1,10 +1,10 @@
 import {
   InMemoryCompanyIdentityBinder,
   InMemoryCompanyRepository,
-  SequentialIdGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
+  Company,
   ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
@@ -22,7 +22,6 @@ describe('CreateCompanyUseCase', () => {
     const identity = new InMemoryCompanyIdentityBinder();
     const useCase = new CreateCompanyUseCase(
       companies,
-      new SequentialIdGenerator(),
       identity,
     );
 
@@ -33,12 +32,12 @@ describe('CreateCompanyUseCase', () => {
   });
 
   it('refuses an actor already bound to a company, without creating it nor rebinding', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const stored = new Map<string, Company>();
+    const companies = new InMemoryCompanyRepository(stored);
     const identity = new InMemoryCompanyIdentityBinder();
     await identity.bindEmployer('user-1', 'company-a');
     const useCase = new CreateCompanyUseCase(
       companies,
-      new SequentialIdGenerator(),
       identity,
     );
 
@@ -48,7 +47,7 @@ describe('CreateCompanyUseCase', () => {
         name: 'Beta',
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
-    expect(await companies.findById('id-1')).toBeNull();
+    expect(stored.size).toBe(0);
     expect(identity.bindings.get('user-1')).toBe('company-a');
   });
 
@@ -57,7 +56,6 @@ describe('CreateCompanyUseCase', () => {
     const identity = new InMemoryCompanyIdentityBinder();
     const useCase = new CreateCompanyUseCase(
       companies,
-      new SequentialIdGenerator(),
       identity,
     );
 
@@ -71,7 +69,6 @@ describe('CreateCompanyUseCase', () => {
   it('trims the company name', async () => {
     const useCase = new CreateCompanyUseCase(
       new InMemoryCompanyRepository(),
-      new SequentialIdGenerator(),
       new InMemoryCompanyIdentityBinder(),
     );
 

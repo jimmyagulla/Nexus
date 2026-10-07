@@ -13,7 +13,6 @@ import {
   IAuditLogRepository,
   IClock,
   ICompanyRepository,
-  IIdGenerator,
   IRemoveCompanyPublicHoliday,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -23,7 +22,6 @@ export class RemoveCompanyPublicHolidayUseCase
   constructor(
     private readonly companies: ICompanyRepository,
     private readonly audits: IAuditLogRepository,
-    private readonly ids: IIdGenerator,
     private readonly clock: IClock,
   ) {}
 
@@ -39,11 +37,15 @@ export class RemoveCompanyPublicHolidayUseCase
     const retained = company.calendar.requirePublicHoliday(
       input.publicHolidayId,
     );
-    const updated = await this.dropFromCalendar(
+    const updated = await this.removePublicHolidayFromCompanyCalendar(
       company,
       input.publicHolidayId,
     );
-    await this.recordDeletion(input.actor, updated, retained.publicHoliday);
+    await this.recordPublicHolidayRemoval(
+      input.actor,
+      updated,
+      retained.publicHoliday,
+    );
     return toCompanySettingsSnapshot(updated);
   }
 
@@ -56,7 +58,7 @@ export class RemoveCompanyPublicHolidayUseCase
     );
   }
 
-  private async dropFromCalendar(
+  private async removePublicHolidayFromCompanyCalendar(
     company: Company,
     publicHolidayId: string,
   ): Promise<Company> {
@@ -67,13 +69,12 @@ export class RemoveCompanyPublicHolidayUseCase
     return updated;
   }
 
-  private recordDeletion(
+  private recordPublicHolidayRemoval(
     actor: ActorContext,
     company: Company,
     publicHoliday: PublicHoliday,
   ): Promise<void> {
     return this.audits.append({
-      id: this.ids.next(),
       companyId: company.id,
       actorId: actor.userId,
       occurredAt: this.clock.now(),

@@ -17,7 +17,6 @@ import {
   IAuditLogRepository,
   IClock,
   ICompanyRepository,
-  IIdGenerator,
   IPublicHolidayRepository,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -28,7 +27,6 @@ export class AddCompanyPublicHolidayUseCase
     private readonly companies: ICompanyRepository,
     private readonly publicHolidays: IPublicHolidayRepository,
     private readonly audits: IAuditLogRepository,
-    private readonly ids: IIdGenerator,
     private readonly clock: IClock,
   ) {}
 
@@ -42,12 +40,19 @@ export class AddCompanyPublicHolidayUseCase
       input.actor,
       input.companyId,
     );
-    const publicHoliday = await this.resolveSharedPublicHoliday(
+    const publicHoliday = await this.findOrCreateSharedPublicHoliday(
       input.date,
       input.label,
     );
-    const updated = await this.retainOnCalendar(company, publicHoliday);
-    await this.recordAddition(input.actor, updated, publicHoliday);
+    const updated = await this.addPublicHolidayToCompanyCalendar(
+      company,
+      publicHoliday,
+    );
+    await this.recordPublicHolidayAddition(
+      input.actor,
+      updated,
+      publicHoliday,
+    );
     return toCompanySettingsSnapshot(updated);
   }
 
@@ -60,7 +65,11 @@ export class AddCompanyPublicHolidayUseCase
     );
   }
 
-  private async resolveSharedPublicHoliday(
+  /**
+   * Public holidays live in one catalog shared by every company.
+   * Returns the entry already stored for this date and label, or registers a new one.
+   */
+  private async findOrCreateSharedPublicHoliday(
     rawDate: string,
     rawLabel: string,
   ): Promise<PublicHoliday> {
@@ -71,12 +80,10 @@ export class AddCompanyPublicHolidayUseCase
       return observed;
     }
 
-    const publicHoliday = new PublicHoliday(this.ids.next(), date, label);
-    await this.publicHolidays.save(publicHoliday);
-    return publicHoliday;
+    return this.publicHolidays.insert(date, label);
   }
 
-  private async retainOnCalendar(
+  private async addPublicHolidayToCompanyCalendar(
     company: Company,
     publicHoliday: PublicHoliday,
   ): Promise<Company> {
@@ -89,13 +96,12 @@ export class AddCompanyPublicHolidayUseCase
     return updated;
   }
 
-  private recordAddition(
+  private recordPublicHolidayAddition(
     actor: ActorContext,
     company: Company,
     publicHoliday: PublicHoliday,
   ): Promise<void> {
     return this.audits.append({
-      id: this.ids.next(),
       companyId: company.id,
       actorId: actor.userId,
       occurredAt: this.clock.now(),

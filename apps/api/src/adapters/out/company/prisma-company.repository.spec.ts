@@ -23,7 +23,17 @@ type Store = {
   publicHolidays: PublicHolidayRow[];
 };
 
-type FakePrisma = { client: PrismaDb; store: Store };
+type CompanyCreateData = {
+  id?: string;
+  name: string;
+  nonWorkingWeekdays?: { create: { dayOfWeek: DayOfWeek }[] };
+};
+
+type FakePrisma = {
+  client: PrismaDb;
+  store: Store;
+  creates: CompanyCreateData[];
+};
 
 const COMPANY_ID = 'company-1';
 
@@ -126,11 +136,34 @@ function createFakePrisma(
     ...seed,
   };
   const rejectHolidayLinks = options.rejectHolidayLinks === true;
+  const creates: CompanyCreateData[] = [];
 
   const client = {
     company: {
       findUnique: async (args: { where: { id: string } }) =>
         readCompany(store, args.where.id),
+      create: async (args: { data: CompanyCreateData }) => {
+        creates.push(args.data);
+        const row = {
+          id: args.data.id ?? 'generated-company-id',
+          name: args.data.name,
+        };
+        store.companies.push(row);
+        const weekdays = args.data.nonWorkingWeekdays?.create ?? [];
+        store.weekdays.push(
+          ...weekdays.map((weekday) => ({
+            companyId: row.id,
+            dayOfWeek: weekday.dayOfWeek,
+          })),
+        );
+        return {
+          ...row,
+          nonWorkingWeekdays: weekdays.map((weekday) => ({
+            dayOfWeek: weekday.dayOfWeek,
+          })),
+          publicHolidays: [],
+        };
+      },
     },
     $transaction: async <T>(
       run: (tx: TransactionClient) => Promise<T>,
@@ -142,7 +175,7 @@ function createFakePrisma(
     },
   };
 
-  return { client: client as unknown as PrismaDb, store };
+  return { client: client as unknown as PrismaDb, store, creates };
 }
 
 function companyOf(
@@ -171,6 +204,30 @@ function companyOf(
 }
 
 describe('PrismaCompanyRepository', () => {
+  it('lets the database assign the id of a new company', async () => {
+    const { client, store, creates } = createFakePrisma();
+    const repository = new PrismaCompanyRepository(client);
+
+    const company = await repository.insert(CompanyName.parse('Acme'));
+
+    expect(creates).toEqual([
+      {
+        name: 'Acme',
+        nonWorkingWeekdays: {
+          create: [
+            { dayOfWeek: DayOfWeek.SATURDAY },
+            { dayOfWeek: DayOfWeek.SUNDAY },
+          ],
+        },
+      },
+    ]);
+    expect(company.id).toBe('generated-company-id');
+    expect(store.companies).toEqual([
+      { id: 'generated-company-id', name: 'Acme' },
+    ]);
+    expect(await repository.findById(company.id)).toEqual(company);
+  });
+
   it('reads back the company it has just written', async () => {
     const { client } = createFakePrisma({ publicHolidays: [christmas] });
     const repository = new PrismaCompanyRepository(client);

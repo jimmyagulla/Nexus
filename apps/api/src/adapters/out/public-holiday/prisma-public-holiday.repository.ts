@@ -8,6 +8,13 @@ import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 export class PrismaPublicHolidayRepository implements IPublicHolidayRepository {
   constructor(private readonly prisma: PrismaDb) {}
 
+  async insert(date: CalendarDate, label: string): Promise<PublicHoliday> {
+    const row = await this.prisma.publicHoliday.create({
+      data: { date: date.value, label },
+    });
+    return new PublicHoliday(row.id, CalendarDate.parse(row.date), row.label);
+  }
+
   async save(holiday: PublicHoliday): Promise<void> {
     await this.prisma.publicHoliday.upsert({
       where: { id: holiday.id },

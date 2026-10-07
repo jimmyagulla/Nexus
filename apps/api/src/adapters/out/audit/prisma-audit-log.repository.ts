@@ -3,7 +3,10 @@ import {
   AuditEvent,
   AuditSubject,
 } from '@hexagonal-monorepo-template/domain';
-import { IAuditLogRepository } from '@hexagonal-monorepo-template/ports';
+import {
+  AuditEventDraft,
+  IAuditLogRepository,
+} from '@hexagonal-monorepo-template/ports';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import {
   toAuditSnapshot,
@@ -13,10 +16,9 @@ import {
 export class PrismaAuditLogRepository implements IAuditLogRepository {
   constructor(private readonly prisma: PrismaDb) {}
 
-  async append(event: AuditEvent): Promise<void> {
+  async append(event: AuditEventDraft): Promise<void> {
     await this.prisma.auditEvent.create({
       data: {
-        id: event.id,
         companyId: event.companyId,
         actorId: event.actorId,
         occurredAt: event.occurredAt,
@@ -25,22 +27,10 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
         snapshots: {
           create: [
             ...(event.before
-              ? [
-                  toAuditSnapshotCreate(
-                    'BEFORE',
-                    event.before,
-                    `${event.id}-before`,
-                  ),
-                ]
+              ? [toAuditSnapshotCreate('BEFORE', event.before)]
               : []),
             ...(event.after
-              ? [
-                  toAuditSnapshotCreate(
-                    'AFTER',
-                    event.after,
-                    `${event.id}-after`,
-                  ),
-                ]
+              ? [toAuditSnapshotCreate('AFTER', event.after)]
               : []),
           ],
         },

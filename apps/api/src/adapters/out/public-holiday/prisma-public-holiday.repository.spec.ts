@@ -18,13 +18,30 @@ type FindArgs = {
   where: { id?: string; date_label?: { date: string; label: string } };
 };
 
-type FakePrisma = { client: PrismaDb; rows: PublicHolidayRow[] };
+type HolidayCreateData = { id?: string; date: string; label: string };
+
+type FakePrisma = {
+  client: PrismaDb;
+  rows: PublicHolidayRow[];
+  creates: HolidayCreateData[];
+};
 
 function createFakePrisma(seed: PublicHolidayRow[] = []): FakePrisma {
   const rows = [...seed];
+  const creates: HolidayCreateData[] = [];
 
   const client = {
     publicHoliday: {
+      create: async (args: { data: HolidayCreateData }) => {
+        creates.push(args.data);
+        const row = {
+          id: args.data.id ?? 'generated-holiday-id',
+          date: args.data.date,
+          label: args.data.label,
+        };
+        rows.push(row);
+        return row;
+      },
       upsert: async (args: UpsertArgs): Promise<void> => {
         const stored = rows.find((row) => row.id === args.where.id);
         if (stored === undefined) {
@@ -46,7 +63,7 @@ function createFakePrisma(seed: PublicHolidayRow[] = []): FakePrisma {
     },
   };
 
-  return { client: client as unknown as PrismaDb, rows };
+  return { client: client as unknown as PrismaDb, rows, creates };
 }
 
 function holidayOf(id: string, date: string, label: string): PublicHoliday {
@@ -54,6 +71,23 @@ function holidayOf(id: string, date: string, label: string): PublicHoliday {
 }
 
 describe('PrismaPublicHolidayRepository', () => {
+  it('lets the database assign the id of a new public holiday', async () => {
+    const { client, rows, creates } = createFakePrisma();
+    const repository = new PrismaPublicHolidayRepository(client);
+
+    const holiday = await repository.insert(
+      CalendarDate.parse('2026-07-14'),
+      'Fête',
+    );
+
+    expect(creates).toEqual([{ date: '2026-07-14', label: 'Fête' }]);
+    expect(holiday.id).toBe('generated-holiday-id');
+    expect(rows).toEqual([
+      { id: 'generated-holiday-id', date: '2026-07-14', label: 'Fête' },
+    ]);
+    expect(await repository.findById(holiday.id)).toEqual(holiday);
+  });
+
   it('reads back the public holiday it has just written', async () => {
     const { client } = createFakePrisma();
     const repository = new PrismaPublicHolidayRepository(client);

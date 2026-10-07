@@ -3,7 +3,6 @@ import {
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
   InMemoryPublicHolidayRepository,
-  SequentialIdGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -26,6 +25,9 @@ const actor: ActorContext = {
 };
 
 const now = new Date('2026-10-06T10:00:00.000Z');
+
+const ASSIGNED_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function companyWith(
   id: string,
@@ -50,7 +52,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -62,8 +63,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
     });
 
     expect(settings.publicHolidays).toEqual([
-      { id: 'id-1', date: '2026-07-14', label: 'Bastille Day' },
+      expect.objectContaining({
+        date: '2026-07-14',
+        label: 'Bastille Day',
+      }),
     ]);
+    expect(settings.publicHolidays[0]?.id).toMatch(ASSIGNED_ID);
   });
 
   it('records the addition in the audit log', async () => {
@@ -74,33 +79,33 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       audits,
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
-    await useCase.execute({
+    const settings = await useCase.execute({
       actor,
       companyId: 'c1',
       date: '2026-07-14',
       label: 'Bastille Day',
     });
+    const holidayId = settings.publicHolidays[0]?.id;
+    const [event] = await audits.listByCompany('c1');
 
-    expect(await audits.listByCompany('c1')).toEqual([
-      {
-        id: 'id-2',
-        companyId: 'c1',
-        actorId: 'user-1',
-        occurredAt: now,
-        action: AuditAction.ADDITION,
-        subject: AuditSubject.COMPANY_PUBLIC_HOLIDAY,
-        before: null,
-        after: {
-          publicHolidayId: 'id-1',
-          holidayDate: '2026-07-14',
-          holidayLabel: 'Bastille Day',
-        },
+    expect(event?.id).toMatch(ASSIGNED_ID);
+    expect(event?.id).not.toBe(holidayId);
+    expect(event).toMatchObject({
+      companyId: 'c1',
+      actorId: 'user-1',
+      occurredAt: now,
+      action: AuditAction.ADDITION,
+      subject: AuditSubject.COMPANY_PUBLIC_HOLIDAY,
+      before: null,
+      after: {
+        publicHolidayId: holidayId,
+        holidayDate: '2026-07-14',
+        holidayLabel: 'Bastille Day',
       },
-    ]);
+    });
   });
 
   it('reuses a public holiday already observed by another company', async () => {
@@ -118,7 +123,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       publicHolidays,
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -139,7 +143,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -160,7 +163,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -177,7 +179,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 
@@ -199,7 +200,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
     await useCase.execute({
@@ -231,7 +231,6 @@ describe('AddCompanyPublicHolidayUseCase', () => {
       companies,
       new InMemoryPublicHolidayRepository(),
       new InMemoryAuditLogRepository(),
-      new SequentialIdGenerator(),
       new FixedClock(now),
     );
 

@@ -12,7 +12,6 @@ import {
   IAuditLogRepository,
   IClock,
   ICompanyRepository,
-  IIdGenerator,
   IRenameCompany,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -20,7 +19,6 @@ export class RenameCompanyUseCase implements IRenameCompany {
   constructor(
     private readonly companies: ICompanyRepository,
     private readonly audits: IAuditLogRepository,
-    private readonly ids: IIdGenerator,
     private readonly clock: IClock,
   ) {}
 
@@ -59,7 +57,6 @@ export class RenameCompanyUseCase implements IRenameCompany {
     after: Company,
   ): Promise<void> {
     return this.audits.append({
-      id: this.ids.next(),
       companyId: after.id,
       actorId: actor.userId,
       occurredAt: this.clock.now(),
