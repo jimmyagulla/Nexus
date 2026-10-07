@@ -1,5 +1,6 @@
 import {
-  InMemoryCompanySettingsGateway,
+  ApiCompanySettingsGateway,
+  InMemoryHttpClient,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -17,74 +18,49 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-function snapshots(): Map<string, CompanySettingsSnapshot> {
-  return new Map([
-    [
-      'c1',
-      {
-        id: 'c1',
-        name: 'Acme',
-        nonWorkingWeekdays: [DayOfWeek.SATURDAY, DayOfWeek.SUNDAY],
-        publicHolidays: [],
-      },
-    ],
-  ]);
+const updated: CompanySettingsSnapshot = {
+  id: 'c1',
+  name: 'Acme',
+  nonWorkingWeekdays: [DayOfWeek.SUNDAY],
+  publicHolidays: [],
+};
+
+function useCaseFor(
+  session: InMemorySessionGateway,
+): SetNonWorkingWeekdaysFromSessionUseCase {
+  const http = new InMemoryHttpClient();
+  http.reply('put', 'companies/c1/calendar/non-working-weekdays', {
+    status: 200,
+    data: updated,
+  });
+  return new SetNonWorkingWeekdaysFromSessionUseCase(
+    session,
+    new ApiCompanySettingsGateway(http),
+  );
 }
 
 describe('SetNonWorkingWeekdaysFromSessionUseCase', () => {
   it('stores the weekdays on the company of the signed-in actor', async () => {
-    const companySettings = new InMemoryCompanySettingsGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new SetNonWorkingWeekdaysFromSessionUseCase(
-      new InMemorySessionGateway('token', actor),
-      companySettings,
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway('token', actor));
 
-    const settings = await useCase.execute([DayOfWeek.SUNDAY]);
-
-    expect(settings.nonWorkingWeekdays).toEqual([DayOfWeek.SUNDAY]);
-    expect(companySettings.snapshotOf('c1').nonWorkingWeekdays).toEqual([
-      DayOfWeek.SUNDAY,
-    ]);
+    await expect(useCase.execute([DayOfWeek.SUNDAY])).resolves.toEqual(updated);
   });
 
   it('refuses when the session carries no company', async () => {
-    const companySettings = new InMemoryCompanySettingsGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new SetNonWorkingWeekdaysFromSessionUseCase(
+    const useCase = useCaseFor(
       new InMemorySessionGateway('token', { ...actor, companyId: null }),
-      companySettings,
     );
 
     await expect(useCase.execute([DayOfWeek.SUNDAY])).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(companySettings.snapshotOf('c1').nonWorkingWeekdays).toEqual([
-      DayOfWeek.SATURDAY,
-      DayOfWeek.SUNDAY,
-    ]);
   });
 
   it('refuses when the session carries no token', async () => {
-    const companySettings = new InMemoryCompanySettingsGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new SetNonWorkingWeekdaysFromSessionUseCase(
-      new InMemorySessionGateway(null, actor),
-      companySettings,
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway(null, actor));
 
     await expect(useCase.execute([DayOfWeek.SUNDAY])).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(companySettings.snapshotOf('c1').nonWorkingWeekdays).toEqual([
-      DayOfWeek.SATURDAY,
-      DayOfWeek.SUNDAY,
-    ]);
   });
 });

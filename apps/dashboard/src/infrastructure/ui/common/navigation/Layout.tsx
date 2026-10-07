@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { LayoutDashboard, Settings } from 'lucide-react';
-import { AppRoutes } from '@hexagonal-monorepo-template/ports';
+import { AppRoutes } from '../../routes/app-routes';
 import { i18n } from '../../i18n/i18n';
 import { NavigationLink } from './NavigationLink';
 

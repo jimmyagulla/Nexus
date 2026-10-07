@@ -1,5 +1,6 @@
 import {
-  InMemoryCompanySettingsGateway,
+  ApiCompanySettingsGateway,
+  InMemoryHttpClient,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -16,69 +17,51 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-function snapshots(): Map<string, CompanySettingsSnapshot> {
-  return new Map([
-    [
-      'c1',
-      { id: 'c1', name: 'Acme', nonWorkingWeekdays: [], publicHolidays: [] },
-    ],
-  ]);
+const renamed: CompanySettingsSnapshot = {
+  id: 'c1',
+  name: 'Nexus',
+  nonWorkingWeekdays: [],
+  publicHolidays: [],
+};
+
+function useCaseFor(
+  session: InMemorySessionGateway,
+): RenameCompanyFromSessionUseCase {
+  const http = new InMemoryHttpClient();
+  http.reply('patch', 'companies/c1/name', { status: 200, data: renamed });
+  return new RenameCompanyFromSessionUseCase(
+    session,
+    new ApiCompanySettingsGateway(http),
+  );
 }
 
 describe('RenameCompanyFromSessionUseCase', () => {
   it('renames the company of the signed-in actor', async () => {
-    const companySettings = new InMemoryCompanySettingsGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new RenameCompanyFromSessionUseCase(
-      new InMemorySessionGateway('token', actor),
-      companySettings,
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway('token', actor));
 
-    const settings = await useCase.execute('Nexus');
-
-    expect(settings.name).toBe('Nexus');
-    expect(companySettings.snapshotOf('c1').name).toBe('Nexus');
+    await expect(useCase.execute('Nexus')).resolves.toEqual(renamed);
   });
 
   it('refuses when the session carries no company', async () => {
-    const companySettings = new InMemoryCompanySettingsGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new RenameCompanyFromSessionUseCase(
+    const useCase = useCaseFor(
       new InMemorySessionGateway('token', { ...actor, companyId: null }),
-      companySettings,
     );
 
     await expect(useCase.execute('Nexus')).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(companySettings.snapshotOf('c1').name).toBe('Acme');
   });
 
   it('refuses when the session carries no token', async () => {
-    const companySettings = new InMemoryCompanySettingsGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new RenameCompanyFromSessionUseCase(
-      new InMemorySessionGateway(null, actor),
-      companySettings,
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway(null, actor));
 
     await expect(useCase.execute('Nexus')).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(companySettings.snapshotOf('c1').name).toBe('Acme');
   });
 
   it('refuses when there is no session at all', async () => {
-    const useCase = new RenameCompanyFromSessionUseCase(
-      new InMemorySessionGateway(null, null),
-      new InMemoryCompanySettingsGateway('token', snapshots()),
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway(null, null));
 
     await expect(useCase.execute('Nexus')).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,

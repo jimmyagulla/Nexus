@@ -1,10 +1,9 @@
 export interface IHttpClient {
-  request<T>(input: {
-    method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
-    path: string;
-    body?: unknown;
-    token?: string;
-  }): Promise<T>;
+  get<T>(url: string, config?: unknown): Promise<T>;
+  post<T>(url: string, data?: unknown, config?: unknown): Promise<T>;
+  put<T>(url: string, data?: unknown, config?: unknown): Promise<T>;
+  patch<T>(url: string, data?: unknown, config?: unknown): Promise<T>;
+  delete<T>(url: string, config?: unknown): Promise<T>;
 }
 
 export const IHttpClient = Symbol('IHttpClient');

@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
 import { createRoute } from '@tanstack/react-router';
-import { AppRoutes } from '@hexagonal-monorepo-template/ports';
-import { getCompanySettingsComposition } from '../../di';
+import { companySettingsComposition } from '../../di';
 import { SettingsPage } from '../views/SettingsPage';
 import { rootRoute } from './__root';
+import { AppRoutes } from './app-routes';
 
 export const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -12,6 +11,5 @@ export const settingsRoute = createRoute({
 });
 
 function SettingsRoute() {
-  const deps = useMemo(() => getCompanySettingsComposition(), []);
-  return <SettingsPage deps={deps} />;
+  return <SettingsPage deps={companySettingsComposition} />;
 }

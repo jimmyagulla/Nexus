@@ -1,14 +1,16 @@
+import { FetchHttpClient } from '@hexagonal-monorepo-template/adapters';
+import { loadDashboardConfig } from './config/load-dashboard-config';
 import { createCompanySettingsComposition } from './composition/company-settings.composition';
-import type { CompanySettingsComposition } from './composition/company-settings.composition';
-import { createHttpClient } from './network/create-http-client';
 import { createSessionGateway } from './session/create-session-gateway';
 
-let companySettingsComposition: CompanySettingsComposition | undefined;
+const API_URL = loadDashboardConfig().apiUrl;
+const httpClient = new FetchHttpClient(API_URL);
 
-export function getCompanySettingsComposition(): CompanySettingsComposition {
-  companySettingsComposition ??= createCompanySettingsComposition(
-    createHttpClient(),
-    createSessionGateway(),
-  );
-  return companySettingsComposition;
-}
+export const companySettingsComposition = createCompanySettingsComposition(
+  httpClient,
+  createSessionGateway(),
+);
+export const companySettingsController = companySettingsComposition.controller;
+export const companySettingsPresenter = companySettingsComposition.presenter;
+export const companySettingsErrorPresenter =
+  companySettingsComposition.errorPresenter;

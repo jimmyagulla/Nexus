@@ -1,5 +1,6 @@
 import {
-  InMemoryCompanyPublicHolidaysGateway,
+  ApiCompanyPublicHolidaysGateway,
+  InMemoryHttpClient,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -16,84 +17,64 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-function snapshots(): Map<string, CompanySettingsSnapshot> {
-  return new Map([
-    [
-      'c1',
-      {
-        id: 'c1',
-        name: 'Acme',
-        nonWorkingWeekdays: [],
-        publicHolidays: [
-          { id: 'ph-1', date: '2026-07-14', label: 'Bastille Day' },
-        ],
-      },
-    ],
-  ]);
+const cleared: CompanySettingsSnapshot = {
+  id: 'c1',
+  name: 'Acme',
+  nonWorkingWeekdays: [],
+  publicHolidays: [],
+};
+
+function gatewayOver(http: InMemoryHttpClient): ApiCompanyPublicHolidaysGateway {
+  return new ApiCompanyPublicHolidaysGateway(http);
 }
 
 describe('RemoveCompanyPublicHolidayFromSessionUseCase', () => {
   it('drops the public holiday from the company of the signed-in actor', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
-    );
+    const http = new InMemoryHttpClient();
+    http.reply('delete', 'companies/c1/calendar/public-holidays/ph-1', {
+      status: 200,
+      data: cleared,
+    });
     const useCase = new RemoveCompanyPublicHolidayFromSessionUseCase(
       new InMemorySessionGateway('token', actor),
-      publicHolidays,
+      gatewayOver(http),
     );
 
-    const settings = await useCase.execute('ph-1');
-
-    expect(settings.publicHolidays).toEqual([]);
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toEqual([]);
+    await expect(useCase.execute('ph-1')).resolves.toEqual(cleared);
   });
 
   it('refuses when the session carries no company', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
-    );
     const useCase = new RemoveCompanyPublicHolidayFromSessionUseCase(
       new InMemorySessionGateway('token', { ...actor, companyId: null }),
-      publicHolidays,
+      gatewayOver(new InMemoryHttpClient()),
     );
 
-    await expect(useCase.execute('ph-1')).rejects.toThrow(
-      ErrorCode.ACCESS_DENIED,
-    );
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toHaveLength(1);
+    await expect(useCase.execute('ph-1')).rejects.toThrow(ErrorCode.ACCESS_DENIED);
   });
 
   it('refuses when the session carries no token', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
-    );
     const useCase = new RemoveCompanyPublicHolidayFromSessionUseCase(
       new InMemorySessionGateway(null, actor),
-      publicHolidays,
+      gatewayOver(new InMemoryHttpClient()),
     );
 
-    await expect(useCase.execute('ph-1')).rejects.toThrow(
-      ErrorCode.ACCESS_DENIED,
-    );
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toHaveLength(1);
+    await expect(useCase.execute('ph-1')).rejects.toThrow(ErrorCode.ACCESS_DENIED);
   });
 
-  it('refuses a public holiday the company never retained', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
+  it('surfaces the gateway refusal when the holiday cannot be removed', async () => {
+    const http = new InMemoryHttpClient();
+    http.reject(
+      'delete',
+      'companies/c1/calendar/public-holidays/ph-missing',
+      new Error(ErrorCode.ACCESS_DENIED),
     );
     const useCase = new RemoveCompanyPublicHolidayFromSessionUseCase(
       new InMemorySessionGateway('token', actor),
-      publicHolidays,
+      gatewayOver(http),
     );
 
     await expect(useCase.execute('ph-missing')).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toHaveLength(1);
   });
 });
