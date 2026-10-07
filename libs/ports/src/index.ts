@@ -23,5 +23,4 @@ export * from './out/session/session-client.port';
 export * from './out/system/clock.port';
 export * from './out/system/id-generator.port';
 export * from './http/api-routes';
-export * from './http/app-routes';
 export * from './http/api-response';

@@ -1,27 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import {
+  InMemoryHttpClient,
+  InMemorySessionGateway,
+} from '@hexagonal-monorepo-template/adapters';
+import {
   ActorContext,
   CompanySettingsSnapshot,
   DayOfWeek,
   ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
-import {
-  IHttpClient,
-  ISessionGateway,
-} from '@hexagonal-monorepo-template/ports';
 import { fr } from '../ui/i18n/fr';
 import {
   CompanySettingsComposition,
   createCompanySettingsComposition,
 } from './company-settings.composition';
-
-type RecordedRequest = {
-  method: string;
-  path: string;
-  body?: unknown;
-  token?: string;
-};
 
 const snapshot: CompanySettingsSnapshot = {
   id: 'c1',
@@ -44,31 +37,25 @@ const strangerToEveryCompany: ActorContext = {
   role: null,
 };
 
-function sessionOf(actor: ActorContext | null, token: string | null) {
-  const gateway: ISessionGateway = {
-    getAccessToken: async () => token,
-    getActor: async () => actor,
-    refresh: async () => undefined,
-  };
-
-  return gateway;
-}
+const envelope = { status: 200, data: snapshot };
 
 function compositionFor(
   actor: ActorContext | null = employerOfAcme,
   token: string | null = 'jwt',
-): { requests: RecordedRequest[]; deps: CompanySettingsComposition } {
-  const requests: RecordedRequest[] = [];
-  const http: IHttpClient = {
-    request: async <T>(input: RecordedRequest): Promise<T> => {
-      requests.push(input);
-      return snapshot as unknown as T;
-    },
-  };
+): { http: InMemoryHttpClient; deps: CompanySettingsComposition } {
+  const http = new InMemoryHttpClient();
+  http.reply('get', 'companies/c1/settings', envelope);
+  http.reply('patch', 'companies/c1/name', envelope);
+  http.reply('put', 'companies/c1/calendar/non-working-weekdays', envelope);
+  http.reply('post', 'companies/c1/calendar/public-holidays', envelope);
+  http.reply('delete', 'companies/c1/calendar/public-holidays/ph-1', envelope);
 
   return {
-    requests,
-    deps: createCompanySettingsComposition(http, sessionOf(actor, token)),
+    http,
+    deps: createCompanySettingsComposition(
+      http,
+      new InMemorySessionGateway(token, actor),
+    ),
   };
 }
 
@@ -78,72 +65,78 @@ describe('createCompanySettingsComposition', () => {
   });
 
   it('wires a controller that reads the settings of the session company', async () => {
-    const { deps, requests } = compositionFor();
+    const { deps, http } = compositionFor();
 
     await expect(deps.controller.getSettings()).resolves.toEqual(snapshot);
-    expect(requests).toEqual([
-      { method: 'GET', path: 'companies/c1/settings', token: 'jwt' },
+    expect(http.calls).toEqual([
+      {
+        method: 'get',
+        url: 'companies/c1/settings',
+        data: undefined,
+        config: { headers: { Authorization: 'Bearer jwt' } },
+      },
     ]);
   });
 
   it('wires a controller that renames the session company', async () => {
-    const { deps, requests } = compositionFor();
+    const { deps, http } = compositionFor();
 
     await deps.controller.renameCompany('Nexus');
 
-    expect(requests).toEqual([
+    expect(http.calls).toEqual([
       {
-        method: 'PATCH',
-        path: 'companies/c1/name',
-        body: { name: 'Nexus' },
-        token: 'jwt',
+        method: 'patch',
+        url: 'companies/c1/name',
+        data: { name: 'Nexus' },
+        config: { headers: { Authorization: 'Bearer jwt' } },
       },
     ]);
   });
 
   it('wires a controller that replaces the non-working weekdays', async () => {
-    const { deps, requests } = compositionFor();
+    const { deps, http } = compositionFor();
 
     await deps.controller.updateNonWorkingWeekdays([DayOfWeek.SATURDAY]);
 
-    expect(requests).toEqual([
+    expect(http.calls).toEqual([
       {
-        method: 'PUT',
-        path: 'companies/c1/calendar/non-working-weekdays',
-        body: { weekdays: [DayOfWeek.SATURDAY] },
-        token: 'jwt',
+        method: 'put',
+        url: 'companies/c1/calendar/non-working-weekdays',
+        data: { weekdays: [DayOfWeek.SATURDAY] },
+        config: { headers: { Authorization: 'Bearer jwt' } },
       },
     ]);
   });
 
   it('wires a controller that retains a public holiday', async () => {
-    const { deps, requests } = compositionFor();
+    const { deps, http } = compositionFor();
 
     await deps.controller.addPublicHoliday({
       date: '2026-11-11',
       label: 'Armistice',
     });
 
-    expect(requests).toEqual([
+    expect(http.calls).toEqual([
       {
-        method: 'POST',
-        path: 'companies/c1/calendar/public-holidays',
-        body: { date: '2026-11-11', label: 'Armistice' },
-        token: 'jwt',
+        method: 'post',
+        url: 'companies/c1/calendar/public-holidays',
+        data: { date: '2026-11-11', label: 'Armistice' },
+        config: { headers: { Authorization: 'Bearer jwt' } },
       },
     ]);
   });
 
   it('wires a controller that drops a retained public holiday', async () => {
-    const { deps, requests } = compositionFor();
+    const { deps, http } = compositionFor();
 
     await deps.controller.removePublicHoliday('ph-1');
 
-    expect(requests).toEqual([
+    expect(http.calls).toEqual([
       {
-        method: 'DELETE',
-        path: 'companies/c1/calendar/public-holidays/ph-1',
-        token: 'jwt',
+        method: 'delete',
+        url: 'companies/c1/calendar/public-holidays/ph-1',
+        data: undefined,
+        config: { headers: { Authorization: 'Bearer jwt' } },
       },
     ]);
   });
@@ -169,20 +162,20 @@ describe('createCompanySettingsComposition', () => {
   });
 
   it('refuses to reach the api when the session carries no company', async () => {
-    const { deps, requests } = compositionFor(strangerToEveryCompany);
+    const { deps, http } = compositionFor(strangerToEveryCompany);
 
     await expect(deps.controller.getSettings()).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(requests).toEqual([]);
+    expect(http.calls).toEqual([]);
   });
 
   it('refuses to reach the api when nobody is signed in', async () => {
-    const { deps, requests } = compositionFor(null, null);
+    const { deps, http } = compositionFor(null, null);
 
     await expect(deps.controller.getSettings()).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(requests).toEqual([]);
+    expect(http.calls).toEqual([]);
   });
 });

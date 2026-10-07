@@ -1,5 +1,6 @@
 import {
-  InMemoryCompanyPublicHolidaysGateway,
+  ApiCompanyPublicHolidaysGateway,
+  InMemoryHttpClient,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -16,70 +17,53 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-function snapshots(): Map<string, CompanySettingsSnapshot> {
-  return new Map([
-    [
-      'c1',
-      { id: 'c1', name: 'Acme', nonWorkingWeekdays: [], publicHolidays: [] },
-    ],
-  ]);
+const retained: CompanySettingsSnapshot = {
+  id: 'c1',
+  name: 'Acme',
+  nonWorkingWeekdays: [],
+  publicHolidays: [
+    { id: 'ph-1', date: '2026-07-14', label: 'Bastille Day' },
+  ],
+};
+
+function useCaseFor(
+  session: InMemorySessionGateway,
+): AddCompanyPublicHolidayFromSessionUseCase {
+  const http = new InMemoryHttpClient();
+  http.reply('post', 'companies/c1/calendar/public-holidays', {
+    status: 200,
+    data: retained,
+  });
+  return new AddCompanyPublicHolidayFromSessionUseCase(
+    session,
+    new ApiCompanyPublicHolidaysGateway(http),
+  );
 }
 
 describe('AddCompanyPublicHolidayFromSessionUseCase', () => {
   it('retains the public holiday on the company of the signed-in actor', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new AddCompanyPublicHolidayFromSessionUseCase(
-      new InMemorySessionGateway('token', actor),
-      publicHolidays,
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway('token', actor));
 
-    const settings = await useCase.execute({
-      date: '2026-07-14',
-      label: 'Bastille Day',
-    });
-
-    expect(settings.publicHolidays).toEqual([
-      {
-        id: '2026-07-14-Bastille Day',
-        date: '2026-07-14',
-        label: 'Bastille Day',
-      },
-    ]);
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toHaveLength(1);
+    await expect(
+      useCase.execute({ date: '2026-07-14', label: 'Bastille Day' }),
+    ).resolves.toEqual(retained);
   });
 
   it('refuses when the session carries no company', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new AddCompanyPublicHolidayFromSessionUseCase(
+    const useCase = useCaseFor(
       new InMemorySessionGateway('token', { ...actor, companyId: null }),
-      publicHolidays,
     );
 
     await expect(
       useCase.execute({ date: '2026-07-14', label: 'Bastille Day' }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toEqual([]);
   });
 
   it('refuses when the session carries no token', async () => {
-    const publicHolidays = new InMemoryCompanyPublicHolidaysGateway(
-      'token',
-      snapshots(),
-    );
-    const useCase = new AddCompanyPublicHolidayFromSessionUseCase(
-      new InMemorySessionGateway(null, actor),
-      publicHolidays,
-    );
+    const useCase = useCaseFor(new InMemorySessionGateway(null, actor));
 
     await expect(
       useCase.execute({ date: '2026-07-14', label: 'Bastille Day' }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
-    expect(publicHolidays.snapshotOf('c1').publicHolidays).toEqual([]);
   });
 });

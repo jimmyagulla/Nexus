@@ -1,11 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   CompanySettingsSnapshot,
   DayOfWeek,
   ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
-import { CompanySettingsComposition } from './composition/company-settings.composition';
 import { fr } from './ui/i18n/fr';
 
 type SessionRecord = {
@@ -14,8 +13,22 @@ type SessionRecord = {
   appMetadata: Readonly<Record<string, unknown>>;
 };
 
+type CapturedCall = {
+  url: string;
+  authorization: string | undefined;
+};
+
+type SentInit = {
+  headers: Record<string, string>;
+};
+
 const supabase = vi.hoisted(() => ({
   session: null as SessionRecord | null,
+}));
+
+const transport = vi.hoisted(() => ({
+  calls: [] as CapturedCall[],
+  body: { status: 200, data: null } as unknown,
 }));
 
 vi.mock('@hexagonal-monorepo-template/infrastructure/supabase/browser', () => ({
@@ -39,22 +52,25 @@ const snapshot: CompanySettingsSnapshot = {
   ],
 };
 
-async function companySettings(): Promise<CompanySettingsComposition> {
-  return (await import('./di')).getCompanySettingsComposition();
-}
-
-function stubApiReturning(data: unknown): { url: string; token?: string }[] {
-  const calls: { url: string; token?: string }[] = [];
-
+function installTransport(): void {
   vi.stubGlobal(
     'fetch',
-    async (url: string, init: { headers: Record<string, string> }) => {
-      calls.push({ url, token: init.headers['Authorization'] });
-      return { ok: true, status: 200, json: async () => ({ data }) };
+    async (url: string, init: SentInit) => {
+      transport.calls.push({
+        url,
+        authorization: init.headers['Authorization'],
+      });
+      return {
+        ok: true,
+        status: 200,
+        json: async () => transport.body,
+      };
     },
   );
+}
 
-  return calls;
+async function companySettings() {
+  return (await import('./di')).companySettingsComposition;
 }
 
 describe('dependency injection entry point', () => {
@@ -63,9 +79,12 @@ describe('dependency injection entry point', () => {
     vi.stubEnv('VITE_API_URL', 'https://api.nexus.test/api');
     vi.stubEnv('VITE_SUPABASE_URL', 'https://project.supabase.co');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon');
+    installTransport();
   });
 
   beforeEach(() => {
+    transport.calls = [];
+    transport.body = { status: 200, data: snapshot };
     supabase.session = {
       accessToken: 'jwt',
       userId: 'u1',
@@ -73,7 +92,7 @@ describe('dependency injection entry point', () => {
     };
   });
 
-  afterEach(() => {
+  afterAll(() => {
     vi.unstubAllGlobals();
   });
 
@@ -106,39 +125,46 @@ describe('dependency injection entry point', () => {
     });
   });
 
+  it('exports the controller and the presenters wired on the shared client', async () => {
+    const di = await import('./di');
+
+    expect(di.companySettingsController).toBe(di.companySettingsComposition.controller);
+    expect(di.companySettingsPresenter).toBe(di.companySettingsComposition.presenter);
+    expect(di.companySettingsErrorPresenter).toBe(
+      di.companySettingsComposition.errorPresenter,
+    );
+  });
+
   it('wires a controller that reaches the configured api for the session company', async () => {
-    const calls = stubApiReturning(snapshot);
     const deps = await companySettings();
 
     await expect(deps.controller.getSettings()).resolves.toEqual(snapshot);
-    expect(calls).toEqual([
+    expect(transport.calls).toEqual([
       {
         url: 'https://api.nexus.test/api/companies/c1/settings',
-        token: 'Bearer jwt',
+        authorization: 'Bearer jwt',
       },
     ]);
   });
 
   it('wires a controller that renames the session company on the api', async () => {
-    const calls = stubApiReturning(snapshot);
     const deps = await companySettings();
 
     await deps.controller.renameCompany('Nexus');
 
-    expect(calls.map((call) => call.url)).toEqual([
+    expect(transport.calls.map((call) => call.url)).toEqual([
       'https://api.nexus.test/api/companies/c1/name',
     ]);
   });
 
   it('refuses to reach the api when nobody is signed in', async () => {
     supabase.session = null;
-    const calls = stubApiReturning(snapshot);
     const deps = await companySettings();
 
     await expect(deps.controller.getSettings()).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(calls).toEqual([]);
+    expect(transport.calls).toEqual([]);
   });
 
   it('refuses to reach the api when the session carries a blank company claim', async () => {
@@ -147,12 +173,11 @@ describe('dependency injection entry point', () => {
       userId: 'u1',
       appMetadata: { company_id: '', role: UserRole.EMPLOYER },
     };
-    const calls = stubApiReturning(snapshot);
     const deps = await companySettings();
 
     await expect(deps.controller.getSettings()).rejects.toThrow(
       ErrorCode.ACCESS_DENIED,
     );
-    expect(calls).toEqual([]);
+    expect(transport.calls).toEqual([]);
   });
 });
