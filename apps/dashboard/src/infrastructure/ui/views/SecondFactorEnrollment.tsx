@@ -2,6 +2,7 @@ import type { SecondFactorEnrollmentViewModel } from '../../../adapters/presente
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { RecoveryCodeList } from '../features/second-factor/RecoveryCodeList';
 import { SecondFactorCodeForm } from '../features/second-factor/SecondFactorCodeForm';
+import { secondFactorCodeSchema } from '../features/second-factor/second-factor-code.schema';
 import { i18n } from '../i18n/i18n';
 
 interface SecondFactorEnrollmentProps {
@@ -43,6 +44,7 @@ export function SecondFactorEnrollment({
           <SecondFactorCodeForm
             label={labels.code}
             submitLabel={labels.confirm}
+            schema={secondFactorCodeSchema}
             errorPresenter={errorPresenter}
             submissionError={submissionError}
             pending={pending}

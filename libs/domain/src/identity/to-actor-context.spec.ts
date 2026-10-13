@@ -77,3 +77,27 @@ describe('toActorContext', () => {
     ).not.toThrow();
   });
 });
+
+describe('toActorContext second factor claim', () => {
+  it('reads a verified second factor from the identity claims', () => {
+    expect(
+      toActorContext('user-1', {
+        role: UserRole.EMPLOYEE,
+        second_factor_verified: true,
+      }).secondFactorVerified,
+    ).toBe(true);
+  });
+
+  it('leaves the second factor unverified when the claim is missing', () => {
+    expect(toActorContext('user-1', {}).secondFactorVerified).toBeUndefined();
+  });
+
+  it('ignores a second factor claim that is not the boolean true', () => {
+    for (const claim of ['true', 1, null, false, ['true']]) {
+      expect(
+        toActorContext('user-1', { second_factor_verified: claim })
+          .secondFactorVerified,
+      ).toBeUndefined();
+    }
+  });
+});

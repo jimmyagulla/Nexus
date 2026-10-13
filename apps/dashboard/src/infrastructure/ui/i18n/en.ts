@@ -37,6 +37,14 @@ export const en = {
         'Keep these codes somewhere safe. Each one works once, in place of the usual code, and they will not be shown again.',
     },
   },
+  secondFactorVerification: {
+    title: 'Additional verification',
+    instructions:
+      'Enter the code of your authenticator application, or a recovery code.',
+    code: 'Verification or recovery code',
+    confirm: 'Verify',
+    done: 'The additional verification is done.',
+  },
   days: {
     SUNDAY: 'Sunday',
     MONDAY: 'Monday',

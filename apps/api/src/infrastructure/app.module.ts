@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { IJwtVerifier } from '@hexagonal-monorepo-template/ports';
 import { AuthGuard } from '../adapters/http/common/guards/auth/auth.guard';
+import { SecondFactorGuard } from '../adapters/http/common/guards/second-factor/second-factor.guard';
 import { createValidationPipe } from '../adapters/http/common/pipes/create-validation.pipe';
 import { SuccessResponseInterceptor } from '../adapters/http/common/interceptors/success-response.interceptor';
 import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exception.filter';
@@ -44,6 +45,10 @@ const persistence = loadApiConfig().persistence;
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: SecondFactorGuard,
     },
     {
       provide: APP_PIPE,

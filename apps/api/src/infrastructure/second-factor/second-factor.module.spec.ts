@@ -3,17 +3,21 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { describe, expect, it } from 'vitest';
 import {
   CryptoRecoveryCodes,
+  InMemorySecondFactorIdentityBinder,
   InMemorySecondFactorRepository,
   TotpSecondFactorCodes,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IOpenSecondFactorChallenge,
   IRecoveryCodes,
   ISecondFactorCodes,
+  ISecondFactorIdentityBinder,
   ISecondFactorRepository,
   IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
+import { SupabaseSecondFactorIdentityBinder } from '../../adapters/out/identity/supabase-second-factor-identity-binder';
 import { PrismaSecondFactorRepository } from '../../adapters/out/second-factor/prisma-second-factor.repository';
 import { ClockModule } from '../clock/clock.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
@@ -61,6 +65,31 @@ describe('SecondFactorModule', () => {
 
     expect(moduleRef.get(IBeginSecondFactorEnrollment)).toBeDefined();
     expect(moduleRef.get(IConfirmSecondFactorEnrollment)).toBeDefined();
+  });
+
+  it('wires the challenge use case', async () => {
+    const moduleRef = await compile({});
+
+    expect(moduleRef.get(IOpenSecondFactorChallenge)).toBeDefined();
+  });
+
+  it('carries the verification through Supabase when the service role is configured', async () => {
+    const moduleRef = await compile({
+      SUPABASE_URL: 'https://project.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-role-key',
+    });
+
+    expect(moduleRef.get(ISecondFactorIdentityBinder)).toBeInstanceOf(
+      SupabaseSecondFactorIdentityBinder,
+    );
+  });
+
+  it('carries the verification in memory without the service role', async () => {
+    const moduleRef = await compile({});
+
+    expect(moduleRef.get(ISecondFactorIdentityBinder)).toBeInstanceOf(
+      InMemorySecondFactorIdentityBinder,
+    );
   });
 
   it('wires the verification use case', async () => {

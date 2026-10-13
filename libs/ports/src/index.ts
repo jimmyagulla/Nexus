@@ -32,3 +32,7 @@ export * from './out/second-factor/second-factor-codes.port';
 export * from './out/second-factor/second-factor.gateway.port';
 export * from './in/second-factor/verify-second-factor.port';
 export * from './out/second-factor/recovery-codes.port';
+export * from './in/second-factor/open-second-factor-challenge.port';
+export * from './in/second-factor/open-second-factor-challenge-from-session.port';
+export * from './in/second-factor/verify-second-factor-from-session.port';
+export * from './out/second-factor/second-factor-identity-binder.port';

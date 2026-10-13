@@ -9,6 +9,7 @@ import {
   IClock,
   IRecoveryCodes,
   ISecondFactorCodes,
+  ISecondFactorIdentityBinder,
   ISecondFactorRepository,
   IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
@@ -18,6 +19,7 @@ export class VerifySecondFactorUseCase implements IVerifySecondFactor {
     private readonly factors: ISecondFactorRepository,
     private readonly codes: ISecondFactorCodes,
     private readonly recovery: IRecoveryCodes,
+    private readonly identity: ISecondFactorIdentityBinder,
     private readonly clock: IClock,
   ) {}
 
@@ -28,6 +30,7 @@ export class VerifySecondFactorUseCase implements IVerifySecondFactor {
     const proof = SecondFactorProof.parse(input.code);
     const factor = await this.requireEnrolledFactor(input.actor.userId);
     await this.accept(factor, proof);
+    await this.identity.markVerified(input.actor.userId);
     return { verified: true };
   }
 

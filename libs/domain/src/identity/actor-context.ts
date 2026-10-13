@@ -4,4 +4,5 @@ export type ActorContext = {
   userId: string;
   companyId: string | null;
   role: UserRole | null;
+  secondFactorVerified?: boolean;
 };

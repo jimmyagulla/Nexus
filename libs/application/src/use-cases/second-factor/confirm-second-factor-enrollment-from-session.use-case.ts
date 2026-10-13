@@ -19,7 +19,12 @@ export class ConfirmSecondFactorEnrollmentFromSessionUseCase
 
   async execute(code: string): Promise<SecondFactorEnrollmentConfirmation> {
     const session = await this.currentSession();
-    return this.secondFactors.confirmEnrollment(code, session.token);
+    const confirmation = await this.secondFactors.confirmEnrollment(
+      code,
+      session.token,
+    );
+    await this.sessions.refresh();
+    return confirmation;
   }
 
   private async currentSession(): Promise<CompanyScopedSession> {

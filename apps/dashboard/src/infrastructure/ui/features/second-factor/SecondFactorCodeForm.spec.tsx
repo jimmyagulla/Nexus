@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
 import { i18n } from '../../i18n/i18n';
 import { SecondFactorCodeForm } from './SecondFactorCodeForm';
+import { secondFactorCodeSchema } from './second-factor-code.schema';
 
 const labels = i18n.messages.secondFactor.enrollment;
 
@@ -15,6 +16,7 @@ function renderForm(
     <SecondFactorCodeForm
       label={labels.code}
       submitLabel={labels.confirm}
+      schema={secondFactorCodeSchema}
       errorPresenter={new ErrorPresenter()}
       submissionError={submissionError}
       pending={pending}

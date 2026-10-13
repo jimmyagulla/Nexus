@@ -30,6 +30,14 @@ function compositionFor(
     status: 201,
     data: { enrolled: true, recoveryCodes: ['ABCDE23456'] },
   });
+  http.reply('post', 'second-factor/challenge', {
+    status: 201,
+    data: { step: 'VERIFY' },
+  });
+  http.reply('post', 'second-factor/verification', {
+    status: 201,
+    data: { verified: true },
+  });
   return {
     http,
     deps: createSecondFactorComposition(
@@ -74,6 +82,38 @@ describe('createSecondFactorComposition', () => {
         config: { headers: { Authorization: 'Bearer jwt' } },
       },
     ]);
+  });
+
+  it('wires a controller that opens the challenge of the session user', async () => {
+    const { deps, http } = compositionFor();
+
+    await expect(deps.controller.openChallenge()).resolves.toEqual({
+      step: 'VERIFY',
+    });
+    expect(http.calls.map((call) => call.url)).toEqual([
+      'second-factor/challenge',
+    ]);
+  });
+
+  it('wires a controller that verifies the second factor with a code', async () => {
+    const { deps, http } = compositionFor();
+
+    await deps.controller.verify('ABCDE-23456');
+
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'second-factor/verification',
+        data: { code: 'ABCDE-23456' },
+        config: { headers: { Authorization: 'Bearer jwt' } },
+      },
+    ]);
+  });
+
+  it('provides the step presenter the routing needs', () => {
+    const { deps } = compositionFor();
+
+    expect(deps.stepPresenter.present({ step: 'ENROLL' })).toBe('ENROLLMENT');
   });
 
   it('provides the presenter the screen needs', () => {

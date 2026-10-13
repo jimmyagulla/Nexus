@@ -1,11 +1,12 @@
 import { ReactNode } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ErrorCode } from '@hexagonal-monorepo-template/domain';
+import { ErrorCode, SecondFactorStep } from '@hexagonal-monorepo-template/domain';
 import { SecondFactorController } from '../../../adapters/controllers/second-factor.controller';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { SecondFactorEnrollmentPresenter } from '../../../adapters/presenters/second-factor-enrollment.presenter';
 import { SecondFactorRecoveryCodesPresenter } from '../../../adapters/presenters/second-factor-recovery-codes.presenter';
+import { SecondFactorStepPresenter } from '../../../adapters/presenters/second-factor-step.presenter';
 import { SecondFactorComposition } from '../../composition/second-factor.composition';
 import { useConfirmSecondFactorEnrollment } from './useConfirmSecondFactorEnrollment';
 import { useGetSecondFactorEnrollment } from './useGetSecondFactorEnrollment';
@@ -27,7 +28,10 @@ function compositionOf(validCode = '123456'): SecondFactorComposition {
           return { enrolled: true, recoveryCodes: ['ABCDE23456'] };
         },
       },
+      { execute: async () => ({ step: SecondFactorStep.VERIFY }) },
+      { execute: async () => ({ verified: true }) },
     ),
+    stepPresenter: new SecondFactorStepPresenter(),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
     recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),
     errorPresenter: new ErrorPresenter(),

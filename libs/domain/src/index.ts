@@ -32,3 +32,5 @@ export * from './read-models/second-factor-enrollment';
 export * from './value-objects/recovery-code.rules';
 export * from './value-objects/recovery-code';
 export * from './value-objects/second-factor-proof';
+export * from './services/next-second-factor-step';
+export * from './read-models/second-factor-challenge';

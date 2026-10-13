@@ -37,6 +37,14 @@ export const fr = {
         "Conservez ces codes en lieu sûr. Chacun ne sert qu'une fois, à la place du code habituel, et ils ne seront plus affichés.",
     },
   },
+  secondFactorVerification: {
+    title: 'Vérification complémentaire',
+    instructions:
+      "Saisissez le code de votre application d'authentification, ou un code de récupération.",
+    code: 'Code de vérification ou de récupération',
+    confirm: 'Vérifier',
+    done: 'La vérification complémentaire est faite.',
+  },
   days: {
     SUNDAY: 'Dimanche',
     MONDAY: 'Lundi',

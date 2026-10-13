@@ -83,6 +83,10 @@ describe('dependency injection entry point', () => {
     installTransport();
   });
 
+  beforeAll(async () => {
+    await import('./di');
+  }, 30_000);
+
   beforeEach(() => {
     transport.calls = [];
     transport.body = { status: 200, data: snapshot };

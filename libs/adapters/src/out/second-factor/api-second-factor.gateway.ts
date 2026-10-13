@@ -1,6 +1,8 @@
 import {
+  SecondFactorChallenge,
   SecondFactorEnrollment,
   SecondFactorEnrollmentConfirmation,
+  SecondFactorVerification,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
@@ -15,6 +17,17 @@ import {
 
 export class ApiSecondFactorGateway implements ISecondFactorGateway {
   constructor(private readonly httpClient: IHttpClient) {}
+
+  async openChallenge(token: string): Promise<SecondFactorChallenge> {
+    const payload = unwrapResponse(
+      await this.httpClient.post<ApiResponse<SecondFactorChallenge>>(
+        secondFactorPath(API_ROUTES.secondFactor.challenge),
+        undefined,
+        this.authorized(token),
+      ),
+    );
+    return { step: payload.step };
+  }
 
   async beginEnrollment(token: string): Promise<SecondFactorEnrollment> {
     const payload = unwrapResponse(
@@ -44,6 +57,20 @@ export class ApiSecondFactorGateway implements ISecondFactorGateway {
       ),
     );
     return { enrolled: true, recoveryCodes: [...payload.recoveryCodes] };
+  }
+
+  async verify(
+    code: string,
+    token: string,
+  ): Promise<SecondFactorVerification> {
+    unwrapResponse(
+      await this.httpClient.post<ApiResponse<SecondFactorVerification>>(
+        secondFactorPath(API_ROUTES.secondFactor.verification),
+        { code },
+        this.authorized(token),
+      ),
+    );
+    return { verified: true };
   }
 
   private authorized(token: string): { headers: { Authorization: string } } {

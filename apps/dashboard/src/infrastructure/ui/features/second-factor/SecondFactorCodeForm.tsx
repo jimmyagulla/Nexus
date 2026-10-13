@@ -12,6 +12,7 @@ import {
 interface SecondFactorCodeFormProps {
   label: string;
   submitLabel: string;
+  schema: typeof secondFactorCodeSchema;
   errorPresenter: ErrorPresenter;
   submissionError: string | null;
   pending: boolean;
@@ -21,13 +22,14 @@ interface SecondFactorCodeFormProps {
 export function SecondFactorCodeForm({
   label,
   submitLabel,
+  schema,
   errorPresenter,
   submissionError,
   pending,
   onSubmit,
 }: SecondFactorCodeFormProps) {
   const form = useForm<SecondFactorCodeValues>({
-    resolver: zodResolver(secondFactorCodeSchema),
+    resolver: zodResolver(schema),
     defaultValues: { code: '' },
   });
   const error = form.formState.errors.code;
@@ -44,7 +46,6 @@ export function SecondFactorCodeForm({
       </label>
       <Input
         id="second-factor-code"
-        inputMode="numeric"
         autoComplete="one-time-code"
         {...form.register('code')}
       />

@@ -1,6 +1,7 @@
 import {
   CryptoRecoveryCodes,
   FixedClock,
+  InMemorySecondFactorIdentityBinder,
   InMemorySecondFactorRepository,
   TotpSecondFactorCodes,
 } from '@hexagonal-monorepo-template/adapters';
@@ -25,14 +26,16 @@ const recovery = new CryptoRecoveryCodes();
 
 async function pendingEnrollment() {
   const factors = new InMemorySecondFactorRepository();
+  const identity = new InMemorySecondFactorIdentityBinder();
   await factors.save(SecondFactor.begin('u1', 'c1', SECRET));
   const useCase = new ConfirmSecondFactorEnrollmentUseCase(
     factors,
     new TotpSecondFactorCodes(),
     recovery,
+    identity,
     new FixedClock(now),
   );
-  return { factors, useCase };
+  return { factors, identity, useCase };
 }
 
 describe('ConfirmSecondFactorEnrollmentUseCase', () => {
@@ -46,6 +49,27 @@ describe('ConfirmSecondFactorEnrollmentUseCase', () => {
 
     expect(result.enrolled).toBe(true);
     expect((await factors.findByUserId('u1'))?.isEnrolled()).toBe(true);
+  });
+
+  it('opens the space of the employee who just proved the code', async () => {
+    const { identity, useCase } = await pendingEnrollment();
+
+    await useCase.execute({
+      actor: employee,
+      code: await computeTotp(SECRET, now.getTime()),
+    });
+
+    expect(identity.verified.has('u1')).toBe(true);
+  });
+
+  it('does not open the space with an invalid code', async () => {
+    const { identity, useCase } = await pendingEnrollment();
+
+    await expect(
+      useCase.execute({ actor: employee, code: '000000' }),
+    ).rejects.toThrow();
+
+    expect(identity.verified.has('u1')).toBe(false);
   });
 
   it('hands over the recovery codes of the enrollment', async () => {
@@ -114,6 +138,7 @@ describe('ConfirmSecondFactorEnrollmentUseCase', () => {
       new InMemorySecondFactorRepository(),
       new TotpSecondFactorCodes(),
       recovery,
+      new InMemorySecondFactorIdentityBinder(),
       new FixedClock(now),
     );
 

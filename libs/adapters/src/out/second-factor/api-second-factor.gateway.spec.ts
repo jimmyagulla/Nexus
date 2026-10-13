@@ -46,4 +46,44 @@ describe('ApiSecondFactorGateway', () => {
       },
     ]);
   });
+
+  it('opens the challenge of the signed-in user', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'second-factor/challenge', {
+      status: 201,
+      data: { step: 'VERIFY' },
+    });
+
+    await expect(
+      new ApiSecondFactorGateway(http).openChallenge('token'),
+    ).resolves.toEqual({ step: 'VERIFY' });
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'second-factor/challenge',
+        data: undefined,
+        config: { headers: { Authorization: 'Bearer token' } },
+      },
+    ]);
+  });
+
+  it('verifies the second factor with a code', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'second-factor/verification', {
+      status: 201,
+      data: { verified: true },
+    });
+
+    await expect(
+      new ApiSecondFactorGateway(http).verify('ABCDE-23456', 'token'),
+    ).resolves.toEqual({ verified: true });
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'second-factor/verification',
+        data: { code: 'ABCDE-23456' },
+        config: { headers: { Authorization: 'Bearer token' } },
+      },
+    ]);
+  });
 });

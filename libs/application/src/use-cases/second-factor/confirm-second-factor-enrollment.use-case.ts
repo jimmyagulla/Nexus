@@ -11,6 +11,7 @@ import {
   IConfirmSecondFactorEnrollment,
   IRecoveryCodes,
   ISecondFactorCodes,
+  ISecondFactorIdentityBinder,
   ISecondFactorRepository,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -21,6 +22,7 @@ export class ConfirmSecondFactorEnrollmentUseCase
     private readonly factors: ISecondFactorRepository,
     private readonly codes: ISecondFactorCodes,
     private readonly recovery: IRecoveryCodes,
+    private readonly identity: ISecondFactorIdentityBinder,
     private readonly clock: IClock,
   ) {}
 
@@ -35,6 +37,7 @@ export class ConfirmSecondFactorEnrollmentUseCase
     await this.factors.save(
       pending.confirm(await this.digestAll(recoveryCodes)),
     );
+    await this.identity.markVerified(input.actor.userId);
     return { enrolled: true, recoveryCodes };
   }
 

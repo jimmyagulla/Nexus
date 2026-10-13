@@ -14,6 +14,7 @@ import {
 } from '@hexagonal-monorepo-template/ports';
 import { AppModule } from './app.module';
 import { AuthGuard } from '../adapters/http/common/guards/auth/auth.guard';
+import { SecondFactorGuard } from '../adapters/http/common/guards/second-factor/second-factor.guard';
 import { createValidationPipe } from '../adapters/http/common/pipes/create-validation.pipe';
 import { SuccessResponseInterceptor } from '../adapters/http/common/interceptors/success-response.interceptor';
 import { ApiExceptionFilter } from '../adapters/http/common/filters/api-exception.filter';
@@ -46,6 +47,19 @@ describe('AppModule', () => {
     expect(guardInstances.some((guard) => guard instanceof AuthGuard)).toBe(
       true,
     );
+  });
+
+  it('registers the second factor guard right after the authentication guard', () => {
+    const providers = Reflect.getMetadata('providers', AppModule) as Array<{
+      provide?: unknown;
+      useClass?: unknown;
+    }>;
+
+    const guards = providers
+      .filter((provider) => provider.provide === APP_GUARD)
+      .map((provider) => provider.useClass);
+
+    expect(guards).toEqual([AuthGuard, SecondFactorGuard]);
   });
 
   it('registers ValidationPipe as APP_PIPE', () => {

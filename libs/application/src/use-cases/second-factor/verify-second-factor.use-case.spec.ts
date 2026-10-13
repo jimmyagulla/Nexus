@@ -1,6 +1,7 @@
 import {
   CryptoRecoveryCodes,
   FixedClock,
+  InMemorySecondFactorIdentityBinder,
   InMemorySecondFactorRepository,
   TotpSecondFactorCodes,
 } from '@hexagonal-monorepo-template/adapters';
@@ -24,6 +25,7 @@ const recovery = new CryptoRecoveryCodes();
 
 async function enrolledEmployee(recoveryCodes: readonly string[] = []) {
   const factors = new InMemorySecondFactorRepository();
+  const identity = new InMemorySecondFactorIdentityBinder();
   await factors.save(
     SecondFactor.begin('u1', 'c1', SECRET).confirm(
       await Promise.all(recoveryCodes.map((code) => recovery.digest(code))),
@@ -33,9 +35,10 @@ async function enrolledEmployee(recoveryCodes: readonly string[] = []) {
     factors,
     new TotpSecondFactorCodes(),
     recovery,
+    identity,
     new FixedClock(now),
   );
-  return { factors, useCase };
+  return { factors, identity, useCase };
 }
 
 describe('VerifySecondFactorUseCase', () => {
@@ -48,6 +51,35 @@ describe('VerifySecondFactorUseCase', () => {
         code: await computeTotp(SECRET, now.getTime()),
       }),
     ).resolves.toEqual({ verified: true });
+  });
+
+  it('carries the verification into the identity of the employee', async () => {
+    const { identity, useCase } = await enrolledEmployee();
+
+    await useCase.execute({
+      actor: employee,
+      code: await computeTotp(SECRET, now.getTime()),
+    });
+
+    expect(identity.verified.has('u1')).toBe(true);
+  });
+
+  it('carries the verification when a recovery code is used', async () => {
+    const { identity, useCase } = await enrolledEmployee(['ABCDE23456']);
+
+    await useCase.execute({ actor: employee, code: 'ABCDE23456' });
+
+    expect(identity.verified.has('u1')).toBe(true);
+  });
+
+  it('does not verify the employee with a wrong code', async () => {
+    const { identity, useCase } = await enrolledEmployee();
+
+    await expect(
+      useCase.execute({ actor: employee, code: '000000' }),
+    ).rejects.toThrow();
+
+    expect(identity.verified.has('u1')).toBe(false);
   });
 
   it('refuses a wrong usual code', async () => {
@@ -123,6 +155,7 @@ describe('VerifySecondFactorUseCase', () => {
       factors,
       new TotpSecondFactorCodes(),
       recovery,
+      new InMemorySecondFactorIdentityBinder(),
       new FixedClock(now),
     );
 
@@ -139,6 +172,7 @@ describe('VerifySecondFactorUseCase', () => {
       new InMemorySecondFactorRepository(),
       new TotpSecondFactorCodes(),
       recovery,
+      new InMemorySecondFactorIdentityBinder(),
       new FixedClock(now),
     );
 

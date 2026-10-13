@@ -17,6 +17,7 @@ import {
 import {
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IOpenSecondFactorChallenge,
   IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
@@ -28,6 +29,9 @@ import { SecondFactorController } from './second-factor.controller';
 const begin = { execute: vi.fn<IBeginSecondFactorEnrollment['execute']>() };
 const confirm = { execute: vi.fn<IConfirmSecondFactorEnrollment['execute']>() };
 const verify = { execute: vi.fn<IVerifySecondFactor['execute']>() };
+const challenge = {
+  execute: vi.fn<IOpenSecondFactorChallenge['execute']>(),
+};
 
 const employee: ActorContext = {
   userId: 'u1',
@@ -62,6 +66,7 @@ beforeAll(async () => {
       { provide: IBeginSecondFactorEnrollment, useValue: begin },
       { provide: IConfirmSecondFactorEnrollment, useValue: confirm },
       { provide: IVerifySecondFactor, useValue: verify },
+      { provide: IOpenSecondFactorChallenge, useValue: challenge },
     ],
   }).compile();
 
@@ -88,6 +93,7 @@ beforeEach(() => {
   begin.execute.mockReset();
   confirm.execute.mockReset();
   verify.execute.mockReset();
+  challenge.execute.mockReset();
 });
 
 describe('SecondFactorController', () => {
@@ -139,6 +145,26 @@ describe('SecondFactorController', () => {
 
     expect(status).toBe(400);
     expect(payload).toMatchObject({ message: ErrorCode.SECOND_FACTOR_REQUIRED });
+  });
+
+  it('opens the challenge right after the secret', async () => {
+    challenge.execute.mockResolvedValue({ step: 'VERIFY' });
+
+    const { status, payload } = await post('/second-factor/challenge');
+
+    expect(status).toBe(201);
+    expect(payload).toMatchObject({ data: { step: 'VERIFY' } });
+    expect(challenge.execute).toHaveBeenCalledWith({ actor: employee });
+  });
+
+  it('opens the challenge of an employer too, who is asked nothing', async () => {
+    actor = { ...employee, role: UserRole.EMPLOYER };
+    challenge.execute.mockResolvedValue({ step: 'NONE' });
+
+    const { status, payload } = await post('/second-factor/challenge');
+
+    expect(status).toBe(201);
+    expect(payload).toMatchObject({ data: { step: 'NONE' } });
   });
 
   it('verifies the second factor with a code', async () => {

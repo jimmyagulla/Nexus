@@ -38,6 +38,14 @@ describe('ConfirmSecondFactorEnrollmentFromSessionUseCase', () => {
     });
   });
 
+  it('refreshes the session so it carries the verification', async () => {
+    const session = new InMemorySessionGateway('token', actor);
+
+    await useCaseFor(session).execute('123456');
+
+    expect(session.refreshes).toBe(1);
+  });
+
   it('refuses when there is no session', async () => {
     const useCase = useCaseFor(new InMemorySessionGateway(null, null));
 
