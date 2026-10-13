@@ -34,7 +34,7 @@ export class ApiSecondFactorGateway implements ISecondFactorGateway {
     code: string,
     token: string,
   ): Promise<SecondFactorEnrollmentConfirmation> {
-    unwrapResponse(
+    const payload = unwrapResponse(
       await this.httpClient.post<
         ApiResponse<SecondFactorEnrollmentConfirmation>
       >(
@@ -43,7 +43,7 @@ export class ApiSecondFactorGateway implements ISecondFactorGateway {
         this.authorized(token),
       ),
     );
-    return { enrolled: true };
+    return { enrolled: true, recoveryCodes: [...payload.recoveryCodes] };
   }
 
   private authorized(token: string): { headers: { Authorization: string } } {

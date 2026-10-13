@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import {
   BeginSecondFactorEnrollmentUseCase,
   ConfirmSecondFactorEnrollmentUseCase,
+  VerifySecondFactorUseCase,
 } from '@hexagonal-monorepo-template/application';
 import {
+  CryptoRecoveryCodes,
   InMemorySecondFactorRepository,
   TotpSecondFactorCodes,
 } from '@hexagonal-monorepo-template/adapters';
@@ -11,8 +13,10 @@ import {
   IBeginSecondFactorEnrollment,
   IClock,
   IConfirmSecondFactorEnrollment,
+  IRecoveryCodes,
   ISecondFactorCodes,
   ISecondFactorRepository,
+  IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
 import { SecondFactorController } from '../../adapters/http/second-factor/second-factor.controller';
 import { PrismaSecondFactorRepository } from '../../adapters/out/second-factor/prisma-second-factor.repository';
@@ -37,6 +41,10 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: () => new TotpSecondFactorCodes(),
     },
     {
+      provide: IRecoveryCodes,
+      useFactory: () => new CryptoRecoveryCodes(),
+    },
+    {
       provide: IBeginSecondFactorEnrollment,
       useFactory: (
         factors: ISecondFactorRepository,
@@ -49,9 +57,26 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: (
         factors: ISecondFactorRepository,
         codes: ISecondFactorCodes,
+        recovery: IRecoveryCodes,
         clock: IClock,
-      ) => new ConfirmSecondFactorEnrollmentUseCase(factors, codes, clock),
-      inject: [ISecondFactorRepository, ISecondFactorCodes, IClock],
+      ) =>
+        new ConfirmSecondFactorEnrollmentUseCase(
+          factors,
+          codes,
+          recovery,
+          clock,
+        ),
+      inject: [ISecondFactorRepository, ISecondFactorCodes, IRecoveryCodes, IClock],
+    },
+    {
+      provide: IVerifySecondFactor,
+      useFactory: (
+        factors: ISecondFactorRepository,
+        codes: ISecondFactorCodes,
+        recovery: IRecoveryCodes,
+        clock: IClock,
+      ) => new VerifySecondFactorUseCase(factors, codes, recovery, clock),
+      inject: [ISecondFactorRepository, ISecondFactorCodes, IRecoveryCodes, IClock],
     },
   ],
   exports: [ISecondFactorRepository],

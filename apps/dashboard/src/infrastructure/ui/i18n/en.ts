@@ -32,6 +32,9 @@ export const en = {
       code: 'Verification code',
       confirm: 'Confirm',
       done: 'The additional verification is in place.',
+      recoveryTitle: 'Recovery codes',
+      recoveryNotice:
+        'Keep these codes somewhere safe. Each one works once, in place of the usual code, and they will not be shown again.',
     },
   },
   days: {

@@ -10,10 +10,12 @@ import {
 import { SecondFactorController } from '../../adapters/controllers/second-factor.controller';
 import { ErrorPresenter } from '../../adapters/presenters/error.presenter';
 import { SecondFactorEnrollmentPresenter } from '../../adapters/presenters/second-factor-enrollment.presenter';
+import { SecondFactorRecoveryCodesPresenter } from '../../adapters/presenters/second-factor-recovery-codes.presenter';
 
 export type SecondFactorComposition = {
   controller: SecondFactorController;
   enrollmentPresenter: SecondFactorEnrollmentPresenter;
+  recoveryCodesPresenter: SecondFactorRecoveryCodesPresenter;
   errorPresenter: ErrorPresenter;
 };
 
@@ -35,6 +37,7 @@ export function createSecondFactorComposition(
       ),
     ),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
+    recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),
     errorPresenter: new ErrorPresenter(),
   };
 }

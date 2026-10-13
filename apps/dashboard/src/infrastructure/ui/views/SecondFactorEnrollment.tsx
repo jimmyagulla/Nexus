@@ -1,12 +1,13 @@
 import type { SecondFactorEnrollmentViewModel } from '../../../adapters/presenters/second-factor-enrollment.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
+import { RecoveryCodeList } from '../features/second-factor/RecoveryCodeList';
 import { SecondFactorCodeForm } from '../features/second-factor/SecondFactorCodeForm';
 import { i18n } from '../i18n/i18n';
 
 interface SecondFactorEnrollmentProps {
   model: SecondFactorEnrollmentViewModel;
   errorPresenter: ErrorPresenter;
-  confirmed: boolean;
+  recoveryCodes: string[] | null;
   submissionError: string | null;
   pending: boolean;
   onConfirm: (code: string) => Promise<void>;
@@ -15,7 +16,7 @@ interface SecondFactorEnrollmentProps {
 export function SecondFactorEnrollment({
   model,
   errorPresenter,
-  confirmed,
+  recoveryCodes,
   submissionError,
   pending,
   onConfirm,
@@ -25,8 +26,13 @@ export function SecondFactorEnrollment({
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">{labels.title}</h1>
-      {confirmed ? (
-        <p>{labels.done}</p>
+      {recoveryCodes !== null ? (
+        <>
+          <p>{labels.done}</p>
+          <h2 className="text-xl font-semibold">{labels.recoveryTitle}</h2>
+          <p>{labels.recoveryNotice}</p>
+          <RecoveryCodeList codes={recoveryCodes} />
+        </>
       ) : (
         <>
           <p>{labels.instructions}</p>

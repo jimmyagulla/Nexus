@@ -2,14 +2,17 @@ import { DynamicModule, Global, Module } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { describe, expect, it } from 'vitest';
 import {
+  CryptoRecoveryCodes,
   InMemorySecondFactorRepository,
   TotpSecondFactorCodes,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IRecoveryCodes,
   ISecondFactorCodes,
   ISecondFactorRepository,
+  IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaSecondFactorRepository } from '../../adapters/out/second-factor/prisma-second-factor.repository';
 import { ClockModule } from '../clock/clock.module';
@@ -58,6 +61,18 @@ describe('SecondFactorModule', () => {
 
     expect(moduleRef.get(IBeginSecondFactorEnrollment)).toBeDefined();
     expect(moduleRef.get(IConfirmSecondFactorEnrollment)).toBeDefined();
+  });
+
+  it('wires the verification use case', async () => {
+    const moduleRef = await compile({});
+
+    expect(moduleRef.get(IVerifySecondFactor)).toBeDefined();
+  });
+
+  it('issues recovery codes from random bytes', async () => {
+    const moduleRef = await compile({});
+
+    expect(moduleRef.get(IRecoveryCodes)).toBeInstanceOf(CryptoRecoveryCodes);
   });
 
   it('issues time based codes', async () => {

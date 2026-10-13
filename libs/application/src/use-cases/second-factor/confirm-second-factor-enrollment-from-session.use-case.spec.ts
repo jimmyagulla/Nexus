@@ -20,7 +20,7 @@ function useCaseFor(session: InMemorySessionGateway) {
   const http = new InMemoryHttpClient();
   http.reply('post', 'second-factor/enrollment/confirmation', {
     status: 201,
-    data: { enrolled: true },
+    data: { enrolled: true, recoveryCodes: ['ABCDE23456'] },
   });
   return new ConfirmSecondFactorEnrollmentFromSessionUseCase(
     session,
@@ -34,6 +34,7 @@ describe('ConfirmSecondFactorEnrollmentFromSessionUseCase', () => {
 
     await expect(useCase.execute('123456')).resolves.toEqual({
       enrolled: true,
+      recoveryCodes: ['ABCDE23456'],
     });
   });
 

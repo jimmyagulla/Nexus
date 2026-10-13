@@ -7,14 +7,17 @@ const labels = i18n.messages.secondFactor.enrollment;
 const model = { secret: 'ABCD EFGH', provisioningUri: 'otpauth://x' };
 
 function renderView(
-  overrides: { confirmed?: boolean; submissionError?: string | null } = {},
+  overrides: {
+    recoveryCodes?: string[] | null;
+    submissionError?: string | null;
+  } = {},
 ) {
   const confirmed: string[] = [];
   render(
     <SecondFactorEnrollment
       model={model}
       errorPresenter={new ErrorPresenter()}
-      confirmed={overrides.confirmed ?? false}
+      recoveryCodes={overrides.recoveryCodes ?? null}
       submissionError={overrides.submissionError ?? null}
       pending={false}
       onConfirm={async (code) => {
@@ -55,10 +58,26 @@ describe('SecondFactorEnrollment', () => {
     expect(screen.getByLabelText(labels.code)).toBeTruthy();
   });
 
-  it('announces the enrollment once confirmed', () => {
-    renderView({ confirmed: true });
+  it('shows no recovery code while the enrollment is unfinished', () => {
+    renderView();
+
+    expect(screen.queryByText(labels.recoveryTitle)).toBeNull();
+    expect(screen.queryAllByRole('listitem')).toEqual([]);
+  });
+
+  it('announces the enrollment and shows the recovery codes once confirmed', () => {
+    renderView({ recoveryCodes: ['ABCDE-23456', 'FGHIJ-23457'] });
 
     expect(screen.getByText(labels.done)).toBeTruthy();
+    expect(screen.getByText(labels.recoveryNotice)).toBeTruthy();
+    expect(
+      screen.getAllByRole('listitem').map((item) => item.textContent),
+    ).toEqual(['ABCDE-23456', 'FGHIJ-23457']);
+  });
+
+  it('stops asking for the code once confirmed', () => {
+    renderView({ recoveryCodes: [] });
+
     expect(screen.queryByLabelText(labels.code)).toBeNull();
   });
 });

@@ -14,3 +14,4 @@ export * from './use-cases/second-factor/begin-second-factor-enrollment.use-case
 export * from './use-cases/second-factor/begin-second-factor-enrollment-from-session.use-case';
 export * from './use-cases/second-factor/confirm-second-factor-enrollment.use-case';
 export * from './use-cases/second-factor/confirm-second-factor-enrollment-from-session.use-case';
+export * from './use-cases/second-factor/verify-second-factor.use-case';

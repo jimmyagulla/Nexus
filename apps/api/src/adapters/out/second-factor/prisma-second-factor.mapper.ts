@@ -5,6 +5,7 @@ export type PrismaSecondFactorRow = {
   companyId: string;
   secret: string;
   enrolled: boolean;
+  recoveryCodeDigests: string[];
 };
 
 export function toSecondFactor(row: PrismaSecondFactorRow): SecondFactor {
@@ -13,6 +14,7 @@ export function toSecondFactor(row: PrismaSecondFactorRow): SecondFactor {
     companyId: row.companyId,
     secret: row.secret,
     enrolled: row.enrolled,
+    recoveryCodeDigests: row.recoveryCodeDigests,
   });
 }
 
@@ -24,5 +26,6 @@ export function toPrismaSecondFactorData(
     companyId: factor.companyId,
     secret: factor.secret,
     enrolled: factor.isEnrolled(),
+    recoveryCodeDigests: [...factor.recoveryCodeDigests],
   };
 }

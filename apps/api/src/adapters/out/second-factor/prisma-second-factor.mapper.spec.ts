@@ -12,6 +12,7 @@ describe('prisma second factor mapper', () => {
       companyId: 'c1',
       secret: 'SECRET',
       enrolled: false,
+      recoveryCodeDigests: [],
     });
 
     expect(factor).toMatchObject({
@@ -22,25 +23,30 @@ describe('prisma second factor mapper', () => {
     expect(factor.isEnrolled()).toBe(false);
   });
 
-  it('rebuilds an enrolled second factor from its row', () => {
-    expect(
-      toSecondFactor({
-        userId: 'u1',
-        companyId: 'c1',
-        secret: 'SECRET',
-        enrolled: true,
-      }).isEnrolled(),
-    ).toBe(true);
+  it('rebuilds an enrolled second factor with its recovery code digests', () => {
+    const factor = toSecondFactor({
+      userId: 'u1',
+      companyId: 'c1',
+      secret: 'SECRET',
+      enrolled: true,
+      recoveryCodeDigests: ['a', 'b'],
+    });
+
+    expect(factor.isEnrolled()).toBe(true);
+    expect(factor.recoveryCodeDigests).toEqual(['a', 'b']);
   });
 
   it('writes a second factor as a row', () => {
     expect(
-      toPrismaSecondFactorData(SecondFactor.begin('u1', 'c1', 'SECRET').confirm()),
+      toPrismaSecondFactorData(
+        SecondFactor.begin('u1', 'c1', 'SECRET').confirm(['a']),
+      ),
     ).toEqual({
       userId: 'u1',
       companyId: 'c1',
       secret: 'SECRET',
       enrolled: true,
+      recoveryCodeDigests: ['a'],
     });
   });
 });

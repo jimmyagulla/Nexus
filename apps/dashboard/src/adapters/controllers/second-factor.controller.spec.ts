@@ -12,7 +12,7 @@ function controller(): SecondFactorController {
         if (code !== '123456') {
           throw new Error(ErrorCode.SECOND_FACTOR_REQUIRED);
         }
-        return { enrolled: true };
+        return { enrolled: true, recoveryCodes: ['ABCDE23456'] };
       },
     },
   );
@@ -26,6 +26,7 @@ describe('SecondFactorController', () => {
   it('hands back the confirmation of a valid code', async () => {
     await expect(controller().confirmEnrollment('123456')).resolves.toEqual({
       enrolled: true,
+      recoveryCodes: ['ABCDE23456'],
     });
   });
 

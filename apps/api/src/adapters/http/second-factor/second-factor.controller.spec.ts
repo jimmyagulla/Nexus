@@ -17,6 +17,7 @@ import {
 import {
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
 import { AuthenticatedRequest } from '../common/guards/authenticated-request';
@@ -26,6 +27,7 @@ import { SecondFactorController } from './second-factor.controller';
 
 const begin = { execute: vi.fn<IBeginSecondFactorEnrollment['execute']>() };
 const confirm = { execute: vi.fn<IConfirmSecondFactorEnrollment['execute']>() };
+const verify = { execute: vi.fn<IVerifySecondFactor['execute']>() };
 
 const employee: ActorContext = {
   userId: 'u1',
@@ -59,6 +61,7 @@ beforeAll(async () => {
     providers: [
       { provide: IBeginSecondFactorEnrollment, useValue: begin },
       { provide: IConfirmSecondFactorEnrollment, useValue: confirm },
+      { provide: IVerifySecondFactor, useValue: verify },
     ],
   }).compile();
 
@@ -84,6 +87,7 @@ beforeEach(() => {
   actor = employee;
   begin.execute.mockReset();
   confirm.execute.mockReset();
+  verify.execute.mockReset();
 });
 
 describe('SecondFactorController', () => {
@@ -102,8 +106,11 @@ describe('SecondFactorController', () => {
     expect(begin.execute).toHaveBeenCalledWith({ actor: employee });
   });
 
-  it('confirms the enrollment with the code', async () => {
-    confirm.execute.mockResolvedValue({ enrolled: true });
+  it('confirms the enrollment with the code and hands over the recovery codes', async () => {
+    confirm.execute.mockResolvedValue({
+      enrolled: true,
+      recoveryCodes: ['ABCDE23456', 'FGHIJ23456'],
+    });
 
     const { status, payload } = await post(
       '/second-factor/enrollment/confirmation',
@@ -111,7 +118,9 @@ describe('SecondFactorController', () => {
     );
 
     expect(status).toBe(201);
-    expect(payload).toMatchObject({ data: { enrolled: true } });
+    expect(payload).toMatchObject({
+      data: { enrolled: true, recoveryCodes: ['ABCDE23456', 'FGHIJ23456'] },
+    });
     expect(confirm.execute).toHaveBeenCalledWith({
       actor: employee,
       code: '123456',
@@ -130,6 +139,45 @@ describe('SecondFactorController', () => {
 
     expect(status).toBe(400);
     expect(payload).toMatchObject({ message: ErrorCode.SECOND_FACTOR_REQUIRED });
+  });
+
+  it('verifies the second factor with a code', async () => {
+    verify.execute.mockResolvedValue({ verified: true });
+
+    const { status, payload } = await post('/second-factor/verification', {
+      code: 'ABCDE-23456',
+    });
+
+    expect(status).toBe(201);
+    expect(payload).toMatchObject({ data: { verified: true } });
+    expect(verify.execute).toHaveBeenCalledWith({
+      actor: employee,
+      code: 'ABCDE-23456',
+    });
+  });
+
+  it('answers the refusal of a code already used', async () => {
+    verify.execute.mockRejectedValue(
+      new Error(ErrorCode.SECOND_FACTOR_REQUIRED),
+    );
+
+    const { status, payload } = await post('/second-factor/verification', {
+      code: 'ABCDE-23456',
+    });
+
+    expect(status).toBe(400);
+    expect(payload).toMatchObject({ message: ErrorCode.SECOND_FACTOR_REQUIRED });
+  });
+
+  it('refuses an employer on the verification too', async () => {
+    actor = { ...employee, role: UserRole.EMPLOYER };
+
+    const { status } = await post('/second-factor/verification', {
+      code: '123456',
+    });
+
+    expect(status).toBe(403);
+    expect(verify.execute).not.toHaveBeenCalled();
   });
 
   it('refuses an employer', async () => {

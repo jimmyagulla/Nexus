@@ -50,7 +50,7 @@ describe('BeginSecondFactorEnrollmentUseCase', () => {
 
   it('refuses an employee who is already enrolled', async () => {
     const factors = new InMemorySecondFactorRepository();
-    await factors.save(SecondFactor.begin('u1', 'c1', 'SECRET').confirm());
+    await factors.save(SecondFactor.begin('u1', 'c1', 'SECRET').confirm([]));
 
     await expect(
       useCaseOver(factors).execute({ actor: employee }),

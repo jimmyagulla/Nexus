@@ -21,7 +21,11 @@ export class PrismaSecondFactorRepository implements ISecondFactorRepository {
     await this.prisma.secondFactor.upsert({
       where: { userId: data.userId },
       create: data,
-      update: { secret: data.secret, enrolled: data.enrolled },
+      update: {
+        secret: data.secret,
+        enrolled: data.enrolled,
+        recoveryCodeDigests: data.recoveryCodeDigests,
+      },
     });
   }
 }

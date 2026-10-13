@@ -5,6 +5,7 @@ import { ErrorCode } from '@hexagonal-monorepo-template/domain';
 import { SecondFactorController } from '../../../adapters/controllers/second-factor.controller';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { SecondFactorEnrollmentPresenter } from '../../../adapters/presenters/second-factor-enrollment.presenter';
+import { SecondFactorRecoveryCodesPresenter } from '../../../adapters/presenters/second-factor-recovery-codes.presenter';
 import { SecondFactorComposition } from '../../composition/second-factor.composition';
 import { useConfirmSecondFactorEnrollment } from './useConfirmSecondFactorEnrollment';
 import { useGetSecondFactorEnrollment } from './useGetSecondFactorEnrollment';
@@ -23,11 +24,12 @@ function compositionOf(validCode = '123456'): SecondFactorComposition {
           if (code !== validCode) {
             throw new Error(ErrorCode.SECOND_FACTOR_REQUIRED);
           }
-          return { enrolled: true };
+          return { enrolled: true, recoveryCodes: ['ABCDE23456'] };
         },
       },
     ),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
+    recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),
     errorPresenter: new ErrorPresenter(),
   };
 }
@@ -72,6 +74,7 @@ describe('useConfirmSecondFactorEnrollment', () => {
     });
 
     await waitFor(() => expect(result.current.confirm.isSuccess).toBe(true));
+    expect(result.current.confirm.data).toEqual({ codes: ['ABCDE-23456'] });
   });
 
   it('reports the refusal of an invalid code', async () => {

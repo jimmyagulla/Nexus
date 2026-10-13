@@ -32,6 +32,9 @@ export const fr = {
       code: 'Code de vérification',
       confirm: 'Confirmer',
       done: 'La vérification complémentaire est en place.',
+      recoveryTitle: 'Codes de récupération',
+      recoveryNotice:
+        "Conservez ces codes en lieu sûr. Chacun ne sert qu'une fois, à la place du code habituel, et ils ne seront plus affichés.",
     },
   },
   days: {

@@ -22,7 +22,7 @@ describe('InMemorySecondFactorRepository', () => {
     const factor = SecondFactor.begin('u1', 'c1', 'SECRET');
     await repository.save(factor);
 
-    await repository.save(factor.confirm());
+    await repository.save(factor.confirm([]));
 
     expect((await repository.findByUserId('u1'))?.isEnrolled()).toBe(true);
   });

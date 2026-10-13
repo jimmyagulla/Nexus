@@ -50,6 +50,7 @@ model SecondFactor {
   companyId String
   secret    String
   enrolled  Boolean @default(false)
+  recoveryCodeDigests String[]
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
 

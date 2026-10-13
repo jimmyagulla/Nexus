@@ -28,12 +28,15 @@ describe('ApiSecondFactorGateway', () => {
     const http = new InMemoryHttpClient();
     http.reply('post', 'second-factor/enrollment/confirmation', {
       status: 201,
-      data: { enrolled: true },
+      data: { enrolled: true, recoveryCodes: ['ABCDE23456', 'FGHIJ23456'] },
     });
 
     await expect(
       new ApiSecondFactorGateway(http).confirmEnrollment('123456', 'token'),
-    ).resolves.toEqual({ enrolled: true });
+    ).resolves.toEqual({
+      enrolled: true,
+      recoveryCodes: ['ABCDE23456', 'FGHIJ23456'],
+    });
     expect(http.calls).toEqual([
       {
         method: 'post',

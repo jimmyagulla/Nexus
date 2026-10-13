@@ -5,4 +5,9 @@ export type SecondFactorEnrollment = {
 
 export type SecondFactorEnrollmentConfirmation = {
   enrolled: true;
+  recoveryCodes: readonly string[];
+};
+
+export type SecondFactorVerification = {
+  verified: true;
 };

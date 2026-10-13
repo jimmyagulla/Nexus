@@ -1,6 +1,7 @@
 import {
   ActorContext,
   ErrorCode,
+  RECOVERY_CODE_COUNT,
   SecondFactor,
   SecondFactorCode,
   SecondFactorEnrollmentConfirmation,
@@ -8,6 +9,7 @@ import {
 import {
   IClock,
   IConfirmSecondFactorEnrollment,
+  IRecoveryCodes,
   ISecondFactorCodes,
   ISecondFactorRepository,
 } from '@hexagonal-monorepo-template/ports';
@@ -18,6 +20,7 @@ export class ConfirmSecondFactorEnrollmentUseCase
   constructor(
     private readonly factors: ISecondFactorRepository,
     private readonly codes: ISecondFactorCodes,
+    private readonly recovery: IRecoveryCodes,
     private readonly clock: IClock,
   ) {}
 
@@ -28,8 +31,11 @@ export class ConfirmSecondFactorEnrollmentUseCase
     const code = SecondFactorCode.parse(input.code);
     const pending = await this.requirePendingFactor(input.actor.userId);
     await this.requireValidCode(pending, code);
-    await this.factors.save(pending.confirm());
-    return { enrolled: true };
+    const recoveryCodes = this.recovery.generate(RECOVERY_CODE_COUNT);
+    await this.factors.save(
+      pending.confirm(await this.digestAll(recoveryCodes)),
+    );
+    return { enrolled: true, recoveryCodes };
   }
 
   private async requirePendingFactor(userId: string): Promise<SecondFactor> {
@@ -44,8 +50,14 @@ export class ConfirmSecondFactorEnrollmentUseCase
     factor: SecondFactor,
     code: SecondFactorCode,
   ): Promise<void> {
-    if (!(await this.codes.matches(factor.secret, code.value, this.clock.now()))) {
+    if (
+      !(await this.codes.matches(factor.secret, code.value, this.clock.now()))
+    ) {
       throw new Error(ErrorCode.SECOND_FACTOR_REQUIRED);
     }
+  }
+
+  private digestAll(recoveryCodes: readonly string[]): Promise<string[]> {
+    return Promise.all(recoveryCodes.map((code) => this.recovery.digest(code)));
   }
 }

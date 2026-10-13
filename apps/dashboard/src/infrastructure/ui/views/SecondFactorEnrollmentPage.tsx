@@ -26,7 +26,7 @@ export function SecondFactorEnrollmentPage({
     <SecondFactorEnrollment
       model={enrollment.data}
       errorPresenter={deps.errorPresenter}
-      confirmed={confirm.isSuccess}
+      recoveryCodes={confirm.isSuccess ? confirm.data.codes : null}
       submissionError={
         confirm.isError ? deps.errorPresenter.present(confirm.error) : null
       }

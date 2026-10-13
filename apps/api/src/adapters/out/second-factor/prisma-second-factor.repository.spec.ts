@@ -37,7 +37,13 @@ describe('PrismaSecondFactorRepository', () => {
 
   it('finds the second factor of a user', async () => {
     const { client } = createFakePrisma([
-      { userId: 'u1', companyId: 'c1', secret: 'SECRET', enrolled: true },
+      {
+        userId: 'u1',
+        companyId: 'c1',
+        secret: 'SECRET',
+        enrolled: true,
+        recoveryCodeDigests: ['a'],
+      },
     ]);
 
     const factor = await new PrismaSecondFactorRepository(client).findByUserId(
@@ -46,6 +52,7 @@ describe('PrismaSecondFactorRepository', () => {
 
     expect(factor?.secret).toBe('SECRET');
     expect(factor?.isEnrolled()).toBe(true);
+    expect(factor?.recoveryCodeDigests).toEqual(['a']);
   });
 
   it('stores a new second factor', async () => {
@@ -56,21 +63,57 @@ describe('PrismaSecondFactorRepository', () => {
     );
 
     expect(rows).toEqual([
-      { userId: 'u1', companyId: 'c1', secret: 'SECRET', enrolled: false },
+      {
+        userId: 'u1',
+        companyId: 'c1',
+        secret: 'SECRET',
+        enrolled: false,
+        recoveryCodeDigests: [],
+      },
     ]);
   });
 
-  it('updates the second factor of a user once confirmed', async () => {
+  it('stores the recovery code digests once confirmed', async () => {
     const { client, rows } = createFakePrisma([
-      { userId: 'u1', companyId: 'c1', secret: 'SECRET', enrolled: false },
+      {
+        userId: 'u1',
+        companyId: 'c1',
+        secret: 'SECRET',
+        enrolled: false,
+        recoveryCodeDigests: [],
+      },
     ]);
 
     await new PrismaSecondFactorRepository(client).save(
-      SecondFactor.begin('u1', 'c1', 'SECRET').confirm(),
+      SecondFactor.begin('u1', 'c1', 'SECRET').confirm(['a', 'b']),
     );
 
     expect(rows).toEqual([
-      { userId: 'u1', companyId: 'c1', secret: 'SECRET', enrolled: true },
+      {
+        userId: 'u1',
+        companyId: 'c1',
+        secret: 'SECRET',
+        enrolled: true,
+        recoveryCodeDigests: ['a', 'b'],
+      },
     ]);
+  });
+
+  it('forgets a recovery code once it is spent', async () => {
+    const { client, rows } = createFakePrisma([
+      {
+        userId: 'u1',
+        companyId: 'c1',
+        secret: 'SECRET',
+        enrolled: true,
+        recoveryCodeDigests: ['a', 'b'],
+      },
+    ]);
+    const repository = new PrismaSecondFactorRepository(client);
+    const factor = await repository.findByUserId('u1');
+
+    await repository.save(factor!.consumeRecoveryCode('a'));
+
+    expect(rows[0]?.recoveryCodeDigests).toEqual(['b']);
   });
 });

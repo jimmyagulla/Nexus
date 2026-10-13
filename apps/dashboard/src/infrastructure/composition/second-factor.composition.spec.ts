@@ -28,7 +28,7 @@ function compositionFor(
   });
   http.reply('post', 'second-factor/enrollment/confirmation', {
     status: 201,
-    data: { enrolled: true },
+    data: { enrolled: true, recoveryCodes: ['ABCDE23456'] },
   });
   return {
     http,
@@ -85,6 +85,17 @@ describe('createSecondFactorComposition', () => {
         provisioningUri: 'otpauth://x',
       }).secret,
     ).toBe('ABCD EFGH');
+  });
+
+  it('provides the recovery codes presenter the screen needs', () => {
+    const { deps } = compositionFor();
+
+    expect(
+      deps.recoveryCodesPresenter.present({
+        enrolled: true,
+        recoveryCodes: ['ABCDE23456'],
+      }).codes,
+    ).toEqual(['ABCDE-23456']);
   });
 
   it('provides the error presenter the screen needs', () => {

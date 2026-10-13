@@ -6,3 +6,5 @@ export * from './http/send-json';
 export * from './http/unwrap-response';
 export * from './totp/base32';
 export * from './totp/totp';
+export * from './crypto/sha256-hex';
+export * from './crypto/random-base32';

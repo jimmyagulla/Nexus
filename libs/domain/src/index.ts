@@ -29,3 +29,6 @@ export * from './entities/second-factor';
 export * from './services/requires-second-factor';
 export * from './services/to-otp-auth-uri';
 export * from './read-models/second-factor-enrollment';
+export * from './value-objects/recovery-code.rules';
+export * from './value-objects/recovery-code';
+export * from './value-objects/second-factor-proof';

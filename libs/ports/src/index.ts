@@ -30,3 +30,5 @@ export * from './in/second-factor/confirm-second-factor-enrollment-from-session.
 export * from './out/second-factor/second-factor.repository.port';
 export * from './out/second-factor/second-factor-codes.port';
 export * from './out/second-factor/second-factor.gateway.port';
+export * from './in/second-factor/verify-second-factor.port';
+export * from './out/second-factor/recovery-codes.port';

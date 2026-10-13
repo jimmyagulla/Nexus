@@ -4,6 +4,7 @@ import { ErrorCode } from '@hexagonal-monorepo-template/domain';
 import { SecondFactorController } from '../../../adapters/controllers/second-factor.controller';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { SecondFactorEnrollmentPresenter } from '../../../adapters/presenters/second-factor-enrollment.presenter';
+import { SecondFactorRecoveryCodesPresenter } from '../../../adapters/presenters/second-factor-recovery-codes.presenter';
 import { SecondFactorComposition } from '../../composition/second-factor.composition';
 import { i18n } from '../i18n/i18n';
 import { SecondFactorEnrollmentPage } from './SecondFactorEnrollmentPage';
@@ -21,11 +22,12 @@ function compositionOf(
           if (code !== '123456') {
             throw new Error(ErrorCode.SECOND_FACTOR_REQUIRED);
           }
-          return { enrolled: true };
+          return { enrolled: true, recoveryCodes: ['ABCDE23456'] };
         },
       },
     ),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
+    recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),
     errorPresenter: new ErrorPresenter(),
   };
 }
@@ -84,6 +86,24 @@ describe('SecondFactorEnrollmentPage', () => {
     await submit('123456');
 
     expect(await screen.findByText(labels.done)).toBeTruthy();
+  });
+
+  it('shows the recovery codes once the enrollment is confirmed', async () => {
+    renderPage(compositionOf(started));
+
+    await submit('123456');
+
+    expect(await screen.findByText('ABCDE-23456')).toBeTruthy();
+    expect(screen.getByText(labels.recoveryNotice)).toBeTruthy();
+  });
+
+  it('shows no recovery code after an invalid code', async () => {
+    renderPage(compositionOf(started));
+
+    await submit('000000');
+
+    await screen.findByText(i18n.messages.errors.SECOND_FACTOR_REQUIRED);
+    expect(screen.queryByText('ABCDE-23456')).toBeNull();
   });
 
   it('keeps the enrollment open after an invalid code', async () => {

@@ -11,6 +11,7 @@ export const API_ROUTES = {
     base: 'second-factor',
     enrollment: 'enrollment',
     enrollmentConfirmation: 'enrollment/confirmation',
+    verification: 'verification',
   },
 } as const;
 
