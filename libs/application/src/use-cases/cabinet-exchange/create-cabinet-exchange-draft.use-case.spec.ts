@@ -132,4 +132,21 @@ describe('CreateCabinetExchangeDraftUseCase', () => {
       useCase.execute({ actor: employer, companyId: 'c2' }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
   });
+
+  it('keeps its own copy of the file: the exchange gives no way back to the original', async () => {
+    const { files, useCase } = build();
+    const original = new Uint8Array([1, 2, 3]);
+
+    const snapshot = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      category: 'Facture',
+      file: { ...pdf, content: original },
+    });
+    original[0] = 9;
+
+    expect([...((await files.find(snapshot.id))?.content ?? [])]).toEqual([
+      1, 2, 3,
+    ]);
+  });
 });

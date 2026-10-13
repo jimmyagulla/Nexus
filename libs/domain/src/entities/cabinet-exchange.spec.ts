@@ -204,4 +204,18 @@ describe('CabinetExchange', () => {
       expect(deposited().receive(sent).status).toBe(ExchangeStatus.RECEIVED);
     });
   });
+
+  it('holds no reference to an employee, to a vault document or to a payslip', () => {
+    expect(Object.keys(readyDraft()).sort()).toEqual([
+      'category',
+      'companyId',
+      'createdAt',
+      'direction',
+      'document',
+      'history',
+      'id',
+      'senderId',
+      'status',
+    ]);
+  });
 });

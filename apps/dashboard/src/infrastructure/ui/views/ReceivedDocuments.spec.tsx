@@ -62,4 +62,16 @@ describe('ReceivedDocuments', () => {
       screen.queryByRole('button', { name: i18n.messages.cabinet.newDocument }),
     ).toBeNull();
   });
+
+  it('never links a file named after an employee to that employee record', () => {
+    render(
+      <ReceivedDocuments
+        exchanges={[{ ...received, fileName: 'bulletin-marie-martin.pdf' }]}
+        onOpen={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText('bulletin-marie-martin.pdf')).toBeTruthy();
+    expect(screen.queryAllByRole('link')).toEqual([]);
+  });
 });

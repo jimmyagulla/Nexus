@@ -57,4 +57,34 @@ describe('toCabinetExchangeSnapshot', () => {
       '2026-10-08T07:00:00.000Z',
     );
   });
+
+  it('refers to no employee, nor to any document of the vault, whatever the file is named', () => {
+    const named = CabinetExchange.draft('ex-5', 'c1', 'user-1', created)
+      .withCategory(ExchangeCategory.parse('Facture'))
+      .withDocument(
+        ExchangeFile.of(
+          'fiche-jean-dupont.pdf',
+          'application/pdf',
+          new Uint8Array([1]),
+        ),
+      );
+
+    const snapshot = toCabinetExchangeSnapshot(named);
+
+    expect(Object.keys(snapshot).sort()).toEqual([
+      'category',
+      'consultedAt',
+      'date',
+      'direction',
+      'document',
+      'id',
+      'senderId',
+      'status',
+    ]);
+    expect(snapshot.document).toEqual({
+      fileName: 'fiche-jean-dupont.pdf',
+      mimeType: 'application/pdf',
+      size: 1,
+    });
+  });
 });

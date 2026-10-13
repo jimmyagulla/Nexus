@@ -116,4 +116,13 @@ describe('ExchangeDetail', () => {
 
     expect(screen.getByText(i18n.messages.cabinet.historyEmpty)).toBeTruthy();
   });
+
+  it('never links a file named after an employee to that employee record', () => {
+    renderDetail({
+      exchange: { ...consulted, fileName: 'fiche-jean-dupont.pdf' },
+    });
+
+    expect(screen.getByText('fiche-jean-dupont.pdf')).toBeTruthy();
+    expect(screen.queryAllByRole('link')).toEqual([]);
+  });
 });

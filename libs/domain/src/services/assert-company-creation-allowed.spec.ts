@@ -22,4 +22,14 @@ describe('assertCompanyCreationAllowed', () => {
       }),
     ).toThrow(ErrorCode.ACCESS_DENIED);
   });
+
+  it('refuses the cabinet, which already belongs to the company that invited it', () => {
+    expect(() =>
+      assertCompanyCreationAllowed({
+        ...founder,
+        companyId: 'company-a',
+        role: UserRole.ACCOUNTANT,
+      }),
+    ).toThrow(ErrorCode.ACCESS_DENIED);
+  });
 });
