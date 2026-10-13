@@ -14,7 +14,7 @@ export class Account {
     readonly status: AccountStatus,
     readonly invitationToken: string | null,
     readonly secretHash: string | null,
-    readonly failedSignInCount: number = 0,
+    readonly failedSignInCount = 0,
   ) {}
 
   static inviteEmployer(
@@ -66,6 +66,22 @@ export class Account {
       AccountStatus.ACTIVE,
       null,
       secretHash,
+    );
+  }
+
+  disable(): Account {
+    if (this.status !== AccountStatus.ACTIVE) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+    return new Account(
+      this.id,
+      this.companyId,
+      this.identifier,
+      this.role,
+      AccountStatus.DISABLED,
+      this.invitationToken,
+      this.secretHash,
+      this.failedSignInCount,
     );
   }
 

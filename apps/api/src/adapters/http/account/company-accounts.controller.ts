@@ -1,11 +1,16 @@
 import { Body, Controller, Inject, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
-import { API_ROUTES, IInviteEmployer } from '@hexagonal-monorepo-template/ports';
+import {
+  API_ROUTES,
+  IDisableAccount,
+  IInviteEmployer,
+} from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
 import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
 import { Roles } from '../common/guards/roles/roles.decorator';
 import { RolesGuard } from '../common/guards/roles/roles.guard';
+import { AccountSummaryResponseDto } from './dto/account-summary-response.dto';
 import { InviteEmployerRequestDto } from './dto/invite-employer-request.dto';
 import { InvitedAccountResponseDto } from './dto/invited-account-response.dto';
 
@@ -18,6 +23,8 @@ export class CompanyAccountsController {
   constructor(
     @Inject(IInviteEmployer)
     private readonly inviteEmployer: IInviteEmployer,
+    @Inject(IDisableAccount)
+    private readonly disableAccount: IDisableAccount,
   ) {}
 
   @Post(API_ROUTES.companies.accounts)
@@ -30,5 +37,14 @@ export class CompanyAccountsController {
       actor,
       identifier: body.identifier,
     });
+  }
+
+  @Post(API_ROUTES.companies.accountDisable)
+  @ApiOperation({ summary: 'Disable an active account of the company' })
+  disable(
+    @Actor() actor: ActorContext,
+    @Param('accountId') accountId: string,
+  ): Promise<AccountSummaryResponseDto> {
+    return this.disableAccount.execute({ actor, accountId });
   }
 }

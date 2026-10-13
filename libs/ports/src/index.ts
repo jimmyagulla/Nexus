@@ -1,6 +1,7 @@
 export * from './in/account/activate-account.port';
 export * from './in/account/sign-in.port';
 export * from './in/account/invite-employer.port';
+export * from './in/account/disable-account.port';
 export * from './in/company/create-company.port';
 export * from './in/company/rename-company.port';
 export * from './in/company/rename-company-from-session.port';

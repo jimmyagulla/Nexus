@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
   ActivateAccountUseCase,
+  DisableAccountUseCase,
   InviteEmployerUseCase,
   SignInUseCase,
 } from '@hexagonal-monorepo-template/application';
@@ -15,6 +16,7 @@ import {
   IActivateAccount,
   IAuditLogRepository,
   IClock,
+  IDisableAccount,
   IInviteEmployer,
   ISecretHasher,
   ISignIn,
@@ -61,6 +63,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       provide: IInviteEmployer,
       useFactory: (accounts: IAccountRepository) =>
         new InviteEmployerUseCase(accounts),
+      inject: [IAccountRepository],
+    },
+    {
+      provide: IDisableAccount,
+      useFactory: (accounts: IAccountRepository) =>
+        new DisableAccountUseCase(accounts),
       inject: [IAccountRepository],
     },
     {

@@ -96,6 +96,37 @@ describe('Account', () => {
     expect(account.isLocked()).toBe(false);
   });
 
+  it('disables an active account and keeps its data', () => {
+    const active = failedSignIns(2);
+
+    const disabled = active.disable();
+
+    expect(disabled.status).toBe(AccountStatus.DISABLED);
+    expect(disabled.id).toBe('account-1');
+    expect(disabled.companyId).toBe('company-1');
+    expect(disabled.identifier.value).toBe('founder');
+    expect(disabled.role).toBe(UserRole.EMPLOYER);
+    expect(disabled.secretHash).toBe('hashed-secret');
+    expect(active.status).toBe(AccountStatus.ACTIVE);
+  });
+
+  it('refuses to disable an invited account', () => {
+    const invited = Account.inviteEmployer(
+      'account-1',
+      'company-1',
+      AccountIdentifier.parse('founder'),
+      'invite-1',
+    );
+
+    expect(() => invited.disable()).toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  it('refuses to disable an account that is already disabled', () => {
+    expect(() => failedSignIns(0).disable().disable()).toThrow(
+      ErrorCode.ACCESS_DENIED,
+    );
+  });
+
   it('refuses to activate an account whose invitation is already consumed', () => {
     const activated = Account.inviteEmployer(
       'account-1',

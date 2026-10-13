@@ -6,6 +6,7 @@ import { AccountStatus, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   IAccountRepository,
   IActivateAccount,
+  IDisableAccount,
   IInviteEmployer,
   ISignIn,
 } from '@hexagonal-monorepo-template/ports';
@@ -88,6 +89,14 @@ describe('AccountModule', () => {
     }).compile();
 
     expect(moduleRef.get(IInviteEmployer)).toBeDefined();
+  });
+
+  it('wires the account disabling use case', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [testGlobals({}), ClockModule, AccountModule],
+    }).compile();
+
+    expect(moduleRef.get(IDisableAccount)).toBeDefined();
   });
 
   it('seeds the local invited employer when authentication is disabled', async () => {
