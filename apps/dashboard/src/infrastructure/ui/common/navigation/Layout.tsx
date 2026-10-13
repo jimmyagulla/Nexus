@@ -3,6 +3,7 @@ import {
   Briefcase,
   FileDown,
   FileUp,
+  History,
   LayoutDashboard,
   Settings,
   type LucideIcon,
@@ -19,6 +20,7 @@ const ICONS: Record<NavigationEntryId, LucideIcon> = {
   cabinet: Briefcase,
   receivedDocuments: FileDown,
   depositDocument: FileUp,
+  exchangeHistory: History,
 };
 
 interface LayoutProps {

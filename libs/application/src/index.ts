@@ -25,3 +25,5 @@ export * from './use-cases/cabinet-exchange/download-cabinet-exchange-file-from-
 export * from './use-cases/session/get-current-role-from-session.use-case';
 export * from './use-cases/cabinet-exchange/deposit-cabinet-exchange.use-case';
 export * from './use-cases/cabinet-exchange/deposit-cabinet-exchange-from-session.use-case';
+export * from './use-cases/cabinet-exchange/list-cabinet-exchange-history.use-case';
+export * from './use-cases/cabinet-exchange/list-cabinet-exchange-history-from-session.use-case';

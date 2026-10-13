@@ -41,3 +41,6 @@ export * from './services/is-recipient';
 export * from './services/require-exchange-participant';
 export * from './services/require-connected-cabinet';
 export * from './entities/exchange-status-transitions';
+export * from './read-models/exchange-history-entry';
+export * from './read-models/to-exchange-history-entries';
+export * from './services/is-in-history-of';

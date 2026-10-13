@@ -1,11 +1,14 @@
+import type { ExchangeHistoryEntryViewModel } from '../../../adapters/presenters/cabinet-exchange-history.presenter';
 import type { CabinetExchangeViewModel } from '../../../adapters/presenters/cabinet-exchange.presenter';
 import { SubmissionError } from '../common/errors/SubmissionError';
+import { ExchangeHistoryList } from '../features/cabinet-exchange/exchange-history/ExchangeHistoryList';
 import { Button } from '../shared/button';
 import { i18n } from '../i18n/i18n';
 
 interface ExchangeDetailProps {
   exchange: CabinetExchangeViewModel;
   downloadError: string | null;
+  history: ExchangeHistoryEntryViewModel[];
   onDownload: () => void;
   onBack: () => void;
 }
@@ -13,6 +16,7 @@ interface ExchangeDetailProps {
 export function ExchangeDetail({
   exchange,
   downloadError,
+  history,
   onDownload,
   onBack,
 }: ExchangeDetailProps) {
@@ -37,6 +41,10 @@ export function ExchangeDetail({
           {i18n.messages.cabinet.back}
         </Button>
       </div>
+      <h2 className="text-xl font-semibold">
+        {i18n.messages.cabinet.historyTitle}
+      </h2>
+      <ExchangeHistoryList entries={history} />
     </div>
   );
 }

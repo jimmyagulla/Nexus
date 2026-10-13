@@ -8,9 +8,22 @@ const RECIPIENT_ROLE: Record<ExchangeDirection, UserRole> = {
   [ExchangeDirection.CABINET_TO_COMPANY]: UserRole.EMPLOYER,
 };
 
+const SENDER_ROLE: Record<ExchangeDirection, UserRole> = {
+  [ExchangeDirection.COMPANY_TO_CABINET]: UserRole.EMPLOYER,
+  [ExchangeDirection.CABINET_TO_COMPANY]: UserRole.ACCOUNTANT,
+};
+
+export function recipientRoleOf(exchange: CabinetExchange): UserRole {
+  return RECIPIENT_ROLE[exchange.direction];
+}
+
+export function senderRoleOf(exchange: CabinetExchange): UserRole {
+  return SENDER_ROLE[exchange.direction];
+}
+
 export function isRecipient(
   exchange: CabinetExchange,
   actor: ActorContext,
 ): boolean {
-  return actor.role === RECIPIENT_ROLE[exchange.direction];
+  return actor.role === recipientRoleOf(exchange);
 }

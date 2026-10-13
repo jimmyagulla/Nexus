@@ -43,6 +43,20 @@ function setup(opened: CabinetExchangeSnapshot | Error) {
     status: 200,
     data: [],
   });
+  http.reply('get', `${BASE}/history`, {
+    status: 200,
+    data: [
+      {
+        exchangeId: 'ex-1',
+        kind: 'CONSULTED',
+        actorRole: 'ACCOUNTANT',
+        occurredAt: '2026-10-07T08:00:00.000Z',
+        documentCount: 1,
+        direction: 'COMPANY_TO_CABINET',
+        fileName: 'releve.pdf',
+      },
+    ],
+  });
   const deps = createCabinetExchangeComposition(
     http,
     new InMemorySessionGateway('jwt', {
@@ -152,5 +166,15 @@ describe('ExchangeDetailPage', () => {
     );
 
     expect(backs).toEqual([1]);
+  });
+
+  it('tells the history of the exchange it opened', async () => {
+    setup(consulted);
+
+    expect(
+      await screen.findByText(
+        'Le document a été consulté par le cabinet comptable.',
+      ),
+    ).toBeTruthy();
   });
 });

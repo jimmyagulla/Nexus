@@ -12,6 +12,8 @@ export const API_ROUTES = {
     toTransmit: ':exchangeId/to-transmit',
     transmission: 'transmission',
     deposit: 'deposit',
+    history: 'history',
+    exchangeHistory: ':exchangeId/history',
     consultation: ':exchangeId/consultation',
     file: ':exchangeId/file',
   },

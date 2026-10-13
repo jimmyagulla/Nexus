@@ -26,6 +26,11 @@ describe('NavigationPresenter', () => {
         to: AppRoutes.depositDocument,
         label: 'Déposer un document',
       },
+      {
+        id: 'exchangeHistory',
+        to: AppRoutes.exchangeHistory,
+        label: 'Historique des échanges',
+      },
     ]);
   });
 

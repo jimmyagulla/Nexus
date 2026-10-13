@@ -1,4 +1,5 @@
 import { CabinetExchangeComposition } from '../../composition/cabinet-exchange.composition';
+import { useCabinetExchangeHistory } from '../hooks/useCabinetExchangeHistory';
 import { useDownloadCabinetExchangeFile } from '../hooks/useDownloadCabinetExchangeFile';
 import { useOpenCabinetExchange } from '../hooks/useOpenCabinetExchange';
 import { i18n } from '../i18n/i18n';
@@ -16,6 +17,7 @@ export function ExchangeDetailPage({
   onBack,
 }: ExchangeDetailPageProps) {
   const exchange = useOpenCabinetExchange(deps, exchangeId);
+  const history = useCabinetExchangeHistory(deps, exchangeId);
   const download = useDownloadCabinetExchangeFile(deps);
 
   if (exchange.isPending) {
@@ -29,6 +31,7 @@ export function ExchangeDetailPage({
   return (
     <ExchangeDetail
       exchange={exchange.data}
+      history={history.data ?? []}
       downloadError={
         download.isError ? deps.errorPresenter.present(download.error) : null
       }

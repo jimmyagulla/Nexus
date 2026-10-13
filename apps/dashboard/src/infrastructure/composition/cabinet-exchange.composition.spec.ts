@@ -57,6 +57,14 @@ function compositionFor(
     status: 200,
     data: [snapshot],
   });
+  http.reply('get', 'companies/c1/cabinet-exchanges/history', {
+    status: 200,
+    data: [],
+  });
+  http.reply('get', 'companies/c1/cabinet-exchanges/ex-1/history', {
+    status: 200,
+    data: [],
+  });
   http.reply('post', 'companies/c1/cabinet-exchanges/deposit', {
     status: 201,
     data: snapshot,
@@ -213,6 +221,38 @@ describe('createCabinetExchangeComposition', () => {
         data: { category: 'Bilan', file: null },
         config: authorized,
       },
+    ]);
+  });
+
+  it('wires a controller that reads the history of the exchanges', async () => {
+    const { deps, http } = compositionFor();
+
+    await deps.controller.history();
+    await deps.controller.history('ex-1');
+
+    expect(http.calls.map((call) => call.url)).toEqual([
+      'companies/c1/cabinet-exchanges/history',
+      'companies/c1/cabinet-exchanges/ex-1/history',
+    ]);
+  });
+
+  it('provides the presenter that reads the history in french', () => {
+    const { deps } = compositionFor();
+
+    expect(
+      deps.historyPresenter.present([
+        {
+          exchangeId: 'ex-1',
+          kind: 'RECEIVED',
+          actorRole: null,
+          occurredAt: '2026-10-06T10:00:00.000Z',
+          documentCount: 1,
+          direction: 'COMPANY_TO_CABINET',
+          fileName: 'a.pdf',
+        },
+      ]),
+    ).toMatchObject([
+      { phrase: 'Le document a été reçu par le cabinet comptable.' },
     ]);
   });
 });

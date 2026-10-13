@@ -20,6 +20,7 @@ import {
   ICreateCabinetExchangeDraft,
   IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
+  IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
   IOpenCabinetExchange,
@@ -44,6 +45,9 @@ const download = {
   execute: vi.fn<IDownloadCabinetExchangeFile['execute']>(),
 };
 const deposit = { execute: vi.fn<IDepositCabinetExchange['execute']>() };
+const history = {
+  execute: vi.fn<IListCabinetExchangeHistory['execute']>(),
+};
 
 const employer: ActorContext = {
   userId: 'user-1',
@@ -56,6 +60,16 @@ const accountant: ActorContext = {
   companyId: 'company-1',
   role: UserRole.ACCOUNTANT,
 };
+
+const entry = {
+  exchangeId: 'ex-1',
+  kind: 'TRANSMITTED',
+  actorRole: 'EMPLOYER',
+  occurredAt: '2026-10-06T10:00:00.000Z',
+  documentCount: 5,
+  direction: 'COMPANY_TO_CABINET',
+  fileName: 'a.pdf',
+} as const;
 
 const snapshot: CabinetExchangeSnapshot = {
   id: 'ex-1',
@@ -103,6 +117,7 @@ beforeAll(async () => {
       { provide: IOpenCabinetExchange, useValue: open },
       { provide: IDownloadCabinetExchangeFile, useValue: download },
       { provide: IDepositCabinetExchange, useValue: deposit },
+      { provide: IListCabinetExchangeHistory, useValue: history },
     ],
   }).compile();
 
@@ -134,6 +149,7 @@ beforeEach(() => {
     open,
     download,
     deposit,
+    history,
   ]) {
     port.execute.mockReset();
   }
@@ -143,6 +159,7 @@ beforeEach(() => {
   list.execute.mockResolvedValue([snapshot]);
   open.execute.mockResolvedValue(snapshot);
   deposit.execute.mockResolvedValue(snapshot);
+  history.execute.mockResolvedValue([entry]);
   download.execute.mockResolvedValue({
     fileName: 'a.pdf',
     mimeType: 'application/pdf',
@@ -507,6 +524,47 @@ describe('CabinetExchangeController', () => {
       const { status } = await send('POST', `${BASE}/deposit`, body);
 
       expect(status).toBe(403);
+    });
+  });
+
+  describe('GET history', () => {
+    it('tells the history of all the exchanges the actor may see', async () => {
+      await expect(send('GET', `${BASE}/history`)).resolves.toEqual({
+        status: 200,
+        payload: { status: 200, message: 'Success', data: [entry] },
+      });
+      expect(history.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+        exchangeId: null,
+      });
+    });
+
+    it('tells the history of one exchange, to the cabinet too', async () => {
+      actor = accountant;
+
+      await send('GET', `${BASE}/ex-1/history`);
+
+      expect(history.execute).toHaveBeenCalledWith({
+        actor: accountant,
+        companyId: 'company-1',
+        exchangeId: 'ex-1',
+      });
+    });
+
+    it('answers 403 DOCUMENT_INACCESSIBLE for an exchange outside the history of the actor', async () => {
+      history.execute.mockRejectedValue(new Error('INACCESSIBLE_DOCUMENT'));
+
+      await expect(send('GET', `${BASE}/ex-1/history`)).resolves.toEqual({
+        status: 403,
+        payload: { status: 403, message: 'INACCESSIBLE_DOCUMENT' },
+      });
+    });
+
+    it('answers 403 to an employee', async () => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+
+      expect((await send('GET', `${BASE}/history`)).status).toBe(403);
     });
   });
 });

@@ -10,7 +10,8 @@ export type NavigationEntryId =
   | 'settings'
   | 'cabinet'
   | 'receivedDocuments'
-  | 'depositDocument';
+  | 'depositDocument'
+  | 'exchangeHistory';
 
 export interface NavigationEntryViewModel {
   id: NavigationEntryId;
@@ -27,7 +28,7 @@ export class NavigationPresenter {
 
   private idsFor(role: UserRole | null): NavigationEntryId[] {
     if (role === UserRole.ACCOUNTANT) {
-      return ['receivedDocuments', 'depositDocument'];
+      return ['receivedDocuments', 'depositDocument', 'exchangeHistory'];
     }
     if (role === UserRole.EMPLOYER) {
       return ['dashboard', 'settings', 'cabinet'];
@@ -42,6 +43,7 @@ export class NavigationPresenter {
       cabinet: AppRoutes.cabinet,
       receivedDocuments: AppRoutes.receivedDocuments,
       depositDocument: AppRoutes.depositDocument,
+      exchangeHistory: AppRoutes.exchangeHistory,
     };
     return {
       id,

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ExchangeHistoryEntryViewModel } from '../../../adapters/presenters/cabinet-exchange-history.presenter';
 import type { CabinetExchangeViewModel } from '../../../adapters/presenters/cabinet-exchange.presenter';
 import { i18n } from '../i18n/i18n';
 import { ExchangeDetail } from './ExchangeDetail';
@@ -20,6 +21,7 @@ function renderDetail(
   options: {
     exchange?: CabinetExchangeViewModel;
     downloadError?: string | null;
+    history?: ExchangeHistoryEntryViewModel[];
   } = {},
 ) {
   const calls = { downloaded: 0, back: 0 };
@@ -27,6 +29,7 @@ function renderDetail(
     <ExchangeDetail
       exchange={options.exchange ?? consulted}
       downloadError={options.downloadError ?? null}
+      history={options.history ?? []}
       onDownload={() => (calls.downloaded += 1)}
       onBack={() => (calls.back += 1)}
     />,
@@ -89,5 +92,28 @@ describe('ExchangeDetail', () => {
     expect(screen.getByRole('alert').textContent).toBe(
       i18n.messages.errors.INACCESSIBLE_DOCUMENT,
     );
+  });
+
+  it('tells the history of the exchange', () => {
+    renderDetail({
+      history: [
+        {
+          key: 'a',
+          who: 'Cabinet comptable',
+          phrase: 'Le document a été consulté par le cabinet comptable.',
+          when: '07/10/2026 08:00',
+        },
+      ],
+    });
+
+    expect(
+      screen.getByText('Le document a été consulté par le cabinet comptable.'),
+    ).toBeTruthy();
+  });
+
+  it('says that nothing was recorded when the history is empty', () => {
+    renderDetail();
+
+    expect(screen.getByText(i18n.messages.cabinet.historyEmpty)).toBeTruthy();
   });
 });

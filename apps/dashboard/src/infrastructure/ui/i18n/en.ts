@@ -7,6 +7,7 @@ export const en = {
     cabinet: 'Accounting firm',
     receivedDocuments: 'Received documents',
     depositDocument: 'Deposit a document',
+    exchangeHistory: 'Exchange history',
   },
   loading: 'Loading…',
   home: {
@@ -46,6 +47,25 @@ export const en = {
     depositTitle: 'Deposit a document',
     deposit: 'Deposit',
     deposited: 'The document was transmitted.',
+    historyTitle: 'Exchange history',
+    historyEmpty: 'No action has been recorded yet.',
+    history: {
+      transmittedToCabinet: 'The document was transmitted to the accounting firm.',
+      transmittedToCabinetMany:
+        '{count} documents were transmitted to the accounting firm.',
+      transmittedToCompany: 'The document was transmitted to the company.',
+      transmittedToCompanyMany:
+        '{count} documents were transmitted to the company.',
+      receivedByCabinet: 'The document was received by the accounting firm.',
+      receivedByCompany: 'The document was received by the company.',
+      consultedByCabinet: 'The document was viewed by the accounting firm.',
+      consultedByCompany: 'The document was viewed by the company.',
+      downloadedByCabinet: 'The document was downloaded by the accounting firm.',
+      downloadedByCompany: 'The document was downloaded by the company.',
+      whoEmployer: 'Employer',
+      whoCabinet: 'Accounting firm',
+      whoAutomatic: 'Automatic',
+    },
     transmitted: 'The document was transmitted to the accounting firm.',
     statuses: {
       DRAFT: 'Draft',

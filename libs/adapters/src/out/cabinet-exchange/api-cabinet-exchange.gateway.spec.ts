@@ -18,6 +18,16 @@ const snapshot: CabinetExchangeSnapshot = {
   consultedAt: null,
 };
 
+const historyEntry = {
+  exchangeId: 'ex-1',
+  kind: 'TRANSMITTED',
+  actorRole: 'EMPLOYER',
+  occurredAt: '2026-10-06T10:00:00.000Z',
+  documentCount: 5,
+  direction: 'COMPANY_TO_CABINET',
+  fileName: 'a.pdf',
+};
+
 const authorized = { headers: { Authorization: 'Bearer token' } };
 
 const file = {
@@ -225,5 +235,37 @@ describe('ApiCabinetExchangeGateway', () => {
         config: authorized,
       },
     ]);
+  });
+
+  it('reads the history of all the exchanges', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/cabinet-exchanges/history', {
+      status: 200,
+      data: [historyEntry],
+    });
+
+    await expect(
+      new ApiCabinetExchangeGateway(http).history('c1', null, 'token'),
+    ).resolves.toEqual([historyEntry]);
+    expect(http.calls).toEqual([
+      {
+        method: 'get',
+        url: 'companies/c1/cabinet-exchanges/history',
+        data: undefined,
+        config: authorized,
+      },
+    ]);
+  });
+
+  it('reads the history of one exchange', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/cabinet-exchanges/ex-1/history', {
+      status: 200,
+      data: [historyEntry],
+    });
+
+    await expect(
+      new ApiCabinetExchangeGateway(http).history('c1', 'ex-1', 'token'),
+    ).resolves.toEqual([historyEntry]);
   });
 });

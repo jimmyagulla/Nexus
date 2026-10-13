@@ -33,6 +33,8 @@ export * from './in/cabinet-exchange/list-cabinet-exchanges.port';
 export * from './in/cabinet-exchange/list-cabinet-exchanges-from-session.port';
 export * from './in/cabinet-exchange/deposit-cabinet-exchange.port';
 export * from './in/cabinet-exchange/deposit-cabinet-exchange-from-session.port';
+export * from './in/cabinet-exchange/list-cabinet-exchange-history.port';
+export * from './in/cabinet-exchange/list-cabinet-exchange-history-from-session.port';
 export * from './in/cabinet-exchange/open-cabinet-exchange.port';
 export * from './in/cabinet-exchange/open-cabinet-exchange-from-session.port';
 export * from './in/cabinet-exchange/download-cabinet-exchange-file.port';

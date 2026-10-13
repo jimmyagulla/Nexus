@@ -2,6 +2,7 @@ import {
   CreateCabinetExchangeDraftFromSessionUseCase,
   DepositCabinetExchangeFromSessionUseCase,
   DownloadCabinetExchangeFileFromSessionUseCase,
+  ListCabinetExchangeHistoryFromSessionUseCase,
   ListCabinetExchangesFromSessionUseCase,
   MarkCabinetExchangeToTransmitFromSessionUseCase,
   OpenCabinetExchangeFromSessionUseCase,
@@ -13,12 +14,14 @@ import {
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
 import { CabinetExchangeController } from '../../adapters/controllers/cabinet-exchange.controller';
+import { CabinetExchangeHistoryPresenter } from '../../adapters/presenters/cabinet-exchange-history.presenter';
 import { CabinetExchangePresenter } from '../../adapters/presenters/cabinet-exchange.presenter';
 import { ErrorPresenter } from '../../adapters/presenters/error.presenter';
 
 export type CabinetExchangeComposition = {
   controller: CabinetExchangeController;
   presenter: CabinetExchangePresenter;
+  historyPresenter: CabinetExchangeHistoryPresenter;
   errorPresenter: ErrorPresenter;
 };
 
@@ -37,8 +40,10 @@ export function createCabinetExchangeComposition(
       new OpenCabinetExchangeFromSessionUseCase(sessions, exchanges),
       new DownloadCabinetExchangeFileFromSessionUseCase(sessions, exchanges),
       new DepositCabinetExchangeFromSessionUseCase(sessions, exchanges),
+      new ListCabinetExchangeHistoryFromSessionUseCase(sessions, exchanges),
     ),
     presenter: new CabinetExchangePresenter(),
+    historyPresenter: new CabinetExchangeHistoryPresenter(),
     errorPresenter: new ErrorPresenter(),
   };
 }

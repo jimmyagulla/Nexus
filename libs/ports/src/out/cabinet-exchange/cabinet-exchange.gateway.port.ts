@@ -1,6 +1,7 @@
 import {
   CabinetExchangeSnapshot,
   ExchangeFileInput,
+  ExchangeHistoryEntry,
 } from '@hexagonal-monorepo-template/domain';
 
 export interface ICabinetExchangeGateway {
@@ -29,6 +30,11 @@ export interface ICabinetExchangeGateway {
     input: { category: string; file: ExchangeFileInput | null },
     token: string,
   ): Promise<CabinetExchangeSnapshot>;
+  history(
+    companyId: string,
+    exchangeId: string | null,
+    token: string,
+  ): Promise<readonly ExchangeHistoryEntry[]>;
   open(
     companyId: string,
     exchangeId: string,

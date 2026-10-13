@@ -23,6 +23,6 @@ describe('createNavigationComposition', () => {
       new InMemorySessionGateway(null, null),
     );
 
-    expect(deps.presenter.present(UserRole.ACCOUNTANT)).toHaveLength(2);
+    expect(deps.presenter.present(UserRole.ACCOUNTANT)).toHaveLength(3);
   });
 });

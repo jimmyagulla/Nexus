@@ -7,6 +7,7 @@ export const fr = {
     cabinet: 'Cabinet comptable',
     receivedDocuments: 'Documents reçus',
     depositDocument: 'Déposer un document',
+    exchangeHistory: 'Historique des échanges',
   },
   loading: 'Chargement…',
   home: {
@@ -46,6 +47,26 @@ export const fr = {
     depositTitle: 'Déposer un document',
     deposit: 'Déposer',
     deposited: 'Le document a été transmis.',
+    historyTitle: 'Historique des échanges',
+    historyEmpty: "Aucune action n'a encore été enregistrée.",
+    history: {
+      transmittedToCabinet: 'Le document a été transmis au cabinet comptable.',
+      transmittedToCabinetMany:
+        '{count} documents ont été transmis au cabinet comptable.',
+      transmittedToCompany: "Le document a été transmis à l'entreprise.",
+      transmittedToCompanyMany:
+        "{count} documents ont été transmis à l'entreprise.",
+      receivedByCabinet: 'Le document a été reçu par le cabinet comptable.',
+      receivedByCompany: "Le document a été reçu par l'entreprise.",
+      consultedByCabinet: 'Le document a été consulté par le cabinet comptable.',
+      consultedByCompany: "Le document a été consulté par l'entreprise.",
+      downloadedByCabinet:
+        'Le document a été téléchargé par le cabinet comptable.',
+      downloadedByCompany: "Le document a été téléchargé par l'entreprise.",
+      whoEmployer: 'Employeur',
+      whoCabinet: 'Cabinet comptable',
+      whoAutomatic: 'Automatique',
+    },
     transmitted: 'Le document a été transmis au cabinet comptable.',
     statuses: {
       DRAFT: 'Brouillon',

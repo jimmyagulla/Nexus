@@ -1,6 +1,7 @@
 import {
   CabinetExchangeSnapshot,
   ExchangeFileInput,
+  ExchangeHistoryEntry,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
@@ -95,6 +96,26 @@ export class ApiCabinetExchangeGateway implements ICabinetExchangeGateway {
       await this.httpClient.post<ApiResponse<CabinetExchangeSnapshot>>(
         cabinetExchangePath(API_ROUTES.cabinetExchanges.deposit, { companyId }),
         this.toDraftPayload(input),
+        this.authorized(token),
+      ),
+    );
+  }
+
+  async history(
+    companyId: string,
+    exchangeId: string | null,
+    token: string,
+  ): Promise<readonly ExchangeHistoryEntry[]> {
+    const path =
+      exchangeId === null
+        ? cabinetExchangePath(API_ROUTES.cabinetExchanges.history, { companyId })
+        : cabinetExchangePath(API_ROUTES.cabinetExchanges.exchangeHistory, {
+            companyId,
+            exchangeId,
+          });
+    return unwrapResponse(
+      await this.httpClient.get<ApiResponse<ExchangeHistoryEntry[]>>(
+        path,
         this.authorized(token),
       ),
     );

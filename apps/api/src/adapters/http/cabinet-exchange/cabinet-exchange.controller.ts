@@ -14,6 +14,7 @@ import {
   ICreateCabinetExchangeDraft,
   IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
+  IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
   IOpenCabinetExchange,
@@ -32,6 +33,7 @@ import { CabinetExchangeResponseDto } from './dto/cabinet-exchange-response.dto'
 import { CreateCabinetExchangeDraftRequestDto } from './dto/create-cabinet-exchange-draft-request.dto';
 import { DepositCabinetExchangeRequestDto } from './dto/deposit-cabinet-exchange-request.dto';
 import { ExchangeFileResponseDto } from './dto/exchange-file-response.dto';
+import { ExchangeHistoryEntryResponseDto } from './dto/exchange-history-entry-response.dto';
 import { MarkCabinetExchangeToTransmitRequestDto } from './dto/mark-cabinet-exchange-to-transmit-request.dto';
 import { TransmitCabinetExchangesRequestDto } from './dto/transmit-cabinet-exchanges-request.dto';
 
@@ -56,6 +58,8 @@ export class CabinetExchangeController {
     private readonly download: IDownloadCabinetExchangeFile,
     @Inject(IDepositCabinetExchange)
     private readonly deposit: IDepositCabinetExchange,
+    @Inject(IListCabinetExchangeHistory)
+    private readonly history: IListCabinetExchangeHistory,
   ) {}
 
   @Post()
@@ -116,6 +120,37 @@ export class CabinetExchangeController {
   ): Promise<CabinetExchangeResponseDto[]> {
     const snapshots = await this.list.execute({ actor, companyId });
     return snapshots.map(toCabinetExchangeResponse);
+  }
+
+  @Get(API_ROUTES.cabinetExchanges.history)
+  @Roles(UserRole.EMPLOYER, UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'Tell the history of all the exchanges' })
+  async allHistory(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+  ): Promise<ExchangeHistoryEntryResponseDto[]> {
+    const entries = await this.history.execute({
+      actor,
+      companyId,
+      exchangeId: null,
+    });
+    return entries.map((entry) => ({ ...entry }));
+  }
+
+  @Get(API_ROUTES.cabinetExchanges.exchangeHistory)
+  @Roles(UserRole.EMPLOYER, UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'Tell the history of one exchange' })
+  async exchangeHistory(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('exchangeId') exchangeId: string,
+  ): Promise<ExchangeHistoryEntryResponseDto[]> {
+    const entries = await this.history.execute({
+      actor,
+      companyId,
+      exchangeId,
+    });
+    return entries.map((entry) => ({ ...entry }));
   }
 
   @Post(API_ROUTES.cabinetExchanges.deposit)
