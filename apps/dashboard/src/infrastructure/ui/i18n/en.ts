@@ -49,5 +49,7 @@ export const en = {
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
     [ErrorCode.INVITATION_INVALID]: 'This activation link is no longer usable.',
+    [ErrorCode.ACCOUNT_LOCKED]:
+      'Sign-in is locked. An employer must restore access.',
   },
 } as const;

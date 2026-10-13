@@ -115,6 +115,27 @@ describe('AccountController', () => {
     });
   });
 
+  it('answers 403 when the account is locked', async () => {
+    signIn.execute.mockRejectedValue(new Error(ErrorCode.ACCOUNT_LOCKED));
+
+    await expect(
+      fetch(`${baseUrl}/accounts/sign-in`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ identifier: 'founder', secret: 's3cret' }),
+      }).then(async (response) => ({
+        status: response.status,
+        payload: await response.json(),
+      })),
+    ).resolves.toEqual({
+      status: 403,
+      payload: {
+        status: 403,
+        message: ErrorCode.ACCOUNT_LOCKED,
+      },
+    });
+  });
+
   it('answers 403 when the secret is wrong', async () => {
     signIn.execute.mockRejectedValue(new Error(ErrorCode.ACCESS_DENIED));
 

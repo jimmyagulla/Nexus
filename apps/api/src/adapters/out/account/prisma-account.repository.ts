@@ -52,6 +52,7 @@ export class PrismaAccountRepository implements IAccountRepository {
       status: account.status,
       invitationToken: account.invitationToken,
       secretHash: account.secretHash,
+      failedSignInCount: account.failedSignInCount,
     };
   }
 }

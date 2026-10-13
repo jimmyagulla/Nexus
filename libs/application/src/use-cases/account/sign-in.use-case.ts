@@ -1,4 +1,5 @@
 import {
+  Account,
   AccountIdentifier,
   AccountSecret,
   AccountStatus,
@@ -25,7 +26,19 @@ export class SignInUseCase implements ISignIn {
   }): Promise<SignedInSession> {
     const identifier = AccountIdentifier.parse(input.identifier);
     const secret = AccountSecret.parse(input.secret);
-    const account = await this.accounts.findByIdentifier(identifier.value);
+    const account = await this.requireActiveAccount(identifier.value);
+    this.refuseIfLocked(account);
+    await this.authenticate(account, secret.value);
+    await this.resetFailedSignIns(account);
+    return this.sessions.open({
+      userId: account.identifier.value,
+      companyId: account.companyId,
+      role: account.role,
+    });
+  }
+
+  private async requireActiveAccount(identifier: string): Promise<Account> {
+    const account = await this.accounts.findByIdentifier(identifier);
     if (
       account === null ||
       account.status !== AccountStatus.ACTIVE ||
@@ -33,13 +46,31 @@ export class SignInUseCase implements ISignIn {
     ) {
       throw new Error(ErrorCode.ACCESS_DENIED);
     }
-    if (!(await this.secrets.matches(secret.value, account.secretHash))) {
+    return account;
+  }
+
+  private refuseIfLocked(account: Account): void {
+    if (account.isLocked()) {
+      throw new Error(ErrorCode.ACCOUNT_LOCKED);
+    }
+  }
+
+  private async authenticate(account: Account, secret: string): Promise<void> {
+    const secretHash = account.secretHash;
+    if (secretHash === null) {
       throw new Error(ErrorCode.ACCESS_DENIED);
     }
-    return this.sessions.open({
-      userId: account.identifier.value,
-      companyId: account.companyId,
-      role: account.role,
-    });
+    if (await this.secrets.matches(secret, secretHash)) {
+      return;
+    }
+    const failed = account.recordFailedSignIn();
+    await this.accounts.save(failed);
+    throw new Error(
+      failed.isLocked() ? ErrorCode.ACCOUNT_LOCKED : ErrorCode.ACCESS_DENIED,
+    );
+  }
+
+  private resetFailedSignIns(account: Account): Promise<void> {
+    return this.accounts.save(account.clearFailedSignIns());
   }
 }

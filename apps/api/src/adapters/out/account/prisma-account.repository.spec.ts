@@ -16,6 +16,7 @@ type AccountRow = {
   status: AccountStatus;
   invitationToken: string | null;
   secretHash: string | null;
+  failedSignInCount: number;
 };
 
 type AccountCreateData = AccountRow;
@@ -50,6 +51,7 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
         stored.status = args.data.status;
         stored.invitationToken = args.data.invitationToken;
         stored.secretHash = args.data.secretHash;
+        stored.failedSignInCount = args.data.failedSignInCount;
       },
       findMany: async (args: {
         where: { companyId: string };
@@ -110,6 +112,7 @@ describe('PrismaAccountRepository', () => {
         status: AccountStatus.INVITED,
         invitationToken: 'invite-account-1',
         secretHash: null,
+        failedSignInCount: 0,
       },
     ]);
   });

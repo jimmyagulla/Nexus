@@ -127,4 +127,66 @@ describe('SignInUseCase', () => {
       useCase.execute({ identifier: 'founder', secret: 's3cret' }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
   });
+
+  it('locks the account on the fifth wrong secret', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const secrets = new InMemorySecretHasher();
+    await activeEmployer(accounts, secrets);
+    const useCase = new SignInUseCase(
+      accounts,
+      secrets,
+      new InMemorySignInSession(),
+    );
+
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      await expect(
+        useCase.execute({ identifier: 'founder', secret: 'wrong' }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    }
+
+    await expect(
+      useCase.execute({ identifier: 'founder', secret: 'wrong' }),
+    ).rejects.toThrow(ErrorCode.ACCOUNT_LOCKED);
+  });
+
+  it('keeps the lock even when the secret is then correct', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const secrets = new InMemorySecretHasher();
+    await activeEmployer(accounts, secrets);
+    const useCase = new SignInUseCase(
+      accounts,
+      secrets,
+      new InMemorySignInSession(),
+    );
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      await useCase.execute({ identifier: 'founder', secret: 'wrong' }).catch(() => undefined);
+    }
+
+    await expect(
+      useCase.execute({ identifier: 'founder', secret: 's3cret' }),
+    ).rejects.toThrow(ErrorCode.ACCOUNT_LOCKED);
+  });
+
+  it('resets the failed sign-in count after a successful connection', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const secrets = new InMemorySecretHasher();
+    await activeEmployer(accounts, secrets);
+    const useCase = new SignInUseCase(
+      accounts,
+      secrets,
+      new InMemorySignInSession(),
+    );
+
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      await useCase
+        .execute({ identifier: 'founder', secret: 'wrong' })
+        .catch(() => undefined);
+    }
+    await useCase.execute({ identifier: 'founder', secret: 's3cret' });
+
+    await expect(
+      useCase.execute({ identifier: 'founder', secret: 'wrong' }),
+    ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
 });

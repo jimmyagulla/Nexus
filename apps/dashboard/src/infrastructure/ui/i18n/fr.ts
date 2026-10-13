@@ -51,5 +51,7 @@ export const fr = {
     [ErrorCode.POTENTIAL_DUPLICATE]: 'Un élément semblable existe déjà.',
     [ErrorCode.INVITATION_INVALID]:
       "Ce lien d'activation n'est plus utilisable.",
+    [ErrorCode.ACCOUNT_LOCKED]:
+      "La connexion est bloquée. Un employeur doit rétablir l'accès.",
   },
 } as const;

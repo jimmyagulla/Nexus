@@ -63,9 +63,10 @@ model Account {
   identifier      String
   role            UserRole
   status          AccountStatus
-  invitationToken String?       @unique
-  secretHash      String?
-  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invitationToken   String?       @unique
+  secretHash        String?
+  failedSignInCount Int           @default(0)
+  company           Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@unique([companyId, identifier])
 }
