@@ -1,11 +1,11 @@
-import type { PersonalInfoUpdatedComposition } from '../../../composition/personal-info-updated.composition';
+import type { PersonalInfoUpdatedPageComposition } from '../../../composition/personal-info/personal-info-updated-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetPersonalInfoUpdated } from '../../hooks/useGetPersonalInfoUpdated';
 import { i18n } from '../../i18n/i18n';
 import { PersonalInfoUpdated } from './PersonalInfoUpdated';
 
 interface PersonalInfoUpdatedPageProps {
-  deps: PersonalInfoUpdatedComposition;
+  deps: PersonalInfoUpdatedPageComposition;
 }
 
 export function PersonalInfoUpdatedPage({ deps }: PersonalInfoUpdatedPageProps) {

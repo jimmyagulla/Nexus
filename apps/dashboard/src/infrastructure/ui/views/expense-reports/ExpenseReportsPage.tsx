@@ -1,11 +1,11 @@
-import type { ExpenseReportsComposition } from '../../../composition/expense-reports.composition';
+import type { ExpenseReportsPageComposition } from '../../../composition/expense-report/expense-reports-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetExpenseReports } from '../../hooks/useGetExpenseReports';
 import { i18n } from '../../i18n/i18n';
 import { ExpenseReports } from './ExpenseReports';
 
 interface ExpenseReportsPageProps {
-  deps: ExpenseReportsComposition;
+  deps: ExpenseReportsPageComposition;
 }
 
 export function ExpenseReportsPage({ deps }: ExpenseReportsPageProps) {

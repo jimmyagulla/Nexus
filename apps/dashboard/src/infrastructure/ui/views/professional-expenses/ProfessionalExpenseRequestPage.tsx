@@ -1,11 +1,11 @@
-import type { ProfessionalExpenseRequestComposition } from '../../../composition/professional-expense-request.composition';
+import type { ProfessionalExpenseRequestPageComposition } from '../../../composition/professional-expense/professional-expense-request-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetProfessionalExpenseRequest } from '../../hooks/useGetProfessionalExpenseRequest';
 import { i18n } from '../../i18n/i18n';
 import { ProfessionalExpenseRequest } from './ProfessionalExpenseRequest';
 
 interface ProfessionalExpenseRequestPageProps {
-  deps: ProfessionalExpenseRequestComposition;
+  deps: ProfessionalExpenseRequestPageComposition;
 }
 
 export function ProfessionalExpenseRequestPage({ deps }: ProfessionalExpenseRequestPageProps) {

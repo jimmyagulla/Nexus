@@ -1,11 +1,11 @@
-import type { DocumentsComposition } from '../../../composition/documents.composition';
+import type { DocumentsPageComposition } from '../../../composition/document/documents-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetDocuments } from '../../hooks/useGetDocuments';
 import { i18n } from '../../i18n/i18n';
 import { Documents } from './Documents';
 
 interface DocumentsPageProps {
-  deps: DocumentsComposition;
+  deps: DocumentsPageComposition;
 }
 
 export function DocumentsPage({ deps }: DocumentsPageProps) {

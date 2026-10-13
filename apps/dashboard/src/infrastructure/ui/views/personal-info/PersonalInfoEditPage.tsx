@@ -1,11 +1,11 @@
-import type { PersonalInfoEditComposition } from '../../../composition/personal-info-edit.composition';
+import type { PersonalInfoEditPageComposition } from '../../../composition/personal-info/personal-info-edit-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetPersonalInfoEdit } from '../../hooks/useGetPersonalInfoEdit';
 import { i18n } from '../../i18n/i18n';
 import { PersonalInfoEdit } from './PersonalInfoEdit';
 
 interface PersonalInfoEditPageProps {
-  deps: PersonalInfoEditComposition;
+  deps: PersonalInfoEditPageComposition;
 }
 
 export function PersonalInfoEditPage({ deps }: PersonalInfoEditPageProps) {

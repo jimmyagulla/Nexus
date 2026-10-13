@@ -1,11 +1,11 @@
-import type { EmployeeDashboardComposition } from '../../../composition/employee-dashboard.composition';
+import type { EmployeeDashboardPageComposition } from '../../../composition/employee-dashboard/employee-dashboard-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetEmployeeDashboard } from '../../hooks/useGetEmployeeDashboard';
 import { i18n } from '../../i18n/i18n';
 import { EmployeeDashboard } from './EmployeeDashboard';
 
 interface EmployeeDashboardPageProps {
-  deps: EmployeeDashboardComposition;
+  deps: EmployeeDashboardPageComposition;
 }
 
 export function EmployeeDashboardPage({ deps }: EmployeeDashboardPageProps) {

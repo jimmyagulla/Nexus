@@ -1,11 +1,11 @@
-import type { LoginComposition } from '../../../composition/login.composition';
+import type { LoginPageComposition } from '../../../composition/auth/login-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetLogin } from '../../hooks/useGetLogin';
 import { i18n } from '../../i18n/i18n';
 import { Login } from './Login';
 
 interface LoginPageProps {
-  deps: LoginComposition;
+  deps: LoginPageComposition;
 }
 
 export function LoginPage({ deps }: LoginPageProps) {

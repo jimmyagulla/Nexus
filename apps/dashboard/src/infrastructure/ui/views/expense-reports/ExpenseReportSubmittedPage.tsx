@@ -1,11 +1,11 @@
-import type { ExpenseReportSubmittedComposition } from '../../../composition/expense-report-submitted.composition';
+import type { ExpenseReportSubmittedPageComposition } from '../../../composition/expense-report/expense-report-submitted-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetExpenseReportSubmitted } from '../../hooks/useGetExpenseReportSubmitted';
 import { i18n } from '../../i18n/i18n';
 import { ExpenseReportSubmitted } from './ExpenseReportSubmitted';
 
 interface ExpenseReportSubmittedPageProps {
-  deps: ExpenseReportSubmittedComposition;
+  deps: ExpenseReportSubmittedPageComposition;
 }
 
 export function ExpenseReportSubmittedPage({ deps }: ExpenseReportSubmittedPageProps) {

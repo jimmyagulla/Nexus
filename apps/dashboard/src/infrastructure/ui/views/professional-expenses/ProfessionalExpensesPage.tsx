@@ -1,11 +1,11 @@
-import type { ProfessionalExpensesComposition } from '../../../composition/professional-expenses.composition';
+import type { ProfessionalExpensesPageComposition } from '../../../composition/professional-expense/professional-expenses-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetProfessionalExpenses } from '../../hooks/useGetProfessionalExpenses';
 import { i18n } from '../../i18n/i18n';
 import { ProfessionalExpenses } from './ProfessionalExpenses';
 
 interface ProfessionalExpensesPageProps {
-  deps: ProfessionalExpensesComposition;
+  deps: ProfessionalExpensesPageComposition;
 }
 
 export function ProfessionalExpensesPage({ deps }: ProfessionalExpensesPageProps) {

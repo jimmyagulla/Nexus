@@ -1,11 +1,11 @@
-import type { DocumentUploadComposition } from '../../../composition/document-upload.composition';
+import type { DocumentUploadPageComposition } from '../../../composition/document/document-upload-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetDocumentUpload } from '../../hooks/useGetDocumentUpload';
 import { i18n } from '../../i18n/i18n';
 import { DocumentUpload } from './DocumentUpload';
 
 interface DocumentUploadPageProps {
-  deps: DocumentUploadComposition;
+  deps: DocumentUploadPageComposition;
 }
 
 export function DocumentUploadPage({ deps }: DocumentUploadPageProps) {

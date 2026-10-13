@@ -1,11 +1,11 @@
-import type { LeaveRequestComposition } from '../../../composition/leave-request.composition';
+import type { LeaveRequestPageComposition } from '../../../composition/leave/leave-request-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetLeaveRequest } from '../../hooks/useGetLeaveRequest';
 import { i18n } from '../../i18n/i18n';
 import { LeaveRequest } from './LeaveRequest';
 
 interface LeaveRequestPageProps {
-  deps: LeaveRequestComposition;
+  deps: LeaveRequestPageComposition;
 }
 
 export function LeaveRequestPage({ deps }: LeaveRequestPageProps) {

@@ -1,14 +1,11 @@
 import { createRoute } from '@tanstack/react-router';
 import {
   accountingFirmComposition,
-  accountingFirmUploadComposition,
   companySettingsComposition,
-  employeeAttendanceComposition,
   employeeComposition,
-  employeesComposition,
   employerDashboardComposition,
-  employerShellComposition,
-  leaveApprovalsComposition,
+  leaveApprovalComposition,
+  shellComposition,
 } from '../../di';
 import { PageContent } from '../common/page/PageContent';
 import { i18n } from '../i18n/i18n';
@@ -30,7 +27,7 @@ const nav = i18n.messages.shell.employerNav;
 const employerLayoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: 'employer',
-  component: () => <EmployerShellPage deps={employerShellComposition} />,
+  component: () => <EmployerShellPage deps={shellComposition.employerShell} />,
 });
 
 const parent = () => employerLayoutRoute;
@@ -40,13 +37,13 @@ function comingSoon(title: string) {
 }
 
 export const employerRoutes = employerLayoutRoute.addChildren([
-  createRoute({ getParentRoute: parent, path: AppRoutes.employer, component: () => <EmployerDashboardPage deps={employerDashboardComposition} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.employees, component: () => <EmployeesPage deps={employeesComposition} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.employee, component: () => <EmployeePage deps={employeeComposition} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.employeeAttendance, component: () => <EmployeeAttendancePage deps={employeeAttendanceComposition} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.leaveApprovals, component: () => <LeaveApprovalsPage deps={leaveApprovalsComposition} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.accountingFirm, component: () => <AccountingFirmPage deps={accountingFirmComposition} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.accountingFirmUpload, component: () => <AccountingFirmUploadPage deps={accountingFirmUploadComposition} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.employer, component: () => <EmployerDashboardPage deps={employerDashboardComposition.employerDashboard} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.employees, component: () => <EmployeesPage deps={employeeComposition.employees} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.employee, component: () => <EmployeePage deps={employeeComposition.employee} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.employeeAttendance, component: () => <EmployeeAttendancePage deps={employeeComposition.employeeAttendance} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.leaveApprovals, component: () => <LeaveApprovalsPage deps={leaveApprovalComposition.leaveApprovals} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.accountingFirm, component: () => <AccountingFirmPage deps={accountingFirmComposition.accountingFirm} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.accountingFirmUpload, component: () => <AccountingFirmUploadPage deps={accountingFirmComposition.accountingFirmUpload} /> }),
   createRoute({
     getParentRoute: parent,
     path: AppRoutes.settings,

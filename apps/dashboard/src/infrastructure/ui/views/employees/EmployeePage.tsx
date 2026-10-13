@@ -1,11 +1,11 @@
-import type { EmployeeComposition } from '../../../composition/employee.composition';
+import type { EmployeePageComposition } from '../../../composition/employee/employee-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetEmployee } from '../../hooks/useGetEmployee';
 import { i18n } from '../../i18n/i18n';
 import { Employee } from './Employee';
 
 interface EmployeePageProps {
-  deps: EmployeeComposition;
+  deps: EmployeePageComposition;
 }
 
 export function EmployeePage({ deps }: EmployeePageProps) {

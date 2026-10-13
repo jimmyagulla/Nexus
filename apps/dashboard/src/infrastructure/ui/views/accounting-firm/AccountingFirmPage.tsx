@@ -1,11 +1,11 @@
-import type { AccountingFirmComposition } from '../../../composition/accounting-firm.composition';
+import type { AccountingFirmPageComposition } from '../../../composition/accounting-firm/accounting-firm-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetAccountingFirm } from '../../hooks/useGetAccountingFirm';
 import { i18n } from '../../i18n/i18n';
 import { AccountingFirm } from './AccountingFirm';
 
 interface AccountingFirmPageProps {
-  deps: AccountingFirmComposition;
+  deps: AccountingFirmPageComposition;
 }
 
 export function AccountingFirmPage({ deps }: AccountingFirmPageProps) {

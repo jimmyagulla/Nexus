@@ -1,11 +1,11 @@
-import type { LeavesComposition } from '../../../composition/leaves.composition';
+import type { LeavesPageComposition } from '../../../composition/leave/leaves-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetLeaves } from '../../hooks/useGetLeaves';
 import { i18n } from '../../i18n/i18n';
 import { Leaves } from './Leaves';
 
 interface LeavesPageProps {
-  deps: LeavesComposition;
+  deps: LeavesPageComposition;
 }
 
 export function LeavesPage({ deps }: LeavesPageProps) {

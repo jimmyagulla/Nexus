@@ -1,11 +1,11 @@
-import type { EmployeeAttendanceComposition } from '../../../composition/employee-attendance.composition';
+import type { EmployeeAttendancePageComposition } from '../../../composition/employee/employee-attendance-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useGetEmployeeAttendance } from '../../hooks/useGetEmployeeAttendance';
 import { i18n } from '../../i18n/i18n';
 import { EmployeeAttendance } from './EmployeeAttendance';
 
 interface EmployeeAttendancePageProps {
-  deps: EmployeeAttendanceComposition;
+  deps: EmployeeAttendancePageComposition;
 }
 
 export function EmployeeAttendancePage({ deps }: EmployeeAttendancePageProps) {

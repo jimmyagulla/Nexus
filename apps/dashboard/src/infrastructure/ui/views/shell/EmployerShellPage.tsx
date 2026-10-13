@@ -1,10 +1,10 @@
 import { Outlet } from '@tanstack/react-router';
-import type { EmployerShellComposition } from '../../../composition/employer-shell.composition';
+import type { EmployerShellPageComposition } from '../../../composition/shell/employer-shell-page.composition';
 import { AppShell } from '../../common/layout/AppShell';
 import { useGetEmployerShell } from '../../hooks/useGetEmployerShell';
 
 interface EmployerShellPageProps {
-  deps: EmployerShellComposition;
+  deps: EmployerShellPageComposition;
 }
 
 /** Layout of the employer routes: the shell around the current screen. */
