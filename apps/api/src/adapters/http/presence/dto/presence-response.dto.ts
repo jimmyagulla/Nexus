@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { AbsenceEntryResponseDto } from './absence-entry-response.dto';
 import { OvertimeEntryResponseDto } from './overtime-entry-response.dto';
 import { SickLeaveEntryResponseDto } from './sick-leave-entry-response.dto';
+import { WorkedDaysAdjustmentResponseDto } from './worked-days-adjustment-response.dto';
 
 export class PresenceResponseDto {
   @ApiProperty()
@@ -18,6 +19,12 @@ export class PresenceResponseDto {
 
   @ApiProperty()
   workedDays!: number;
+
+  @ApiProperty()
+  proposedWorkedDays!: number;
+
+  @ApiProperty({ type: [WorkedDaysAdjustmentResponseDto] })
+  adjustments!: WorkedDaysAdjustmentResponseDto[];
 
   @ApiProperty({ type: [AbsenceEntryResponseDto] })
   leaves!: AbsenceEntryResponseDto[];

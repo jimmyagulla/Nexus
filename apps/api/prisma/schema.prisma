@@ -72,14 +72,26 @@ model CompanyPublicHoliday {
 }
 
 model Presence {
-  id         String  @id @default(uuid())
-  companyId  String
-  employeeId String
-  month      String
-  workedDays Int
-  company    Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id                 String               @id @default(uuid())
+  companyId          String
+  employeeId         String
+  month              String
+  proposedWorkedDays Int
+  workedDays         Int
+  company            Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  adjustments        PresenceAdjustment[]
 
   @@unique([companyId, employeeId, month])
+}
+
+model PresenceAdjustment {
+  id         String   @id @default(uuid())
+  presenceId String
+  actorId    String
+  occurredAt DateTime
+  before     Int
+  after      Int
+  presence   Presence @relation(fields: [presenceId], references: [id], onDelete: Cascade)
 }
 
 model AuditEvent {

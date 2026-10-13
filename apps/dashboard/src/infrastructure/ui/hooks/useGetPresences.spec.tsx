@@ -11,7 +11,7 @@ import { PresencePresenter } from '../../../adapters/presenters/presence.present
 import { PresenceComposition } from '../../composition/presence.composition';
 import { useGetPresences } from './useGetPresences';
 
-const unusedOpen = {
+const unused = {
   execute: async (): Promise<never> => {
     throw new Error('unused');
   },
@@ -21,7 +21,7 @@ function compositionOf(
   list: () => Promise<PresenceListSnapshot>,
 ): PresenceComposition {
   return {
-    controller: new PresenceController({ execute: list }, unusedOpen),
+    controller: new PresenceController({ execute: list }, unused, unused),
     presenter: new PresencePresenter(),
     errorPresenter: new ErrorPresenter(),
   };
@@ -50,6 +50,8 @@ describe('useGetPresences', () => {
             employeeName: 'Camille Martin',
             month: '2026-10',
             workedDays: 22,
+            proposedWorkedDays: 22,
+            adjustments: [],
             leaves: [],
             absences: [],
             sickLeaves: [],
@@ -69,6 +71,8 @@ describe('useGetPresences', () => {
         employeeName: 'Camille Martin',
         monthLabel: 'Octobre 2026',
         workedDays: 22,
+        originalWorkedDays: 22,
+        history: [],
         leaves: [],
         absences: [],
         sickLeaves: [],

@@ -20,6 +20,18 @@ export class InMemoryPresenceRepository implements IPresenceRepository {
     return inserted;
   }
 
+  async save(presence: Presence): Promise<void> {
+    this.presences.set(presence.id, presence);
+  }
+
+  async findById(
+    companyId: string,
+    presenceId: string,
+  ): Promise<Presence | null> {
+    const presence = this.presences.get(presenceId);
+    return presence?.companyId === companyId ? presence : null;
+  }
+
   async findByEmployeeAndMonth(
     companyId: string,
     employeeId: string,

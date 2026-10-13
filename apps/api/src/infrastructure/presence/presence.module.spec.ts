@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { InMemoryPresenceRepository } from '@hexagonal-monorepo-template/adapters';
 import {
   IAbsenceFactSource,
+  IAdjustPresenceWorkedDays,
   ICompanyRepository,
   IHoursFactSource,
   IListPresences,
@@ -38,6 +39,7 @@ describe('PresenceModule', () => {
 
     expect(moduleRef.get(IOpenPresence)).toBeDefined();
     expect(moduleRef.get(IListPresences)).toBeDefined();
+    expect(moduleRef.get(IAdjustPresenceWorkedDays)).toBeDefined();
   });
 
   it('reuses the company repository of the company module', async () => {

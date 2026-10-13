@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER, ModulesContainer } from '@nestjs/core';
 import {
   IAddCompanyPublicHoliday,
+  IAdjustPresenceWorkedDays,
   ICreateCompany,
   IGetCompanySettings,
   IJwtVerifier,
@@ -93,6 +94,7 @@ describe('AppModule', () => {
 
     expect(moduleRef.get(IOpenPresence)).toBeDefined();
     expect(moduleRef.get(IListPresences)).toBeDefined();
+    expect(moduleRef.get(IAdjustPresenceWorkedDays)).toBeDefined();
   });
 
   it('registers SuccessResponseInterceptor as APP_INTERCEPTOR', () => {

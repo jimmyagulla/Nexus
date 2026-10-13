@@ -74,12 +74,9 @@ export class OpenPresenceUseCase implements IOpenPresence {
 
   private factSources(): PresenceFactSources {
     return {
-      absences: (companyId, employeeId) =>
-        this.absences.listForEmployee(companyId, employeeId),
-      sickLeaves: (companyId, employeeId) =>
-        this.sickLeaves.listForEmployee(companyId, employeeId),
-      hours: (companyId, employeeId) =>
-        this.hours.listForEmployee(companyId, employeeId),
+      absences: this.absences,
+      sickLeaves: this.sickLeaves,
+      hours: this.hours,
     };
   }
 

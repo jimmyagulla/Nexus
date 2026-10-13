@@ -27,6 +27,13 @@ type PresencePayload = {
   employeeName: string;
   month: string;
   workedDays: number;
+  proposedWorkedDays: number;
+  adjustments: {
+    actorId: string;
+    occurredAt: string;
+    before: number;
+    after: number;
+  }[];
   leaves: AbsenceEntryPayload[];
   absences: AbsenceEntryPayload[];
   sickLeaves: { id: string; date: string }[];
@@ -76,6 +83,25 @@ export class ApiPresenceGateway implements IPresenceGateway {
     return this.toSnapshot(payload);
   }
 
+  async adjustWorkedDays(
+    companyId: string,
+    presenceId: string,
+    workedDays: number,
+    token: string,
+  ): Promise<PresenceSnapshot> {
+    const payload = unwrapResponse(
+      await this.httpClient.patch<ApiResponse<PresencePayload>>(
+        companyPath(API_ROUTES.companies.presenceWorkedDays, {
+          companyId,
+          presenceId,
+        }),
+        { workedDays },
+        this.authorized(token),
+      ),
+    );
+    return this.toSnapshot(payload);
+  }
+
   private authorized(token: string): { headers: { Authorization: string } } {
     return { headers: { Authorization: `Bearer ${token}` } };
   }
@@ -87,6 +113,8 @@ export class ApiPresenceGateway implements IPresenceGateway {
       employeeName: payload.employeeName,
       month: payload.month,
       workedDays: payload.workedDays,
+      proposedWorkedDays: payload.proposedWorkedDays,
+      adjustments: payload.adjustments.map((entry) => ({ ...entry })),
       leaves: payload.leaves.map((entry) => ({ ...entry })),
       absences: payload.absences.map((entry) => ({ ...entry })),
       sickLeaves: payload.sickLeaves.map((entry) => ({ ...entry })),

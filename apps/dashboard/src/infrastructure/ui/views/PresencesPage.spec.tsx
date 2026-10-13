@@ -24,6 +24,8 @@ const camille: PresenceSnapshot = {
   employeeName: 'Camille Martin',
   month: '2026-10',
   workedDays: 22,
+  proposedWorkedDays: 22,
+  adjustments: [],
   leaves: [],
   absences: [],
   sickLeaves: [],
@@ -42,6 +44,7 @@ const listWith = (
 function compositionOf(
   list: () => Promise<PresenceListSnapshot>,
   openRefusal?: ErrorCode,
+  adjustRefusal?: ErrorCode,
 ): PresenceComposition {
   return {
     controller: new PresenceController(
@@ -50,6 +53,14 @@ function compositionOf(
         execute: async () => {
           if (openRefusal !== undefined) {
             throw new Error(openRefusal);
+          }
+          return camille;
+        },
+      },
+      {
+        execute: async () => {
+          if (adjustRefusal !== undefined) {
+            throw new Error(adjustRefusal);
           }
           return camille;
         },
@@ -93,7 +104,71 @@ async function openMonthThroughDialog() {
   );
 }
 
+async function adjustDaysThroughDialog() {
+  fireEvent.click(
+    await screen.findByRole('button', { name: i18n.messages.presences.adjust }),
+  );
+
+  const dialog = within(screen.getByRole('dialog'));
+  fireEvent.change(dialog.getByLabelText(i18n.messages.presences.workedDays), {
+    target: { value: '20' },
+  });
+  fireEvent.click(
+    dialog.getByRole('button', { name: i18n.messages.presences.save }),
+  );
+}
+
 describe('PresencesPage', () => {
+  it('closes the dialog once the days are corrected', async () => {
+    renderPage(compositionOf(async () => listWith([camille])));
+
+    await adjustDaysThroughDialog();
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  });
+
+  it('explains inside the dialog why the days could not be corrected', async () => {
+    renderPage(
+      compositionOf(
+        async () => listWith([camille]),
+        undefined,
+        ErrorCode.ACCESS_DENIED,
+      ),
+    );
+
+    await adjustDaysThroughDialog();
+
+    expect(
+      (await within(screen.getByRole('dialog')).findByRole('alert')).textContent,
+    ).toBe(i18n.messages.errors.ACCESS_DENIED);
+  });
+
+  it('shows the history of a month that was corrected', async () => {
+    renderPage(
+      compositionOf(async () =>
+        listWith([
+          {
+            ...camille,
+            workedDays: 20,
+            adjustments: [
+              {
+                actorId: 'user-1',
+                occurredAt: '2026-10-13T09:00:00.000Z',
+                before: 22,
+                after: 20,
+              },
+            ],
+          },
+        ]),
+      ),
+    );
+
+    expect(await screen.findByText('13/10/2026 : 22 → 20')).toBeTruthy();
+    expect(
+      screen.getByText(`${i18n.messages.presences.originalValue} : 22`),
+    ).toBeTruthy();
+  });
+
   it('shows a waiting state while the presences load', () => {
     renderPage(compositionOf(() => new Promise(() => undefined)));
 

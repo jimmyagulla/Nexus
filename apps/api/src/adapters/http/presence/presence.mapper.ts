@@ -14,6 +14,8 @@ export function toPresenceResponse(
     employeeName: snapshot.employeeName,
     month: snapshot.month,
     workedDays: snapshot.workedDays,
+    proposedWorkedDays: snapshot.proposedWorkedDays,
+    adjustments: snapshot.adjustments.map((entry) => ({ ...entry })),
     leaves: snapshot.leaves.map((entry) => ({ ...entry })),
     absences: snapshot.absences.map((entry) => ({ ...entry })),
     sickLeaves: snapshot.sickLeaves.map((entry) => ({ ...entry })),

@@ -13,6 +13,8 @@ export type PresenceFilter = {
 
 export interface IPresenceRepository {
   insert(presence: NewPresence): Promise<Presence>;
+  save(presence: Presence): Promise<void>;
+  findById(companyId: string, presenceId: string): Promise<Presence | null>;
   findByEmployeeAndMonth(
     companyId: string,
     employeeId: string,

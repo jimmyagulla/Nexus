@@ -10,6 +10,8 @@ export * from './in/company-public-holidays/add-company-public-holiday-from-sess
 export * from './in/company-public-holidays/update-company-public-holiday.port';
 export * from './in/company-public-holidays/remove-company-public-holiday.port';
 export * from './in/company-public-holidays/remove-company-public-holiday-from-session.port';
+export * from './in/presence/adjust-presence-worked-days.port';
+export * from './in/presence/adjust-presence-worked-days-from-session.port';
 export * from './in/presence/open-presence.port';
 export * from './in/presence/list-presences.port';
 export * from './in/presence/list-presences-from-session.port';

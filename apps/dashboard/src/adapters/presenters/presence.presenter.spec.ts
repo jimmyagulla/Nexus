@@ -15,6 +15,8 @@ const list: PresenceListSnapshot = {
       employeeName: 'Camille Martin',
       month: '2026-10',
       workedDays: 22,
+      proposedWorkedDays: 22,
+      adjustments: [],
       leaves: [
         {
           id: 'a1',
@@ -59,6 +61,46 @@ describe('PresencePresenter', () => {
       monthLabel: 'Octobre 2026',
       workedDays: 22,
     });
+  });
+
+  it('keeps the proposed days as the original value of the month', () => {
+    expect(new PresencePresenter().present(list).rows[0]?.originalWorkedDays).toBe(
+      22,
+    );
+  });
+
+  it('writes the history of the corrections with the old and the new value', () => {
+    const [row] = new PresencePresenter().present({
+      ...list,
+      presences: [
+        {
+          ...(list.presences[0] as PresenceSnapshot),
+          workedDays: 21,
+          proposedWorkedDays: 22,
+          adjustments: [
+            {
+              actorId: 'user-1',
+              occurredAt: '2026-10-13T09:00:00.000Z',
+              before: 22,
+              after: 20,
+            },
+            {
+              actorId: 'user-1',
+              occurredAt: '2026-10-14T10:30:00.000Z',
+              before: 20,
+              after: 21,
+            },
+          ],
+        },
+      ],
+    }).rows;
+
+    expect(row?.history).toEqual(['13/10/2026 : 22 → 20', '14/10/2026 : 20 → 21']);
+    expect(row?.workedDays).toBe(21);
+  });
+
+  it('has no history for a month nobody corrected', () => {
+    expect(new PresencePresenter().present(list).rows[0]?.history).toEqual([]);
   });
 
   it('writes a leave with its type, its period and its days', () => {

@@ -11,6 +11,8 @@ const model: PresenceListViewModel = {
       employeeName: 'Camille Martin',
       monthLabel: 'Octobre 2026',
       workedDays: 22,
+      originalWorkedDays: 22,
+      history: [],
       leaves: [],
       absences: [],
       sickLeaves: [],
@@ -27,7 +29,9 @@ function renderView(overrides: Partial<PresenceListViewModel> = {}) {
       model={{ ...model, ...overrides }}
       errorPresenter={new ErrorPresenter()}
       openError={null}
+      adjustError={null}
       onOpen={async () => true}
+      onAdjust={async () => true}
     />,
   );
 }
@@ -56,11 +60,27 @@ describe('Presences', () => {
     ).toBeTruthy();
   });
 
+  it('lets the employer adjust the days of a month', () => {
+    renderView();
+
+    expect(
+      screen.getByRole('button', { name: i18n.messages.presences.adjust }),
+    ).toBeTruthy();
+  });
+
   it('does not let an actor who cannot manage open a month', () => {
     renderView({ canManage: false });
 
     expect(
       screen.queryByRole('button', { name: i18n.messages.presences.openMonth }),
+    ).toBeNull();
+  });
+
+  it('does not let an actor who cannot manage adjust the days', () => {
+    renderView({ canManage: false });
+
+    expect(
+      screen.queryByRole('button', { name: i18n.messages.presences.adjust }),
     ).toBeNull();
   });
 });

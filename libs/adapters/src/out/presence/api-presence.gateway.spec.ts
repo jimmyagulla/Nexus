@@ -7,7 +7,16 @@ const camille = {
   employeeId: 'e1',
   employeeName: 'Camille Martin',
   month: '2026-10',
-  workedDays: 22,
+  workedDays: 20,
+  proposedWorkedDays: 22,
+  adjustments: [
+    {
+      actorId: 'user-1',
+      occurredAt: '2026-10-13T09:00:00.000Z',
+      before: 22,
+      after: 20,
+    },
+  ],
   leaves: [
     {
       id: 'a1',
@@ -73,6 +82,26 @@ describe('ApiPresenceGateway', () => {
         method: 'post',
         url: 'companies/c1/presences',
         data: { employeeId: 'e1', month: '2026-10' },
+        config: { headers: { Authorization: 'Bearer token' } },
+      },
+    ]);
+  });
+
+  it('corrects the worked days of a presence', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('patch', 'companies/c1/presences/p1/worked-days', {
+      status: 200,
+      data: camille,
+    });
+
+    await expect(
+      new ApiPresenceGateway(http).adjustWorkedDays('c1', 'p1', 20, 'token'),
+    ).resolves.toEqual(camille);
+    expect(http.calls).toEqual([
+      {
+        method: 'patch',
+        url: 'companies/c1/presences/p1/worked-days',
+        data: { workedDays: 20 },
         config: { headers: { Authorization: 'Bearer token' } },
       },
     ]);

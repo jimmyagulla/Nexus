@@ -33,6 +33,8 @@ function schedule(accepted: boolean) {
       employeeName: 'Camille Martin',
       month: input.month,
       workedDays: 22,
+      proposedWorkedDays: 22,
+      adjustments: [],
       leaves: [],
       absences: [],
       sickLeaves: [],
@@ -43,7 +45,15 @@ function schedule(accepted: boolean) {
   };
 
   const deps: PresenceComposition = {
-    controller: new PresenceController({ execute: list }, { execute: open }),
+    controller: new PresenceController(
+      { execute: list },
+      { execute: open },
+      {
+        execute: async (): Promise<never> => {
+          throw new Error('unused');
+        },
+      },
+    ),
     presenter: new PresencePresenter(),
     errorPresenter: new ErrorPresenter(),
   };

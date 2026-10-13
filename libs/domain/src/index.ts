@@ -10,6 +10,7 @@ export * from './entities/company-public-holiday';
 export * from './entities/company-non-working-weekday';
 export * from './entities/company-calendar';
 export * from './entities/company';
+export * from './entities/worked-days-adjustment';
 export * from './entities/presence';
 export * from './facts/employee-reference';
 export * from './facts/absence-fact';

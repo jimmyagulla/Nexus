@@ -7,6 +7,7 @@ export const API_ROUTES = {
     publicHolidays: ':companyId/calendar/public-holidays',
     publicHoliday: ':companyId/calendar/public-holidays/:publicHolidayId',
     presences: ':companyId/presences',
+    presenceWorkedDays: ':companyId/presences/:presenceId/worked-days',
   },
 } as const;
 

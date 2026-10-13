@@ -27,6 +27,73 @@ describe('InMemoryPresenceRepository', () => {
     expect(presence.month.value).toBe('2026-10');
   });
 
+  it('starts a new presence with its worked days as the proposed ones', async () => {
+    const presences = new InMemoryPresenceRepository();
+
+    const presence = await presences.insert({
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: october,
+      workedDays: 22,
+    });
+
+    expect(presence.proposedWorkedDays).toBe(22);
+    expect(presence.adjustments).toEqual([]);
+  });
+
+  it('finds a presence by its id inside its company', async () => {
+    const presences = new InMemoryPresenceRepository();
+    const inserted = await presences.insert({
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: october,
+      workedDays: 22,
+    });
+
+    expect(await presences.findById('c1', inserted.id)).toEqual(inserted);
+  });
+
+  it('finds nothing by the id of a presence of another company', async () => {
+    const presences = new InMemoryPresenceRepository();
+    const inserted = await presences.insert({
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: october,
+      workedDays: 22,
+    });
+
+    expect(await presences.findById('c2', inserted.id)).toBeNull();
+  });
+
+  it('finds nothing by an unknown id', async () => {
+    expect(
+      await new InMemoryPresenceRepository().findById('c1', 'missing'),
+    ).toBeNull();
+  });
+
+  it('keeps the adjustments of a presence it saved', async () => {
+    const presences = new InMemoryPresenceRepository();
+    const inserted = await presences.insert({
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: october,
+      workedDays: 22,
+    });
+    const adjusted = inserted.adjustWorkedDays(
+      20,
+      'user-1',
+      new Date('2026-10-13T09:00:00.000Z'),
+    );
+
+    await presences.save(adjusted);
+
+    expect(await presences.findById('c1', inserted.id)).toEqual(adjusted);
+    expect(
+      await presences.findByEmployeeAndMonth('c1', 'e1', october),
+    ).toEqual(adjusted);
+    expect(await presences.list({ companyId: 'c1' })).toEqual([adjusted]);
+  });
+
   it('finds the presence of an employee for a month', async () => {
     const presences = new InMemoryPresenceRepository();
     const inserted = await presences.insert({

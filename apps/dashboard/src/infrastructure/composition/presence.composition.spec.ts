@@ -20,6 +20,8 @@ const camille = {
   employeeName: 'Camille Martin',
   month: '2026-10',
   workedDays: 22,
+  proposedWorkedDays: 22,
+  adjustments: [],
   leaves: [],
   absences: [],
   sickLeaves: [],
@@ -52,6 +54,10 @@ function compositionFor(
     },
   });
   http.reply('post', 'companies/c1/presences', { status: 201, data: camille });
+  http.reply('patch', 'companies/c1/presences/p1/worked-days', {
+    status: 200,
+    data: camille,
+  });
 
   return {
     http,
@@ -99,6 +105,21 @@ describe('createPresenceComposition', () => {
     ]);
   });
 
+  it('wires a controller that corrects the worked days of a month', async () => {
+    const { deps, http } = compositionFor();
+
+    await deps.controller.adjustWorkedDays({ presenceId: 'p1', workedDays: 20 });
+
+    expect(http.calls).toEqual([
+      {
+        method: 'patch',
+        url: 'companies/c1/presences/p1/worked-days',
+        data: { workedDays: 20 },
+        config: { headers: { Authorization: 'Bearer jwt' } },
+      },
+    ]);
+  });
+
   it('provides the presenter the screen needs, not only the controller', () => {
     const { deps } = compositionFor();
 
@@ -114,6 +135,8 @@ describe('createPresenceComposition', () => {
         employeeName: 'Camille Martin',
         monthLabel: 'Octobre 2026',
         workedDays: 22,
+        originalWorkedDays: 22,
+        history: [],
         leaves: [],
         absences: [],
         sickLeaves: [],

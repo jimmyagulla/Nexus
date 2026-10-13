@@ -11,6 +11,12 @@ export interface IPresenceGateway {
     month: string,
     token: string,
   ): Promise<PresenceSnapshot>;
+  adjustWorkedDays(
+    companyId: string,
+    presenceId: string,
+    workedDays: number,
+    token: string,
+  ): Promise<PresenceSnapshot>;
 }
 
 export const IPresenceGateway = Symbol('IPresenceGateway');

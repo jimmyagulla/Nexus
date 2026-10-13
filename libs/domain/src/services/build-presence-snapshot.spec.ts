@@ -21,10 +21,12 @@ const presence = new Presence(
 describe('buildPresenceSnapshot', () => {
   it('reads the facts of the employee of the presence', async () => {
     const asked: string[] = [];
-    const ask = (source: string) => async (companyId: string, employeeId: string) => {
-      asked.push(`${source}:${companyId}:${employeeId}`);
-      return [];
-    };
+    const ask = (source: string) => ({
+      listForEmployee: async (companyId: string, employeeId: string) => {
+        asked.push(`${source}:${companyId}:${employeeId}`);
+        return [];
+      },
+    });
 
     await buildPresenceSnapshot(presence, employee, {
       absences: ask('absences'),
@@ -41,20 +43,22 @@ describe('buildPresenceSnapshot', () => {
 
   it('shows the facts the sources answered', async () => {
     const snapshot = await buildPresenceSnapshot(presence, employee, {
-      absences: async () => [
-        {
-          id: 'a1',
-          companyId: 'c1',
-          employeeId: 'e1',
-          start: CalendarDate.parse('2026-10-05'),
-          end: CalendarDate.parse('2026-10-07'),
-          type: 'Congés payés',
-          days: 3,
-          sourceRequestId: 'r1',
-        },
-      ],
-      sickLeaves: async () => [],
-      hours: async () => [],
+      absences: {
+        listForEmployee: async () => [
+          {
+            id: 'a1',
+            companyId: 'c1',
+            employeeId: 'e1',
+            start: CalendarDate.parse('2026-10-05'),
+            end: CalendarDate.parse('2026-10-07'),
+            type: 'Congés payés',
+            days: 3,
+            sourceRequestId: 'r1',
+          },
+        ],
+      },
+      sickLeaves: { listForEmployee: async () => [] },
+      hours: { listForEmployee: async () => [] },
     });
 
     expect(snapshot.leaves.map((leave) => leave.id)).toEqual(['a1']);
@@ -62,10 +66,11 @@ describe('buildPresenceSnapshot', () => {
   });
 
   it('leaves the rubrics empty when the sources hold no fact', async () => {
+    const empty = { listForEmployee: async () => [] };
     const snapshot = await buildPresenceSnapshot(presence, employee, {
-      absences: async () => [],
-      sickLeaves: async () => [],
-      hours: async () => [],
+      absences: empty,
+      sickLeaves: empty,
+      hours: empty,
     });
 
     expect([

@@ -6,7 +6,16 @@ const camille: PresenceSnapshot = {
   employeeId: 'e1',
   employeeName: 'Camille Martin',
   month: '2026-10',
-  workedDays: 22,
+  workedDays: 20,
+  proposedWorkedDays: 22,
+  adjustments: [
+    {
+      actorId: 'user-1',
+      occurredAt: '2026-10-13T09:00:00.000Z',
+      before: 22,
+      after: 20,
+    },
+  ],
   leaves: [
     {
       id: 'a1',
@@ -32,6 +41,27 @@ const camille: PresenceSnapshot = {
 describe('toPresenceResponse', () => {
   it('answers every rubric of the month as plain data', () => {
     expect(toPresenceResponse(camille)).toEqual(camille);
+  });
+
+  it('answers the proposed days beside the adjusted ones, with the history', () => {
+    expect(toPresenceResponse(camille)).toMatchObject({
+      workedDays: 20,
+      proposedWorkedDays: 22,
+      adjustments: [
+        {
+          actorId: 'user-1',
+          occurredAt: '2026-10-13T09:00:00.000Z',
+          before: 22,
+          after: 20,
+        },
+      ],
+    });
+  });
+
+  it('answers an empty history as an empty list', () => {
+    expect(toPresenceResponse({ ...camille, adjustments: [] }).adjustments).toEqual(
+      [],
+    );
   });
 
   it('answers empty rubrics as empty lists', () => {

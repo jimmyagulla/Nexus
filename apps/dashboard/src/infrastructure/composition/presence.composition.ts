@@ -1,4 +1,5 @@
 import {
+  AdjustPresenceWorkedDaysFromSessionUseCase,
   ListPresencesFromSessionUseCase,
   OpenPresenceFromSessionUseCase,
 } from '@hexagonal-monorepo-template/application';
@@ -27,6 +28,7 @@ export function createPresenceComposition(
     controller: new PresenceController(
       new ListPresencesFromSessionUseCase(sessions, presences),
       new OpenPresenceFromSessionUseCase(sessions, presences),
+      new AdjustPresenceWorkedDaysFromSessionUseCase(sessions, presences),
     ),
     presenter: new PresencePresenter(),
     errorPresenter: new ErrorPresenter(),

@@ -25,6 +25,8 @@ const list: PresenceListSnapshot = {
       employeeName: 'Camille Martin',
       month: '2026-10',
       workedDays: 22,
+      proposedWorkedDays: 22,
+      adjustments: [],
       leaves: [],
       absences: [],
       sickLeaves: [],

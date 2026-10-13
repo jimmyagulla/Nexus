@@ -7,7 +7,11 @@ import {
   PresenceSnapshot,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
-import { IListPresences, IOpenPresence } from '@hexagonal-monorepo-template/ports';
+import {
+  IAdjustPresenceWorkedDays,
+  IListPresences,
+  IOpenPresence,
+} from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
 import { AuthenticatedRequest } from '../common/guards/authenticated-request';
 import { SuccessResponseInterceptor } from '../common/interceptors/success-response.interceptor';
@@ -16,6 +20,9 @@ import { PresenceController } from './presence.controller';
 
 const openPresence = { execute: vi.fn<IOpenPresence['execute']>() };
 const listPresences = { execute: vi.fn<IListPresences['execute']>() };
+const adjustPresence = {
+  execute: vi.fn<IAdjustPresenceWorkedDays['execute']>(),
+};
 
 const employer: ActorContext = {
   userId: 'user-1',
@@ -28,7 +35,16 @@ const presence: PresenceSnapshot = {
   employeeId: 'employee-1',
   employeeName: 'Camille Martin',
   month: '2026-10',
-  workedDays: 22,
+  workedDays: 20,
+  proposedWorkedDays: 22,
+  adjustments: [
+    {
+      actorId: 'user-1',
+      occurredAt: '2026-10-13T09:00:00.000Z',
+      before: 22,
+      after: 20,
+    },
+  ],
   leaves: [
     {
       id: 'absence-1',
@@ -44,6 +60,7 @@ const presence: PresenceSnapshot = {
 };
 
 const PRESENCES_PATH = '/companies/company-1/presences';
+const WORKED_DAYS_PATH = `${PRESENCES_PATH}/presence-1/worked-days`;
 
 let app: INestApplication;
 let baseUrl: string;
@@ -73,6 +90,7 @@ beforeAll(async () => {
     providers: [
       { provide: IOpenPresence, useValue: openPresence },
       { provide: IListPresences, useValue: listPresences },
+      { provide: IAdjustPresenceWorkedDays, useValue: adjustPresence },
     ],
   }).compile();
 
@@ -98,6 +116,8 @@ beforeEach(() => {
   actor = employer;
   openPresence.execute.mockReset();
   openPresence.execute.mockResolvedValue(presence);
+  adjustPresence.execute.mockReset();
+  adjustPresence.execute.mockResolvedValue(presence);
   listPresences.execute.mockReset();
   listPresences.execute.mockResolvedValue({
     presences: [presence],
@@ -149,6 +169,85 @@ describe('PresenceController', () => {
       await expect(send('GET', PRESENCES_PATH)).resolves.toEqual({
         status: 403,
         payload: { status: 403, message: ErrorCode.ACCESS_DENIED },
+      });
+    });
+  });
+
+  describe('PATCH /companies/:companyId/presences/:presenceId/worked-days', () => {
+    it('answers 200 with the corrected presence', async () => {
+      await expect(
+        send('PATCH', WORKED_DAYS_PATH, { workedDays: 20 }),
+      ).resolves.toEqual({
+        status: 200,
+        payload: { status: 200, message: 'Success', data: presence },
+      });
+    });
+
+    it('hands the presence of the path and the corrected days to the use case', async () => {
+      await send('PATCH', WORKED_DAYS_PATH, { workedDays: 20 });
+
+      expect(adjustPresence.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+        presenceId: 'presence-1',
+        workedDays: 20,
+      });
+    });
+
+    it('answers 400 when the days are not a whole number', async () => {
+      const { status } = await send('PATCH', WORKED_DAYS_PATH, {
+        workedDays: 20.5,
+      });
+
+      expect(status).toBe(400);
+      expect(adjustPresence.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the actor is an employee', async () => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+
+      const { status } = await send('PATCH', WORKED_DAYS_PATH, {
+        workedDays: 20,
+      });
+
+      expect(status).toBe(403);
+      expect(adjustPresence.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the actor is bound to another company', async () => {
+      actor = { ...employer, companyId: 'company-2' };
+
+      const { status } = await send('PATCH', WORKED_DAYS_PATH, {
+        workedDays: 20,
+      });
+
+      expect(status).toBe(403);
+      expect(adjustPresence.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the use case denies access to the presence', async () => {
+      adjustPresence.execute.mockRejectedValue(
+        new Error(ErrorCode.ACCESS_DENIED),
+      );
+
+      await expect(
+        send('PATCH', WORKED_DAYS_PATH, { workedDays: 20 }),
+      ).resolves.toEqual({
+        status: 403,
+        payload: { status: 403, message: ErrorCode.ACCESS_DENIED },
+      });
+    });
+
+    it('answers 400 when the use case refuses the days', async () => {
+      adjustPresence.execute.mockRejectedValue(
+        new Error(ErrorCode.REQUIRED_INFORMATION),
+      );
+
+      await expect(
+        send('PATCH', WORKED_DAYS_PATH, { workedDays: 31 }),
+      ).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.REQUIRED_INFORMATION },
       });
     });
   });

@@ -6,19 +6,17 @@ import { SickLeaveDocument } from '../facts/sick-leave-document';
 import { PresenceSnapshot } from '../read-models/presence-snapshot';
 import { toPresenceSnapshot } from '../read-models/to-presence-snapshot';
 
+type FactsOfEmployee<Fact> = {
+  listForEmployee(
+    companyId: string,
+    employeeId: string,
+  ): Promise<readonly Fact[]>;
+};
+
 export type PresenceFactSources = {
-  absences: (
-    companyId: string,
-    employeeId: string,
-  ) => Promise<readonly AbsenceFact[]>;
-  sickLeaves: (
-    companyId: string,
-    employeeId: string,
-  ) => Promise<readonly SickLeaveDocument[]>;
-  hours: (
-    companyId: string,
-    employeeId: string,
-  ) => Promise<readonly HoursFact[]>;
+  absences: FactsOfEmployee<AbsenceFact>;
+  sickLeaves: FactsOfEmployee<SickLeaveDocument>;
+  hours: FactsOfEmployee<HoursFact>;
 };
 
 export async function buildPresenceSnapshot(
@@ -27,9 +25,9 @@ export async function buildPresenceSnapshot(
   sources: PresenceFactSources,
 ): Promise<PresenceSnapshot> {
   const [absences, sickLeaves, hours] = await Promise.all([
-    sources.absences(presence.companyId, presence.employeeId),
-    sources.sickLeaves(presence.companyId, presence.employeeId),
-    sources.hours(presence.companyId, presence.employeeId),
+    sources.absences.listForEmployee(presence.companyId, presence.employeeId),
+    sources.sickLeaves.listForEmployee(presence.companyId, presence.employeeId),
+    sources.hours.listForEmployee(presence.companyId, presence.employeeId),
   ]);
 
   return toPresenceSnapshot(presence, employee, { absences, sickLeaves, hours });

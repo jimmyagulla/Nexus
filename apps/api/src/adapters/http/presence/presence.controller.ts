@@ -4,6 +4,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
+  IAdjustPresenceWorkedDays,
   IListPresences,
   IOpenPresence,
 } from '@hexagonal-monorepo-template/ports';
@@ -18,6 +20,7 @@ import { Actor } from '../common/guards/auth/actor.decorator';
 import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
 import { Roles } from '../common/guards/roles/roles.decorator';
 import { RolesGuard } from '../common/guards/roles/roles.guard';
+import { AdjustWorkedDaysRequestDto } from './dto/adjust-worked-days-request.dto';
 import { OpenPresenceRequestDto } from './dto/open-presence-request.dto';
 import { PresenceListResponseDto } from './dto/presence-list-response.dto';
 import { PresenceResponseDto } from './dto/presence-response.dto';
@@ -31,6 +34,8 @@ export class PresenceController {
   constructor(
     @Inject(IOpenPresence) private readonly openPresence: IOpenPresence,
     @Inject(IListPresences) private readonly listPresences: IListPresences,
+    @Inject(IAdjustPresenceWorkedDays)
+    private readonly adjustPresence: IAdjustPresenceWorkedDays,
   ) {}
 
   @Get(API_ROUTES.companies.presences)
@@ -42,6 +47,24 @@ export class PresenceController {
   ): Promise<PresenceListResponseDto> {
     const list = await this.listPresences.execute({ actor, companyId });
     return toPresenceListResponse(list);
+  }
+
+  @Patch(API_ROUTES.companies.presenceWorkedDays)
+  @Roles(UserRole.EMPLOYER)
+  @ApiOperation({ summary: 'Correct the worked days of a presence month' })
+  async adjustWorkedDays(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('presenceId') presenceId: string,
+    @Body() body: AdjustWorkedDaysRequestDto,
+  ): Promise<PresenceResponseDto> {
+    const presence = await this.adjustPresence.execute({
+      actor,
+      companyId,
+      presenceId,
+      workedDays: body.workedDays,
+    });
+    return toPresenceResponse(presence);
   }
 
   @Post(API_ROUTES.companies.presences)

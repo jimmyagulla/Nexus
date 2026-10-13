@@ -4,6 +4,7 @@ import {
   PresenceListSnapshot,
   PresenceSnapshot,
   SickLeaveEntrySnapshot,
+  WorkedDaysAdjustmentSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   i18n as appI18n,
@@ -15,6 +16,8 @@ export interface PresenceRowViewModel {
   employeeName: string;
   monthLabel: string;
   workedDays: number;
+  originalWorkedDays: number;
+  history: string[];
   leaves: string[];
   absences: string[];
   sickLeaves: string[];
@@ -52,6 +55,10 @@ export class PresencePresenter {
       employeeName: presence.employeeName,
       monthLabel: this.formatMonth(presence.month),
       workedDays: presence.workedDays,
+      originalWorkedDays: presence.proposedWorkedDays,
+      history: presence.adjustments.map((entry) =>
+        this.presentAdjustment(entry),
+      ),
       leaves: presence.leaves.map((entry) => this.presentAbsence(entry)),
       absences: presence.absences.map((entry) => this.presentAbsence(entry)),
       sickLeaves: presence.sickLeaves.map((entry) =>
@@ -59,6 +66,11 @@ export class PresencePresenter {
       ),
       overtime: presence.overtime.map((entry) => this.presentOvertime(entry)),
     };
+  }
+
+  private presentAdjustment(entry: WorkedDaysAdjustmentSnapshot): string {
+    const day = entry.occurredAt.slice(0, 10);
+    return `${this.formatDate(day)} : ${entry.before} → ${entry.after}`;
   }
 
   private presentAbsence(entry: AbsenceEntrySnapshot): string {

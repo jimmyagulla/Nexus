@@ -78,11 +78,49 @@ describe('toPresenceSnapshot', () => {
       employeeName: 'Camille Martin',
       month: '2026-10',
       workedDays: 22,
+      proposedWorkedDays: 22,
+      adjustments: [],
       leaves: [],
       absences: [],
       sickLeaves: [],
       overtime: [],
     });
+  });
+
+  it('keeps the proposed days beside the adjusted ones', () => {
+    const snapshot = toPresenceSnapshot(
+      presence.adjustWorkedDays(20, 'user-1', new Date('2026-10-13T09:00:00.000Z')),
+      employee,
+      noFacts,
+    );
+
+    expect(snapshot.workedDays).toBe(20);
+    expect(snapshot.proposedWorkedDays).toBe(22);
+  });
+
+  it('writes each adjustment with the days before and after', () => {
+    const snapshot = toPresenceSnapshot(
+      presence
+        .adjustWorkedDays(20, 'user-1', new Date('2026-10-13T09:00:00.000Z'))
+        .adjustWorkedDays(21, 'user-2', new Date('2026-10-14T10:30:00.000Z')),
+      employee,
+      noFacts,
+    );
+
+    expect(snapshot.adjustments).toEqual([
+      {
+        actorId: 'user-1',
+        occurredAt: '2026-10-13T09:00:00.000Z',
+        before: 22,
+        after: 20,
+      },
+      {
+        actorId: 'user-2',
+        occurredAt: '2026-10-14T10:30:00.000Z',
+        before: 20,
+        after: 21,
+      },
+    ]);
   });
 
   it('shows paid leave and RTT among the leaves', () => {

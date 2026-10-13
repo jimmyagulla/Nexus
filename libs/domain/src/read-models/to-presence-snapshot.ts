@@ -26,6 +26,13 @@ export function toPresenceSnapshot(
     employeeName: employee.fullName,
     month: presence.month.value,
     workedDays: presence.workedDays,
+    proposedWorkedDays: presence.proposedWorkedDays,
+    adjustments: presence.adjustments.map((adjustment) => ({
+      actorId: adjustment.actorId,
+      occurredAt: adjustment.occurredAt.toISOString(),
+      before: adjustment.before,
+      after: adjustment.after,
+    })),
     leaves: absences
       .filter((absence) => isLeaveType(absence.type))
       .map(toAbsenceEntry),
