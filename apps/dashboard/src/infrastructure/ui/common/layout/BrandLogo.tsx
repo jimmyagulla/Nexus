@@ -7,10 +7,11 @@ interface BrandLogoProps {
   className?: string;
 }
 
+/** Same footprint as the former 24 / 22 / 32px brand mark. */
 const markClassName = {
-  sidebar: 'size-6',
-  mobile: 'size-5.5',
-  auth: 'size-8',
+  sidebar: 'size-6 text-24',
+  mobile: 'size-5.5 text-22',
+  auth: 'size-8 text-32',
 };
 
 const nameClassName = {
@@ -22,10 +23,12 @@ const nameClassName = {
 export function BrandLogo({ size = 'sidebar', className }: BrandLogoProps) {
   return (
     <span className={cn('flex items-center gap-2.5', className)}>
-      <img
-        src="/icon-septeo-orange.svg"
-        alt=""
-        className={cn('block shrink-0', markClassName[size])}
+      <i
+        aria-hidden
+        className={cn(
+          'ri-safe-2-fill block shrink-0 leading-none text-brand',
+          markClassName[size],
+        )}
       />
       <span
         className={cn(

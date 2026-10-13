@@ -23,7 +23,7 @@ The reference design lives in `Nexus maquettes/` (Claude Design export, v3 is th
 ## 3. Typography
 - `font-sans` (Inter) for all text; `font-display` (Poppins) for the product name only.
 - The page line-height is `normal`, like the mockups. Only add `leading-*` when the mockup sets a `line-height` (`line-height: 18px` → `leading-4.5`).
-- Font sizes: `text-10` … `text-30` (the number is the size in px).
+- Font sizes: `text-10` … `text-32` (the number is the size in px).
 
 ## 4. Spacing & sizes
 Tailwind v4 spacing is `n × 4px`, fractions allowed: `7px` → `1.75`, `10px` → `2.5`, `18px` → `4.5`, `38px` → `9.5`, `300px` → `75`, `520px` → `130`.

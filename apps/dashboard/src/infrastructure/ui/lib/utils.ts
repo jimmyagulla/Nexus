@@ -8,7 +8,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ["10", "11", "12", "13", "14", "15", "16", "17", "18", "20", "22", "24", "26", "28", "30"],
+      text: ["10", "11", "12", "13", "14", "15", "16", "17", "18", "20", "22", "24", "26", "28", "30", "32"],
       radius: ["3", "10", "14"],
       shadow: [
         "popover-soft",
