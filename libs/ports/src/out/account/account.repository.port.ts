@@ -4,6 +4,7 @@ export interface IAccountRepository {
   insert(account: Account): Promise<void>;
   save(account: Account): Promise<void>;
   listByCompany(companyId: string): Promise<readonly Account[]>;
+  findById(accountId: string): Promise<Account | null>;
   findByInvitationToken(invitationToken: string): Promise<Account | null>;
   findByIdentifier(identifier: string): Promise<Account | null>;
   findByEmployeeId(employeeId: string): Promise<Account | null>;

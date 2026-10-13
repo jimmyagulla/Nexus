@@ -5,6 +5,8 @@ export * from './use-cases/account/activate-account-via-gateway.use-case';
 export * from './use-cases/employee/invite-employee.use-case';
 export * from './use-cases/employee/activate-employee-account.use-case';
 export * from './use-cases/employee/activate-employee-account-via-gateway.use-case';
+export * from './use-cases/employee/confirm-second-factor-enrollment.use-case';
+export * from './use-cases/employee/confirm-second-factor-enrollment-via-gateway.use-case';
 export * from './use-cases/company/create-company.use-case';
 export * from './use-cases/company/rename-company.use-case';
 export * from './use-cases/company/rename-company-from-session.use-case';

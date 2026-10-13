@@ -26,6 +26,18 @@ export class SecondFactorEnrollment {
     );
   }
 
+  confirm(): SecondFactorEnrollment {
+    if (this.isConfirmed()) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+    return new SecondFactorEnrollment(
+      this.id,
+      this.accountId,
+      this.secret,
+      SecondFactorEnrollmentStatus.CONFIRMED,
+    );
+  }
+
   isConfirmed(): boolean {
     return this.status === SecondFactorEnrollmentStatus.CONFIRMED;
   }

@@ -116,6 +116,6 @@ import { SecondFactorModule } from '../second-factor/second-factor.module';
       ],
     },
   ],
-  exports: [IAccountRepository],
+  exports: [IAccountRepository, ISignInSession],
 })
 export class AccountModule {}

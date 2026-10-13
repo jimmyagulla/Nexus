@@ -18,6 +18,7 @@ import { IdGeneratorModule } from './id-generator/id-generator.module';
 import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
 import { CompanySettingsModule } from './company-settings/company-settings.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { SecondFactorEnrollmentModule } from './second-factor-enrollment/second-factor-enrollment.module';
 
 const persistence = loadApiConfig().persistence;
 
@@ -30,6 +31,7 @@ const persistence = loadApiConfig().persistence;
     AuditModule,
     AccountModule,
     EmployeeModule,
+    SecondFactorEnrollmentModule,
     CompanyModule,
     CompanySettingsModule,
     CompanyPublicHolidaysModule,

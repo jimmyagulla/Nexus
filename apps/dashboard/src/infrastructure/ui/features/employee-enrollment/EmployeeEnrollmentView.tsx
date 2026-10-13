@@ -1,11 +1,21 @@
 import type { EmployeeEnrollmentViewModel } from '../../../../adapters/presenters/employee-enrollment.presenter';
+import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
 import { i18n } from '../../i18n/i18n';
+import { EnrollmentCodeForm } from './EnrollmentCodeForm';
 
 interface EmployeeEnrollmentViewProps {
   model: EmployeeEnrollmentViewModel;
+  errorPresenter: ErrorPresenter;
+  submissionError: string | null;
+  onSubmit: (code: string) => Promise<void>;
 }
 
-export function EmployeeEnrollmentView({ model }: EmployeeEnrollmentViewProps) {
+export function EmployeeEnrollmentView({
+  model,
+  errorPresenter,
+  submissionError,
+  onSubmit,
+}: EmployeeEnrollmentViewProps) {
   return (
     <section className="space-y-4">
       <h1 className="text-2xl font-semibold text-primary">
@@ -19,6 +29,11 @@ export function EmployeeEnrollmentView({ model }: EmployeeEnrollmentViewProps) {
       <a className="text-primary underline" href={model.provisioningUri}>
         {i18n.messages.enrollment.uri}
       </a>
+      <EnrollmentCodeForm
+        errorPresenter={errorPresenter}
+        submissionError={submissionError}
+        onSubmit={onSubmit}
+      />
     </section>
   );
 }

@@ -50,6 +50,12 @@ export const fr = {
       "Ajoutez cette clé dans votre application d'authentification pour obtenir vos codes.",
     secret: 'Clé à saisir',
     uri: 'Lien de configuration',
+    code: 'Code de vérification',
+    submit: 'Confirmer',
+  },
+  workspace: {
+    title: 'Mon espace',
+    noDocuments: "Aucun document n'est disponible dans votre espace.",
   },
   errors: {
     [ErrorCode.ACCESS_DENIED]: "Vous n'avez pas accès à cet élément.",

@@ -27,6 +27,13 @@ export class PrismaAccountRepository implements IAccountRepository {
     return rows.map(toAccount);
   }
 
+  async findById(accountId: string): Promise<Account | null> {
+    const row = await this.prisma.account.findUnique({
+      where: { id: accountId },
+    });
+    return row === null ? null : toAccount(row);
+  }
+
   async findByInvitationToken(
     invitationToken: string,
   ): Promise<Account | null> {

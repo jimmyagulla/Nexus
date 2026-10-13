@@ -5,6 +5,10 @@ export const API_ROUTES = {
     employeeActivation: 'employee-activation',
     signIn: 'sign-in',
   },
+  secondFactor: {
+    base: 'second-factor',
+    enrollmentConfirmation: 'enrollment-confirmation',
+  },
   employees: {
     base: 'companies/:companyId/employees',
     invitation: ':employeeId/invitation',

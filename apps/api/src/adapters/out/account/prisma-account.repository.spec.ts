@@ -60,10 +60,12 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
       }): Promise<AccountRow[]> =>
         rows.filter((row) => row.companyId === args.where.companyId),
       findUnique: async (args: {
-        where: { invitationToken?: string };
+        where: { invitationToken?: string; id?: string };
       }): Promise<AccountRow | null> =>
-        rows.find(
-          (row) => row.invitationToken === args.where.invitationToken,
+        rows.find((row) =>
+          args.where.id !== undefined
+            ? row.id === args.where.id
+            : row.invitationToken === args.where.invitationToken,
         ) ?? null,
       findFirst: async (args: {
         where: { identifier?: string; employeeId?: string };
@@ -151,6 +153,26 @@ describe('PrismaAccountRepository', () => {
         employeeId: 'employee-1',
       },
     ]);
+  });
+
+  it('reads the account back by its id', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+    const account = invitedEmployer('account-1', 'company-1', 'founder');
+
+    await repository.insert(invitedEmployer('account-0', 'company-1', 'partner'));
+    await repository.insert(account);
+
+    expect(await repository.findById('account-1')).toEqual(account);
+  });
+
+  it('returns nothing for an unknown account id', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+
+    await repository.insert(invitedEmployer('account-1', 'company-1', 'founder'));
+
+    expect(await repository.findById('missing')).toBeNull();
   });
 
   it('reads the account of an employee record back by that record', async () => {

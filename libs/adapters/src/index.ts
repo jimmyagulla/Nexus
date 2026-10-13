@@ -13,6 +13,7 @@ export * from './out/http/fetch-http-client';
 export * from './out/http/in-memory-http-client';
 export * from './out/identity/in-memory-company-identity-binder';
 export * from './out/public-holiday/in-memory-public-holiday.repository';
+export * from './out/second-factor/api-second-factor-enrollment.gateway';
 export * from './out/second-factor/in-memory-second-factor-enrollment.repository';
 export * from './out/second-factor/totp-second-factor-codes';
 export * from './out/session/client-session.gateway';

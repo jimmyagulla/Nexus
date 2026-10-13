@@ -132,6 +132,24 @@ describe('InMemoryAccountRepository', () => {
     expect(await accounts.findByInvitationToken('invite-a1')).toBeNull();
   });
 
+  it('reads the account back by its id', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const account = invitedEmployer('a1', 'c1', 'founder');
+
+    await accounts.insert(invitedEmployer('a0', 'c1', 'partner'));
+    await accounts.insert(account);
+
+    expect(await accounts.findById('a1')).toEqual(account);
+  });
+
+  it('returns nothing for an unknown account id', async () => {
+    const accounts = new InMemoryAccountRepository();
+
+    await accounts.insert(invitedEmployer('a1', 'c1', 'founder'));
+
+    expect(await accounts.findById('missing')).toBeNull();
+  });
+
   it('reads the account of an employee record back by that record', async () => {
     const accounts = new InMemoryAccountRepository();
     const account = invitedEmployee('a2', 'c1', 'alice', 'e1');

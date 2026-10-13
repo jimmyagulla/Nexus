@@ -13,4 +13,15 @@ export class Employee {
   isActive(): boolean {
     return this.status === EmployeeStatus.ACTIVE;
   }
+
+  recordActivity(at: Date): Employee {
+    return new Employee(
+      this.id,
+      this.companyId,
+      this.firstName,
+      this.lastName,
+      this.status,
+      at,
+    );
+  }
 }

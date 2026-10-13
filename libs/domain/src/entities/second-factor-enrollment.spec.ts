@@ -17,6 +17,32 @@ describe('SecondFactorEnrollment', () => {
     expect(enrollment.isConfirmed()).toBe(false);
   });
 
+  it('is confirmed once the employee proved the code, keeping its identity', () => {
+    const pending = SecondFactorEnrollment.start(
+      'enrollment-1',
+      'account-1',
+      'JBSWY3DPEHPK3PXP',
+    );
+
+    const confirmed = pending.confirm();
+
+    expect(confirmed.isConfirmed()).toBe(true);
+    expect(confirmed.id).toBe('enrollment-1');
+    expect(confirmed.accountId).toBe('account-1');
+    expect(confirmed.secret).toBe('JBSWY3DPEHPK3PXP');
+    expect(pending.isConfirmed()).toBe(false);
+  });
+
+  it('refuses to be confirmed a second time', () => {
+    const confirmed = SecondFactorEnrollment.start(
+      'enrollment-1',
+      'account-1',
+      'JBSWY3DPEHPK3PXP',
+    ).confirm();
+
+    expect(() => confirmed.confirm()).toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
   it('refuses to start without a secret', () => {
     expect(() =>
       SecondFactorEnrollment.start('enrollment-1', 'account-1', '   '),

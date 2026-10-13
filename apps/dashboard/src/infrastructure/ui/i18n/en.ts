@@ -50,6 +50,12 @@ export const en = {
       'Add this key to your authenticator application to get your codes.',
     secret: 'Key to enter',
     uri: 'Setup link',
+    code: 'Verification code',
+    submit: 'Confirm',
+  },
+  workspace: {
+    title: 'My space',
+    noDocuments: 'No document is available in your space.',
   },
   errors: {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',

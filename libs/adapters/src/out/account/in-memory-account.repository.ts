@@ -18,6 +18,10 @@ export class InMemoryAccountRepository implements IAccountRepository {
     );
   }
 
+  async findById(accountId: string): Promise<Account | null> {
+    return this.accounts.get(accountId) ?? null;
+  }
+
   async findByInvitationToken(
     invitationToken: string,
   ): Promise<Account | null> {
