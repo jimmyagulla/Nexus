@@ -30,6 +30,10 @@ function compositionFor(
     status: 201,
     data: { enrolled: true, recoveryCodes: ['ABCDE23456'] },
   });
+  http.reply('get', 'second-factor/status', {
+    status: 200,
+    data: { step: 'ENROLL' },
+  });
   http.reply('post', 'second-factor/challenge', {
     status: 201,
     data: { step: 'VERIFY' },
@@ -79,6 +83,22 @@ describe('createSecondFactorComposition', () => {
         method: 'post',
         url: 'second-factor/enrollment/confirmation',
         data: { code: '123456' },
+        config: { headers: { Authorization: 'Bearer jwt' } },
+      },
+    ]);
+  });
+
+  it('wires a controller that reads the step the session user still owes', async () => {
+    const { deps, http } = compositionFor();
+
+    await expect(deps.controller.getStatus()).resolves.toEqual({
+      step: 'ENROLL',
+    });
+    expect(http.calls).toEqual([
+      {
+        method: 'get',
+        url: 'second-factor/status',
+        data: undefined,
         config: { headers: { Authorization: 'Bearer jwt' } },
       },
     ]);

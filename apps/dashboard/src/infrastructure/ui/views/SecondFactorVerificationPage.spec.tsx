@@ -35,6 +35,7 @@ function compositionAccepting(...accepted: string[]): SecondFactorComposition {
           return { verified: true };
         },
       },
+      { execute: async () => ({ step: SecondFactorStep.ENROLL }) },
     ),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
     recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),

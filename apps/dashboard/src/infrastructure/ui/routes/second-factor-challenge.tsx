@@ -5,12 +5,7 @@ import { secondFactorComposition } from '../../di';
 import { SecondFactorChallengePage } from '../views/SecondFactorChallengePage';
 import { rootRoute } from './__root';
 import { AppRoutes } from './app-routes';
-
-const DESTINATIONS: Record<SecondFactorDestination, string> = {
-  ENROLLMENT: AppRoutes.secondFactorEnrollment,
-  VERIFICATION: AppRoutes.secondFactorVerification,
-  SPACE: AppRoutes.home,
-};
+import { SECOND_FACTOR_DESTINATIONS } from './second-factor-destinations';
 
 export const secondFactorChallengeRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -22,7 +17,7 @@ function SecondFactorChallengeRoute() {
   const navigate = useNavigate();
   const onProceed = useCallback(
     (destination: SecondFactorDestination) => {
-      void navigate({ to: DESTINATIONS[destination] });
+      void navigate({ to: SECOND_FACTOR_DESTINATIONS[destination] });
     },
     [navigate],
   );

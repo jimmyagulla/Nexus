@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import {
   BeginSecondFactorEnrollmentUseCase,
   ConfirmSecondFactorEnrollmentUseCase,
+  GetSecondFactorStatusUseCase,
   OpenSecondFactorChallengeUseCase,
   VerifySecondFactorUseCase,
 } from '@hexagonal-monorepo-template/application';
@@ -15,6 +16,7 @@ import {
   IBeginSecondFactorEnrollment,
   IClock,
   IConfirmSecondFactorEnrollment,
+  IGetSecondFactorStatus,
   IOpenSecondFactorChallenge,
   IRecoveryCodes,
   ISecondFactorCodes,
@@ -64,6 +66,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         return new InMemorySecondFactorIdentityBinder();
       },
       inject: [API_CONFIG],
+    },
+    {
+      provide: IGetSecondFactorStatus,
+      useFactory: (factors: ISecondFactorRepository) =>
+        new GetSecondFactorStatusUseCase(factors),
+      inject: [ISecondFactorRepository],
     },
     {
       provide: IOpenSecondFactorChallenge,

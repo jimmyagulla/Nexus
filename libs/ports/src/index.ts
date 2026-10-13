@@ -36,3 +36,5 @@ export * from './in/second-factor/open-second-factor-challenge.port';
 export * from './in/second-factor/open-second-factor-challenge-from-session.port';
 export * from './in/second-factor/verify-second-factor-from-session.port';
 export * from './out/second-factor/second-factor-identity-binder.port';
+export * from './in/second-factor/get-second-factor-status.port';
+export * from './in/second-factor/get-second-factor-status-from-session.port';

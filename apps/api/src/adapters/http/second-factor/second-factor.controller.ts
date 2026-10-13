@@ -1,10 +1,18 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IGetSecondFactorStatus,
   IOpenSecondFactorChallenge,
   IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
@@ -16,6 +24,7 @@ import { ConfirmSecondFactorRequestDto } from './dto/confirm-second-factor-reque
 import { SecondFactorChallengeResponseDto } from './dto/second-factor-challenge-response.dto';
 import { SecondFactorEnrollmentConfirmationResponseDto } from './dto/second-factor-enrollment-confirmation-response.dto';
 import { SecondFactorEnrollmentResponseDto } from './dto/second-factor-enrollment-response.dto';
+import { SecondFactorStatusResponseDto } from './dto/second-factor-status-response.dto';
 import { SecondFactorVerificationResponseDto } from './dto/second-factor-verification-response.dto';
 import { VerifySecondFactorRequestDto } from './dto/verify-second-factor-request.dto';
 
@@ -26,6 +35,8 @@ import { VerifySecondFactorRequestDto } from './dto/verify-second-factor-request
 @AllowWithoutSecondFactor()
 export class SecondFactorController {
   constructor(
+    @Inject(IGetSecondFactorStatus)
+    private readonly getStatus: IGetSecondFactorStatus,
     @Inject(IOpenSecondFactorChallenge)
     private readonly openChallenge: IOpenSecondFactorChallenge,
     @Inject(IBeginSecondFactorEnrollment)
@@ -35,6 +46,17 @@ export class SecondFactorController {
     @Inject(IVerifySecondFactor)
     private readonly verifySecondFactor: IVerifySecondFactor,
   ) {}
+
+  @Get(API_ROUTES.secondFactor.status)
+  @ApiOperation({
+    summary: 'Tell which second factor step the signed-in user still owes',
+  })
+  async status(
+    @Actor() actor: ActorContext,
+  ): Promise<SecondFactorStatusResponseDto> {
+    const status = await this.getStatus.execute({ actor });
+    return { step: status.step };
+  }
 
   @Post(API_ROUTES.secondFactor.challenge)
   @ApiOperation({

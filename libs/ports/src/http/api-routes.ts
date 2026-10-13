@@ -13,6 +13,7 @@ export const API_ROUTES = {
     enrollmentConfirmation: 'enrollment/confirmation',
     verification: 'verification',
     challenge: 'challenge',
+    status: 'status',
   },
 } as const;
 

@@ -17,6 +17,7 @@ import {
 import {
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IGetSecondFactorStatus,
   IOpenSecondFactorChallenge,
   IVerifySecondFactor,
 } from '@hexagonal-monorepo-template/ports';
@@ -32,6 +33,7 @@ const verify = { execute: vi.fn<IVerifySecondFactor['execute']>() };
 const challenge = {
   execute: vi.fn<IOpenSecondFactorChallenge['execute']>(),
 };
+const status = { execute: vi.fn<IGetSecondFactorStatus['execute']>() };
 
 const employee: ActorContext = {
   userId: 'u1',
@@ -46,9 +48,10 @@ let actor: ActorContext | undefined;
 async function post(
   path: string,
   body?: unknown,
+  method = 'POST',
 ): Promise<{ status: number; payload: unknown }> {
   const response = await fetch(`${baseUrl}${path}`, {
-    method: 'POST',
+    method,
     ...(body === undefined
       ? {}
       : {
@@ -67,6 +70,7 @@ beforeAll(async () => {
       { provide: IConfirmSecondFactorEnrollment, useValue: confirm },
       { provide: IVerifySecondFactor, useValue: verify },
       { provide: IOpenSecondFactorChallenge, useValue: challenge },
+      { provide: IGetSecondFactorStatus, useValue: status },
     ],
   }).compile();
 
@@ -94,6 +98,7 @@ beforeEach(() => {
   confirm.execute.mockReset();
   verify.execute.mockReset();
   challenge.execute.mockReset();
+  status.execute.mockReset();
 });
 
 describe('SecondFactorController', () => {
@@ -145,6 +150,29 @@ describe('SecondFactorController', () => {
 
     expect(status).toBe(400);
     expect(payload).toMatchObject({ message: ErrorCode.SECOND_FACTOR_REQUIRED });
+  });
+
+  it('tells which step the signed-in user still owes', async () => {
+    status.execute.mockResolvedValue({ step: 'ENROLL' });
+
+    const { status: code, payload } = await post(
+      '/second-factor/status',
+      undefined,
+      'GET',
+    );
+
+    expect(code).toBe(200);
+    expect(payload).toMatchObject({ data: { step: 'ENROLL' } });
+    expect(status.execute).toHaveBeenCalledWith({ actor: employee });
+  });
+
+  it('tells an employer that nothing is owed', async () => {
+    actor = { ...employee, role: UserRole.EMPLOYER };
+    status.execute.mockResolvedValue({ step: 'NONE' });
+
+    const { payload } = await post('/second-factor/status', undefined, 'GET');
+
+    expect(payload).toMatchObject({ data: { step: 'NONE' } });
   });
 
   it('opens the challenge right after the secret', async () => {

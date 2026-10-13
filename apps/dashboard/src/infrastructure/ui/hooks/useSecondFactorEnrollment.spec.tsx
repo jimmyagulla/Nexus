@@ -30,6 +30,7 @@ function compositionOf(validCode = '123456'): SecondFactorComposition {
       },
       { execute: async () => ({ step: SecondFactorStep.VERIFY }) },
       { execute: async () => ({ verified: true }) },
+      { execute: async () => ({ step: SecondFactorStep.ENROLL }) },
     ),
     stepPresenter: new SecondFactorStepPresenter(),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),

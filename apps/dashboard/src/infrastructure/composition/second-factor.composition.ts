@@ -1,6 +1,7 @@
 import {
   BeginSecondFactorEnrollmentFromSessionUseCase,
   ConfirmSecondFactorEnrollmentFromSessionUseCase,
+  GetSecondFactorStatusFromSessionUseCase,
   OpenSecondFactorChallengeFromSessionUseCase,
   VerifySecondFactorFromSessionUseCase,
 } from '@hexagonal-monorepo-template/application';
@@ -41,6 +42,7 @@ export function createSecondFactorComposition(
       ),
       new OpenSecondFactorChallengeFromSessionUseCase(sessions, secondFactors),
       new VerifySecondFactorFromSessionUseCase(sessions, secondFactors),
+      new GetSecondFactorStatusFromSessionUseCase(sessions, secondFactors),
     ),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
     recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),

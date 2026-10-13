@@ -2,11 +2,13 @@ import {
   SecondFactorChallenge,
   SecondFactorEnrollment,
   SecondFactorEnrollmentConfirmation,
+  SecondFactorStatus,
   SecondFactorVerification,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IBeginSecondFactorEnrollmentFromSession,
   IConfirmSecondFactorEnrollmentFromSession,
+  IGetSecondFactorStatusFromSession,
   IOpenSecondFactorChallengeFromSession,
   IVerifySecondFactorFromSession,
 } from '@hexagonal-monorepo-template/ports';
@@ -17,7 +19,12 @@ export class SecondFactorController {
     private readonly confirmFromSession: IConfirmSecondFactorEnrollmentFromSession,
     private readonly challengeFromSession: IOpenSecondFactorChallengeFromSession,
     private readonly verifyFromSession: IVerifySecondFactorFromSession,
+    private readonly statusFromSession: IGetSecondFactorStatusFromSession,
   ) {}
+
+  getStatus(): Promise<SecondFactorStatus> {
+    return this.statusFromSession.execute();
+  }
 
   openChallenge(): Promise<SecondFactorChallenge> {
     return this.challengeFromSession.execute();

@@ -47,6 +47,26 @@ describe('ApiSecondFactorGateway', () => {
     ]);
   });
 
+  it('reads the status of the signed-in user without opening anything', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'second-factor/status', {
+      status: 200,
+      data: { step: 'ENROLL' },
+    });
+
+    await expect(
+      new ApiSecondFactorGateway(http).getStatus('token'),
+    ).resolves.toEqual({ step: 'ENROLL' });
+    expect(http.calls).toEqual([
+      {
+        method: 'get',
+        url: 'second-factor/status',
+        data: undefined,
+        config: { headers: { Authorization: 'Bearer token' } },
+      },
+    ]);
+  });
+
   it('opens the challenge of the signed-in user', async () => {
     const http = new InMemoryHttpClient();
     http.reply('post', 'second-factor/challenge', {

@@ -28,6 +28,7 @@ function compositionOf(
       },
       { execute: async () => ({ step: SecondFactorStep.VERIFY }) },
       { execute: async () => ({ verified: true }) },
+      { execute: async () => ({ step: SecondFactorStep.ENROLL }) },
     ),
     stepPresenter: new SecondFactorStepPresenter(),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),

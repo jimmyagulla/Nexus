@@ -18,3 +18,5 @@ export * from './use-cases/second-factor/verify-second-factor.use-case';
 export * from './use-cases/second-factor/open-second-factor-challenge.use-case';
 export * from './use-cases/second-factor/open-second-factor-challenge-from-session.use-case';
 export * from './use-cases/second-factor/verify-second-factor-from-session.use-case';
+export * from './use-cases/second-factor/get-second-factor-status.use-case';
+export * from './use-cases/second-factor/get-second-factor-status-from-session.use-case';

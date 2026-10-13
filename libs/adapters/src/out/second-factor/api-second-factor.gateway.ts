@@ -2,6 +2,7 @@ import {
   SecondFactorChallenge,
   SecondFactorEnrollment,
   SecondFactorEnrollmentConfirmation,
+  SecondFactorStatus,
   SecondFactorVerification,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -17,6 +18,16 @@ import {
 
 export class ApiSecondFactorGateway implements ISecondFactorGateway {
   constructor(private readonly httpClient: IHttpClient) {}
+
+  async getStatus(token: string): Promise<SecondFactorStatus> {
+    const payload = unwrapResponse(
+      await this.httpClient.get<ApiResponse<SecondFactorStatus>>(
+        secondFactorPath(API_ROUTES.secondFactor.status),
+        this.authorized(token),
+      ),
+    );
+    return { step: payload.step };
+  }
 
   async openChallenge(token: string): Promise<SecondFactorChallenge> {
     const payload = unwrapResponse(

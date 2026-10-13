@@ -128,6 +128,20 @@ describe('the second factor, from the secret to the personal space', () => {
     expect(space.payload).toMatchObject({ message: 'SECOND_FACTOR_REQUIRED' });
   });
 
+  it('leads an employee who is not enrolled to the enrollment and nowhere else', async () => {
+    expect(dataOf((await call('GET', '/second-factor/status')).payload)).toEqual({
+      step: 'ENROLL',
+    });
+    expect((await call('GET', '/space')).payload).toMatchObject({
+      message: 'SECOND_FACTOR_REQUIRED',
+    });
+    await call('POST', '/second-factor/enrollment');
+    expect(dataOf((await call('GET', '/second-factor/status')).payload)).toEqual({
+      step: 'ENROLL',
+    });
+    expect((await call('GET', '/space')).status).toBe(403);
+  });
+
   it('leads a new employee to the enrollment, then opens the space once enrolled', async () => {
     expect(dataOf((await call('POST', '/second-factor/challenge')).payload)).toEqual({
       step: 'ENROLL',

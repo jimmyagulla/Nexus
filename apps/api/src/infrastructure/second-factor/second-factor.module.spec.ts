@@ -10,6 +10,7 @@ import {
 import {
   IBeginSecondFactorEnrollment,
   IConfirmSecondFactorEnrollment,
+  IGetSecondFactorStatus,
   IOpenSecondFactorChallenge,
   IRecoveryCodes,
   ISecondFactorCodes,
@@ -65,6 +66,12 @@ describe('SecondFactorModule', () => {
 
     expect(moduleRef.get(IBeginSecondFactorEnrollment)).toBeDefined();
     expect(moduleRef.get(IConfirmSecondFactorEnrollment)).toBeDefined();
+  });
+
+  it('wires the status use case', async () => {
+    const moduleRef = await compile({});
+
+    expect(moduleRef.get(IGetSecondFactorStatus)).toBeDefined();
   });
 
   it('wires the challenge use case', async () => {

@@ -24,10 +24,17 @@ function controller(): SecondFactorController {
         return { verified: true };
       },
     },
+    { execute: async () => ({ step: SecondFactorStep.ENROLL }) },
   );
 }
 
 describe('SecondFactorController', () => {
+  it('hands back the step the current session still owes', async () => {
+    await expect(controller().getStatus()).resolves.toEqual({
+      step: SecondFactorStep.ENROLL,
+    });
+  });
+
   it('hands back the challenge opened for the current session', async () => {
     await expect(controller().openChallenge()).resolves.toEqual({
       step: SecondFactorStep.VERIFY,

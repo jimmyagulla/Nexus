@@ -25,7 +25,13 @@ function compositionOf(
   open: () => Promise<SecondFactorChallenge>,
 ): SecondFactorComposition {
   return {
-    controller: new SecondFactorController(unused, unused, { execute: open }, unused),
+    controller: new SecondFactorController(
+      unused,
+      unused,
+      { execute: open },
+      unused,
+      unused,
+    ),
     enrollmentPresenter: new SecondFactorEnrollmentPresenter(),
     recoveryCodesPresenter: new SecondFactorRecoveryCodesPresenter(),
     stepPresenter: new SecondFactorStepPresenter(),

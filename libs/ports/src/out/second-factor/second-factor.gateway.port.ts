@@ -2,10 +2,12 @@ import {
   SecondFactorChallenge,
   SecondFactorEnrollment,
   SecondFactorEnrollmentConfirmation,
+  SecondFactorStatus,
   SecondFactorVerification,
 } from '@hexagonal-monorepo-template/domain';
 
 export interface ISecondFactorGateway {
+  getStatus(token: string): Promise<SecondFactorStatus>;
   openChallenge(token: string): Promise<SecondFactorChallenge>;
   beginEnrollment(token: string): Promise<SecondFactorEnrollment>;
   confirmEnrollment(
