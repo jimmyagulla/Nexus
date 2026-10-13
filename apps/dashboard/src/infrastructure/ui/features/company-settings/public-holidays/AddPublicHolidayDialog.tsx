@@ -3,6 +3,7 @@ import { ErrorPresenter } from '../../../../../adapters/presenters/error.present
 import { Button } from '../../../shared/button';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -34,17 +35,19 @@ export function AddPublicHolidayDialog({
         <DialogHeader>
           <DialogTitle>{i18n.messages.settings.addHolidayTitle}</DialogTitle>
         </DialogHeader>
-        <PublicHolidayForm
-          errorPresenter={errorPresenter}
-          submissionError={submissionError}
-          onSubmit={async (values) => {
-            const retained = await onSubmit(values);
-            if (retained) {
-              setOpen(false);
-            }
-            return retained;
-          }}
-        />
+        <DialogBody>
+          <PublicHolidayForm
+            errorPresenter={errorPresenter}
+            submissionError={submissionError}
+            onSubmit={async (values) => {
+              const retained = await onSubmit(values);
+              if (retained) {
+                setOpen(false);
+              }
+              return retained;
+            }}
+          />
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

@@ -1,0 +1,42 @@
+export const accountingFirm = {
+  exchanges: {
+    title: 'Cabinet comptable',
+    description:
+      "Échange sécurisé de documents entre l'entreprise et le cabinet.",
+    uploadForFirm: 'Déposer pour le cabinet',
+    activeConnection: 'Connexion active',
+    inviteCollaborator: 'Inviter un collaborateur',
+    manageAccess: "Gérer l'accès",
+    tabs: {
+      all: 'Tous les échanges',
+      sent: 'Transmis au cabinet',
+      received: 'Reçus du cabinet',
+    },
+    searchPlaceholder: 'Rechercher un document',
+    sort: "date, récent d'abord",
+    document: 'Document',
+    date: 'Date',
+    direction: 'Sens',
+    status: 'Statut',
+    actions: 'Actions',
+    toFirm: 'Entreprise → Cabinet',
+    fromFirm: 'Cabinet → Entreprise',
+  },
+  upload: {
+    title: 'Déposer un document pour le cabinet comptable',
+    description:
+      "Le document est transmis au cabinet par un canal chiffré et n'est pas visible des salariés.",
+    recipient: 'Destinataire : Cabinet comptable',
+    secureExchange: 'Échange sécurisé',
+    documentType: 'Type de document',
+    recipientField: 'Destinataire',
+    files: 'Fichiers',
+    dropPrompt: 'Glissez vos fichiers ici ou',
+    dropAction: 'sélectionnez des fichiers',
+    transmissionDate: 'Date de transmission',
+    immediate: 'Immédiate',
+    scheduled: 'Programmée',
+    comment: 'Commentaire',
+    send: 'Transmettre au cabinet',
+  },
+} as const;

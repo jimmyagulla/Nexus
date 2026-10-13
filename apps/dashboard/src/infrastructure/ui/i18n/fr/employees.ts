@@ -1,0 +1,47 @@
+export const employees = {
+  list: {
+    title: 'Salariés',
+    addEmployee: 'Ajouter un salarié',
+    searchPlaceholder: 'Rechercher un nom ou un poste',
+    serviceFilter: 'Service',
+    sort: 'nom A → Z',
+    name: 'Nom et prénom',
+    position: 'Poste',
+    service: 'Service',
+    status: 'Statut',
+    startDate: 'Entrée',
+    lastActivity: 'Dernière activité',
+    openSpace: "Voir l'espace",
+  },
+  space: {
+    contact: 'Contacter',
+    uploadDocument: 'Déposer un document',
+    tabs: {
+      overview: "Vue d'ensemble",
+      documents: 'Documents',
+      payslips: 'Bulletins',
+      attendance: 'Présences',
+      expenses: 'Frais',
+      history: 'Historique',
+    },
+  },
+  overview: {
+    identity: 'Identité et coordonnées',
+    actionsHistory: 'Historique des actions',
+    accessLogNote:
+      "Votre consultation de cet espace est enregistrée dans l'historique des accès.",
+  },
+  attendance: {
+    periodFilter: 'Période',
+    payrollNote: 'Données utilisées pour la préparation de la paie',
+    export: 'Exporter',
+    month: 'Mois',
+    period: 'Période',
+    worked: 'Travaillés',
+    absences: 'Absences',
+    leaves: 'Congés',
+    sickLeaves: 'Arrêts',
+    otherEvents: 'Autres événements',
+    daysUnit: 'j',
+  },
+} as const;

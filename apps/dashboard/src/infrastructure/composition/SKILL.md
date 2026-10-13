@@ -18,6 +18,12 @@ description: >-
 - **Consistency**: Export compositions, controllers, and presenters from `di.ts` to be used in routes or pages.
 - **Every implementation**: Choosing which implementation of a port is injected is settled here, in-memory implementations included — skill `no-test-doubles`.
 
+## Page compositions grouped by domain
+
+- **Page composition**: `composition/<group>/<screen>-page.composition.ts` exports `<Screen>PageComposition` and `create<Screen>PageComposition()`: `{ presenter }` (and later `controller`).
+- **Group (parent) composition**: `composition/<group>/<group>.composition.ts` exports `<Group>Composition` and `create<Group>Composition()`, one key per page: e.g. `professionalExpense = { professionalExpenses, professionalExpenseRequest }`.
+- `di.ts` instantiates the parent compositions only. The route passes the page's slice to the page as `deps` (`deps={professionalExpenseComposition.professionalExpenseRequest}`); the page hands `deps` to its query hook (`useGet<Screen>`), which calls `presenter.present(…)` and returns the view model the page gives to its view.
+
 ## Presenters are wired here, never built by the view
 
 - Presenters are passed to the component as props, exactly like the controller.
