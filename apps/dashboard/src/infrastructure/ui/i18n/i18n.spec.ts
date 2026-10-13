@@ -50,4 +50,35 @@ describe('I18n', () => {
     expect(i18n.messages.errors.ACCESS_DENIED).toBe(en.errors.ACCESS_DENIED);
     expect(en.settings.title).not.toBe(fr.settings.title);
   });
+
+  it('words the cabinet refusals as the product reference does', () => {
+    expect(fr.errors.INVALID_FILE).toBe(
+      'Ce fichier ne peut pas être accepté. Vérifiez son format et réessayez.',
+    );
+    expect(fr.errors.MISSING_DOCUMENT).toBe(
+      'Ajoutez le document attendu avant de valider.',
+    );
+    expect(fr.errors.TRANSMISSION_FAILED).toBe(
+      "La transmission n'a pas abouti. Vous pouvez réessayer.",
+    );
+    expect(fr.errors.INACCESSIBLE_DOCUMENT).toBe(
+      "Ce document n'est pas accessible.",
+    );
+  });
+
+  it('confirms a transmission as the product reference does', () => {
+    expect(fr.cabinet.transmitted).toBe(
+      'Le document a été transmis au cabinet comptable.',
+    );
+  });
+
+  it('names the exchange statuses as the product reference does', () => {
+    expect(Object.values(fr.cabinet.statuses)).toEqual([
+      'Brouillon',
+      'À transmettre',
+      'Transmis',
+      'Reçu',
+      'Consulté',
+    ]);
+  });
 });

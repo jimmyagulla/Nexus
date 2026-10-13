@@ -10,6 +10,8 @@ import { SupabaseJwtVerifier } from '../adapters/out/auth/supabase-jwt-verifier'
 import { DenyAllJwtVerifier } from '../adapters/out/auth/deny-all-jwt-verifier';
 import { ApiConfigModule } from './config/api-config.module';
 import { AuditModule } from './audit/audit.module';
+import { CabinetConnectionModule } from './cabinet-connection/cabinet-connection.module';
+import { CabinetExchangeModule } from './cabinet-exchange/cabinet-exchange.module';
 import { ClockModule } from './clock/clock.module';
 import { CompanyModule } from './company/company.module';
 import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
@@ -27,6 +29,8 @@ const persistence = loadApiConfig().persistence;
     CompanyModule,
     CompanySettingsModule,
     CompanyPublicHolidaysModule,
+    CabinetConnectionModule,
+    CabinetExchangeModule,
   ],
   providers: [
     {

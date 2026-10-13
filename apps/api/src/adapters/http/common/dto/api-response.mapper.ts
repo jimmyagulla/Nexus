@@ -2,6 +2,11 @@ import { HttpException } from '@nestjs/common';
 import { ErrorCode, isErrorCode } from '@hexagonal-monorepo-template/domain';
 import { ApiResult, ErrorEnvelope, SuccessEnvelope } from './api-response.types';
 
+const REFUSALS: readonly string[] = [
+  ErrorCode.ACCESS_DENIED,
+  ErrorCode.INACCESSIBLE_DOCUMENT,
+];
+
 function isApiResult(obj: unknown): obj is ApiResult<unknown> {
   return (
     typeof obj === 'object' &&
@@ -69,7 +74,7 @@ export function httpStatusForError(exception: unknown): number {
     return exception.getStatus();
   }
   if (exception instanceof Error && isErrorCode(exception.message)) {
-    return exception.message === ErrorCode.ACCESS_DENIED ? 403 : 400;
+    return REFUSALS.includes(exception.message) ? 403 : 400;
   }
   return 500;
 }

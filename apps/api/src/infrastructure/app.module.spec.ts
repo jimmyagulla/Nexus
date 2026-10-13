@@ -2,12 +2,16 @@ import { Test } from '@nestjs/testing';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER, ModulesContainer } from '@nestjs/core';
 import {
   IAddCompanyPublicHoliday,
+  ICreateCabinetExchangeDraft,
   ICreateCompany,
   IGetCompanySettings,
   IJwtVerifier,
+  IListCabinetExchanges,
+  IMarkCabinetExchangeToTransmit,
   IRemoveCompanyPublicHoliday,
   IRenameCompany,
   ISetNonWorkingWeekdays,
+  ITransmitCabinetExchanges,
   IUpdateCompanyPublicHoliday,
 } from '@hexagonal-monorepo-template/ports';
 import { AppModule } from './app.module';
@@ -82,6 +86,17 @@ describe('AppModule', () => {
     expect(moduleRef.get(IAddCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IUpdateCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IRemoveCompanyPublicHoliday)).toBeDefined();
+  });
+
+  it('wires every cabinet exchange in port', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    expect(moduleRef.get(ICreateCabinetExchangeDraft)).toBeDefined();
+    expect(moduleRef.get(IMarkCabinetExchangeToTransmit)).toBeDefined();
+    expect(moduleRef.get(ITransmitCabinetExchanges)).toBeDefined();
+    expect(moduleRef.get(IListCabinetExchanges)).toBeDefined();
   });
 
   it('registers SuccessResponseInterceptor as APP_INTERCEPTOR', () => {

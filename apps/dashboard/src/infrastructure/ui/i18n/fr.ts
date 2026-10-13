@@ -4,6 +4,7 @@ export const fr = {
   navigation: {
     dashboard: 'Tableau de bord',
     settings: 'Paramètres',
+    cabinet: 'Cabinet comptable',
   },
   loading: 'Chargement…',
   home: {
@@ -23,6 +24,30 @@ export const fr = {
     date: 'Date',
     label: 'Libellé',
   },
+  cabinet: {
+    title: 'Cabinet comptable',
+    newDocument: 'Nouveau document',
+    newDocumentTitle: 'Nouveau document pour le cabinet',
+    category: 'Catégorie',
+    file: 'Fichier',
+    saveDraft: 'Enregistrer le brouillon',
+    markToTransmit: 'Marquer à transmettre',
+    transmit: 'Transmettre',
+    noCategory: 'Sans catégorie',
+    noFile: 'Aucun fichier',
+    transmitted: 'Le document a été transmis au cabinet comptable.',
+    statuses: {
+      DRAFT: 'Brouillon',
+      TO_TRANSMIT: 'À transmettre',
+      TRANSMITTED: 'Transmis',
+      RECEIVED: 'Reçu',
+      CONSULTED: 'Consulté',
+    },
+    directions: {
+      COMPANY_TO_CABINET: 'Entreprise vers cabinet',
+      CABINET_TO_COMPANY: 'Cabinet vers entreprise',
+    },
+  },
   days: {
     SUNDAY: 'Dimanche',
     MONDAY: 'Lundi',
@@ -37,5 +62,12 @@ export const fr = {
     [ErrorCode.REQUIRED_INFORMATION]:
       'Renseignez les informations obligatoires.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'Un élément semblable existe déjà.',
+    [ErrorCode.INVALID_FILE]:
+      'Ce fichier ne peut pas être accepté. Vérifiez son format et réessayez.',
+    [ErrorCode.MISSING_DOCUMENT]:
+      'Ajoutez le document attendu avant de valider.',
+    [ErrorCode.TRANSMISSION_FAILED]:
+      "La transmission n'a pas abouti. Vous pouvez réessayer.",
+    [ErrorCode.INACCESSIBLE_DOCUMENT]: "Ce document n'est pas accessible.",
   },
 } as const;

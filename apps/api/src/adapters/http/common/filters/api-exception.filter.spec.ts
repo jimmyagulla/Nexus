@@ -62,6 +62,13 @@ describe('ApiExceptionFilter', () => {
     });
   });
 
+  it('maps INACCESSIBLE_DOCUMENT domain errors to 403', () => {
+    expect(sendThrough(new Error('INACCESSIBLE_DOCUMENT'))).toEqual({
+      status: 403,
+      body: { status: 403, message: 'INACCESSIBLE_DOCUMENT' },
+    });
+  });
+
   it('maps other domain errors to 400', () => {
     expect(sendThrough(new Error('REQUIRED_INFORMATION'))).toEqual({
       status: 400,

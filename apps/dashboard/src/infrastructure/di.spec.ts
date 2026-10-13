@@ -181,4 +181,18 @@ describe('dependency injection entry point', () => {
     );
     expect(transport.calls).toEqual([]);
   });
+
+  it('wires the cabinet exchanges on the same api for the session company', async () => {
+    transport.body = { status: 200, data: [] };
+    const di = await import('./di');
+
+    await di.cabinetExchangeComposition.controller.list();
+
+    expect(transport.calls).toEqual([
+      {
+        url: 'https://api.nexus.test/api/companies/c1/cabinet-exchanges',
+        authorization: 'Bearer jwt',
+      },
+    ]);
+  });
 });

@@ -10,3 +10,11 @@ export * from './use-cases/company-public-holidays/add-company-public-holiday-fr
 export * from './use-cases/company-public-holidays/update-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday-from-session.use-case';
+export * from './use-cases/cabinet-exchange/create-cabinet-exchange-draft.use-case';
+export * from './use-cases/cabinet-exchange/mark-cabinet-exchange-to-transmit.use-case';
+export * from './use-cases/cabinet-exchange/transmit-cabinet-exchanges.use-case';
+export * from './use-cases/cabinet-exchange/list-cabinet-exchanges.use-case';
+export * from './use-cases/cabinet-exchange/create-cabinet-exchange-draft-from-session.use-case';
+export * from './use-cases/cabinet-exchange/mark-cabinet-exchange-to-transmit-from-session.use-case';
+export * from './use-cases/cabinet-exchange/transmit-cabinet-exchanges-from-session.use-case';
+export * from './use-cases/cabinet-exchange/list-cabinet-exchanges-from-session.use-case';

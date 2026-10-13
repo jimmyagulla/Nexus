@@ -31,6 +31,32 @@ enum AuditSubject {
   COMPANY_PUBLIC_HOLIDAY
 }
 
+enum ExchangeStatus {
+  DRAFT
+  TO_TRANSMIT
+  TRANSMITTED
+  RECEIVED
+  CONSULTED
+}
+
+enum ExchangeDirection {
+  COMPANY_TO_CABINET
+  CABINET_TO_COMPANY
+}
+
+enum ExchangeEventKind {
+  TRANSMITTED
+  RECEIVED
+  CONSULTED
+  DOWNLOADED
+}
+
+enum CabinetConnectionStatus {
+  INVITATION_SENT
+  CONNECTED
+  REVOKED
+}
+
 enum AuditSide {
   BEFORE
   AFTER
@@ -42,6 +68,8 @@ model Company {
   nonWorkingWeekdays   CompanyNonWorkingWeekday[]
   publicHolidays       CompanyPublicHoliday[]
   auditEvents          AuditEvent[]
+  cabinetExchanges     CabinetExchange[]
+  cabinetConnection    CabinetConnection?
 }
 
 model CompanyNonWorkingWeekday {
@@ -101,4 +129,46 @@ model AuditSnapshotDayOfWeek {
   snapshot   AuditSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
 
   @@id([snapshotId, dayOfWeek])
+}
+
+model CabinetConnection {
+  companyId String                  @id
+  status    CabinetConnectionStatus
+  company   Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model CabinetExchange {
+  id        String               @id
+  companyId String
+  direction ExchangeDirection
+  senderId  String
+  createdAt DateTime
+  category  String?
+  fileName  String?
+  mimeType  String?
+  fileSize  Int?
+  status    ExchangeStatus
+  company   Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  events    CabinetExchangeEvent[]
+  file      CabinetExchangeFile?
+}
+
+model CabinetExchangeEvent {
+  exchangeId    String
+  position      Int
+  kind          ExchangeEventKind
+  actorId       String?
+  occurredAt    DateTime
+  documentCount Int
+  exchange      CabinetExchange   @relation(fields: [exchangeId], references: [id], onDelete: Cascade)
+
+  @@id([exchangeId, position])
+}
+
+model CabinetExchangeFile {
+  exchangeId String          @id
+  fileName   String
+  mimeType   String
+  content    Bytes
+  exchange   CabinetExchange @relation(fields: [exchangeId], references: [id], onDelete: Cascade)
 }

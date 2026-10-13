@@ -1,0 +1,91 @@
+import { describe, expect, it } from 'vitest';
+import {
+  CabinetExchangeSnapshot,
+  ExchangeDirection,
+  ExchangeFileInput,
+  ExchangeStatus,
+} from '@hexagonal-monorepo-template/domain';
+import { CabinetExchangeController } from './cabinet-exchange.controller';
+
+const snapshot: CabinetExchangeSnapshot = {
+  id: 'ex-1',
+  direction: ExchangeDirection.COMPANY_TO_CABINET,
+  status: ExchangeStatus.DRAFT,
+  category: 'Facture',
+  document: null,
+  senderId: 'user-1',
+  date: '2026-10-06T09:00:00.000Z',
+};
+
+const file: ExchangeFileInput = {
+  fileName: 'a.pdf',
+  mimeType: 'application/pdf',
+  content: new Uint8Array([1]),
+};
+
+function controller() {
+  const received = {
+    created: [] as unknown[],
+    marked: [] as unknown[],
+    transmitted: [] as (readonly string[])[],
+  };
+  return {
+    received,
+    controller: new CabinetExchangeController(
+      {
+        execute: async (input) => {
+          received.created.push(input);
+          return snapshot;
+        },
+      },
+      {
+        execute: async (input) => {
+          received.marked.push(input);
+          return { ...snapshot, status: ExchangeStatus.TO_TRANSMIT };
+        },
+      },
+      {
+        execute: async (ids) => {
+          received.transmitted.push(ids);
+          return [{ ...snapshot, status: ExchangeStatus.RECEIVED }];
+        },
+      },
+      { execute: async () => [snapshot] },
+    ),
+  };
+}
+
+describe('CabinetExchangeController', () => {
+  it('creates a draft from the entered category and file', async () => {
+    const { controller: sut, received } = controller();
+
+    await expect(
+      sut.createDraft({ category: 'Facture', file }),
+    ).resolves.toEqual(snapshot);
+    expect(received.created).toEqual([{ category: 'Facture', file }]);
+  });
+
+  it('marks an exchange as ready to transmit', async () => {
+    const { controller: sut, received } = controller();
+
+    await expect(sut.markToTransmit('ex-1')).resolves.toMatchObject({
+      status: ExchangeStatus.TO_TRANSMIT,
+    });
+    expect(received.marked).toEqual([{ exchangeId: 'ex-1' }]);
+  });
+
+  it('transmits several exchanges together', async () => {
+    const { controller: sut, received } = controller();
+
+    await expect(sut.transmit(['ex-1', 'ex-2'])).resolves.toEqual([
+      expect.objectContaining({ status: ExchangeStatus.RECEIVED }),
+    ]);
+    expect(received.transmitted).toEqual([['ex-1', 'ex-2']]);
+  });
+
+  it('lists the exchanges of the session company', async () => {
+    const { controller: sut } = controller();
+
+    await expect(sut.list()).resolves.toEqual([snapshot]);
+  });
+});

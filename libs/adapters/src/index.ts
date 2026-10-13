@@ -12,3 +12,7 @@ export * from './out/session/client-session.gateway';
 export * from './out/session/in-memory-session.client';
 export * from './out/session/in-memory-session.gateway';
 export * from './out/session/local-dev-session';
+export * from './out/cabinet-exchange/in-memory-cabinet-exchange.repository';
+export * from './out/cabinet-exchange/in-memory-exchange-file.storage';
+export * from './out/cabinet-connection/in-memory-cabinet-connection.repository';
+export * from './out/cabinet-exchange/api-cabinet-exchange.gateway';

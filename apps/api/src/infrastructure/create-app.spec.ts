@@ -48,6 +48,41 @@ async function getResponse(
   }
 }
 
+async function postJson(
+  app: INestApplication,
+  path: string,
+  body: string,
+): Promise<number> {
+  const server = app.getHttpServer();
+  await new Promise<void>((resolve) => {
+    server.listen(0, '127.0.0.1', resolve);
+  });
+
+  try {
+    const { port } = server.address() as AddressInfo;
+
+    return await new Promise((resolve, reject) => {
+      const request = httpRequest(
+        {
+          hostname: '127.0.0.1',
+          port,
+          path,
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+        },
+        (res) => {
+          res.resume();
+          res.on('end', () => resolve(res.statusCode ?? 0));
+        },
+      );
+      request.on('error', reject);
+      request.end(body);
+    });
+  } finally {
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  }
+}
+
 describe('createNestApp', () => {
   let app: INestApplication | undefined;
 
@@ -64,5 +99,19 @@ describe('createNestApp', () => {
 
     expect(status).toBe(200);
     expect(body).toContain('Swagger');
+  });
+
+  it('accepts a request body large enough to carry an exchange file', async () => {
+    app = await createNestApp();
+    await app.init();
+    const body = JSON.stringify({ padding: 'x'.repeat(2_000_000) });
+
+    const status = await postJson(
+      app,
+      '/api/companies/c1/cabinet-exchanges',
+      body,
+    );
+
+    expect(status).toBe(403);
   });
 });

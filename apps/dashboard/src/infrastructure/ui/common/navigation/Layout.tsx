@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { LayoutDashboard, Settings } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Settings } from 'lucide-react';
 import { AppRoutes } from '../../routes/app-routes';
 import { i18n } from '../../i18n/i18n';
 import { NavigationLink } from './NavigationLink';
@@ -27,6 +27,11 @@ export function Layout({ children }: LayoutProps) {
             to={AppRoutes.settings}
             icon={<Settings className="h-5 w-5" />}
             label={i18n.messages.navigation.settings}
+          />
+          <NavigationLink
+            to={AppRoutes.cabinet}
+            icon={<Briefcase className="h-5 w-5" />}
+            label={i18n.messages.navigation.cabinet}
           />
         </nav>
       </aside>

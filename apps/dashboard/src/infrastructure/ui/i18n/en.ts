@@ -4,6 +4,7 @@ export const en = {
   navigation: {
     dashboard: 'Dashboard',
     settings: 'Settings',
+    cabinet: 'Accounting firm',
   },
   loading: 'Loading…',
   home: {
@@ -23,6 +24,30 @@ export const en = {
     date: 'Date',
     label: 'Label',
   },
+  cabinet: {
+    title: 'Accounting firm',
+    newDocument: 'New document',
+    newDocumentTitle: 'New document for the firm',
+    category: 'Category',
+    file: 'File',
+    saveDraft: 'Save the draft',
+    markToTransmit: 'Mark as ready to transmit',
+    transmit: 'Transmit',
+    noCategory: 'No category',
+    noFile: 'No file',
+    transmitted: 'The document was transmitted to the accounting firm.',
+    statuses: {
+      DRAFT: 'Draft',
+      TO_TRANSMIT: 'To transmit',
+      TRANSMITTED: 'Transmitted',
+      RECEIVED: 'Received',
+      CONSULTED: 'Viewed',
+    },
+    directions: {
+      COMPANY_TO_CABINET: 'Company to firm',
+      CABINET_TO_COMPANY: 'Firm to company',
+    },
+  },
   days: {
     SUNDAY: 'Sunday',
     MONDAY: 'Monday',
@@ -36,5 +61,11 @@ export const en = {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.INVALID_FILE]:
+      'This file cannot be accepted. Check its format and try again.',
+    [ErrorCode.MISSING_DOCUMENT]: 'Add the expected document before validating.',
+    [ErrorCode.TRANSMISSION_FAILED]:
+      'The transmission did not go through. You can try again.',
+    [ErrorCode.INACCESSIBLE_DOCUMENT]: 'This document is not accessible.',
   },
 } as const;

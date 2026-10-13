@@ -5,6 +5,10 @@ describe('isErrorCode', () => {
     expect(isErrorCode('ACCESS_DENIED')).toBe(true);
     expect(isErrorCode('REQUIRED_INFORMATION')).toBe(true);
     expect(isErrorCode('POTENTIAL_DUPLICATE')).toBe(true);
+    expect(isErrorCode('INVALID_FILE')).toBe(true);
+    expect(isErrorCode('MISSING_DOCUMENT')).toBe(true);
+    expect(isErrorCode('TRANSMISSION_FAILED')).toBe(true);
+    expect(isErrorCode('INACCESSIBLE_DOCUMENT')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {
