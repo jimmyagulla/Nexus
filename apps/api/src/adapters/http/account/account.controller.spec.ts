@@ -1,7 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ErrorCode, UserRole } from '@hexagonal-monorepo-template/domain';
+import {
+  ErrorCode,
+  SecondFactorEnrollmentOffer,
+  UserRole,
+} from '@hexagonal-monorepo-template/domain';
 import {
   IActivateAccount,
   IActivateEmployeeAccount,
@@ -16,6 +20,13 @@ const activateAccount = { execute: vi.fn<IActivateAccount['execute']>() };
 const signIn = { execute: vi.fn<ISignIn['execute']>() };
 const activateEmployeeAccount = {
   execute: vi.fn<IActivateEmployeeAccount['execute']>(),
+};
+
+const ENROLLMENT_OFFER: SecondFactorEnrollmentOffer = {
+  enrollmentId: 'enrollment-1',
+  secret: 'JBSWY3DPEHPK3PXP',
+  provisioningUri:
+    'otpauth://totp/Nexus:alice?secret=JBSWY3DPEHPK3PXP&issuer=Nexus',
 };
 
 let app: INestApplication;
@@ -69,7 +80,7 @@ beforeEach(() => {
   activateAccount.execute.mockReset();
   signIn.execute.mockReset();
   activateEmployeeAccount.execute.mockReset();
-  activateEmployeeAccount.execute.mockResolvedValue(undefined);
+  activateEmployeeAccount.execute.mockResolvedValue(ENROLLMENT_OFFER);
   activateAccount.execute.mockResolvedValue(undefined);
   signIn.execute.mockResolvedValue({
     accessToken: 'session:founder',
@@ -80,6 +91,15 @@ beforeEach(() => {
 
 describe('AccountController', () => {
   describe('POST /accounts/employee-activation', () => {
+    it('answers 201 with the second factor enrollment to complete', async () => {
+      await expect(
+        sendEmployeeActivation({ invitationToken: 'invite-1', secret: 's3cret' }),
+      ).resolves.toEqual({
+        status: 201,
+        payload: { status: 201, message: 'Success', data: ENROLLMENT_OFFER },
+      });
+    });
+
     it('activates the invited employee account with the chosen secret', async () => {
       const { status } = await sendEmployeeActivation({
         invitationToken: 'invite-1',

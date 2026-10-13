@@ -7,6 +7,7 @@ import {
   ISetNonWorkingWeekdays,
 } from '@hexagonal-monorepo-template/ports';
 import { ClockModule } from '../clock/clock.module';
+import { IdGeneratorModule } from '../id-generator/id-generator.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { CompanySettingsModule } from './company-settings.module';
 
@@ -26,6 +27,7 @@ function compile(): Promise<TestingModule> {
     imports: [
       testGlobals,
       ClockModule,
+      IdGeneratorModule,
       CompanySettingsModule,
     ],
   }).compile();

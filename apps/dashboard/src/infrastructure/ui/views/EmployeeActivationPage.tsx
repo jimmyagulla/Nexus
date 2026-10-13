@@ -1,6 +1,7 @@
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { AccountComposition } from '../../composition/account.composition';
 import { ActivationView } from '../features/account-activation/ActivationView';
+import { EmployeeEnrollmentView } from '../features/employee-enrollment/EmployeeEnrollmentView';
 import { useActivateEmployeeAccount } from '../hooks/useActivateEmployeeAccount';
 
 interface EmployeeActivationPageProps {
@@ -13,6 +14,14 @@ export function EmployeeActivationPage({
   deps,
 }: EmployeeActivationPageProps) {
   const activation = useActivateEmployeeAccount(deps);
+
+  if (activation.isSuccess) {
+    return (
+      <EmployeeEnrollmentView
+        model={deps.enrollmentPresenter.present(activation.data)}
+      />
+    );
+  }
 
   return (
     <ActivationView

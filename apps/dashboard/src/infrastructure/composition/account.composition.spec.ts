@@ -8,5 +8,6 @@ describe('createAccountComposition', () => {
 
     expect(deps.controller).toBeDefined();
     expect(deps.errorPresenter).toBeDefined();
+    expect(deps.enrollmentPresenter).toBeDefined();
   });
 });

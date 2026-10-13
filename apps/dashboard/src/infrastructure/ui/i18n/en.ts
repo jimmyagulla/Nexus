@@ -44,6 +44,13 @@ export const en = {
     submit: 'Activate',
     opened: 'Your workspace is open.',
   },
+  enrollment: {
+    title: 'Additional verification',
+    instruction:
+      'Add this key to your authenticator application to get your codes.',
+    secret: 'Key to enter',
+    uri: 'Setup link',
+  },
   errors: {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
@@ -51,5 +58,7 @@ export const en = {
     [ErrorCode.INVITATION_INVALID]: 'This activation link is no longer usable.',
     [ErrorCode.ACCOUNT_LOCKED]:
       'Sign-in is locked. An employer must restore access.',
+    [ErrorCode.SECOND_FACTOR_REQUIRED]:
+      'Additional verification is required to access your workspace.',
   },
 } as const;

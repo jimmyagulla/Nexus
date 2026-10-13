@@ -14,6 +14,12 @@ describe('ErrorPresenter', () => {
     );
   });
 
+  it('maps SECOND_FACTOR_REQUIRED to the phrase of the reference', () => {
+    expect(presenter.present(new Error(ErrorCode.SECOND_FACTOR_REQUIRED))).toBe(
+      'La vérification complémentaire est nécessaire pour accéder à votre espace.',
+    );
+  });
+
   it('maps ACCESS_DENIED to the french phrase', () => {
     expect(presenter.present(new Error(ErrorCode.ACCESS_DENIED))).toBe(
       i18n.messages.errors.ACCESS_DENIED,

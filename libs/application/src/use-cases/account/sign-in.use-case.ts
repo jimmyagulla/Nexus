@@ -7,11 +7,13 @@ import {
   AuditSubject,
   ErrorCode,
   SignedInSession,
+  UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAccountRepository,
   IAuditLogRepository,
   IClock,
+  ISecondFactorEnrollmentRepository,
   ISecretHasher,
   ISignIn,
   ISignInSession,
@@ -24,6 +26,7 @@ export class SignInUseCase implements ISignIn {
     private readonly sessions: ISignInSession,
     private readonly audits: IAuditLogRepository,
     private readonly clock: IClock,
+    private readonly enrollments: ISecondFactorEnrollmentRepository,
   ) {}
 
   async execute(input: {
@@ -35,6 +38,7 @@ export class SignInUseCase implements ISignIn {
     const account = await this.requireActiveAccount(identifier.value);
     this.refuseIfLocked(account);
     await this.authenticate(account, secret.value);
+    await this.requireSecondFactorWhenEmployee(account);
     await this.resetFailedSignIns(account);
     await this.recordConnection(account);
     return this.sessions.open({
@@ -75,6 +79,18 @@ export class SignInUseCase implements ISignIn {
     throw new Error(
       failed.isLocked() ? ErrorCode.ACCOUNT_LOCKED : ErrorCode.ACCESS_DENIED,
     );
+  }
+
+  private async requireSecondFactorWhenEmployee(
+    account: Account,
+  ): Promise<void> {
+    if (account.role !== UserRole.EMPLOYEE) {
+      return;
+    }
+    const enrollment = await this.enrollments.findByAccountId(account.id);
+    if (enrollment === null || !enrollment.isConfirmed()) {
+      throw new Error(ErrorCode.SECOND_FACTOR_REQUIRED);
+    }
   }
 
   private resetFailedSignIns(account: Account): Promise<void> {

@@ -88,8 +88,22 @@ model Account {
   employeeId        String?       @unique
   company           Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   employee          Employee?     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  secondFactorEnrollment SecondFactorEnrollment?
 
   @@unique([companyId, identifier])
+}
+
+enum SecondFactorEnrollmentStatus {
+  PENDING
+  CONFIRMED
+}
+
+model SecondFactorEnrollment {
+  id        String                       @id @default(uuid())
+  accountId String                       @unique
+  secret    String
+  status    SecondFactorEnrollmentStatus
+  account   Account                      @relation(fields: [accountId], references: [id], onDelete: Cascade)
 }
 
 model CompanyNonWorkingWeekday {

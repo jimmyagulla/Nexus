@@ -8,6 +8,7 @@ import {
 } from '@hexagonal-monorepo-template/ports';
 import { Public } from '../common/guards/auth/public.decorator';
 import { ActivateAccountRequestDto } from './dto/activate-account-request.dto';
+import { SecondFactorEnrollmentOfferResponseDto } from './dto/second-factor-enrollment-offer-response.dto';
 import { SignInRequestDto } from './dto/sign-in-request.dto';
 import { SignedInSessionResponseDto } from './dto/signed-in-session-response.dto';
 
@@ -26,10 +27,10 @@ export class AccountController {
   @Post(API_ROUTES.accounts.employeeActivation)
   @Public()
   @ApiOperation({ summary: 'Activate an invited employee account' })
-  async activateEmployee(
+  activateEmployee(
     @Body() body: ActivateAccountRequestDto,
-  ): Promise<void> {
-    await this.activateEmployeeAccount.execute({
+  ): Promise<SecondFactorEnrollmentOfferResponseDto> {
+    return this.activateEmployeeAccount.execute({
       invitationToken: body.invitationToken,
       secret: body.secret,
     });

@@ -26,6 +26,8 @@ export * from './out/company-public-holidays/company-public-holidays.gateway.por
 export * from './out/company-settings/company-settings.gateway.port';
 export * from './out/http/http-client.port';
 export * from './out/public-holiday/public-holiday.repository.port';
+export * from './out/second-factor/second-factor-codes.port';
+export * from './out/second-factor/second-factor-enrollment.repository.port';
 export * from './out/session/session.gateway.port';
 export * from './out/session/sign-in-session.port';
 export * from './out/session/session-client.port';

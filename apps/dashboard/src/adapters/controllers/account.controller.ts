@@ -1,4 +1,7 @@
-import { SignedInSession } from '@hexagonal-monorepo-template/domain';
+import {
+  SecondFactorEnrollmentOffer,
+  SignedInSession,
+} from '@hexagonal-monorepo-template/domain';
 import {
   IActivateAccount,
   IActivateEmployeeAccount,
@@ -16,7 +19,10 @@ export class AccountController {
     return this.activateAccount.execute({ invitationToken, secret });
   }
 
-  activateEmployee(invitationToken: string, secret: string): Promise<void> {
+  activateEmployee(
+    invitationToken: string,
+    secret: string,
+  ): Promise<SecondFactorEnrollmentOffer> {
     return this.activateEmployeeAccount.execute({ invitationToken, secret });
   }
 

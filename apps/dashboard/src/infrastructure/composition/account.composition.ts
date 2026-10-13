@@ -6,11 +6,13 @@ import {
 import { ApiAccountGateway } from '@hexagonal-monorepo-template/adapters';
 import { IHttpClient } from '@hexagonal-monorepo-template/ports';
 import { AccountController } from '../../adapters/controllers/account.controller';
+import { EmployeeEnrollmentPresenter } from '../../adapters/presenters/employee-enrollment.presenter';
 import { ErrorPresenter } from '../../adapters/presenters/error.presenter';
 
 export type AccountComposition = {
   controller: AccountController;
   errorPresenter: ErrorPresenter;
+  enrollmentPresenter: EmployeeEnrollmentPresenter;
 };
 
 export function createAccountComposition(
@@ -24,5 +26,6 @@ export function createAccountComposition(
       new SignInViaGatewayUseCase(accounts),
     ),
     errorPresenter: new ErrorPresenter(),
+    enrollmentPresenter: new EmployeeEnrollmentPresenter(),
   };
 }

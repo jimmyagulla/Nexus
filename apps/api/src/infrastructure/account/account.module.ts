@@ -16,6 +16,9 @@ import {
   IActivateEmployeeAccount,
   IAuditLogRepository,
   IClock,
+  IIdGenerator,
+  ISecondFactorCodes,
+  ISecondFactorEnrollmentRepository,
   ISecretHasher,
   ISignIn,
   ISignInSession,
@@ -25,9 +28,10 @@ import { PrismaAccountRepository } from '../../adapters/out/account/prisma-accou
 import { AuditModule } from '../audit/audit.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
+import { SecondFactorModule } from '../second-factor/second-factor.module';
 
 @Module({
-  imports: [AuditModule],
+  imports: [AuditModule, SecondFactorModule],
   controllers: [AccountController],
   providers: [
     {
@@ -58,9 +62,27 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
     },
     {
       provide: IActivateEmployeeAccount,
-      useFactory: (accounts: IAccountRepository, secrets: ISecretHasher) =>
-        new ActivateEmployeeAccountUseCase(accounts, secrets),
-      inject: [IAccountRepository, ISecretHasher],
+      useFactory: (
+        accounts: IAccountRepository,
+        secrets: ISecretHasher,
+        enrollments: ISecondFactorEnrollmentRepository,
+        codes: ISecondFactorCodes,
+        ids: IIdGenerator,
+      ) =>
+        new ActivateEmployeeAccountUseCase(
+          accounts,
+          secrets,
+          enrollments,
+          codes,
+          ids,
+        ),
+      inject: [
+        IAccountRepository,
+        ISecretHasher,
+        ISecondFactorEnrollmentRepository,
+        ISecondFactorCodes,
+        IIdGenerator,
+      ],
     },
     {
       provide: ISignInSession,
@@ -74,13 +96,23 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         sessions: ISignInSession,
         audits: IAuditLogRepository,
         clock: IClock,
-      ) => new SignInUseCase(accounts, secrets, sessions, audits, clock),
+        enrollments: ISecondFactorEnrollmentRepository,
+      ) =>
+        new SignInUseCase(
+          accounts,
+          secrets,
+          sessions,
+          audits,
+          clock,
+          enrollments,
+        ),
       inject: [
         IAccountRepository,
         ISecretHasher,
         ISignInSession,
         IAuditLogRepository,
         IClock,
+        ISecondFactorEnrollmentRepository,
       ],
     },
   ],

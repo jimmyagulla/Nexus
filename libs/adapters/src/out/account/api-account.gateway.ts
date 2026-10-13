@@ -1,4 +1,7 @@
-import { SignedInSession } from '@hexagonal-monorepo-template/domain';
+import {
+  SecondFactorEnrollmentOffer,
+  SignedInSession,
+} from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
   unwrapResponse,
@@ -27,9 +30,9 @@ export class ApiAccountGateway implements IAccountGateway {
   async activateEmployee(input: {
     invitationToken: string;
     secret: string;
-  }): Promise<void> {
-    unwrapResponse(
-      await this.httpClient.post(
+  }): Promise<SecondFactorEnrollmentOffer> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<SecondFactorEnrollmentOffer>>(
         `${API_ROUTES.accounts.base}/${API_ROUTES.accounts.employeeActivation}`,
         input,
       ),

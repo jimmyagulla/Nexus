@@ -2,6 +2,12 @@ import { HttpException } from '@nestjs/common';
 import { ErrorCode, isErrorCode } from '@hexagonal-monorepo-template/domain';
 import { ApiResult, ErrorEnvelope, SuccessEnvelope } from './api-response.types';
 
+const FORBIDDEN_CODES: readonly string[] = [
+  ErrorCode.ACCESS_DENIED,
+  ErrorCode.ACCOUNT_LOCKED,
+  ErrorCode.SECOND_FACTOR_REQUIRED,
+];
+
 function isApiResult(obj: unknown): obj is ApiResult<unknown> {
   return (
     typeof obj === 'object' &&
@@ -69,10 +75,7 @@ export function httpStatusForError(exception: unknown): number {
     return exception.getStatus();
   }
   if (exception instanceof Error && isErrorCode(exception.message)) {
-    return exception.message === ErrorCode.ACCESS_DENIED ||
-      exception.message === ErrorCode.ACCOUNT_LOCKED
-      ? 403
-      : 400;
+    return FORBIDDEN_CODES.includes(exception.message) ? 403 : 400;
   }
   return 500;
 }

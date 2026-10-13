@@ -4,6 +4,7 @@ export const ErrorCode = {
   POTENTIAL_DUPLICATE: 'POTENTIAL_DUPLICATE',
   INVITATION_INVALID: 'INVITATION_INVALID',
   ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
+  SECOND_FACTOR_REQUIRED: 'SECOND_FACTOR_REQUIRED',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

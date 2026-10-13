@@ -1,4 +1,7 @@
-import { SignedInSession } from '@hexagonal-monorepo-template/domain';
+import {
+  SecondFactorEnrollmentOffer,
+  SignedInSession,
+} from '@hexagonal-monorepo-template/domain';
 
 export interface IAccountGateway {
   activate(input: {
@@ -8,7 +11,7 @@ export interface IAccountGateway {
   activateEmployee(input: {
     invitationToken: string;
     secret: string;
-  }): Promise<void>;
+  }): Promise<SecondFactorEnrollmentOffer>;
   signIn(input: {
     identifier: string;
     secret: string;

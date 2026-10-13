@@ -69,6 +69,13 @@ describe('ApiExceptionFilter', () => {
     });
   });
 
+  it('maps SECOND_FACTOR_REQUIRED domain errors to 403', () => {
+    expect(sendThrough(new Error('SECOND_FACTOR_REQUIRED'))).toEqual({
+      status: 403,
+      body: { status: 403, message: 'SECOND_FACTOR_REQUIRED' },
+    });
+  });
+
   it('maps other domain errors to 400', () => {
     expect(sendThrough(new Error('REQUIRED_INFORMATION'))).toEqual({
       status: 400,

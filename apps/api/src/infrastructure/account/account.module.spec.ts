@@ -13,6 +13,7 @@ import {
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
 import { ClockModule } from '../clock/clock.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
+import { IdGeneratorModule } from '../id-generator/id-generator.module';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { AccountModule } from './account.module';
 
@@ -47,7 +48,12 @@ async function accountRepository(
   prisma?: PrismaDb,
 ): Promise<IAccountRepository> {
   const moduleRef = await Test.createTestingModule({
-    imports: [testGlobals(env, prisma), ClockModule, AccountModule],
+    imports: [
+      testGlobals(env, prisma),
+      ClockModule,
+      IdGeneratorModule,
+      AccountModule,
+    ],
   }).compile();
 
   return moduleRef.get<IAccountRepository>(IAccountRepository);
@@ -76,7 +82,12 @@ describe('AccountModule', () => {
 
   it('wires the activation use case', async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [testGlobals({}), ClockModule, AccountModule],
+      imports: [
+        testGlobals({}),
+        ClockModule,
+        IdGeneratorModule,
+        AccountModule,
+      ],
     }).compile();
 
     expect(moduleRef.get(IActivateAccount)).toBeDefined();
@@ -85,7 +96,12 @@ describe('AccountModule', () => {
 
   it('wires the employee activation use case', async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [testGlobals({}), ClockModule, AccountModule],
+      imports: [
+        testGlobals({}),
+        ClockModule,
+        IdGeneratorModule,
+        AccountModule,
+      ],
     }).compile();
 
     expect(moduleRef.get(IActivateEmployeeAccount)).toBeInstanceOf(

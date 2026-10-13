@@ -19,6 +19,7 @@ import {
 import { PrismaCompanyRepository } from '../../adapters/out/company/prisma-company.repository';
 import { SupabaseCompanyIdentityBinder } from '../../adapters/out/identity/supabase-company-identity-binder';
 import { ClockModule } from '../clock/clock.module';
+import { IdGeneratorModule } from '../id-generator/id-generator.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { CompanyModule } from './company.module';
@@ -62,6 +63,7 @@ function compile(
     imports: [
       testGlobals(env, prisma),
       ClockModule,
+      IdGeneratorModule,
       CompanyModule,
     ],
   }).compile();

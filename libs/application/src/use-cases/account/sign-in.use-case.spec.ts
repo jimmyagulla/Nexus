@@ -2,6 +2,7 @@ import {
   FixedClock,
   InMemoryAccountRepository,
   InMemoryAuditLogRepository,
+  InMemorySecondFactorEnrollmentRepository,
   InMemorySecretHasher,
   InMemorySignInSession,
 } from '@hexagonal-monorepo-template/adapters';
@@ -12,6 +13,8 @@ import {
   AuditAction,
   AuditSubject,
   ErrorCode,
+  SecondFactorEnrollment,
+  SecondFactorEnrollmentStatus,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { SignInUseCase } from './sign-in.use-case';
@@ -23,6 +26,7 @@ function signInUseCase(
   secrets: InMemorySecretHasher,
   sessions = new InMemorySignInSession(),
   audits = new InMemoryAuditLogRepository(),
+  enrollments = new InMemorySecondFactorEnrollmentRepository(),
 ) {
   return new SignInUseCase(
     accounts,
@@ -30,7 +34,25 @@ function signInUseCase(
     sessions,
     audits,
     new FixedClock(SIGNED_IN_AT),
+    enrollments,
   );
+}
+
+async function activeEmployee(
+  accounts: InMemoryAccountRepository,
+  secrets: InMemorySecretHasher,
+): Promise<Account> {
+  const invited = Account.inviteEmployee(
+    'account-2',
+    'company-1',
+    AccountIdentifier.parse('alice'),
+    'invite-2',
+    'employee-1',
+  );
+  await accounts.insert(invited);
+  const activated = invited.activate(await secrets.hash('s3cret'));
+  await accounts.save(activated);
+  return activated;
 }
 
 async function activeEmployer(
@@ -234,5 +256,86 @@ describe('SignInUseCase', () => {
     await expect(
       useCase.execute({ identifier: 'founder', secret: 'wrong' }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  describe('an employee account', () => {
+    it('stays out of the workspace while no second factor was ever enrolled', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const secrets = new InMemorySecretHasher();
+      const sessions = new InMemorySignInSession();
+      const audits = new InMemoryAuditLogRepository();
+      await activeEmployee(accounts, secrets);
+      const useCase = signInUseCase(accounts, secrets, sessions, audits);
+
+      await expect(
+        useCase.execute({ identifier: 'alice', secret: 's3cret' }),
+      ).rejects.toThrow(ErrorCode.SECOND_FACTOR_REQUIRED);
+      expect(sessions.opened).toEqual([]);
+      expect(await audits.listByCompany('company-1')).toEqual([]);
+    });
+
+    it('stays out of the workspace when the enrollment was abandoned', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const secrets = new InMemorySecretHasher();
+      const sessions = new InMemorySignInSession();
+      const enrollments = new InMemorySecondFactorEnrollmentRepository();
+      await activeEmployee(accounts, secrets);
+      await enrollments.insert(
+        SecondFactorEnrollment.start('enrollment-1', 'account-2', 'JBSWY3DPEHPK3PXP'),
+      );
+      const useCase = signInUseCase(
+        accounts,
+        secrets,
+        sessions,
+        new InMemoryAuditLogRepository(),
+        enrollments,
+      );
+
+      await expect(
+        useCase.execute({ identifier: 'alice', secret: 's3cret' }),
+      ).rejects.toThrow(ErrorCode.SECOND_FACTOR_REQUIRED);
+      expect(sessions.opened).toEqual([]);
+    });
+
+    it('opens the employee workspace once the second factor is confirmed', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const secrets = new InMemorySecretHasher();
+      const enrollments = new InMemorySecondFactorEnrollmentRepository();
+      await activeEmployee(accounts, secrets);
+      await enrollments.insert(
+        new SecondFactorEnrollment(
+          'enrollment-1',
+          'account-2',
+          'JBSWY3DPEHPK3PXP',
+          SecondFactorEnrollmentStatus.CONFIRMED,
+        ),
+      );
+      const useCase = signInUseCase(
+        accounts,
+        secrets,
+        new InMemorySignInSession(),
+        new InMemoryAuditLogRepository(),
+        enrollments,
+      );
+
+      await expect(
+        useCase.execute({ identifier: 'alice', secret: 's3cret' }),
+      ).resolves.toEqual({
+        accessToken: 'session:alice',
+        companyId: 'company-1',
+        role: UserRole.EMPLOYEE,
+      });
+    });
+
+    it('does not tell a wrong secret from a missing second factor', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const secrets = new InMemorySecretHasher();
+      await activeEmployee(accounts, secrets);
+      const useCase = signInUseCase(accounts, secrets);
+
+      await expect(
+        useCase.execute({ identifier: 'alice', secret: 'wrong' }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    });
   });
 });

@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { InMemoryHttpClient } from '../http/in-memory-http-client';
 import { ApiAccountGateway } from './api-account.gateway';
 
+const OFFER = {
+  enrollmentId: 'enrollment-1',
+  secret: 'JBSWY3DPEHPK3PXP',
+  provisioningUri:
+    'otpauth://totp/Nexus:alice?secret=JBSWY3DPEHPK3PXP&issuer=Nexus',
+};
+
 describe('ApiAccountGateway', () => {
   it('posts the invitation and the chosen secret', async () => {
     const http = new InMemoryHttpClient();
@@ -27,7 +34,7 @@ describe('ApiAccountGateway', () => {
     const http = new InMemoryHttpClient();
     http.reply('post', 'accounts/employee-activation', {
       status: 201,
-      data: null,
+      data: OFFER,
     });
     const gateway = new ApiAccountGateway(http);
 
@@ -44,6 +51,19 @@ describe('ApiAccountGateway', () => {
         config: undefined,
       },
     ]);
+  });
+
+  it('hands back the second factor enrollment offered once the employee is activated', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'accounts/employee-activation', {
+      status: 201,
+      data: OFFER,
+    });
+    const gateway = new ApiAccountGateway(http);
+
+    await expect(
+      gateway.activateEmployee({ invitationToken: 'invite-1', secret: 's3cret' }),
+    ).resolves.toEqual(OFFER);
   });
 
   it('posts the identifier and the secret to sign in', async () => {

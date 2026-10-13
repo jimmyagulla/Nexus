@@ -1,3 +1,4 @@
+import { SecondFactorEnrollmentOffer } from '@hexagonal-monorepo-template/domain';
 import {
   IAccountGateway,
   IActivateEmployeeAccount,
@@ -11,7 +12,7 @@ export class ActivateEmployeeAccountViaGatewayUseCase
   execute(input: {
     invitationToken: string;
     secret: string;
-  }): Promise<void> {
+  }): Promise<SecondFactorEnrollmentOffer> {
     return this.accounts.activateEmployee(input);
   }
 }

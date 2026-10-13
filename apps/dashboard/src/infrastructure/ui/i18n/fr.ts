@@ -44,6 +44,13 @@ export const fr = {
     submit: 'Activer',
     opened: 'Votre espace est ouvert.',
   },
+  enrollment: {
+    title: 'Vérification complémentaire',
+    instruction:
+      "Ajoutez cette clé dans votre application d'authentification pour obtenir vos codes.",
+    secret: 'Clé à saisir',
+    uri: 'Lien de configuration',
+  },
   errors: {
     [ErrorCode.ACCESS_DENIED]: "Vous n'avez pas accès à cet élément.",
     [ErrorCode.REQUIRED_INFORMATION]:
@@ -53,5 +60,7 @@ export const fr = {
       "Ce lien d'activation n'est plus utilisable.",
     [ErrorCode.ACCOUNT_LOCKED]:
       "La connexion est bloquée. Un employeur doit rétablir l'accès.",
+    [ErrorCode.SECOND_FACTOR_REQUIRED]:
+      'La vérification complémentaire est nécessaire pour accéder à votre espace.',
   },
 } as const;
