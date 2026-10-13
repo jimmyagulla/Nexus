@@ -109,6 +109,67 @@ describe('Account', () => {
     );
   });
 
+  describe('reissuing an invitation', () => {
+    function invitedEmployee(): Account {
+      return Account.inviteEmployee(
+        'account-2',
+        'company-1',
+        AccountIdentifier.parse('alice'),
+        'invite-2',
+        'employee-7',
+      );
+    }
+
+    it('replaces the invitation of an account still invited, keeping the account', () => {
+      const reissued = invitedEmployee().reissueInvitation(
+        'invite-3',
+        AccountIdentifier.parse('alice'),
+      );
+
+      expect(reissued.invitationToken).toBe('invite-3');
+      expect(reissued.status).toBe(AccountStatus.INVITED);
+      expect(reissued.id).toBe('account-2');
+      expect(reissued.companyId).toBe('company-1');
+      expect(reissued.role).toBe(UserRole.EMPLOYEE);
+      expect(reissued.employeeId).toBe('employee-7');
+      expect(reissued.secretHash).toBeNull();
+    });
+
+    it('applies the identifier submitted with the new invitation', () => {
+      const reissued = invitedEmployee().reissueInvitation(
+        'invite-3',
+        AccountIdentifier.parse('alice.martin'),
+      );
+
+      expect(reissued.identifier.value).toBe('alice.martin');
+    });
+
+    it('leaves the first invitation holder with nothing to use', () => {
+      const original = invitedEmployee();
+
+      original.reissueInvitation('invite-3', AccountIdentifier.parse('alice'));
+
+      expect(original.invitationToken).toBe('invite-2');
+    });
+
+    it('refuses to reissue once the account is active', () => {
+      const active = invitedEmployee().activate('hashed-secret');
+
+      expect(() =>
+        active.reissueInvitation('invite-3', AccountIdentifier.parse('alice')),
+      ).toThrow(ErrorCode.POTENTIAL_DUPLICATE);
+    });
+
+    it('refuses a blank invitation token', () => {
+      expect(() =>
+        invitedEmployee().reissueInvitation(
+          '   ',
+          AccountIdentifier.parse('alice'),
+        ),
+      ).toThrow(ErrorCode.REQUIRED_INFORMATION);
+    });
+  });
+
   it('invites an employee as an invited account bound to one employee record', () => {
     const account = Account.inviteEmployee(
       'account-2',

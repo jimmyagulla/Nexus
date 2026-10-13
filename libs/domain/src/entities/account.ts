@@ -88,6 +88,33 @@ export class Account {
     return this.withFailedSignInCount(0);
   }
 
+  reissueInvitation(
+    invitationToken: string,
+    identifier: AccountIdentifier,
+  ): Account {
+    if (
+      this.status !== AccountStatus.INVITED ||
+      this.invitationToken === null
+    ) {
+      throw new Error(ErrorCode.POTENTIAL_DUPLICATE);
+    }
+    const token = invitationToken.trim();
+    if (token === '') {
+      throw new Error(ErrorCode.REQUIRED_INFORMATION);
+    }
+    return new Account(
+      this.id,
+      this.companyId,
+      identifier,
+      this.role,
+      AccountStatus.INVITED,
+      token,
+      null,
+      0,
+      this.employeeId,
+    );
+  }
+
   activate(secretHash: string): Account {
     if (
       this.status !== AccountStatus.INVITED ||

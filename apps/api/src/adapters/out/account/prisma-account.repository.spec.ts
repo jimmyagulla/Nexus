@@ -3,6 +3,7 @@ import {
   Account,
   AccountIdentifier,
   AccountStatus,
+  ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
@@ -54,6 +55,21 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
         stored.secretHash = args.data.secretHash;
         stored.failedSignInCount = args.data.failedSignInCount;
         stored.employeeId = args.data.employeeId;
+      },
+      updateMany: async (args: {
+        where: { id: string; invitationToken: string };
+        data: Omit<AccountRow, 'id'>;
+      }): Promise<{ count: number }> => {
+        const stored = rows.find(
+          (row) =>
+            row.id === args.where.id &&
+            row.invitationToken === args.where.invitationToken,
+        );
+        if (stored === undefined) {
+          return { count: 0 };
+        }
+        Object.assign(stored, args.data);
+        return { count: 1 };
       },
       findMany: async (args: {
         where: { companyId: string };
@@ -153,6 +169,57 @@ describe('PrismaAccountRepository', () => {
         employeeId: 'employee-1',
       },
     ]);
+  });
+
+  describe('consuming an invitation', () => {
+    function invitedEmployee(): Account {
+      return Account.inviteEmployee(
+        'account-2',
+        'company-1',
+        AccountIdentifier.parse('alice'),
+        'invite-2',
+        'employee-1',
+      );
+    }
+
+    it('stores the activated account when the invitation is still there', async () => {
+      const { client } = createFakePrisma();
+      const repository = new PrismaAccountRepository(client);
+      const invited = invitedEmployee();
+      await repository.insert(invited);
+      const activated = invited.activate('hashed-secret');
+
+      await repository.consumeInvitation(activated, 'invite-2');
+
+      expect(await repository.findById('account-2')).toEqual(activated);
+      expect(await repository.findByInvitationToken('invite-2')).toBeNull();
+    });
+
+    it('refuses a second consumption of the same invitation, keeping the first secret', async () => {
+      const { client } = createFakePrisma();
+      const repository = new PrismaAccountRepository(client);
+      const invited = invitedEmployee();
+      await repository.insert(invited);
+      const first = invited.activate('first-secret');
+      await repository.consumeInvitation(first, 'invite-2');
+
+      await expect(
+        repository.consumeInvitation(invited.activate('second-secret'), 'invite-2'),
+      ).rejects.toThrow(ErrorCode.INVITATION_INVALID);
+
+      expect(await repository.findById('account-2')).toEqual(first);
+    });
+
+    it('refuses an account the store does not know', async () => {
+      const { client } = createFakePrisma();
+
+      await expect(
+        new PrismaAccountRepository(client).consumeInvitation(
+          invitedEmployee().activate('hashed-secret'),
+          'invite-2',
+        ),
+      ).rejects.toThrow(ErrorCode.INVITATION_INVALID);
+    });
   });
 
   it('reads the account back by its id', async () => {

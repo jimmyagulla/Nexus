@@ -53,7 +53,7 @@ export class ActivateEmployeeAccountUseCase implements IActivateEmployeeAccount 
     secret: AccountSecret,
   ): Promise<Account> {
     const active = account.activate(await this.secrets.hash(secret.value));
-    await this.accounts.save(active);
+    await this.accounts.consumeInvitation(active, account.invitationToken ?? '');
     return active;
   }
 

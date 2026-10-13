@@ -119,6 +119,122 @@ describe('InviteEmployeeUseCase', () => {
     expect(await accounts.findByIdentifier('alice-bis')).toBeNull();
   });
 
+  describe('a new invitation for an account still invited', () => {
+    it('replaces the invitation and keeps the same account', async () => {
+      const { accounts, useCase } = await setup([employee('e1')]);
+      const first = await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+
+      const second = await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+
+      expect(second.accountId).toBe(first.accountId);
+      expect(second.employeeId).toBe('e1');
+      expect(second.invitationToken).not.toBe(first.invitationToken);
+      expect(await accounts.listByCompany('c1')).toHaveLength(1);
+    });
+
+    it('leaves the previous invitation with nothing to open', async () => {
+      const { accounts, useCase } = await setup([employee('e1')]);
+      const first = await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+
+      const second = await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+
+      expect(await accounts.findByInvitationToken(first.invitationToken)).toBeNull();
+      expect(
+        (await accounts.findByInvitationToken(second.invitationToken))?.employeeId,
+      ).toBe('e1');
+    });
+
+    it('takes the identifier submitted with the new invitation when it is free', async () => {
+      const { accounts, useCase } = await setup([employee('e1')]);
+      await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+
+      await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice.martin',
+      });
+
+      expect((await accounts.findByEmployeeId('e1'))?.identifier.value).toBe(
+        'alice.martin',
+      );
+    });
+
+    it('refuses an identifier held by another account, and keeps the previous invitation', async () => {
+      const { accounts, useCase } = await setup([
+        employee('e1'),
+        employee('e2'),
+      ]);
+      const first = await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+      await useCase.execute({
+        actor: employer,
+        employeeId: 'e2',
+        identifier: 'bruno',
+      });
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          employeeId: 'e1',
+          identifier: 'bruno',
+        }),
+      ).rejects.toThrow(ErrorCode.POTENTIAL_DUPLICATE);
+      expect(
+        (await accounts.findByInvitationToken(first.invitationToken))?.employeeId,
+      ).toBe('e1');
+    });
+
+    it('does not reach the invitation of another record', async () => {
+      const { accounts, useCase } = await setup([
+        employee('e1'),
+        employee('e2'),
+      ]);
+      await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+      const other = await useCase.execute({
+        actor: employer,
+        employeeId: 'e2',
+        identifier: 'bruno',
+      });
+
+      await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+
+      expect(
+        (await accounts.findByInvitationToken(other.invitationToken))?.employeeId,
+      ).toBe('e2');
+    });
+  });
+
   it('refuses an identifier already held by another account', async () => {
     const { accounts, useCase } = await setup([
       employee('e1'),

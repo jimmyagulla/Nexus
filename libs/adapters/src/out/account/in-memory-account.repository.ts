@@ -1,4 +1,4 @@
-import { Account } from '@hexagonal-monorepo-template/domain';
+import { Account, ErrorCode } from '@hexagonal-monorepo-template/domain';
 import { IAccountRepository } from '@hexagonal-monorepo-template/ports';
 
 export class InMemoryAccountRepository implements IAccountRepository {
@@ -10,6 +10,17 @@ export class InMemoryAccountRepository implements IAccountRepository {
 
   async save(account: Account): Promise<void> {
     this.accounts.set(account.id, account);
+  }
+
+  async consumeInvitation(
+    activated: Account,
+    invitationToken: string,
+  ): Promise<void> {
+    const stored = this.accounts.get(activated.id);
+    if (stored === undefined || stored.invitationToken !== invitationToken) {
+      throw new Error(ErrorCode.INVITATION_INVALID);
+    }
+    this.accounts.set(activated.id, activated);
   }
 
   async listByCompany(companyId: string): Promise<readonly Account[]> {

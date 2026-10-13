@@ -32,10 +32,13 @@ export class InviteEmployeeUseCase implements IInviteEmployee {
       input.actor,
       input.employeeId,
     );
-    await this.requireNoAccountFor(employee);
     const identifier = AccountIdentifier.parse(input.identifier);
-    await this.requireFreeIdentifier(identifier);
-    return this.openInvitedAccount(employee, identifier);
+    const existing = await this.accounts.findByEmployeeId(employee.id);
+    const invited =
+      existing === null
+        ? await this.openInvitedAccount(employee, identifier)
+        : await this.reissueInvitation(existing, identifier);
+    return this.toInvitation(invited);
   }
 
   private loadAccessibleEmployee(
@@ -47,38 +50,48 @@ export class InviteEmployeeUseCase implements IInviteEmployee {
     );
   }
 
-  private async requireNoAccountFor(employee: Employee): Promise<void> {
-    if ((await this.accounts.findByEmployeeId(employee.id)) !== null) {
-      throw new Error(ErrorCode.POTENTIAL_DUPLICATE);
-    }
-  }
-
-  private async requireFreeIdentifier(
-    identifier: AccountIdentifier,
-  ): Promise<void> {
-    if ((await this.accounts.findByIdentifier(identifier.value)) !== null) {
-      throw new Error(ErrorCode.POTENTIAL_DUPLICATE);
-    }
-  }
-
   private async openInvitedAccount(
     employee: Employee,
     identifier: AccountIdentifier,
-  ): Promise<EmployeeInvitation> {
-    const invitationToken = this.ids.generate();
+  ): Promise<Account> {
+    await this.requireFreeIdentifier(identifier, null);
     const account = Account.inviteEmployee(
       this.ids.generate(),
       employee.companyId,
       identifier,
-      invitationToken,
+      this.ids.generate(),
       employee.id,
     );
     await this.accounts.insert(account);
+    return account;
+  }
+
+  private async reissueInvitation(
+    existing: Account,
+    identifier: AccountIdentifier,
+  ): Promise<Account> {
+    const reissued = existing.reissueInvitation(this.ids.generate(), identifier);
+    await this.requireFreeIdentifier(identifier, existing.id);
+    await this.accounts.save(reissued);
+    return reissued;
+  }
+
+  private async requireFreeIdentifier(
+    identifier: AccountIdentifier,
+    ownAccountId: string | null,
+  ): Promise<void> {
+    const holder = await this.accounts.findByIdentifier(identifier.value);
+    if (holder !== null && holder.id !== ownAccountId) {
+      throw new Error(ErrorCode.POTENTIAL_DUPLICATE);
+    }
+  }
+
+  private toInvitation(account: Account): EmployeeInvitation {
     return {
-      employeeId: employee.id,
+      employeeId: account.employeeId ?? '',
       accountId: account.id,
-      identifier: identifier.value,
-      invitationToken,
+      identifier: account.identifier.value,
+      invitationToken: account.invitationToken ?? '',
     };
   }
 }

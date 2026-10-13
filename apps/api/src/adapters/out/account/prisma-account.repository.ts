@@ -1,4 +1,4 @@
-import { Account } from '@hexagonal-monorepo-template/domain';
+import { Account, ErrorCode } from '@hexagonal-monorepo-template/domain';
 import { IAccountRepository } from '@hexagonal-monorepo-template/ports';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import { toAccount } from './prisma-account.mapper';
@@ -18,6 +18,20 @@ export class PrismaAccountRepository implements IAccountRepository {
       where: { id },
       data,
     });
+  }
+
+  async consumeInvitation(
+    activated: Account,
+    invitationToken: string,
+  ): Promise<void> {
+    const { id, ...data } = this.toRow(activated);
+    const { count } = await this.prisma.account.updateMany({
+      where: { id, invitationToken },
+      data,
+    });
+    if (count === 0) {
+      throw new Error(ErrorCode.INVITATION_INVALID);
+    }
   }
 
   async listByCompany(companyId: string): Promise<readonly Account[]> {

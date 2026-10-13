@@ -1,6 +1,7 @@
 import {
   Account,
   AccountIdentifier,
+  ErrorCode,
 } from '@hexagonal-monorepo-template/domain';
 import { InMemoryAccountRepository } from './in-memory-account.repository';
 
@@ -130,6 +131,56 @@ describe('InMemoryAccountRepository', () => {
 
     expect(await accounts.listByCompany('c1')).toEqual([activated]);
     expect(await accounts.findByInvitationToken('invite-a1')).toBeNull();
+  });
+
+  describe('consuming an invitation', () => {
+    it('stores the activated account when the invitation is still there', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const invited = invitedEmployee('a2', 'c1', 'alice', 'e1');
+      await accounts.insert(invited);
+      const activated = invited.activate('hashed-secret');
+
+      await accounts.consumeInvitation(activated, 'invite-a2');
+
+      expect(await accounts.findById('a2')).toEqual(activated);
+      expect(await accounts.findByInvitationToken('invite-a2')).toBeNull();
+    });
+
+    it('refuses a second consumption of the same invitation, keeping the first secret', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const invited = invitedEmployee('a2', 'c1', 'alice', 'e1');
+      await accounts.insert(invited);
+      const first = invited.activate('first-secret');
+      await accounts.consumeInvitation(first, 'invite-a2');
+
+      await expect(
+        accounts.consumeInvitation(invited.activate('second-secret'), 'invite-a2'),
+      ).rejects.toThrow(ErrorCode.INVITATION_INVALID);
+
+      expect(await accounts.findById('a2')).toEqual(first);
+    });
+
+    it('refuses an invitation that was replaced in the meantime', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const invited = invitedEmployee('a2', 'c1', 'alice', 'e1');
+      await accounts.insert(invited);
+      await accounts.save(
+        invited.reissueInvitation('invite-new', AccountIdentifier.parse('alice')),
+      );
+
+      await expect(
+        accounts.consumeInvitation(invited.activate('hashed-secret'), 'invite-a2'),
+      ).rejects.toThrow(ErrorCode.INVITATION_INVALID);
+    });
+
+    it('refuses an account the store does not know', async () => {
+      const accounts = new InMemoryAccountRepository();
+      const invited = invitedEmployee('a2', 'c1', 'alice', 'e1');
+
+      await expect(
+        accounts.consumeInvitation(invited.activate('hashed-secret'), 'invite-a2'),
+      ).rejects.toThrow(ErrorCode.INVITATION_INVALID);
+    });
   });
 
   it('reads the account back by its id', async () => {

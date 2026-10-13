@@ -139,6 +139,43 @@ describe('ActivateEmployeeAccountUseCase', () => {
     ).toBe(AccountStatus.INVITED);
   });
 
+  describe('when two people use the same invitation at the same time', () => {
+    it('lets only one of them activate the account', async () => {
+      const { repository, secrets, useCase } = await setup();
+
+      const outcomes = await Promise.allSettled([
+        useCase.execute({ invitationToken: 'invite-1', secret: 'first-secret' }),
+        useCase.execute({ invitationToken: 'invite-1', secret: 'second-secret' }),
+      ]);
+
+      const accepted = outcomes.filter((o) => o.status === 'fulfilled');
+      const refused = outcomes.filter((o) => o.status === 'rejected');
+      expect(accepted).toHaveLength(1);
+      expect(refused).toHaveLength(1);
+      expect((refused[0] as PromiseRejectedResult).reason.message).toBe(
+        ErrorCode.INVITATION_INVALID,
+      );
+      const account = await repository.findByEmployeeId('e1');
+      expect(
+        await secrets.matches('first-secret', account?.secretHash ?? ''),
+      ).toBe(true);
+    });
+
+    it('starts a single enrollment', async () => {
+      const { enrollments, useCase } = await setup();
+
+      await Promise.allSettled([
+        useCase.execute({ invitationToken: 'invite-1', secret: 'first-secret' }),
+        useCase.execute({ invitationToken: 'invite-1', secret: 'second-secret' }),
+      ]);
+
+      expect(await enrollments.findByAccountId('account-1')).not.toBeNull();
+      expect(
+        (await enrollments.findByAccountId('account-1'))?.status,
+      ).toBe(SecondFactorEnrollmentStatus.PENDING);
+    });
+  });
+
   describe('chaining the second factor enrollment', () => {
     it('offers the enrollment as soon as the secret is chosen', async () => {
       const { enrollments, useCase } = await setup();
