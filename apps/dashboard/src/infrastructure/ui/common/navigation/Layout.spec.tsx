@@ -7,13 +7,18 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router';
+import { Workspace } from '@hexagonal-monorepo-template/domain';
 import { AppRoutes } from '../../routes/app-routes';
 import { i18n } from '../../i18n/i18n';
 import { Layout } from './Layout';
 
-async function renderLayoutAt(path: string, children: ReactNode) {
+async function renderLayoutAt(
+  path: string,
+  children: ReactNode,
+  workspace?: Workspace,
+) {
   const rootRoute = createRootRoute({
-    component: () => <Layout>{children}</Layout>,
+    component: () => <Layout workspace={workspace}>{children}</Layout>,
   });
   const routeTree = rootRoute.addChildren([
     createRoute({
@@ -34,7 +39,7 @@ async function renderLayoutAt(path: string, children: ReactNode) {
   });
 
   render(<RouterProvider router={router} />);
-  await screen.findByRole('navigation');
+  await screen.findByRole('main');
 }
 
 describe('Layout', () => {
@@ -77,5 +82,25 @@ describe('Layout', () => {
     expect(
       screen.getByRole('link', { current: 'page' }).getAttribute('href'),
     ).toBe(AppRoutes.home);
+  });
+
+  it('hides the employee space from the company workspace', async () => {
+    await renderLayoutAt(AppRoutes.home, null);
+
+    expect(screen.queryByText('Mon espace')).toBeNull();
+  });
+
+  it('does not open the employee space', async () => {
+    await renderLayoutAt(AppRoutes.home, null, Workspace.EMPLOYEE);
+
+    expect(screen.queryByText(i18n.messages.navigation.dashboard)).toBeNull();
+    expect(screen.queryByText('Mon espace')).toBeNull();
+  });
+
+  it('does not open the accountant space', async () => {
+    await renderLayoutAt(AppRoutes.home, null, Workspace.ACCOUNTANT);
+
+    expect(screen.queryByText(i18n.messages.navigation.dashboard)).toBeNull();
+    expect(screen.queryByText('Documents reçus')).toBeNull();
   });
 });

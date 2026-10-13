@@ -12,6 +12,7 @@ export * from './entities/company-calendar';
 export * from './entities/company';
 export * from './identity/account-status';
 export * from './identity/user-role';
+export * from './identity/workspace';
 export * from './entities/account';
 export * from './identity/actor-context';
 export * from './identity/to-actor-context';
