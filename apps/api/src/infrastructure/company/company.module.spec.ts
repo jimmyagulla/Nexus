@@ -6,6 +6,11 @@ import {
   InMemoryCompanyRepository,
 } from '@hexagonal-monorepo-template/adapters';
 import {
+  AccountStatus,
+  UserRole,
+} from '@hexagonal-monorepo-template/domain';
+import {
+  IAccountRepository,
   ICompanyIdentityBinder,
   ICompanyRepository,
   ICreateCompany,
@@ -68,6 +73,23 @@ describe('CompanyModule', () => {
 
     expect(moduleRef.get(ICreateCompany)).toBeDefined();
     expect(moduleRef.get(IRenameCompany)).toBeDefined();
+  });
+
+  it('creates the first invited employer when a company is opened', async () => {
+    const moduleRef = await compile({});
+    const create = moduleRef.get<ICreateCompany>(ICreateCompany);
+    const accounts = moduleRef.get<IAccountRepository>(IAccountRepository);
+
+    const company = await create.execute({
+      actor: { userId: 'user-1', companyId: null, role: null },
+      name: 'Acme',
+    });
+    const attached = await accounts.listByCompany(company.id);
+
+    expect(attached).toHaveLength(1);
+    expect(attached[0]?.identifier.value).toBe('user-1');
+    expect(attached[0]?.role).toBe(UserRole.EMPLOYER);
+    expect(attached[0]?.status).toBe(AccountStatus.INVITED);
   });
 
   it('stores companies in Postgres when the mode and the client are both set', async () => {

@@ -1,3 +1,4 @@
+export * from './out/account/in-memory-account.repository';
 export * from './out/audit/in-memory-audit-log.repository';
 export * from './out/clock/fixed-clock';
 export * from './out/clock/system-clock';

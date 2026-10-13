@@ -10,6 +10,7 @@ export * from './in/company-public-holidays/add-company-public-holiday-from-sess
 export * from './in/company-public-holidays/update-company-public-holiday.port';
 export * from './in/company-public-holidays/remove-company-public-holiday.port';
 export * from './in/company-public-holidays/remove-company-public-holiday-from-session.port';
+export * from './out/account/account.repository.port';
 export * from './out/audit/audit-log.repository.port';
 export * from './out/auth/jwt-verifier.port';
 export * from './out/company/company.repository.port';

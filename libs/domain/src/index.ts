@@ -1,4 +1,5 @@
 export * from './errors/error-code';
+export * from './value-objects/account-identifier';
 export * from './value-objects/company-name';
 export * from './value-objects/calendar-date';
 export * from './value-objects/calendar-date.pattern';
@@ -8,7 +9,9 @@ export * from './entities/company-public-holiday';
 export * from './entities/company-non-working-weekday';
 export * from './entities/company-calendar';
 export * from './entities/company';
+export * from './identity/account-status';
 export * from './identity/user-role';
+export * from './entities/account';
 export * from './identity/actor-context';
 export * from './identity/to-actor-context';
 export * from './services/tenant-access';

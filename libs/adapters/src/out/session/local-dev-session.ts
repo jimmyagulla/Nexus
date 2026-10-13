@@ -1,4 +1,6 @@
 import {
+  Account,
+  AccountIdentifier,
   ActorContext,
   Company,
   CompanyName,
@@ -8,6 +10,7 @@ import { SessionRecord } from '@hexagonal-monorepo-template/ports';
 
 export const LOCAL_DEV_COMPANY_ID = 'local-dev-company';
 export const LOCAL_DEV_USER_ID = 'local-dev-user';
+export const LOCAL_DEV_ACCOUNT_ID = 'local-dev-account';
 
 export const localDevActor: ActorContext = {
   userId: LOCAL_DEV_USER_ID,
@@ -28,5 +31,13 @@ export function localDevCompany(): Company {
   return Company.create(
     LOCAL_DEV_COMPANY_ID,
     CompanyName.parse('Entreprise locale'),
+  );
+}
+
+export function localDevAccount(): Account {
+  return Account.inviteEmployer(
+    LOCAL_DEV_ACCOUNT_ID,
+    LOCAL_DEV_COMPANY_ID,
+    AccountIdentifier.parse(LOCAL_DEV_USER_ID),
   );
 }
