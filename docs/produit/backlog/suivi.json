@@ -33,10 +33,10 @@
         "E02-US03"
       ],
       "priorite": 1,
-      "status": "a-faire",
-      "branch": null,
-      "worktree": null,
-      "claimedAt": null
+      "status": "en-cours",
+      "branch": "next/e03-us01",
+      "worktree": "c:\\Users\\Jimmy\\Documents\\code\\Nexus-next-e03-us01",
+      "claimedAt": "2026-10-13T11:20:26+00:00"
     },
     "E02-US01": {
       "kind": "story",
@@ -46,10 +46,10 @@
       "dependDe": [
         "E01-US01"
       ],
-      "status": "a-faire",
-      "branch": null,
-      "worktree": null,
-      "claimedAt": null
+      "status": "en-cours",
+      "branch": "next/e03-us01",
+      "worktree": "c:\\Users\\Jimmy\\Documents\\code\\Nexus-next-e03-us01",
+      "claimedAt": "2026-10-13T11:20:26+00:00"
     },
     "E02-US02": {
       "kind": "story",
