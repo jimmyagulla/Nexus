@@ -32,6 +32,7 @@ export class CreateCompanyUseCase implements ICreateCompany {
         globalThis.crypto.randomUUID(),
         company.id,
         identifier,
+        globalThis.crypto.randomUUID(),
       ),
     );
     await this.identity.bindEmployer(input.actor.userId, company.id);

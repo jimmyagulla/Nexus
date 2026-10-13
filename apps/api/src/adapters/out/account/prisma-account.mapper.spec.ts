@@ -13,6 +13,8 @@ function rowOf(overrides: Partial<PrismaAccountRow> = {}): PrismaAccountRow {
     identifier: 'founder',
     role: UserRole.EMPLOYER,
     status: AccountStatus.INVITED,
+    invitationToken: 'invite-1',
+    secretHash: null,
     ...overrides,
   };
 }
@@ -26,6 +28,8 @@ describe('toAccount', () => {
     expect(account.identifier.value).toBe('founder');
     expect(account.role).toBe(UserRole.EMPLOYER);
     expect(account.status).toBe(AccountStatus.INVITED);
+    expect(account.invitationToken).toBe('invite-1');
+    expect(account.secretHash).toBeNull();
   });
 
   it('rejects a row whose identifier is empty', () => {

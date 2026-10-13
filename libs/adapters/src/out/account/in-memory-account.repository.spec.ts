@@ -13,6 +13,7 @@ function invitedEmployer(
     id,
     companyId,
     AccountIdentifier.parse(identifier),
+    `invite-${id}`,
   );
 }
 
@@ -68,5 +69,34 @@ describe('InMemoryAccountRepository', () => {
     const accounts = new InMemoryAccountRepository(new Map([['a1', seeded]]));
 
     expect(await accounts.listByCompany('c1')).toEqual([seeded]);
+  });
+
+  it('reads the account back by its invitation token', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const account = invitedEmployer('a1', 'c1', 'founder');
+
+    await accounts.insert(account);
+
+    expect(await accounts.findByInvitationToken('invite-a1')).toEqual(account);
+  });
+
+  it('returns nothing for an unknown invitation token', async () => {
+    const accounts = new InMemoryAccountRepository();
+
+    await accounts.insert(invitedEmployer('a1', 'c1', 'founder'));
+
+    expect(await accounts.findByInvitationToken('missing')).toBeNull();
+  });
+
+  it('saves the activated account over the invited one', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const invited = invitedEmployer('a1', 'c1', 'founder');
+
+    await accounts.insert(invited);
+    const activated = invited.activate('hashed-secret');
+    await accounts.save(activated);
+
+    expect(await accounts.listByCompany('c1')).toEqual([activated]);
+    expect(await accounts.findByInvitationToken('invite-a1')).toBeNull();
   });
 });

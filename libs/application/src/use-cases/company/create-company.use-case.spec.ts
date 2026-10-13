@@ -125,5 +125,8 @@ describe('CreateCompanyUseCase', () => {
     expect(attached[0]?.identifier.value).toBe(founder.userId);
     expect(attached[0]?.role).toBe(UserRole.EMPLOYER);
     expect(attached[0]?.status).toBe(AccountStatus.INVITED);
+    expect(attached[0]?.invitationToken).toEqual(expect.any(String));
+    expect(attached[0]?.invitationToken).not.toBe('');
+    expect(attached[0]?.secretHash).toBeNull();
   });
 });

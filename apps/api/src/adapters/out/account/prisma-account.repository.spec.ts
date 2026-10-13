@@ -14,6 +14,8 @@ type AccountRow = {
   identifier: string;
   role: UserRole;
   status: AccountStatus;
+  invitationToken: string | null;
+  secretHash: string | null;
 };
 
 type AccountCreateData = AccountRow;
@@ -34,10 +36,31 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
         creates.push(args.data);
         rows.push({ ...args.data });
       },
+      update: async (args: {
+        where: { id: string };
+        data: Omit<AccountRow, 'id'>;
+      }): Promise<void> => {
+        const stored = rows.find((row) => row.id === args.where.id);
+        if (stored === undefined) {
+          return;
+        }
+        stored.companyId = args.data.companyId;
+        stored.identifier = args.data.identifier;
+        stored.role = args.data.role;
+        stored.status = args.data.status;
+        stored.invitationToken = args.data.invitationToken;
+        stored.secretHash = args.data.secretHash;
+      },
       findMany: async (args: {
         where: { companyId: string };
       }): Promise<AccountRow[]> =>
         rows.filter((row) => row.companyId === args.where.companyId),
+      findUnique: async (args: {
+        where: { invitationToken?: string };
+      }): Promise<AccountRow | null> =>
+        rows.find(
+          (row) => row.invitationToken === args.where.invitationToken,
+        ) ?? null,
     },
   };
 
@@ -53,6 +76,7 @@ function invitedEmployer(
     id,
     companyId,
     AccountIdentifier.parse(identifier),
+    `invite-${id}`,
   );
 }
 
@@ -80,6 +104,8 @@ describe('PrismaAccountRepository', () => {
         identifier: 'founder',
         role: UserRole.EMPLOYER,
         status: AccountStatus.INVITED,
+        invitationToken: 'invite-account-1',
+        secretHash: null,
       },
     ]);
   });
@@ -124,5 +150,39 @@ describe('PrismaAccountRepository', () => {
 
     expect(await repository.listByCompany('c1')).toEqual([ofFirst]);
     expect(await repository.listByCompany('c2')).toEqual([ofSecond]);
+  });
+
+  it('reads the account back by its invitation token', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+    const account = invitedEmployer('account-1', 'company-1', 'founder');
+
+    await repository.insert(account);
+
+    expect(await repository.findByInvitationToken('invite-account-1')).toEqual(
+      account,
+    );
+  });
+
+  it('returns nothing for an unknown invitation token', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+
+    await repository.insert(invitedEmployer('account-1', 'company-1', 'founder'));
+
+    expect(await repository.findByInvitationToken('missing')).toBeNull();
+  });
+
+  it('saves the activated account over the invited one', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+    const invited = invitedEmployer('account-1', 'company-1', 'founder');
+
+    await repository.insert(invited);
+    const activated = invited.activate('hashed-secret');
+    await repository.save(activated);
+
+    expect(await repository.listByCompany('company-1')).toEqual([activated]);
+    expect(await repository.findByInvitationToken('invite-account-1')).toBeNull();
   });
 });

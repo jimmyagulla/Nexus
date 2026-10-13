@@ -8,13 +8,15 @@ export class PrismaAccountRepository implements IAccountRepository {
 
   async insert(account: Account): Promise<void> {
     await this.prisma.account.create({
-      data: {
-        id: account.id,
-        companyId: account.companyId,
-        identifier: account.identifier.value,
-        role: account.role,
-        status: account.status,
-      },
+      data: this.toRow(account),
+    });
+  }
+
+  async save(account: Account): Promise<void> {
+    const { id, ...data } = this.toRow(account);
+    await this.prisma.account.update({
+      where: { id },
+      data,
     });
   }
 
@@ -23,5 +25,26 @@ export class PrismaAccountRepository implements IAccountRepository {
       where: { companyId },
     });
     return rows.map(toAccount);
+  }
+
+  async findByInvitationToken(
+    invitationToken: string,
+  ): Promise<Account | null> {
+    const row = await this.prisma.account.findUnique({
+      where: { invitationToken },
+    });
+    return row === null ? null : toAccount(row);
+  }
+
+  private toRow(account: Account) {
+    return {
+      id: account.id,
+      companyId: account.companyId,
+      identifier: account.identifier.value,
+      role: account.role,
+      status: account.status,
+      invitationToken: account.invitationToken,
+      secretHash: account.secretHash,
+    };
   }
 }

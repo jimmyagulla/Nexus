@@ -32,9 +32,16 @@ export const en = {
     FRIDAY: 'Friday',
     SATURDAY: 'Saturday',
   },
+  activation: {
+    title: 'Activate your access',
+    secret: 'Secret',
+    submit: 'Activate',
+    opened: 'Your workspace is open.',
+  },
   errors: {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.INVITATION_INVALID]: 'This activation link is no longer usable.',
   },
 } as const;

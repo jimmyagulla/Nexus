@@ -1,5 +1,6 @@
 export * from './errors/error-code';
 export * from './value-objects/account-identifier';
+export * from './value-objects/account-secret';
 export * from './value-objects/company-name';
 export * from './value-objects/calendar-date';
 export * from './value-objects/calendar-date.pattern';

@@ -1,3 +1,4 @@
+export * from './in/account/activate-account.port';
 export * from './in/company/create-company.port';
 export * from './in/company/rename-company.port';
 export * from './in/company/rename-company-from-session.port';
@@ -10,7 +11,9 @@ export * from './in/company-public-holidays/add-company-public-holiday-from-sess
 export * from './in/company-public-holidays/update-company-public-holiday.port';
 export * from './in/company-public-holidays/remove-company-public-holiday.port';
 export * from './in/company-public-holidays/remove-company-public-holiday-from-session.port';
+export * from './out/account/account.gateway.port';
 export * from './out/account/account.repository.port';
+export * from './out/secret/secret-hasher.port';
 export * from './out/audit/audit-log.repository.port';
 export * from './out/auth/jwt-verifier.port';
 export * from './out/company/company.repository.port';

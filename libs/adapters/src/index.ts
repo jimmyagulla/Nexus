@@ -1,4 +1,6 @@
+export * from './out/account/api-account.gateway';
 export * from './out/account/in-memory-account.repository';
+export * from './out/secret/in-memory-secret-hasher';
 export * from './out/audit/in-memory-audit-log.repository';
 export * from './out/clock/fixed-clock';
 export * from './out/clock/system-clock';

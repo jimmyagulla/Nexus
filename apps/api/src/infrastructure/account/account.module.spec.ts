@@ -3,7 +3,10 @@ import { Test } from '@nestjs/testing';
 import { describe, expect, it } from 'vitest';
 import { InMemoryAccountRepository } from '@hexagonal-monorepo-template/adapters';
 import { AccountStatus, UserRole } from '@hexagonal-monorepo-template/domain';
-import { IAccountRepository } from '@hexagonal-monorepo-template/ports';
+import {
+  IAccountRepository,
+  IActivateAccount,
+} from '@hexagonal-monorepo-template/ports';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
@@ -65,6 +68,14 @@ describe('AccountModule', () => {
     await expect(accountRepository(postgresEnv)).resolves.toBeInstanceOf(
       InMemoryAccountRepository,
     );
+  });
+
+  it('wires the activation use case', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [testGlobals({}), AccountModule],
+    }).compile();
+
+    expect(moduleRef.get(IActivateAccount)).toBeDefined();
   });
 
   it('seeds the local invited employer when authentication is disabled', async () => {

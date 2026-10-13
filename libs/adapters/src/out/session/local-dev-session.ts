@@ -11,6 +11,7 @@ import { SessionRecord } from '@hexagonal-monorepo-template/ports';
 export const LOCAL_DEV_COMPANY_ID = 'local-dev-company';
 export const LOCAL_DEV_USER_ID = 'local-dev-user';
 export const LOCAL_DEV_ACCOUNT_ID = 'local-dev-account';
+export const LOCAL_DEV_INVITATION_TOKEN = 'local-dev-invitation';
 
 export const localDevActor: ActorContext = {
   userId: LOCAL_DEV_USER_ID,
@@ -39,5 +40,6 @@ export function localDevAccount(): Account {
     LOCAL_DEV_ACCOUNT_ID,
     LOCAL_DEV_COMPANY_ID,
     AccountIdentifier.parse(LOCAL_DEV_USER_ID),
+    LOCAL_DEV_INVITATION_TOKEN,
   );
 }
