@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
   ActivateAccountUseCase,
+  InviteEmployerUseCase,
   SignInUseCase,
 } from '@hexagonal-monorepo-template/application';
 import {
@@ -14,11 +15,13 @@ import {
   IActivateAccount,
   IAuditLogRepository,
   IClock,
+  IInviteEmployer,
   ISecretHasher,
   ISignIn,
   ISignInSession,
 } from '@hexagonal-monorepo-template/ports';
 import { AccountController } from '../../adapters/http/account/account.controller';
+import { CompanyAccountsController } from '../../adapters/http/account/company-accounts.controller';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
 import { AuditModule } from '../audit/audit.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
@@ -26,7 +29,7 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
   imports: [AuditModule],
-  controllers: [AccountController],
+  controllers: [AccountController, CompanyAccountsController],
   providers: [
     {
       provide: IAccountRepository,
@@ -53,6 +56,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: (accounts: IAccountRepository, secrets: ISecretHasher) =>
         new ActivateAccountUseCase(accounts, secrets),
       inject: [IAccountRepository, ISecretHasher],
+    },
+    {
+      provide: IInviteEmployer,
+      useFactory: (accounts: IAccountRepository) =>
+        new InviteEmployerUseCase(accounts),
+      inject: [IAccountRepository],
     },
     {
       provide: ISignInSession,

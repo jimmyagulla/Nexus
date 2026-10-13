@@ -1,5 +1,6 @@
 export * from './use-cases/account/activate-account.use-case';
 export * from './use-cases/account/sign-in.use-case';
+export * from './use-cases/account/invite-employer.use-case';
 export * from './use-cases/account/sign-in-via-gateway.use-case';
 export * from './use-cases/account/activate-account-via-gateway.use-case';
 export * from './use-cases/company/create-company.use-case';

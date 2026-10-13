@@ -20,6 +20,8 @@ export * from './services/tenant-access';
 export * from './services/assert-company-creation-allowed';
 export * from './services/require-accessible-company';
 export * from './services/require-company-scoped-session';
+export * from './services/require-employer-company';
+export * from './read-models/invited-account';
 export * from './services/require-public-holiday-label';
 export * from './audit/audit-action';
 export * from './audit/audit-snapshot';
