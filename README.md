@@ -46,8 +46,6 @@ Environment (see `.env.example`; no dotenv loader — export them or set them in
 - `DATABASE_URL` / `DIRECT_URL` — Postgres (required when `PERSISTENCE=postgres`)
 - `SUPABASE_URL` / `SUPABASE_JWKS_URL` / `SUPABASE_SERVICE_ROLE_KEY` — JWT verification and employer claim binding
 
-Produit RH : cahier des charges, référentiels et user stories priorisées dans [`docs/produit`](docs/produit/README.md).
-
 New API features: ask the agent to scaffold a hexagonal slice (project skill `.cursor/skills/hexagonal-slice`).
 
 ## Advanced Nx Commands
