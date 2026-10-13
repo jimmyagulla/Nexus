@@ -3,6 +3,7 @@ import {
   AddExpenseUseCase,
   AttachReceiptUseCase,
   CreateExpenseReportUseCase,
+  GetExpenseReportIndicatorsUseCase,
   GetExpenseReportUseCase,
   GetReceiptUseCase,
   ListExpenseReportsUseCase,
@@ -26,6 +27,7 @@ import {
   IClock,
   INotificationRepository,
   IGetExpenseReport,
+  IGetExpenseReportIndicators,
   IGetReceipt,
   IListExpenseReports,
   IOpenExpenseReport,
@@ -171,6 +173,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         clock: IClock,
       ) => new ReimburseExpenseReportUseCase(reports, notifications, clock),
       inject: [IExpenseReportRepository, INotificationRepository, IClock],
+    },
+    {
+      provide: IGetExpenseReportIndicators,
+      useFactory: (reports: IExpenseReportRepository) =>
+        new GetExpenseReportIndicatorsUseCase(reports),
+      inject: [IExpenseReportRepository],
     },
     {
       provide: IGetReceipt,

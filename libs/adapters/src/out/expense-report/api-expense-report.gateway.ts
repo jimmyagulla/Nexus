@@ -1,5 +1,7 @@
 import {
   ExpenseDetailsInput,
+  ExpenseReportFilterInput,
+  ExpenseReportIndicators,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ReceiptDetailsInput,
@@ -7,6 +9,7 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
+  buildUrl,
   decodeBase64,
   encodeBase64,
   unwrapResponse,
@@ -58,10 +61,26 @@ export class ApiExpenseReportGateway implements IExpenseReportGateway {
   async list(
     companyId: string,
     token: string,
+    filter: ExpenseReportFilterInput = {},
   ): Promise<ExpenseReportListSnapshot> {
     return unwrapResponse(
       await this.httpClient.get<ApiResponse<ExpenseReportListSnapshot>>(
-        companyPath(API_ROUTES.companies.expenseReports, { companyId }),
+        buildUrl(
+          companyPath(API_ROUTES.companies.expenseReports, { companyId }),
+          { ...filter },
+        ),
+        this.authorized(token),
+      ),
+    );
+  }
+
+  async indicators(
+    companyId: string,
+    token: string,
+  ): Promise<ExpenseReportIndicators> {
+    return unwrapResponse(
+      await this.httpClient.get<ApiResponse<ExpenseReportIndicators>>(
+        companyPath(API_ROUTES.companies.expenseReportIndicators, { companyId }),
         this.authorized(token),
       ),
     );

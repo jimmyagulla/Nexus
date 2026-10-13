@@ -87,9 +87,56 @@ describe('ApiExpenseReportGateway', () => {
     ]);
   });
 
+  it('asks the api for the reports matching a filter', async () => {
+    const http = new InMemoryHttpClient();
+    const list = { canCreate: false, reports: [report], totalAmount: 45 };
+    http.reply(
+      'get',
+      'companies/c1/expense-reports?employeeId=e1&status=SUBMITTED&from=2026-10-01&to=2026-10-31&minAmount=10&maxAmount=500',
+      { status: 200, data: list },
+    );
+
+    await expect(
+      new ApiExpenseReportGateway(http).list('c1', 'token', {
+        employeeId: 'e1',
+        status: 'SUBMITTED',
+        from: '2026-10-01',
+        to: '2026-10-31',
+        minAmount: 10,
+        maxAmount: 500,
+      }),
+    ).resolves.toEqual(list);
+  });
+
+  it('leaves the criteria it is not given out of the request', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/expense-reports?status=DRAFT', {
+      status: 200,
+      data: { canCreate: true, reports: [], totalAmount: 0 },
+    });
+
+    await new ApiExpenseReportGateway(http).list('c1', 'token', {
+      status: 'DRAFT',
+    });
+
+    expect(http.calls[0]?.url).toBe('companies/c1/expense-reports?status=DRAFT');
+  });
+
+  it('reads the indicators', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/expense-report-indicators', {
+      status: 200,
+      data: { 'notes.a-traiter': 2, 'notes.montant-attente': 170 },
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http).indicators('c1', 'token'),
+    ).resolves.toEqual({ 'notes.a-traiter': 2, 'notes.montant-attente': 170 });
+  });
+
   it('lists the reports', async () => {
     const http = new InMemoryHttpClient();
-    const list = { canCreate: true, reports: [report] };
+    const list = { canCreate: true, reports: [report], totalAmount: 45 };
     http.reply('get', 'companies/c1/expense-reports', {
       status: 200,
       data: list,

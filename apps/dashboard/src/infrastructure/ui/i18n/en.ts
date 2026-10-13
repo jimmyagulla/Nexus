@@ -40,6 +40,18 @@ export const en = {
     reimburse: 'Record the reimbursement',
     reimbursed: 'The expense report has been marked as reimbursed.',
     reimbursedAmount: 'Amount reimbursed',
+    filters: {
+      status: 'Status',
+      allStatuses: 'All statuses',
+      from: 'From',
+      to: 'To',
+      minAmount: 'Minimum amount (€)',
+      maxAmount: 'Maximum amount (€)',
+      employee: 'Employee',
+      apply: 'Filter',
+      reset: 'Reset',
+      total: 'Amount of the reports shown',
+    },
     expense: {
       date: 'Date',
       category: 'Category',
@@ -100,6 +112,8 @@ export const en = {
     [ErrorCode.REQUEST_ALREADY_PROCESSED]:
       'This request has already been processed.',
     [ErrorCode.MISSING_DOCUMENT]: 'Add the expected document before validating.',
+    [ErrorCode.INVALID_PERIOD]:
+      'The end date must be on or after the start date.',
     [ErrorCode.INVALID_FILE]:
       'This file cannot be accepted. Check its format and try again.',
   },

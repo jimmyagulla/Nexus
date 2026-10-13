@@ -42,6 +42,7 @@ describe('useGetExpenseReports', () => {
       status: 200,
       data: {
         canCreate: true,
+        totalAmount: 45,
         reports: [
           {
             id: 'r1',

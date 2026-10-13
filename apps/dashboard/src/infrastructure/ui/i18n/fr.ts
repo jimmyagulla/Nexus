@@ -40,6 +40,18 @@ export const fr = {
     reimburse: 'Enregistrer le remboursement',
     reimbursed: 'La note de frais a été marquée comme remboursée.',
     reimbursedAmount: 'Montant remboursé',
+    filters: {
+      status: 'Statut',
+      allStatuses: 'Tous les statuts',
+      from: 'Du',
+      to: 'Au',
+      minAmount: 'Montant minimum (€)',
+      maxAmount: 'Montant maximum (€)',
+      employee: 'Salarié',
+      apply: 'Filtrer',
+      reset: 'Réinitialiser',
+      total: 'Montant des notes affichées',
+    },
     expense: {
       date: 'Date',
       category: 'Catégorie',
@@ -100,6 +112,8 @@ export const fr = {
       "Ce salarié est inactif. Cette action n'est plus possible.",
     [ErrorCode.REQUEST_ALREADY_PROCESSED]: 'Cette demande a déjà été traitée.',
     [ErrorCode.MISSING_DOCUMENT]: 'Ajoutez le document attendu avant de valider.',
+    [ErrorCode.INVALID_PERIOD]:
+      'La date de fin doit être postérieure ou égale à la date de début.',
     [ErrorCode.INVALID_FILE]:
       'Ce fichier ne peut pas être accepté. Vérifiez son format et réessayez.',
   },

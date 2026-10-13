@@ -42,3 +42,5 @@ export * from './use-cases/expense-report/validate-expense-report.use-case';
 export * from './use-cases/expense-report/refuse-expense-report.use-case';
 export * from './use-cases/expense-report/reimburse-expense-report.use-case';
 export * from './use-cases/expense-report/reimburse-expense-report-from-session.use-case';
+export * from './use-cases/expense-report/get-expense-report-indicators.use-case';
+export * from './use-cases/expense-report/get-expense-report-indicators-from-session.use-case';

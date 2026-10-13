@@ -8,6 +8,7 @@ export const API_ROUTES = {
     publicHoliday: ':companyId/calendar/public-holidays/:publicHolidayId',
     expenseCategories: ':companyId/expense-categories',
     expenseReports: ':companyId/expense-reports',
+    expenseReportIndicators: ':companyId/expense-report-indicators',
     expenseReport: ':companyId/expense-reports/:expenseReportId',
     expenseReportExpenses: ':companyId/expense-reports/:expenseReportId/expenses',
     expenseReportReceipt:

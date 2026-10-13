@@ -55,7 +55,7 @@ describe('createExpenseReportsComposition', () => {
     const http = new InMemoryHttpClient();
     http.reply('get', 'companies/c1/expense-reports', {
       status: 200,
-      data: { canCreate: true, reports: [report] },
+      data: { canCreate: true, reports: [report], totalAmount: 0 },
     });
     const deps = createExpenseReportsComposition(
       http,
@@ -64,6 +64,7 @@ describe('createExpenseReportsComposition', () => {
 
     await expect(deps.controller.listReports()).resolves.toEqual({
       canCreate: true,
+      totalAmount: 0,
       reports: [report],
     });
   });

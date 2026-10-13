@@ -61,14 +61,18 @@ describe('ExpenseReportsPage', () => {
   });
 
   it('lists the reports of the employee', async () => {
-    renderPage(httpWith({ canCreate: true, reports: [lyon] }));
+    renderPage(httpWith({ canCreate: true, reports: [lyon], totalAmount: 0 }));
 
     expect(await screen.findByText('Déplacement Lyon')).toBeTruthy();
-    expect(screen.getByText(i18n.messages.expenseReports.status.DRAFT)).toBeTruthy();
+    expect(
+      within(screen.getByRole('listitem')).getByText(
+        i18n.messages.expenseReports.status.DRAFT,
+      ),
+    ).toBeTruthy();
   });
 
   it('announces that no report has been submitted yet', async () => {
-    renderPage(httpWith({ canCreate: true, reports: [] }));
+    renderPage(httpWith({ canCreate: true, reports: [], totalAmount: 0 }));
 
     expect(
       await screen.findByText(i18n.messages.expenseReports.empty),
@@ -81,6 +85,7 @@ describe('ExpenseReportsPage', () => {
   it('shows the employer the submitted reports under the title she is given', async () => {
     const http = httpWith({
       canCreate: false,
+      totalAmount: 0,
       reports: [{ ...lyon, status: 'SUBMITTED' }],
     });
     const sessions = new InMemorySessionGateway('token', {
@@ -111,10 +116,98 @@ describe('ExpenseReportsPage', () => {
         name: i18n.messages.expenseReports.employerTitle,
       }),
     ).toBeTruthy();
-    expect(screen.getByText(i18n.messages.expenseReports.status.SUBMITTED)).toBeTruthy();
+    expect(
+      within(screen.getByRole('listitem')).getByText(
+        i18n.messages.expenseReports.status.SUBMITTED,
+      ),
+    ).toBeTruthy();
     expect(
       screen.queryByRole('button', { name: i18n.messages.expenseReports.create }),
     ).toBeNull();
+  });
+
+  it('asks the api for the reports matching the filter the user applies', async () => {
+    const http = httpWith({ canCreate: true, reports: [lyon], totalAmount: 0 });
+    http.reply('get', 'companies/c1/expense-reports?status=SUBMITTED&minAmount=10', {
+      status: 200,
+      data: { canCreate: true, reports: [], totalAmount: 0 },
+    });
+    renderPage(http);
+
+    fireEvent.change(
+      await screen.findByLabelText(i18n.messages.expenseReports.filters.status),
+      { target: { value: 'SUBMITTED' } },
+    );
+    fireEvent.change(
+      screen.getByLabelText(i18n.messages.expenseReports.filters.minAmount),
+      { target: { value: '10' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.filters.apply,
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        http.calls.some(
+          (call) =>
+            call.url ===
+            'companies/c1/expense-reports?status=SUBMITTED&minAmount=10',
+        ),
+      ).toBe(true),
+    );
+  });
+
+  it('keeps the filter form on screen while the filtered reports load', async () => {
+    const http = httpWith({ canCreate: true, reports: [lyon], totalAmount: 0 });
+    http.reply('get', 'companies/c1/expense-reports?status=DRAFT', {
+      status: 200,
+      data: { canCreate: true, reports: [lyon], totalAmount: 0 },
+    });
+    renderPage(http);
+
+    fireEvent.change(
+      await screen.findByLabelText(i18n.messages.expenseReports.filters.status),
+      { target: { value: 'DRAFT' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.filters.apply,
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByLabelText<HTMLSelectElement>(
+          i18n.messages.expenseReports.filters.status,
+        ).value,
+      ).toBe('DRAFT'),
+    );
+  });
+
+  it('does not tell the employee she submitted nothing when her filter finds nothing', async () => {
+    const http = httpWith({ canCreate: true, reports: [lyon], totalAmount: 0 });
+    http.reply('get', 'companies/c1/expense-reports?status=REFUSED', {
+      status: 200,
+      data: { canCreate: true, reports: [], totalAmount: 0 },
+    });
+    renderPage(http);
+
+    fireEvent.change(
+      await screen.findByLabelText(i18n.messages.expenseReports.filters.status),
+      { target: { value: 'REFUSED' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.filters.apply,
+      }),
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByText('Déplacement Lyon')).toBeNull(),
+    );
+    expect(screen.queryByText(i18n.messages.expenseReports.empty)).toBeNull();
   });
 
   it('shows a readable message when the reports cannot be loaded', async () => {
@@ -133,7 +226,7 @@ describe('ExpenseReportsPage', () => {
 
   it('opens a report', async () => {
     const opened: string[] = [];
-    renderPage(httpWith({ canCreate: true, reports: [lyon] }), opened);
+    renderPage(httpWith({ canCreate: true, reports: [lyon], totalAmount: 0 }), opened);
 
     fireEvent.click(
       await screen.findByRole('button', {
@@ -145,7 +238,7 @@ describe('ExpenseReportsPage', () => {
   });
 
   it('creates a report from the dialog and closes it', async () => {
-    const http = httpWith({ canCreate: true, reports: [] });
+    const http = httpWith({ canCreate: true, reports: [], totalAmount: 0 });
     http.reply('post', 'companies/c1/expense-reports', {
       status: 201,
       data: lyon,
@@ -172,7 +265,7 @@ describe('ExpenseReportsPage', () => {
   });
 
   it('explains inside the dialog why the report was refused', async () => {
-    const http = httpWith({ canCreate: true, reports: [] });
+    const http = httpWith({ canCreate: true, reports: [], totalAmount: 0 });
     http.reject(
       'post',
       'companies/c1/expense-reports',

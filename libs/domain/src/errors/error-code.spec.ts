@@ -11,6 +11,7 @@ describe('isErrorCode', () => {
     expect(isErrorCode('REQUEST_ALREADY_PROCESSED')).toBe(true);
     expect(isErrorCode('MISSING_DOCUMENT')).toBe(true);
     expect(isErrorCode('INVALID_FILE')).toBe(true);
+    expect(isErrorCode('INVALID_PERIOD')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {

@@ -8,6 +8,7 @@ import {
   ICreateExpenseReport,
   IExpenseReportRepository,
   IGetExpenseReport,
+  IGetExpenseReportIndicators,
   IGetReceipt,
   IListExpenseReports,
   IOpenExpenseReport,
@@ -68,6 +69,7 @@ describe('ExpenseReportModule', () => {
     expect(moduleRef.get(IAddExpense)).toBeDefined();
     expect(moduleRef.get(IGetExpenseReport)).toBeDefined();
     expect(moduleRef.get(IListExpenseReports)).toBeDefined();
+    expect(moduleRef.get(IGetExpenseReportIndicators)).toBeDefined();
     expect(moduleRef.get(IUpdateExpense)).toBeDefined();
     expect(moduleRef.get(IRemoveExpense)).toBeDefined();
     expect(moduleRef.get(IAttachReceipt)).toBeDefined();

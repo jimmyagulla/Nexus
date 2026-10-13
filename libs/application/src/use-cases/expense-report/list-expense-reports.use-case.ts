@@ -2,8 +2,11 @@ import {
   ActorContext,
   assertSameCompany,
   ExpenseReport,
+  ExpenseReportFilter,
+  ExpenseReportFilterInput,
   ExpenseReportListSnapshot,
   ExpenseReportStatus,
+  Money,
   requireActorRole,
   toExpenseReportSnapshot,
   UserRole,
@@ -23,34 +26,52 @@ export class ListExpenseReportsUseCase implements IListExpenseReports {
   async execute(input: {
     actor: ActorContext;
     companyId: string;
+    filter?: ExpenseReportFilterInput;
   }): Promise<ExpenseReportListSnapshot> {
     requireActorRole(input.actor, UserRole.EMPLOYER, UserRole.EMPLOYEE);
     assertSameCompany(input.companyId, input.actor.companyId);
+    const filter = ExpenseReportFilter.parse(input.filter ?? {});
     return input.actor.role === UserRole.EMPLOYER
-      ? this.listForEmployer(input.companyId)
-      : this.listForEmployee(input.actor, input.companyId);
+      ? this.listForEmployer(input.companyId, filter)
+      : this.listForEmployee(input.actor, input.companyId, filter);
   }
 
   private async listForEmployer(
     companyId: string,
+    filter: ExpenseReportFilter,
   ): Promise<ExpenseReportListSnapshot> {
     const reports = await this.reports.list(companyId, {});
-    return {
-      canCreate: false,
-      reports: this.submitted(reports).map(toExpenseReportSnapshot),
-    };
+    return this.snapshotOf(
+      this.submitted(reports).filter((report) => filter.matches(report)),
+      false,
+    );
   }
 
   private async listForEmployee(
     actor: ActorContext,
     companyId: string,
+    filter: ExpenseReportFilter,
   ): Promise<ExpenseReportListSnapshot> {
     const reports = await this.reports.list(companyId, {
       employeeId: actor.userId,
     });
+    return this.snapshotOf(
+      reports.filter((report) => filter.matches(report)),
+      await this.isActiveEmployee(actor, companyId),
+    );
+  }
+
+  private snapshotOf(
+    reports: readonly ExpenseReport[],
+    canCreate: boolean,
+  ): ExpenseReportListSnapshot {
     return {
-      canCreate: await this.isActiveEmployee(actor, companyId),
+      canCreate,
       reports: reports.map(toExpenseReportSnapshot),
+      totalAmount: reports.reduce(
+        (sum, report) => sum.plus(report.total()),
+        Money.zero(),
+      ).euros,
     };
   }
 

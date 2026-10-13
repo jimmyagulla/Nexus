@@ -58,6 +58,7 @@ export interface ExpenseReportViewModel {
 export interface ExpenseReportListViewModel {
   canCreate: boolean;
   reports: ExpenseReportViewModel[];
+  totalAmount: string;
 }
 
 export class ExpenseReportPresenter {
@@ -98,6 +99,7 @@ export class ExpenseReportPresenter {
     return {
       canCreate: list.canCreate,
       reports: list.reports.map((report) => this.present(report, categories)),
+      totalAmount: this.euros.present(list.totalAmount),
     };
   }
 

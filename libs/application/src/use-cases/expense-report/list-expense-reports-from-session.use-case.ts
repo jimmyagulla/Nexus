@@ -1,5 +1,6 @@
 import {
   CompanyScopedSession,
+  ExpenseReportFilterInput,
   ExpenseReportListSnapshot,
   requireCompanyScopedSession,
 } from '@hexagonal-monorepo-template/domain';
@@ -17,9 +18,11 @@ export class ListExpenseReportsFromSessionUseCase
     private readonly reports: IExpenseReportGateway,
   ) {}
 
-  async execute(): Promise<ExpenseReportListSnapshot> {
+  async execute(
+    filter?: ExpenseReportFilterInput,
+  ): Promise<ExpenseReportListSnapshot> {
     const session = await this.currentCompanySession();
-    return this.reports.list(session.companyId, session.token);
+    return this.reports.list(session.companyId, session.token, filter);
   }
 
   private async currentCompanySession(): Promise<CompanyScopedSession> {

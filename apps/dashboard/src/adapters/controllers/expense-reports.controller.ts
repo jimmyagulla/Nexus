@@ -1,5 +1,7 @@
 import {
   ExpenseDetailsInput,
+  ExpenseReportFilterInput,
+  ExpenseReportIndicators,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ReceiptDetailsInput,
@@ -10,6 +12,7 @@ import {
   IAttachReceiptFromSession,
   ICreateExpenseReportFromSession,
   IGetExpenseReportFromSession,
+  IGetExpenseReportIndicatorsFromSession,
   IGetReceiptFromSession,
   IListExpenseReportsFromSession,
   IOpenExpenseReportFromSession,
@@ -38,6 +41,7 @@ export class ExpenseReportsController {
     private readonly validateFromSession: IValidateExpenseReportFromSession,
     private readonly refuseFromSession: IRefuseExpenseReportFromSession,
     private readonly reimburseFromSession: IReimburseExpenseReportFromSession,
+    private readonly indicatorsFromSession: IGetExpenseReportIndicatorsFromSession,
   ) {}
 
   createReport(label: string): Promise<ExpenseReportSnapshot> {
@@ -108,11 +112,17 @@ export class ExpenseReportsController {
     return this.reimburseFromSession.execute(reportId);
   }
 
+  getIndicators(): Promise<ExpenseReportIndicators> {
+    return this.indicatorsFromSession.execute();
+  }
+
   getReport(reportId: string): Promise<ExpenseReportSnapshot> {
     return this.getFromSession.execute(reportId);
   }
 
-  listReports(): Promise<ExpenseReportListSnapshot> {
-    return this.listFromSession.execute();
+  listReports(
+    filter?: ExpenseReportFilterInput,
+  ): Promise<ExpenseReportListSnapshot> {
+    return this.listFromSession.execute(filter);
   }
 }

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { ExpenseReportFilterInput } from '@hexagonal-monorepo-template/domain';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { ExpenseReportsScreenComposition } from '../../composition/expense-reports.composition';
 import { useCreateExpenseReport } from '../hooks/useCreateExpenseReport';
@@ -8,6 +10,7 @@ import { ExpenseReports } from './ExpenseReports';
 interface ExpenseReportsPageProps {
   title: string;
   emptyMessage: string | null;
+  byEmployee?: boolean;
   deps: ExpenseReportsScreenComposition;
   onOpen: (reportId: string) => void;
 }
@@ -15,10 +18,12 @@ interface ExpenseReportsPageProps {
 export function ExpenseReportsPage({
   title,
   emptyMessage,
+  byEmployee = false,
   deps,
   onOpen,
 }: ExpenseReportsPageProps) {
-  const reports = useGetExpenseReports(deps);
+  const [filter, setFilter] = useState<ExpenseReportFilterInput>({});
+  const reports = useGetExpenseReports(deps, filter);
   const create = useCreateExpenseReport(deps.reports);
 
   if (reports.isPending) {
@@ -32,11 +37,14 @@ export function ExpenseReportsPage({
   return (
     <ExpenseReports
       title={title}
-      emptyMessage={emptyMessage}
+      emptyMessage={Object.keys(filter).length === 0 ? emptyMessage : null}
+      byEmployee={byEmployee}
       model={reports.data}
       errorPresenter={deps.reports.errorPresenter}
       createError={refusalOf(deps.reports.errorPresenter, create)}
       onCreate={(values) => accepted(create.mutateAsync(values.label))}
+      onFilter={setFilter}
+      onResetFilter={() => setFilter({})}
       onOpen={onOpen}
     />
   );

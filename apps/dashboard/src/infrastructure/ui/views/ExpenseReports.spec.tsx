@@ -9,6 +9,9 @@ function renderView(model: ExpenseReportListViewModel, opened: string[] = []) {
     <ExpenseReports
       title={i18n.messages.expenseReports.title}
       emptyMessage={i18n.messages.expenseReports.empty}
+      byEmployee={false}
+      onFilter={() => undefined}
+      onResetFilter={() => undefined}
       model={model}
       errorPresenter={new ErrorPresenter()}
       createError={null}
@@ -35,7 +38,7 @@ const draft = {
 
 describe('ExpenseReports', () => {
   it('titles the screen', () => {
-    renderView({ canCreate: true, reports: [] });
+    renderView({ canCreate: true, reports: [], totalAmount: '0 €' });
 
     expect(
       screen.getByRole('heading', { name: i18n.messages.expenseReports.title }),
@@ -43,7 +46,7 @@ describe('ExpenseReports', () => {
   });
 
   it('offers to create a report to an active employee', () => {
-    renderView({ canCreate: true, reports: [] });
+    renderView({ canCreate: true, reports: [], totalAmount: '0 €' });
 
     expect(
       screen.getByRole('button', { name: i18n.messages.expenseReports.create }),
@@ -51,7 +54,7 @@ describe('ExpenseReports', () => {
   });
 
   it('does not offer to create a report to an inactive employee', () => {
-    renderView({ canCreate: false, reports: [] });
+    renderView({ canCreate: false, reports: [], totalAmount: '0 €' });
 
     expect(
       screen.queryByRole('button', {
@@ -62,14 +65,35 @@ describe('ExpenseReports', () => {
   });
 
   it('lists the reports of the employee', () => {
-    renderView({ canCreate: true, reports: [draft] });
+    renderView({ canCreate: true, reports: [draft], totalAmount: '0 €' });
 
     expect(screen.getByText('Déplacement Lyon')).toBeTruthy();
   });
 
+  it('shows the amount of the reports it lists', () => {
+    renderView({ canCreate: true, reports: [draft], totalAmount: '125 €' });
+
+    expect(
+      screen.getByText(`${i18n.messages.expenseReports.filters.total} : 125 €`),
+    ).toBeTruthy();
+  });
+
+  it('lets the user filter the reports', () => {
+    renderView({ canCreate: true, reports: [draft], totalAmount: '0 €' });
+
+    expect(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.filters.apply,
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByLabelText(i18n.messages.expenseReports.filters.status),
+    ).toBeTruthy();
+  });
+
   it('opens a report', () => {
     const opened: string[] = [];
-    renderView({ canCreate: true, reports: [draft] }, opened);
+    renderView({ canCreate: true, reports: [draft], totalAmount: '0 €' }, opened);
 
     fireEvent.click(
       screen.getByRole('button', { name: i18n.messages.expenseReports.open }),

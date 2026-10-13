@@ -1,5 +1,7 @@
 import {
   ExpenseDetailsInput,
+  ExpenseReportFilterInput,
+  ExpenseReportIndicators,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ReceiptDetailsInput,
@@ -17,7 +19,15 @@ export interface IExpenseReportGateway {
     reportId: string,
     token: string,
   ): Promise<ExpenseReportSnapshot>;
-  list(companyId: string, token: string): Promise<ExpenseReportListSnapshot>;
+  list(
+    companyId: string,
+    token: string,
+    filter?: ExpenseReportFilterInput,
+  ): Promise<ExpenseReportListSnapshot>;
+  indicators(
+    companyId: string,
+    token: string,
+  ): Promise<ExpenseReportIndicators>;
   addExpense(
     companyId: string,
     reportId: string,

@@ -1,7 +1,12 @@
-import { ExpenseReportListSnapshot } from '@hexagonal-monorepo-template/domain';
+import {
+  ExpenseReportFilterInput,
+  ExpenseReportListSnapshot,
+} from '@hexagonal-monorepo-template/domain';
 
 export interface IListExpenseReportsFromSession {
-  execute(): Promise<ExpenseReportListSnapshot>;
+  execute(
+    filter?: ExpenseReportFilterInput,
+  ): Promise<ExpenseReportListSnapshot>;
 }
 
 export const IListExpenseReportsFromSession = Symbol(

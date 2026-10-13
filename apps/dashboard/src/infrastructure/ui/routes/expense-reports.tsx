@@ -18,6 +18,7 @@ function ExpenseReportsRoute() {
     <ExpenseReportsPage
       title={i18n.messages.expenseReports.employerTitle}
       emptyMessage={null}
+      byEmployee
       deps={expenseReportsScreenComposition}
       onOpen={(reportId) =>
         void navigate({

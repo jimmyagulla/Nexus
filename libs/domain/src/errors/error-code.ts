@@ -8,6 +8,7 @@ export const ErrorCode = {
   REQUEST_ALREADY_PROCESSED: 'REQUEST_ALREADY_PROCESSED',
   MISSING_DOCUMENT: 'MISSING_DOCUMENT',
   INVALID_FILE: 'INVALID_FILE',
+  INVALID_PERIOD: 'INVALID_PERIOD',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

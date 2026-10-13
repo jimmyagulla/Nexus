@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ExpenseDetailsInput,
+  ExpenseReportFilterInput,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ExpenseReportStatus,
@@ -20,7 +21,11 @@ const report: ExpenseReportSnapshot = {
   expenses: [],
 };
 
-const list: ExpenseReportListSnapshot = { canCreate: true, reports: [report] };
+const list: ExpenseReportListSnapshot = {
+  canCreate: true,
+  reports: [report],
+  totalAmount: 0,
+};
 
 const expense: ExpenseDetailsInput = {
   date: '2026-10-05',
@@ -53,9 +58,11 @@ function controller() {
   const submitted: string[] = [];
   const opened: { reportId: string; receiptId: string }[] = [];
   const processed: string[] = [];
+  const filters: (ExpenseReportFilterInput | undefined)[] = [];
   return {
     opened,
     processed,
+    filters,
     created,
     added,
     read,
@@ -82,7 +89,12 @@ function controller() {
           return report;
         },
       },
-      { execute: async () => list },
+      {
+        execute: async (filter) => {
+          filters.push(filter);
+          return list;
+        },
+      },
       {
         execute: async (input) => {
           updated.push(input);
@@ -142,6 +154,12 @@ function controller() {
           processed.push(`reimburse:${reportId}`);
           return report;
         },
+      },
+      {
+        execute: async () => ({
+          'notes.a-traiter': 2,
+          'notes.montant-attente': 170,
+        }),
       },
     ),
   };
@@ -234,5 +252,20 @@ describe('ExpenseReportsController', () => {
 
   it('lists the reports', async () => {
     await expect(controller().controller.listReports()).resolves.toEqual(list);
+  });
+
+  it('lists the reports matching a filter', async () => {
+    const { controller: subject, filters } = controller();
+
+    await subject.listReports({ status: 'SUBMITTED', minAmount: 10 });
+
+    expect(filters).toEqual([{ status: 'SUBMITTED', minAmount: 10 }]);
+  });
+
+  it('reads the indicators', async () => {
+    await expect(controller().controller.getIndicators()).resolves.toEqual({
+      'notes.a-traiter': 2,
+      'notes.montant-attente': 170,
+    });
   });
 });

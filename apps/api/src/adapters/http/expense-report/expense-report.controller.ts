@@ -7,16 +7,27 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  ActorContext,
+  ExpenseReportIndicators,
+  UserRole,
+} from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   IAddExpense,
   IAttachReceipt,
   ICreateExpenseReport,
   IGetExpenseReport,
+  IGetExpenseReportIndicators,
   IGetReceipt,
   IListExpenseReports,
   IOpenExpenseReport,
@@ -34,6 +45,7 @@ import { Roles } from '../common/guards/roles/roles.decorator';
 import { RolesGuard } from '../common/guards/roles/roles.guard';
 import { AttachReceiptRequestDto } from './dto/attach-receipt-request.dto';
 import { CreateExpenseReportRequestDto } from './dto/create-expense-report-request.dto';
+import { ExpenseReportFilterQueryDto } from './dto/expense-report-filter-query.dto';
 import { ExpenseReportListResponseDto } from './dto/expense-report-list-response.dto';
 import { ExpenseReportResponseDto } from './dto/expense-report-response.dto';
 import { ExpenseRequestDto } from './dto/expense-request.dto';
@@ -52,6 +64,8 @@ export class ExpenseReportController {
     private readonly addExpense: IAddExpense,
     @Inject(IGetExpenseReport)
     private readonly getReport: IGetExpenseReport,
+    @Inject(IGetExpenseReportIndicators)
+    private readonly getIndicators: IGetExpenseReportIndicators,
     @Inject(IListExpenseReports)
     private readonly listReports: IListExpenseReports,
     @Inject(IUpdateExpense)
@@ -98,12 +112,31 @@ export class ExpenseReportController {
   async list(
     @Actor() actor: ActorContext,
     @Param('companyId') companyId: string,
+    @Query() query: ExpenseReportFilterQueryDto,
   ): Promise<ExpenseReportListResponseDto> {
-    const list = await this.listReports.execute({ actor, companyId });
+    const list = await this.listReports.execute({
+      actor,
+      companyId,
+      filter: { ...query },
+    });
     return {
       canCreate: list.canCreate,
+      totalAmount: list.totalAmount,
       reports: list.reports.map(toExpenseReportResponse),
     };
+  }
+
+  @Get(API_ROUTES.companies.expenseReportIndicators)
+  @Roles(UserRole.EMPLOYER, UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Indicators published by the expense reports' })
+  @ApiOkResponse({
+    schema: { type: 'object', additionalProperties: { type: 'number' } },
+  })
+  async indicators(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+  ): Promise<ExpenseReportIndicators> {
+    return { ...(await this.getIndicators.execute({ actor, companyId })) };
   }
 
   @Get(API_ROUTES.companies.expenseReport)

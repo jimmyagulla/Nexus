@@ -61,3 +61,5 @@ export * from './in/expense-report/refuse-expense-report.port';
 export * from './in/expense-report/refuse-expense-report-from-session.port';
 export * from './in/expense-report/reimburse-expense-report.port';
 export * from './in/expense-report/reimburse-expense-report-from-session.port';
+export * from './in/expense-report/get-expense-report-indicators.port';
+export * from './in/expense-report/get-expense-report-indicators-from-session.port';

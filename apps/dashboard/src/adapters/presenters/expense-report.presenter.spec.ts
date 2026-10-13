@@ -248,11 +248,12 @@ describe('ExpenseReportPresenter', () => {
 
   it('presents every report of a list and whether a report can be created', () => {
     const list = new ExpenseReportPresenter().presentList(
-      { canCreate: false, reports: [report] },
+      { canCreate: false, reports: [report], totalAmount: 125 },
       categories,
     );
 
     expect(list.canCreate).toBe(false);
     expect(list.reports.map((item) => item.id)).toEqual(['r1']);
+    expect(plain(list.totalAmount)).toBe('125 €');
   });
 });

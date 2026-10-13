@@ -37,7 +37,7 @@ function httpWithEmptyList(): InMemoryHttpClient {
   const http = new InMemoryHttpClient();
   http.reply('get', 'companies/c1/expense-reports', {
     status: 200,
-    data: { canCreate: true, reports: [] },
+    data: { canCreate: true, reports: [], totalAmount: 0 },
   });
   http.reply('get', 'companies/c1/expense-categories', {
     status: 200,

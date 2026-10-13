@@ -31,7 +31,11 @@ const report: ExpenseReportSnapshot = {
   expenses: [],
 };
 
-const list: ExpenseReportListSnapshot = { canCreate: true, reports: [report] };
+const list: ExpenseReportListSnapshot = {
+  canCreate: true,
+  reports: [report],
+  totalAmount: 0,
+};
 
 function useCaseFor(session: InMemorySessionGateway) {
   const http = new InMemoryHttpClient();
@@ -50,6 +54,24 @@ describe('ListExpenseReportsFromSessionUseCase', () => {
     const useCase = useCaseFor(new InMemorySessionGateway('token', actor));
 
     await expect(useCase.execute()).resolves.toEqual(list);
+  });
+
+  it('hands the filter to the api', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/expense-reports?status=SUBMITTED', {
+      status: 200,
+      data: list,
+    });
+    const useCase = new ListExpenseReportsFromSessionUseCase(
+      new InMemorySessionGateway('token', actor),
+      new ApiExpenseReportGateway(http),
+    );
+
+    await useCase.execute({ status: 'SUBMITTED' });
+
+    expect(http.calls[0]?.url).toBe(
+      'companies/c1/expense-reports?status=SUBMITTED',
+    );
   });
 
   it('refuses when the session carries no company', async () => {

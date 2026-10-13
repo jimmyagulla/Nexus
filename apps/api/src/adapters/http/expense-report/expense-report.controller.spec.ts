@@ -21,6 +21,7 @@ import {
   IAttachReceipt,
   ICreateExpenseReport,
   IGetExpenseReport,
+  IGetExpenseReportIndicators,
   IGetReceipt,
   IListExpenseReports,
   IOpenExpenseReport,
@@ -53,6 +54,9 @@ const requestInformation = {
 };
 const validateReport = { execute: vi.fn<IValidateExpenseReport['execute']>() };
 const refuseReport = { execute: vi.fn<IRefuseExpenseReport['execute']>() };
+const getIndicators = {
+  execute: vi.fn<IGetExpenseReportIndicators['execute']>(),
+};
 const reimburseReport = {
   execute: vi.fn<IReimburseExpenseReport['execute']>(),
 };
@@ -121,6 +125,7 @@ beforeAll(async () => {
       { provide: IAddExpense, useValue: addExpense },
       { provide: IGetExpenseReport, useValue: getReport },
       { provide: IListExpenseReports, useValue: listReports },
+      { provide: IGetExpenseReportIndicators, useValue: getIndicators },
       { provide: IUpdateExpense, useValue: updateExpense },
       { provide: IRemoveExpense, useValue: removeExpense },
       { provide: IAttachReceipt, useValue: attachReceipt },
@@ -175,7 +180,16 @@ beforeEach(() => {
     useCase.execute.mockResolvedValue(report);
   }
   listReports.execute.mockReset();
-  listReports.execute.mockResolvedValue({ canCreate: true, reports: [report] });
+  listReports.execute.mockResolvedValue({
+    canCreate: true,
+    reports: [report],
+    totalAmount: 0,
+  });
+  getIndicators.execute.mockReset();
+  getIndicators.execute.mockResolvedValue({
+    'notes.a-traiter': 2,
+    'notes.montant-attente': 170,
+  });
 });
 
 describe('ExpenseReportController', () => {
@@ -236,7 +250,7 @@ describe('ExpenseReportController', () => {
         payload: {
           status: 200,
           message: 'Success',
-          data: { canCreate: true, reports: [report] },
+          data: { canCreate: true, totalAmount: 0, reports: [report] },
         },
       });
     });
@@ -245,6 +259,54 @@ describe('ExpenseReportController', () => {
       actor = { ...employee, companyId: 'company-2' };
 
       expect((await send('GET', REPORTS_PATH)).status).toBe(403);
+    });
+
+    it('hands the filter of the query to the use case', async () => {
+      await send(
+        'GET',
+        `${REPORTS_PATH}?status=SUBMITTED&from=2026-10-01&to=2026-10-31&minAmount=10&maxAmount=500&employeeId=e9`,
+      );
+
+      expect(listReports.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+        filter: {
+          status: 'SUBMITTED',
+          from: '2026-10-01',
+          to: '2026-10-31',
+          minAmount: 10,
+          maxAmount: 500,
+          employeeId: 'e9',
+        },
+      });
+    });
+
+    it('answers 400 when the status is not one of the statuses', async () => {
+      const { status } = await send('GET', `${REPORTS_PATH}?status=PAID`);
+
+      expect(status).toBe(400);
+      expect(listReports.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 400 when a date is malformed', async () => {
+      expect((await send('GET', `${REPORTS_PATH}?from=demain`)).status).toBe(400);
+    });
+
+    it('answers 400 when an amount is not a number', async () => {
+      expect(
+        (await send('GET', `${REPORTS_PATH}?minAmount=beaucoup`)).status,
+      ).toBe(400);
+    });
+
+    it('answers 400 with the code when the period ends before it starts', async () => {
+      listReports.execute.mockRejectedValue(new Error(ErrorCode.INVALID_PERIOD));
+
+      await expect(
+        send('GET', `${REPORTS_PATH}?from=2026-10-31&to=2026-10-01`),
+      ).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.INVALID_PERIOD },
+      });
     });
 
     it('lets the employer list the reports', async () => {
@@ -258,6 +320,43 @@ describe('ExpenseReportController', () => {
 
       expect((await send('GET', REPORTS_PATH)).status).toBe(403);
       expect(listReports.execute).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('GET /companies/:companyId/expense-report-indicators', () => {
+    const INDICATORS_PATH = '/companies/company-1/expense-report-indicators';
+
+    it('answers 200 with the indicators', async () => {
+      await expect(send('GET', INDICATORS_PATH)).resolves.toEqual({
+        status: 200,
+        payload: {
+          status: 200,
+          message: 'Success',
+          data: { 'notes.a-traiter': 2, 'notes.montant-attente': 170 },
+        },
+      });
+    });
+
+    it('hands the actor and the company to the use case', async () => {
+      await send('GET', INDICATORS_PATH);
+
+      expect(getIndicators.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+      });
+    });
+
+    it('answers 403 for the accounting firm', async () => {
+      actor = { ...employee, role: UserRole.ACCOUNTANT };
+
+      expect((await send('GET', INDICATORS_PATH)).status).toBe(403);
+      expect(getIndicators.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the actor is bound to another company', async () => {
+      actor = { ...employee, companyId: 'company-2' };
+
+      expect((await send('GET', INDICATORS_PATH)).status).toBe(403);
     });
   });
 
