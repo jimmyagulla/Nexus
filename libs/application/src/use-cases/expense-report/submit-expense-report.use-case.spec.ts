@@ -1,6 +1,7 @@
 import {
   InMemoryEmployeeRepository,
   FixedClock,
+  InMemoryAuditLogRepository,
   InMemoryExpenseReportRepository,
   InMemoryNotificationRepository,
 } from '@hexagonal-monorepo-template/adapters';
@@ -8,6 +9,8 @@ import {
   ActorContext,
   Employee,
   EmployeeStatus,
+  AuditAction,
+  AuditSubject,
   ErrorCode,
   ExpenseDetails,
   ExpenseReportLabel,
@@ -33,6 +36,7 @@ async function setup(
 ) {
   const reports = new InMemoryExpenseReportRepository();
   const notifications = new InMemoryNotificationRepository();
+  const audits = new InMemoryAuditLogRepository();
   const useCase = new SubmitExpenseReportUseCase(
     new InMemoryEmployeeRepository([
       new Employee('e1', 'c1', options.status ?? EmployeeStatus.ACTIVE),
@@ -40,6 +44,7 @@ async function setup(
     ]),
     reports,
     notifications,
+    audits,
     new FixedClock(new Date('2026-10-06T10:00:00.000Z')),
   );
   const report = await reports.insert(
@@ -72,7 +77,7 @@ async function setup(
       }),
     );
   }
-  return { reports, notifications, useCase, report };
+  return { reports, notifications, audits, useCase, report };
 }
 
 describe('SubmitExpenseReportUseCase', () => {
@@ -133,6 +138,50 @@ describe('SubmitExpenseReportUseCase', () => {
         read: false,
       }),
     ]);
+  });
+
+  it('records in the audit log who submitted what, when, and the total', async () => {
+    const { useCase, audits, report } = await setup();
+
+    await useCase.execute({
+      actor: employee,
+      companyId: 'c1',
+      reportId: report.id,
+    });
+
+    const [event, ...others] = await audits.listByCompany('c1');
+    expect(others).toEqual([]);
+    expect(event).toMatchObject({
+      companyId: 'c1',
+      actorId: 'e1',
+      occurredAt: new Date('2026-10-06T10:00:00.000Z'),
+      action: AuditAction.TRANSMISSION,
+      subject: AuditSubject.EXPENSE_REPORT,
+      before: { expenseReportStatus: 'DRAFT', expenseReportTotal: 68 },
+      after: { expenseReportStatus: 'SUBMITTED', expenseReportTotal: 68 },
+    });
+    expect(event?.sentence).toBe(
+      'Note de frais « Déplacement Lyon » soumise (68 €).',
+    );
+  });
+
+  it('does not record the submission twice on a second submission', async () => {
+    const { useCase, audits, report } = await setup();
+    const input = { actor: employee, companyId: 'c1', reportId: report.id };
+
+    await useCase.execute(input);
+    await useCase.execute(input);
+
+    expect(await audits.listByCompany('c1')).toHaveLength(1);
+  });
+
+  it('writes nothing in the audit log when a receipt is missing', async () => {
+    const { useCase, audits, report } = await setup({ withReceipt: false });
+
+    await expect(
+      useCase.execute({ actor: employee, companyId: 'c1', reportId: report.id }),
+    ).rejects.toThrow(ErrorCode.MISSING_DOCUMENT);
+    expect(await audits.listByCompany('c1')).toEqual([]);
   });
 
   it('does not create a second report nor a second notification on a second submission', async () => {

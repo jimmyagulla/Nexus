@@ -24,6 +24,7 @@ import {
   IEmployeeRepository,
   IExpenseCategoryRepository,
   IExpenseReportRepository,
+  IAuditLogRepository,
   IClock,
   INotificationRepository,
   IGetExpenseReport,
@@ -43,12 +44,18 @@ import { ExpenseReportController } from '../../adapters/http/expense-report/expe
 import { PrismaExpenseReportRepository } from '../../adapters/out/expense-report/prisma-expense-report.repository';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { EmployeeModule } from '../employee/employee.module';
+import { AuditModule } from '../audit/audit.module';
 import { ExpenseCategoryModule } from '../expense-category/expense-category.module';
 import { NotificationModule } from '../notification/notification.module';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
-  imports: [EmployeeModule, ExpenseCategoryModule, NotificationModule],
+  imports: [
+    AuditModule,
+    EmployeeModule,
+    ExpenseCategoryModule,
+    NotificationModule,
+  ],
   controllers: [ExpenseReportController],
   providers: [
     {
@@ -117,13 +124,21 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         employees: IEmployeeRepository,
         reports: IExpenseReportRepository,
         notifications: INotificationRepository,
+        audits: IAuditLogRepository,
         clock: IClock,
       ) =>
-        new SubmitExpenseReportUseCase(employees, reports, notifications, clock),
+        new SubmitExpenseReportUseCase(
+          employees,
+          reports,
+          notifications,
+          audits,
+          clock,
+        ),
       inject: [
         IEmployeeRepository,
         IExpenseReportRepository,
         INotificationRepository,
+        IAuditLogRepository,
         IClock,
       ],
     },
@@ -138,41 +153,73 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: (
         reports: IExpenseReportRepository,
         notifications: INotificationRepository,
+        audits: IAuditLogRepository,
         clock: IClock,
       ) =>
         new RequestExpenseReportInformationUseCase(
           reports,
           notifications,
+          audits,
           clock,
         ),
-      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+      inject: [
+        IExpenseReportRepository,
+        INotificationRepository,
+        IAuditLogRepository,
+        IClock,
+      ],
     },
     {
       provide: IValidateExpenseReport,
       useFactory: (
         reports: IExpenseReportRepository,
         notifications: INotificationRepository,
+        audits: IAuditLogRepository,
         clock: IClock,
-      ) => new ValidateExpenseReportUseCase(reports, notifications, clock),
-      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+      ) =>
+        new ValidateExpenseReportUseCase(reports, notifications, audits, clock),
+      inject: [
+        IExpenseReportRepository,
+        INotificationRepository,
+        IAuditLogRepository,
+        IClock,
+      ],
     },
     {
       provide: IRefuseExpenseReport,
       useFactory: (
         reports: IExpenseReportRepository,
         notifications: INotificationRepository,
+        audits: IAuditLogRepository,
         clock: IClock,
-      ) => new RefuseExpenseReportUseCase(reports, notifications, clock),
-      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+      ) => new RefuseExpenseReportUseCase(reports, notifications, audits, clock),
+      inject: [
+        IExpenseReportRepository,
+        INotificationRepository,
+        IAuditLogRepository,
+        IClock,
+      ],
     },
     {
       provide: IReimburseExpenseReport,
       useFactory: (
         reports: IExpenseReportRepository,
         notifications: INotificationRepository,
+        audits: IAuditLogRepository,
         clock: IClock,
-      ) => new ReimburseExpenseReportUseCase(reports, notifications, clock),
-      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+      ) =>
+        new ReimburseExpenseReportUseCase(
+          reports,
+          notifications,
+          audits,
+          clock,
+        ),
+      inject: [
+        IExpenseReportRepository,
+        INotificationRepository,
+        IAuditLogRepository,
+        IClock,
+      ],
     },
     {
       provide: IGetExpenseReportIndicators,

@@ -1,13 +1,16 @@
 import {
   ActorContext,
+  ExpenseReportAuditKind,
   ExpenseReportSnapshot,
   NotificationType,
   requireEmployerActor,
   requireVisibleExpenseReport,
+  toExpenseReportAuditEvent,
   toExpenseReportNotification,
   toExpenseReportSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
+  IAuditLogRepository,
   IClock,
   IExpenseReportRepository,
   INotificationRepository,
@@ -18,6 +21,7 @@ export class ValidateExpenseReportUseCase implements IValidateExpenseReport {
   constructor(
     private readonly reports: IExpenseReportRepository,
     private readonly notifications: INotificationRepository,
+    private readonly audits: IAuditLogRepository,
     private readonly clock: IClock,
   ) {}
 
@@ -32,13 +36,19 @@ export class ValidateExpenseReportUseCase implements IValidateExpenseReport {
       input.actor,
     );
     const decided = report.validate();
+    const now = this.clock.now();
     await this.reports.save(decided);
     await this.notifications.append(
-      toExpenseReportNotification(
-        NotificationType.EXPENSE_REPORT_VALIDATED,
-        decided,
-        this.clock.now(),
-      ),
+      toExpenseReportNotification(NotificationType.EXPENSE_REPORT_VALIDATED, decided, now),
+    );
+    await this.audits.append(
+      toExpenseReportAuditEvent({
+        kind: ExpenseReportAuditKind.VALIDATED,
+        actorId: input.actor.userId,
+        before: report,
+        after: decided,
+        occurredAt: now,
+      }),
     );
     return toExpenseReportSnapshot(decided);
   }

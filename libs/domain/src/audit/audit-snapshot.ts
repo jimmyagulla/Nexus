@@ -6,4 +6,8 @@ export type AuditSnapshot = {
   publicHolidayId?: string;
   holidayDate?: string;
   holidayLabel?: string;
+  expenseReportId?: string;
+  expenseReportLabel?: string;
+  expenseReportStatus?: string;
+  expenseReportTotal?: number;
 };

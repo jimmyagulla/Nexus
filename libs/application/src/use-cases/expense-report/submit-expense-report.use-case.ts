@@ -1,15 +1,18 @@
 import {
   ActorContext,
   ExpenseReport,
+  ExpenseReportAuditKind,
   ExpenseReportSnapshot,
   ExpenseReportStatus,
   NotificationType,
   requireActiveEmployeeActor,
   requireOwnExpenseReport,
+  toExpenseReportAuditEvent,
   toExpenseReportNotification,
   toExpenseReportSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
+  IAuditLogRepository,
   IClock,
   IEmployeeRepository,
   IExpenseReportRepository,
@@ -22,6 +25,7 @@ export class SubmitExpenseReportUseCase implements ISubmitExpenseReport {
     private readonly employees: IEmployeeRepository,
     private readonly reports: IExpenseReportRepository,
     private readonly notifications: INotificationRepository,
+    private readonly audits: IAuditLogRepository,
     private readonly clock: IClock,
   ) {}
 
@@ -42,18 +46,31 @@ export class SubmitExpenseReportUseCase implements ISubmitExpenseReport {
     if (report.status !== ExpenseReportStatus.DRAFT) {
       return toExpenseReportSnapshot(report);
     }
-    return toExpenseReportSnapshot(await this.submit(report));
+    return toExpenseReportSnapshot(await this.submit(input.actor, report));
   }
 
-  private async submit(report: ExpenseReport): Promise<ExpenseReport> {
+  private async submit(
+    actor: ActorContext,
+    report: ExpenseReport,
+  ): Promise<ExpenseReport> {
     const submitted = report.submit();
+    const now = this.clock.now();
     await this.reports.save(submitted);
     await this.notifications.append(
       toExpenseReportNotification(
         NotificationType.EXPENSE_REPORT_SUBMITTED,
         submitted,
-        this.clock.now(),
+        now,
       ),
+    );
+    await this.audits.append(
+      toExpenseReportAuditEvent({
+        kind: ExpenseReportAuditKind.SUBMITTED,
+        actorId: actor.userId,
+        before: report,
+        after: submitted,
+        occurredAt: now,
+      }),
     );
     return submitted;
   }

@@ -23,12 +23,17 @@ enum AuditAction {
   MODIFICATION
   ADDITION
   DELETION
+  TRANSMISSION
+  VALIDATION
+  REFUSAL
+  STATUS_CHANGE
 }
 
 enum AuditSubject {
   COMPANY_NAME
   COMPANY_NON_WORKING_WEEKDAY
   COMPANY_PUBLIC_HOLIDAY
+  EXPENSE_REPORT
 }
 
 enum AuditSide {
@@ -81,6 +86,7 @@ model AuditEvent {
   occurredAt DateTime
   action     AuditAction
   subject    AuditSubject
+  sentence   String?
   company    Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   snapshots  AuditSnapshot[]
 }
@@ -93,6 +99,10 @@ model AuditSnapshot {
   publicHolidayId String?
   holidayDate     String?
   holidayLabel    String?
+  expenseReportId String?
+  expenseReportLabel String?
+  expenseReportStatus String?
+  expenseReportTotalCents Int?
   event           AuditEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
   daysOfWeek      AuditSnapshotDayOfWeek[]
 

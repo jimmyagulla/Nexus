@@ -11,4 +11,5 @@ export type AuditEvent = {
   subject: AuditSubject;
   before: AuditSnapshot | null;
   after: AuditSnapshot | null;
+  sentence?: string;
 };

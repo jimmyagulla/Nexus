@@ -1,10 +1,13 @@
 import {
   FixedClock,
+  InMemoryAuditLogRepository,
   InMemoryExpenseReportRepository,
   InMemoryNotificationRepository,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
+  AuditAction,
+  AuditSubject,
   ErrorCode,
   ExpenseDetails,
   ExpenseReport,
@@ -46,6 +49,7 @@ async function setup(options: { status?: ExpenseReportStatus } = {}) {
   const status = options.status ?? ExpenseReportStatus.UNDER_REVIEW;
   const reports = new InMemoryExpenseReportRepository();
   const notifications = new InMemoryNotificationRepository();
+  const audits = new InMemoryAuditLogRepository();
   const created = await reports.insert(
     'c1',
     'e1',
@@ -82,8 +86,14 @@ async function setup(options: { status?: ExpenseReportStatus } = {}) {
   return {
     reports,
     notifications,
+    audits,
     report: created,
-    useCase: new RefuseExpenseReportUseCase(reports, notifications, new FixedClock(now)),
+    useCase: new RefuseExpenseReportUseCase(
+      reports,
+      notifications,
+      audits,
+      new FixedClock(now),
+    ),
   };
 }
 
@@ -167,6 +177,41 @@ describe('RefuseExpenseReportUseCase', () => {
       expect(await notifications.listByCompany('c1')).toEqual([]);
     },
   );
+
+  it('records in the audit log who did what, when, and the total', async () => {
+    const { useCase, audits, report } = await setup();
+
+    await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      reportId: report.id,
+    });
+
+    const [event, ...others] = await audits.listByCompany('c1');
+    expect(others).toEqual([]);
+    expect(event).toMatchObject({
+      companyId: 'c1',
+      actorId: 'u1',
+      occurredAt: now,
+      action: AuditAction.REFUSAL,
+      subject: AuditSubject.EXPENSE_REPORT,
+      after: { expenseReportId: report.id },
+    });
+    expect(event?.after?.expenseReportTotal).toBeGreaterThan(0);
+    expect(event?.sentence).toContain('refusée');
+    expect(event?.sentence?.toLowerCase()).not.toContain('professionnel');
+  });
+
+  it('writes nothing in the audit log when the decision is refused', async () => {
+    const { useCase, audits, report } = await setup({
+      status: ExpenseReportStatus.REFUSED,
+    });
+
+    await expect(
+      useCase.execute({ actor: employer, companyId: 'c1', reportId: report.id }),
+    ).rejects.toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    expect(await audits.listByCompany('c1')).toEqual([]);
+  });
 
   it('hides a draft from the employer', async () => {
     const { useCase, report } = await setup({

@@ -24,6 +24,7 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
         occurredAt: event.occurredAt,
         action: event.action,
         subject: event.subject,
+        sentence: event.sentence,
         snapshots: {
           create: [
             ...(event.before
@@ -52,6 +53,7 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
       occurredAt: row.occurredAt,
       action: row.action as AuditAction,
       subject: row.subject as AuditSubject,
+      sentence: row.sentence ?? undefined,
       before: toAuditSnapshot(
         row.snapshots.find((item) => item.side === 'BEFORE'),
       ),

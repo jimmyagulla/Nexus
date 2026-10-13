@@ -87,3 +87,42 @@ describe('toAuditSnapshot', () => {
     });
   });
 });
+
+describe('expense report audit fields', () => {
+  it('stores the total of a report in cents', () => {
+    expect(
+      toAuditSnapshotCreate('AFTER', {
+        expenseReportId: 'r1',
+        expenseReportLabel: 'Déplacement Lyon',
+        expenseReportStatus: 'SUBMITTED',
+        expenseReportTotal: 68.5,
+      }),
+    ).toMatchObject({
+      expenseReportId: 'r1',
+      expenseReportLabel: 'Déplacement Lyon',
+      expenseReportStatus: 'SUBMITTED',
+      expenseReportTotalCents: 6850,
+    });
+  });
+
+  it('reads the total of a report back in euros', () => {
+    expect(
+      toAuditSnapshot({
+        companyName: null,
+        publicHolidayId: null,
+        holidayDate: null,
+        holidayLabel: null,
+        expenseReportId: 'r1',
+        expenseReportLabel: 'Déplacement Lyon',
+        expenseReportStatus: 'SUBMITTED',
+        expenseReportTotalCents: 6850,
+        daysOfWeek: [],
+      }),
+    ).toMatchObject({
+      expenseReportId: 'r1',
+      expenseReportLabel: 'Déplacement Lyon',
+      expenseReportStatus: 'SUBMITTED',
+      expenseReportTotal: 68.5,
+    });
+  });
+});

@@ -18,6 +18,10 @@ type SnapshotCreate = {
   publicHolidayId?: string;
   holidayDate?: string;
   holidayLabel?: string;
+  expenseReportId?: string;
+  expenseReportLabel?: string;
+  expenseReportStatus?: string;
+  expenseReportTotalCents?: number;
   daysOfWeek?: { create: { dayOfWeek: DayOfWeek }[] };
 };
 
@@ -29,6 +33,7 @@ type EventCreateArgs = {
     occurredAt: Date;
     action: AuditAction;
     subject: AuditSubject;
+    sentence?: string;
     snapshots: { create: SnapshotCreate[] };
   };
 };
@@ -40,6 +45,10 @@ type SnapshotRow = {
   publicHolidayId: string | null;
   holidayDate: string | null;
   holidayLabel: string | null;
+  expenseReportId: string | null;
+  expenseReportLabel: string | null;
+  expenseReportStatus: string | null;
+  expenseReportTotalCents: number | null;
   daysOfWeek: { dayOfWeek: DayOfWeek }[];
 };
 
@@ -50,6 +59,7 @@ type EventRow = {
   occurredAt: Date;
   action: AuditAction;
   subject: AuditSubject;
+  sentence: string | null;
   snapshots: SnapshotRow[];
 };
 
@@ -67,6 +77,10 @@ function toSnapshotRow(snapshot: SnapshotCreate): SnapshotRow {
     publicHolidayId: snapshot.publicHolidayId ?? null,
     holidayDate: snapshot.holidayDate ?? null,
     holidayLabel: snapshot.holidayLabel ?? null,
+    expenseReportId: snapshot.expenseReportId ?? null,
+    expenseReportLabel: snapshot.expenseReportLabel ?? null,
+    expenseReportStatus: snapshot.expenseReportStatus ?? null,
+    expenseReportTotalCents: snapshot.expenseReportTotalCents ?? null,
     daysOfWeek: snapshot.daysOfWeek?.create ?? [],
   };
 }
@@ -79,10 +93,11 @@ function createFakePrisma(): FakePrisma {
     auditEvent: {
       create: async (args: EventCreateArgs): Promise<void> => {
         created.push(args);
-        const { snapshots, id, ...event } = args.data;
+        const { snapshots, id, sentence, ...event } = args.data;
         rows.push({
           ...event,
           id: id ?? globalThis.crypto.randomUUID(),
+          sentence: sentence ?? null,
           snapshots: snapshots.create.map(toSnapshotRow),
         });
       },
@@ -271,5 +286,59 @@ describe('PrismaAuditLogRepository', () => {
       '2026-03-01T10:00:00.000Z',
       '2026-03-02T10:00:00.000Z',
     ]);
+  });
+
+  it('keeps the expense report fields, the total in cents, and the sentence', async () => {
+    const { client, created } = createFakePrisma();
+    const repository = new PrismaAuditLogRepository(client);
+
+    await repository.append(
+      eventOf({
+        action: AuditAction.TRANSMISSION,
+        subject: AuditSubject.EXPENSE_REPORT,
+        before: {
+          expenseReportId: 'report-1',
+          expenseReportLabel: 'Déplacement Lyon',
+          expenseReportStatus: 'DRAFT',
+          expenseReportTotal: 125,
+        },
+        after: {
+          expenseReportId: 'report-1',
+          expenseReportLabel: 'Déplacement Lyon',
+          expenseReportStatus: 'SUBMITTED',
+          expenseReportTotal: 125.5,
+        },
+        sentence: 'Note de frais « Déplacement Lyon » soumise (125,50 €).',
+      }),
+    );
+    const [stored] = await repository.listByCompany('company-1');
+
+    expect(
+      created[0]?.data.snapshots.create.map(
+        (snapshot) => snapshot.expenseReportTotalCents,
+      ),
+    ).toEqual([12500, 12550]);
+    expect(stored?.before).toMatchObject({
+      expenseReportId: 'report-1',
+      expenseReportStatus: 'DRAFT',
+      expenseReportTotal: 125,
+    });
+    expect(stored?.after).toMatchObject({
+      expenseReportStatus: 'SUBMITTED',
+      expenseReportTotal: 125.5,
+    });
+    expect(stored?.sentence).toBe(
+      'Note de frais « Déplacement Lyon » soumise (125,50 €).',
+    );
+  });
+
+  it('reads an event written without sentence as having none', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAuditLogRepository(client);
+
+    await repository.append(eventOf());
+    const [stored] = await repository.listByCompany('company-1');
+
+    expect(stored?.sentence).toBeUndefined();
   });
 });

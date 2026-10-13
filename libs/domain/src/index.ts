@@ -50,3 +50,5 @@ export * from './read-models/receipt-file-snapshot';
 export * from './services/require-employer-actor';
 export * from './entities/expense-report-filter';
 export * from './read-models/to-expense-report-indicators';
+export * from './audit/to-expense-report-audit-snapshot';
+export * from './audit/to-expense-report-audit-event';
