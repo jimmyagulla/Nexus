@@ -12,3 +12,6 @@ export * from './out/session/client-session.gateway';
 export * from './out/session/in-memory-session.client';
 export * from './out/session/in-memory-session.gateway';
 export * from './out/session/local-dev-session';
+export * from './out/second-factor/api-second-factor.gateway';
+export * from './out/second-factor/in-memory-second-factor.repository';
+export * from './out/second-factor/totp-second-factor-codes';

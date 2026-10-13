@@ -158,6 +158,28 @@ describe('dependency injection entry point', () => {
     ]);
   });
 
+  it('wires the second factor enrollment on the configured api', async () => {
+    transport.body = {
+      status: 201,
+      data: { secret: 'ABCDEFGH', provisioningUri: 'otpauth://x' },
+    };
+    supabase.session = {
+      accessToken: 'jwt',
+      userId: 'u1',
+      appMetadata: { company_id: 'c1', role: UserRole.EMPLOYEE },
+    };
+    const { secondFactorComposition } = await import('./di');
+
+    await secondFactorComposition.controller.beginEnrollment();
+
+    expect(transport.calls).toEqual([
+      {
+        url: 'https://api.nexus.test/api/second-factor/enrollment',
+        authorization: 'Bearer jwt',
+      },
+    ]);
+  });
+
   it('refuses to reach the api when nobody is signed in', async () => {
     supabase.session = null;
     const deps = await companySettings();

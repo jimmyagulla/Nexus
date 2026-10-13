@@ -7,6 +7,11 @@ export const API_ROUTES = {
     publicHolidays: ':companyId/calendar/public-holidays',
     publicHoliday: ':companyId/calendar/public-holidays/:publicHolidayId',
   },
+  secondFactor: {
+    base: 'second-factor',
+    enrollment: 'enrollment',
+    enrollmentConfirmation: 'enrollment/confirmation',
+  },
 } as const;
 
 export function companyPath(
@@ -17,4 +22,8 @@ export function companyPath(
     (path, [key, value]) => path.replace(`:${key}`, value),
     `${API_ROUTES.companies.base}/${template}`,
   );
+}
+
+export function secondFactorPath(template: string): string {
+  return `${API_ROUTES.secondFactor.base}/${template}`;
 }

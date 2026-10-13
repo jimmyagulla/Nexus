@@ -2,6 +2,8 @@ import { Test } from '@nestjs/testing';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER, ModulesContainer } from '@nestjs/core';
 import {
   IAddCompanyPublicHoliday,
+  IBeginSecondFactorEnrollment,
+  IConfirmSecondFactorEnrollment,
   ICreateCompany,
   IGetCompanySettings,
   IJwtVerifier,
@@ -82,6 +84,15 @@ describe('AppModule', () => {
     expect(moduleRef.get(IAddCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IUpdateCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IRemoveCompanyPublicHoliday)).toBeDefined();
+  });
+
+  it('wires the second factor enrollment', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    expect(moduleRef.get(IBeginSecondFactorEnrollment)).toBeDefined();
+    expect(moduleRef.get(IConfirmSecondFactorEnrollment)).toBeDefined();
   });
 
   it('registers SuccessResponseInterceptor as APP_INTERCEPTOR', () => {

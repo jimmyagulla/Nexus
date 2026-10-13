@@ -42,6 +42,15 @@ model Company {
   nonWorkingWeekdays   CompanyNonWorkingWeekday[]
   publicHolidays       CompanyPublicHoliday[]
   auditEvents          AuditEvent[]
+  secondFactors        SecondFactor[]
+}
+
+model SecondFactor {
+  userId    String  @id
+  companyId String
+  secret    String
+  enrolled  Boolean @default(false)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
 
 model CompanyNonWorkingWeekday {

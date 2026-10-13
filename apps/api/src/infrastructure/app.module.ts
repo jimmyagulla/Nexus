@@ -15,6 +15,7 @@ import { CompanyModule } from './company/company.module';
 import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
 import { CompanySettingsModule } from './company-settings/company-settings.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { SecondFactorModule } from './second-factor/second-factor.module';
 
 const persistence = loadApiConfig().persistence;
 
@@ -27,6 +28,7 @@ const persistence = loadApiConfig().persistence;
     CompanyModule,
     CompanySettingsModule,
     CompanyPublicHolidaysModule,
+    SecondFactorModule,
   ],
   providers: [
     {

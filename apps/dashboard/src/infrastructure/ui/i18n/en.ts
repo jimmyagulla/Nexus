@@ -23,6 +23,17 @@ export const en = {
     date: 'Date',
     label: 'Label',
   },
+  secondFactor: {
+    enrollment: {
+      title: 'Additional verification',
+      instructions:
+        'Add this key to your authenticator application, then enter the code it shows.',
+      secret: 'Setup key',
+      code: 'Verification code',
+      confirm: 'Confirm',
+      done: 'The additional verification is in place.',
+    },
+  },
   days: {
     SUNDAY: 'Sunday',
     MONDAY: 'Monday',
@@ -36,5 +47,7 @@ export const en = {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.SECOND_FACTOR_REQUIRED]:
+      'The additional verification is required to access your space.',
   },
 } as const;

@@ -10,3 +10,7 @@ export * from './use-cases/company-public-holidays/add-company-public-holiday-fr
 export * from './use-cases/company-public-holidays/update-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday-from-session.use-case';
+export * from './use-cases/second-factor/begin-second-factor-enrollment.use-case';
+export * from './use-cases/second-factor/begin-second-factor-enrollment-from-session.use-case';
+export * from './use-cases/second-factor/confirm-second-factor-enrollment.use-case';
+export * from './use-cases/second-factor/confirm-second-factor-enrollment-from-session.use-case';

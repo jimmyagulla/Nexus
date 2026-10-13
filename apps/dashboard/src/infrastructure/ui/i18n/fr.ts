@@ -23,6 +23,17 @@ export const fr = {
     date: 'Date',
     label: 'Libellé',
   },
+  secondFactor: {
+    enrollment: {
+      title: 'Vérification complémentaire',
+      instructions:
+        "Ajoutez cette clé dans votre application d'authentification, puis saisissez le code qu'elle affiche.",
+      secret: 'Clé de configuration',
+      code: 'Code de vérification',
+      confirm: 'Confirmer',
+      done: 'La vérification complémentaire est en place.',
+    },
+  },
   days: {
     SUNDAY: 'Dimanche',
     MONDAY: 'Lundi',
@@ -37,5 +48,7 @@ export const fr = {
     [ErrorCode.REQUIRED_INFORMATION]:
       'Renseignez les informations obligatoires.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'Un élément semblable existe déjà.',
+    [ErrorCode.SECOND_FACTOR_REQUIRED]:
+      'La vérification complémentaire est nécessaire pour accéder à votre espace.',
   },
 } as const;
