@@ -10,7 +10,7 @@ import { Button } from '../../shared/button';
 import { OvertimeCounter } from './components/OvertimeCounter';
 import { OvertimeDeclarationTable } from './components/OvertimeDeclarationTable';
 import { OvertimeHighlightCounter } from './components/OvertimeHighlightCounter';
-import type { OvertimeViewModel } from '../../../../adapters/presenters/overtime/overtime.view-models';
+import type { OvertimeViewModel } from '../../../../adapters/presenters/overtime/overtime.presenter';
 
 interface OvertimeProps {
   model: OvertimeViewModel;

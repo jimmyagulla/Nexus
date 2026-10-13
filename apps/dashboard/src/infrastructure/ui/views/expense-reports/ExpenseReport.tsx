@@ -3,7 +3,7 @@ import { i18n } from '../../i18n/i18n';
 import { Badge } from '../../shared/badge';
 import { ExpenseReportTotals } from './components/ExpenseReportTotals';
 import { ExpensesTable } from './components/ExpensesTable';
-import type { ExpenseReportViewModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseReportViewModel } from '../../../../adapters/presenters/expense-reports/expense-report.presenter';
 
 /** P6.3 — a draft expense report and its expenses. */
 export function ExpenseReport({ model }: { model: ExpenseReportViewModel }) {

@@ -7,7 +7,7 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Badge } from '../../shared/badge';
 import { Button } from '../../shared/button';
-import type { LeaveRequestSentViewModel } from '../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveRequestSentViewModel } from '../../../../adapters/presenters/leaves/leave-request-sent.presenter';
 
 interface LeaveRequestSentProps {
   model: LeaveRequestSentViewModel;

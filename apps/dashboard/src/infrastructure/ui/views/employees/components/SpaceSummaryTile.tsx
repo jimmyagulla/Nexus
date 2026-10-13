@@ -1,5 +1,5 @@
 import { Card } from '../../../shared/card';
-import type { SpaceSummaryTileModel } from '../../../../../adapters/presenters/employees/employees.view-models';
+import type { SpaceSummaryTileModel } from '../../../../../adapters/presenters/employees/employee.presenter';
 
 /** Summary figure of an employee space (documents, payslips…). */
 export function SpaceSummaryTile({ tile }: { tile: SpaceSummaryTileModel }) {

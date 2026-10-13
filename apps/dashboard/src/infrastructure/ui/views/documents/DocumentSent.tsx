@@ -7,7 +7,7 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Badge } from '../../shared/badge';
 import { Button } from '../../shared/button';
-import type { DocumentSentViewModel } from '../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentSentViewModel } from '../../../../adapters/presenters/documents/document-sent.presenter';
 
 interface DocumentSentProps {
   model: DocumentSentViewModel;

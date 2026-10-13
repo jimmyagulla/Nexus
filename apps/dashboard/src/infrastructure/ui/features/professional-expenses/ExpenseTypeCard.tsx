@@ -1,6 +1,6 @@
 import { cn } from '../../lib/utils';
 import { RadioGroupItem } from '../../shared/radio-group';
-import type { ExpenseTypeOption } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
+import type { ExpenseTypeOption } from '../../../../adapters/presenters/professional-expenses/professional-expense-request.presenter';
 
 /** Radio card of the "Type de frais" choice. */
 export function ExpenseTypeCard({ option }: { option: ExpenseTypeOption }) {

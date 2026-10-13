@@ -1,4 +1,20 @@
-import type { EmployeeAttendanceViewModel } from './employees.view-models';
+import type { EmployeeHeaderModel } from './employee.presenter';
+
+export interface EmployeeAttendanceViewModel {
+  employee: EmployeeHeaderModel;
+  periodFilter: string;
+  months: AttendanceMonthRowModel[];
+}
+
+export interface AttendanceMonthRowModel {
+  month: string;
+  period: string;
+  worked: string;
+  absences: string;
+  leaves: string;
+  sickLeaves: string;
+  otherEvents: string;
+}
 
 /**
  * Presents the attendance of one employee.

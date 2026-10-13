@@ -1,4 +1,28 @@
-import type { ProfessionalExpenseRequestViewModel } from './professional-expenses.view-models';
+export interface ProfessionalExpenseRequestViewModel {
+  request: ProfessionalExpenseFormModel;
+}
+
+export interface ExpenseTypeOption {
+  value: string;
+  label: string;
+  description: string;
+  /** Remix Icon class, e.g. `ri-home-wifi-line`. */
+  icon: string;
+}
+
+export interface ProfessionalExpenseFormModel {
+  types: ExpenseTypeOption[];
+  type: string;
+  period: string;
+  periods: string[];
+  days: string;
+  /** "2,50 € / jour" */
+  rate: string;
+  total: string;
+  description: string;
+  /** "Non requis pour ce type de frais" */
+  proofNotice: string;
+}
 
 /**
  * Presents the professional expense request form.

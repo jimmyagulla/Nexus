@@ -1,7 +1,7 @@
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
 import { cn } from '../../../lib/utils';
-import type { ExpenseReportRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseReportRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.presenter';
 
 export function ExpenseReportRow({ report }: { report: ExpenseReportRowModel }) {
   return (

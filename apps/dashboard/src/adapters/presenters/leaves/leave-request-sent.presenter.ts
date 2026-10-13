@@ -1,4 +1,14 @@
-import type { LeaveRequestSentViewModel } from './leaves.view-models';
+import type { ProgressStepViewModel, StatusViewModel } from '../display.types';
+
+export interface LeaveRequestSentViewModel {
+  description: string;
+  type: string;
+  period: string;
+  deducted: string;
+  sentAt: string;
+  status: StatusViewModel;
+  steps: ProgressStepViewModel[];
+}
 
 /**
  * Presents the leave request confirmation.

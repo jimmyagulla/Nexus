@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { IconTile } from '../../../common/data/IconTile';
 import { i18n } from '../../../i18n/i18n';
 import { Button } from '../../../shared/button';
-import type { TaskItemModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
+import type { TaskItemModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.presenter';
 
 /** Line of the "À traiter" list: flow tile, count, label, "Traiter". */
 export function TaskItem({ task }: { task: TaskItemModel }) {

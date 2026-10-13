@@ -3,7 +3,7 @@ import { MobileHeader } from './MobileHeader';
 import { MobileTabBar } from './MobileTabBar';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
-import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface AppShellProps {
   model: ShellViewModel;

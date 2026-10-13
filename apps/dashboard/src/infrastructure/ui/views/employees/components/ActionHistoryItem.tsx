@@ -1,4 +1,4 @@
-import type { ActionHistoryItemModel } from '../../../../../adapters/presenters/employees/employees.view-models';
+import type { ActionHistoryItemModel } from '../../../../../adapters/presenters/employees/employee.presenter';
 
 /** Dotted line of an employee's actions history. */
 export function ActionHistoryItem({ item }: { item: ActionHistoryItemModel }) {

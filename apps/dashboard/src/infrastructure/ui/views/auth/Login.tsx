@@ -2,7 +2,7 @@ import { LoginForm } from '../../features/auth/LoginForm';
 import { i18n } from '../../i18n/i18n';
 import { AuthHeading } from './components/AuthHeading';
 import { AuthLayout } from './components/AuthLayout';
-import type { LoginViewModel } from '../../../../adapters/presenters/auth/auth.view-models';
+import type { LoginViewModel } from '../../../../adapters/presenters/auth/login.presenter';
 
 interface LoginProps {
   model: LoginViewModel;

@@ -1,4 +1,6 @@
-import type { EmployeeAttendanceViewModel, EmployeeHeaderModel, EmployeeViewModel, EmployeesViewModel } from '../../../adapters/presenters/employees/employees.view-models';
+import type { EmployeeAttendanceViewModel } from '../../../adapters/presenters/employees/employee-attendance.presenter';
+import type { EmployeeHeaderModel, EmployeeViewModel } from '../../../adapters/presenters/employees/employee.presenter';
+import type { EmployeesViewModel } from '../../../adapters/presenters/employees/employees.presenter';
 
 /** Placeholder data of the employees screens (mockup v3, flow 8). */
 export const employeesFixture: EmployeesViewModel = {

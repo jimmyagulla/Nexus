@@ -1,5 +1,5 @@
 import { AppRoutes } from '../routes/app-routes';
-import type { EmployerDashboardViewModel } from '../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
+import type { EmployerDashboardViewModel } from '../../../adapters/presenters/employer-dashboard/employer-dashboard.presenter';
 
 /** Placeholder data of the employer dashboard (mockup v3, flow 8). */
 export const employerDashboardFixture: EmployerDashboardViewModel = {

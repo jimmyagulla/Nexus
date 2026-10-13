@@ -1,7 +1,7 @@
 import { FormField } from '../../common/forms/FormField';
 import { cn } from '../../lib/utils';
 import { Input } from '../../shared/input';
-import type { ContactFieldModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { ContactFieldModel } from '../../../../adapters/presenters/personal-info/personal-info-edit.presenter';
 
 interface ContactFieldProps {
   model: ContactFieldModel;

@@ -1,5 +1,5 @@
 import { i18n } from '../../i18n/i18n';
-import type { SearchPreviewResult } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { SearchPreviewResult } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface SearchPreviewItemProps {
   result: SearchPreviewResult;

@@ -5,7 +5,7 @@ import { ExpenseKpiCard } from './components/ExpenseKpiCard';
 import { ExpenseReportsTable } from './components/ExpenseReportsTable';
 import { ExpenseReportsToolbar } from './components/ExpenseReportsToolbar';
 import { NewExpenseReportButton } from './components/NewExpenseReportButton';
-import type { ExpenseReportsViewModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseReportsViewModel } from '../../../../adapters/presenters/expense-reports/expense-reports.presenter';
 
 /** P6.1 — the employee's expense reports. */
 export function ExpenseReports({ model }: { model: ExpenseReportsViewModel }) {

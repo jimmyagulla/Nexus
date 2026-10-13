@@ -13,10 +13,10 @@ import {
   DialogTitle,
 } from '../../../shared/dialog';
 import { ChangeRow } from './ChangeRow';
-import type { ConfirmChangesViewModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { ConfirmChangesModel } from '../../../../../adapters/presenters/personal-info/personal-info-edit.presenter';
 
 interface ConfirmChangesDialogProps {
-  model: ConfirmChangesViewModel;
+  model: ConfirmChangesModel;
 }
 
 /** P3.3 — recap of the changed fields, rendered inside a Dialog. */

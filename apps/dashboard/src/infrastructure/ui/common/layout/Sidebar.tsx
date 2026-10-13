@@ -3,7 +3,7 @@ import { BrandLogo } from './BrandLogo';
 import { RoleCard } from './RoleCard';
 import { SidebarNavSection } from './SidebarNavSection';
 import { SidebarUser } from './SidebarUser';
-import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface SidebarProps {
   model: ShellViewModel;

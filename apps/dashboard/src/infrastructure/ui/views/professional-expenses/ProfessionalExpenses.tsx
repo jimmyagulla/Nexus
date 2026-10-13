@@ -7,7 +7,7 @@ import { Button } from '../../shared/button';
 import { PendingRequestAlert } from './components/PendingRequestAlert';
 import { ProfessionalExpensesTable } from './components/ProfessionalExpensesTable';
 import { ProfessionalExpensesToolbar } from './components/ProfessionalExpensesToolbar';
-import type { ProfessionalExpensesViewModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
+import type { ProfessionalExpensesViewModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.presenter';
 
 /** P7.1 — the employee's professional expense requests. */
 export function ProfessionalExpenses({

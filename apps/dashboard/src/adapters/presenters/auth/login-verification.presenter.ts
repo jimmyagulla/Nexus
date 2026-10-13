@@ -1,4 +1,8 @@
-import type { LoginVerificationViewModel } from './auth.view-models';
+export interface LoginVerificationViewModel {
+  maskedEmail: string;
+  code: string;
+  resendIn: string;
+}
 
 /**
  * Presents the two-step verification screen.

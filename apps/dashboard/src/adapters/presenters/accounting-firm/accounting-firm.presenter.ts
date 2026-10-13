@@ -1,4 +1,27 @@
-import type { AccountingFirmViewModel } from './accounting-firm.view-models';
+import type { StatusViewModel } from '../display.types';
+
+export interface AccountingFirmViewModel {
+  firm: FirmConnectionModel;
+  all: ExchangeRowModel[];
+  sent: ExchangeRowModel[];
+  received: ExchangeRowModel[];
+  counts: { all: string; sent: string; received: string };
+}
+
+export interface ExchangeRowModel {
+  id: string;
+  icon: string;
+  name: string;
+  category: string;
+  date: string;
+  direction: 'toFirm' | 'fromFirm';
+  status: StatusViewModel;
+}
+
+export interface FirmConnectionModel {
+  name: string;
+  contact: string;
+}
 
 /**
  * Presents the accounting firm exchanges.

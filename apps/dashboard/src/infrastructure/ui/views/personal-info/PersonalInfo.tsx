@@ -3,7 +3,7 @@ import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
 import { EditableInfoCard } from './components/EditableInfoCard';
 import { EmployerInfoCard } from './components/EmployerInfoCard';
-import type { PersonalInfoViewModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { PersonalInfoViewModel } from '../../../../adapters/presenters/personal-info/personal-info.presenter';
 
 interface PersonalInfoProps {
   model: PersonalInfoViewModel;

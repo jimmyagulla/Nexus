@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../shared/shee
 import { BrandLogo } from './BrandLogo';
 import { NotificationBell } from './NotificationBell';
 import { Sidebar } from './Sidebar';
-import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface MobileHeaderProps {
   model: ShellViewModel;

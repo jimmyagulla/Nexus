@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList } from '../../shared/tabs';
 import { ExchangesPanel } from './components/ExchangesPanel';
 import { ExchangesTab } from './components/ExchangesTab';
 import { FirmConnectionCard } from './components/FirmConnectionCard';
-import type { AccountingFirmViewModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
+import type { AccountingFirmViewModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm.presenter';
 
 /** P10.1 — document exchanges with the accounting firm. */
 export function AccountingFirm({ model }: { model: AccountingFirmViewModel }) {

@@ -6,7 +6,7 @@ import { ActionHistoryItem } from './components/ActionHistoryItem';
 import { EmployeeHeader } from './components/EmployeeHeader';
 import { IdentityRow } from './components/IdentityRow';
 import { SpaceSummaryTile } from './components/SpaceSummaryTile';
-import type { EmployeeViewModel } from '../../../../adapters/presenters/employees/employees.view-models';
+import type { EmployeeViewModel } from '../../../../adapters/presenters/employees/employee.presenter';
 
 /** P8.3 — employee space seen by the employer, overview tab. */
 export function Employee({ model }: { model: EmployeeViewModel }) {

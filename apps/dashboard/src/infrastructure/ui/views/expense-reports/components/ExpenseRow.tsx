@@ -1,7 +1,7 @@
 import { i18n } from '../../../i18n/i18n';
 import { cn } from '../../../lib/utils';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { ExpenseRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseRowModel } from '../../../../../adapters/presenters/expense-reports/expense-report.presenter';
 
 export function ExpenseRow({ expense }: { expense: ExpenseRowModel }) {
   return (

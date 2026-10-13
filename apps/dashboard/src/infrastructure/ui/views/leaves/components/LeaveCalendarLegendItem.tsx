@@ -1,5 +1,6 @@
 import { cn } from '../../../lib/utils';
-import type { LeaveCalendarLegendTone } from '../../../../../adapters/presenters/leaves/leaves.view-models';
+
+export type LeaveCalendarLegendTone = 'accepted' | 'pending' | 'today' | 'weekend';
 
 interface LeaveCalendarLegendItemProps {
   label: string;

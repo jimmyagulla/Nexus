@@ -9,7 +9,7 @@ import { Button } from '../../shared/button';
 import { Card } from '../../shared/card';
 import { LeaveBalanceImpact } from './components/LeaveBalanceImpact';
 import { LeaveCountDetail } from './components/LeaveCountDetail';
-import type { LeaveRequestViewModel } from '../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveRequestViewModel } from '../../../../adapters/presenters/leaves/leave-request.presenter';
 
 interface LeaveRequestProps {
   model: LeaveRequestViewModel;

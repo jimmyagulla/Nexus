@@ -4,7 +4,7 @@ import { i18n } from '../../i18n/i18n';
 import { Button } from '../../shared/button';
 import { AuthHeading } from './components/AuthHeading';
 import { AuthLayout } from './components/AuthLayout';
-import type { LoginVerificationViewModel } from '../../../../adapters/presenters/auth/auth.view-models';
+import type { LoginVerificationViewModel } from '../../../../adapters/presenters/auth/login-verification.presenter';
 
 interface LoginVerificationProps {
   model: LoginVerificationViewModel;

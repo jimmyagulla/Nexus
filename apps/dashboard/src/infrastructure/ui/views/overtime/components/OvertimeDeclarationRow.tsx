@@ -1,6 +1,6 @@
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { OvertimeDeclarationRowModel } from '../../../../../adapters/presenters/overtime/overtime.view-models';
+import type { OvertimeDeclarationRowModel } from '../../../../../adapters/presenters/overtime/overtime.presenter';
 
 export function OvertimeDeclarationRow({
   date,

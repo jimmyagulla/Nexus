@@ -1,4 +1,5 @@
-import type { AccountingFirmUploadFormModel, AccountingFirmUploadViewModel, AccountingFirmViewModel, ExchangeRowModel } from '../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
+import type { AccountingFirmUploadFormModel, AccountingFirmUploadViewModel } from '../../../adapters/presenters/accounting-firm/accounting-firm-upload.presenter';
+import type { AccountingFirmViewModel, ExchangeRowModel } from '../../../adapters/presenters/accounting-firm/accounting-firm.presenter';
 
 /** Placeholder data of the accounting firm screens (mockup v3, flow 10). */
 const exchanges: ExchangeRowModel[] = [

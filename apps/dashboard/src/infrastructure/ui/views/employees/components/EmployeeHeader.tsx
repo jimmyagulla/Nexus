@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from '../../../shared/avatar';
 import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { tabsTriggerClassName } from '../../../shared/tabs';
-import type { EmployeeHeaderModel } from '../../../../../adapters/presenters/employees/employees.view-models';
+import type { EmployeeHeaderModel } from '../../../../../adapters/presenters/employees/employee.presenter';
 
 /** Banner of an employee space: identity, actions and the space tabs. */
 export function EmployeeHeader({ employee }: { employee: EmployeeHeaderModel }) {

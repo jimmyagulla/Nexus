@@ -1,4 +1,4 @@
-import type { ProgressStepState } from '../../../../adapters/presenters/display.view-models';
+import type { ProgressStepState } from '../../../../adapters/presenters/display.types';
 import { cn } from '../../lib/utils';
 
 interface StepProgressItemProps {

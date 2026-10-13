@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '../../lib/utils';
-import type { ShellNavItem } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellNavItem } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface MobileTabBarItemProps {
   item: ShellNavItem;

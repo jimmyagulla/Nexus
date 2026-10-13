@@ -8,7 +8,7 @@ import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card } from '../../shared/card';
 import { OvertimeCounterPanel } from './components/OvertimeCounterPanel';
-import type { OvertimeDeclarationViewModel } from '../../../../adapters/presenters/overtime/overtime.view-models';
+import type { OvertimeDeclarationViewModel } from '../../../../adapters/presenters/overtime/overtime-declaration.presenter';
 
 interface OvertimeDeclarationProps {
   model: OvertimeDeclarationViewModel;

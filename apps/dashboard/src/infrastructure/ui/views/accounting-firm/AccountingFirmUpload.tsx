@@ -5,7 +5,7 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card } from '../../shared/card';
-import type { AccountingFirmUploadViewModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
+import type { AccountingFirmUploadViewModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm-upload.presenter';
 
 /** P10.2 — upload a document for the accounting firm. */
 export function AccountingFirmUpload({

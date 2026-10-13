@@ -1,4 +1,5 @@
-import type { OvertimeDeclarationViewModel, OvertimeViewModel } from '../../../adapters/presenters/overtime/overtime.view-models';
+import type { OvertimeDeclarationViewModel } from '../../../adapters/presenters/overtime/overtime-declaration.presenter';
+import type { OvertimeViewModel } from '../../../adapters/presenters/overtime/overtime.presenter';
 
 /** Placeholder data of the overtime screens (mockup v3, flow 5). */
 export const overtimeFixture: OvertimeViewModel = {

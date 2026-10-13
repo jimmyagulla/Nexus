@@ -6,7 +6,7 @@ import { i18n } from '../../i18n/i18n';
 import { RadioGroup } from '../../shared/radio-group';
 import { Textarea } from '../../shared/textarea';
 import { DocumentTypeOption } from './DocumentTypeOption';
-import type { DocumentUploadFormModel } from '../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentUploadFormModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
 
 interface DocumentUploadFormProps {
   model: DocumentUploadFormModel;

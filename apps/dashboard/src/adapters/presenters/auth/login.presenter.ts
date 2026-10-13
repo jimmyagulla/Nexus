@@ -1,4 +1,8 @@
-import type { LoginViewModel } from './auth.view-models';
+export interface LoginViewModel {
+  organization: string;
+  email: string;
+  password: string;
+}
 
 /**
  * Presents the login screen.

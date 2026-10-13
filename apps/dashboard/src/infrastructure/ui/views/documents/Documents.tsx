@@ -13,7 +13,7 @@ import { Sheet, SheetTrigger } from '../../shared/sheet';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { DocumentFiltersSheet } from './components/DocumentFiltersSheet';
 import { DocumentRow } from './components/DocumentRow';
-import type { DocumentsViewModel } from '../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentsViewModel } from '../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentsProps {
   model: DocumentsViewModel;

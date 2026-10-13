@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import type { PayslipBannerModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { PayslipBannerModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 /** Blue banner of the latest payslip on the mobile home (M.1). */
 export function PayslipBanner({ banner }: { banner: PayslipBannerModel }) {

@@ -1,5 +1,5 @@
 import { MobileTabBarItem } from './MobileTabBarItem';
-import type { ShellNavItem } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellNavItem } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface MobileTabBarProps {
   items: ShellNavItem[];

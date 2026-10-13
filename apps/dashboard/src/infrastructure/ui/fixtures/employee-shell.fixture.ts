@@ -1,4 +1,4 @@
-import type { ShellViewModel } from '../../../adapters/presenters/shell/shell.view-models';
+import type { ShellViewModel } from '../../../adapters/presenters/shell/shell.presenter';
 import { i18n } from '../i18n/i18n';
 import { AppRoutes } from '../routes/app-routes';
 

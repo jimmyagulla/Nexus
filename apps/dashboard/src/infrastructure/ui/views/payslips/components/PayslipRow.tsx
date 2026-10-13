@@ -5,7 +5,7 @@ import { AppRoutes } from '../../../routes/app-routes';
 import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslips.view-models';
+import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslips.presenter';
 
 /** One payslip line of the P1.5 table. */
 export function PayslipRow({ payslip }: { payslip: PayslipRowModel }) {

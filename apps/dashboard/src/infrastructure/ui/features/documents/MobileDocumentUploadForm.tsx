@@ -6,7 +6,7 @@ import { Textarea } from '../../shared/textarea';
 import { MobileDocumentTypeOption } from './MobileDocumentTypeOption';
 import { MobileFilePicker } from './MobileFilePicker';
 import { MobileUploadedFile } from './MobileUploadedFile';
-import type { MobileDocumentUploadFormModel } from '../../../../adapters/presenters/documents/documents.view-models';
+import type { MobileDocumentUploadFormModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
 
 interface MobileDocumentUploadFormProps {
   model: MobileDocumentUploadFormModel;

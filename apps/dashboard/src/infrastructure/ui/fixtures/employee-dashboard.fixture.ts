@@ -1,5 +1,5 @@
 import { AppRoutes } from '../routes/app-routes';
-import type { EmployeeDashboardViewModel } from '../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { EmployeeDashboardViewModel } from '../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 const latestPayslip = {
   to: AppRoutes.payslip,

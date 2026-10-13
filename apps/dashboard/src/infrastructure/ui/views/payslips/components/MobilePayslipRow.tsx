@@ -3,7 +3,7 @@ import { i18n } from '../../../i18n/i18n';
 import { AppRoutes } from '../../../routes/app-routes';
 import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
-import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslips.view-models';
+import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslips.presenter';
 
 /** One payslip card of the mobile list (M.2). */
 export function MobilePayslipRow({ payslip }: { payslip: PayslipRowModel }) {

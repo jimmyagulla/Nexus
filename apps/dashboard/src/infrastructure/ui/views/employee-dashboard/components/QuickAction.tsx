@@ -1,7 +1,16 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../shared/button';
-import type { QuickActionModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { NavigationTarget } from '../../../../../adapters/presenters/display.types';
+
+export interface QuickActionModel {
+  id: string;
+  /** Remix Icon class, e.g. `ri-time-line`. */
+  icon: string;
+  label: string;
+  link: NavigationTarget;
+  primary?: boolean;
+}
 
 /** Full-width action button of the quick actions card. */
 export function QuickAction({ action }: { action: QuickActionModel }) {

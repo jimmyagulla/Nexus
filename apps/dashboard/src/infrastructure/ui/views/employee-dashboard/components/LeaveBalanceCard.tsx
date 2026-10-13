@@ -7,7 +7,7 @@ import { Button } from '../../../shared/button';
 import { Card } from '../../../shared/card';
 import { LeaveBalanceItem } from './LeaveBalanceItem';
 import { LeaveBalanceRing } from './LeaveBalanceRing';
-import type { LeaveBalanceModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { LeaveBalanceModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 /** Paid-leave balance: ring, figures, next leave and leave actions. */
 export function LeaveBalanceCard({ balance }: { balance: LeaveBalanceModel }) {

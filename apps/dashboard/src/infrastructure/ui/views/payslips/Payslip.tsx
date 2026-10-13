@@ -7,7 +7,7 @@ import { Card } from '../../shared/card';
 import { DownloadToast } from './components/DownloadToast';
 import { PayslipDetailRow } from './components/PayslipDetailRow';
 import { PayslipPreview } from './components/PayslipPreview';
-import type { PayslipViewModel } from '../../../../adapters/presenters/payslips/payslips.view-models';
+import type { PayslipViewModel } from '../../../../adapters/presenters/payslips/payslip.presenter';
 
 interface PayslipProps {
   model: PayslipViewModel;

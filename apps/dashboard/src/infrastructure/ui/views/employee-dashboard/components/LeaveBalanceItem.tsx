@@ -1,5 +1,5 @@
 import { cn } from '../../../lib/utils';
-import type { LeaveBalanceItemModel, LeaveBalanceKind } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { LeaveBalanceItemModel, LeaveBalanceKind } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 const dotClassName: Record<LeaveBalanceKind, string> = {
   acquired: 'bg-grey-300',

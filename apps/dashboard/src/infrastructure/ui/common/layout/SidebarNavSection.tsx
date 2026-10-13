@@ -1,4 +1,4 @@
-import type { ShellNavSection } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellNavSection } from '../../../../adapters/presenters/shell/shell.presenter';
 import { SidebarNavItem } from './SidebarNavItem';
 
 interface SidebarNavSectionProps {

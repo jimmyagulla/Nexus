@@ -1,4 +1,5 @@
-import type { LoginVerificationViewModel, LoginViewModel } from '../../../adapters/presenters/auth/auth.view-models';
+import type { LoginVerificationViewModel } from '../../../adapters/presenters/auth/login-verification.presenter';
+import type { LoginViewModel } from '../../../adapters/presenters/auth/login.presenter';
 
 /** Placeholder data of the sign-in screens (mockup v3, flow 1). */
 export const loginFixture: LoginViewModel = {

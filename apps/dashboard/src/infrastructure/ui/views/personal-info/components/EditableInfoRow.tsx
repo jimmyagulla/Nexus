@@ -1,6 +1,6 @@
 import { cn } from '../../../lib/utils';
 import { i18n } from '../../../i18n/i18n';
-import type { EditableInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { EditableInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.presenter';
 
 interface EditableInfoRowProps {
   model: EditableInfoModel;

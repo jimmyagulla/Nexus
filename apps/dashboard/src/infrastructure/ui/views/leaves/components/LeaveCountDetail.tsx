@@ -1,6 +1,6 @@
 import { i18n } from '../../../i18n/i18n';
 import { LeaveCountDetailRow } from './LeaveCountDetailRow';
-import type { LeaveCountDetailModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveCountDetailModel } from '../../../../../adapters/presenters/leaves/leave-request.presenter';
 
 /** "Détail du décompte": how the working days of the request are counted. */
 export function LeaveCountDetail({

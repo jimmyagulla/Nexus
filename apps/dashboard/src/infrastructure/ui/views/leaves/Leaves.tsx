@@ -8,7 +8,7 @@ import { LeaveBalanceHighlight } from './components/LeaveBalanceHighlight';
 import { LeaveCalendar } from './components/LeaveCalendar';
 import { LeaveCounter } from './components/LeaveCounter';
 import { LeaveRequestList } from './components/LeaveRequestList';
-import type { LeavesViewModel } from '../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeavesViewModel } from '../../../../adapters/presenters/leaves/leaves.presenter';
 
 interface LeavesProps {
   model: LeavesViewModel;

@@ -1,4 +1,4 @@
-import type { ActivityItemModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
+import type { ActivityItemModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.presenter';
 
 /** Line of the recent activity feed: icon, "<b>Actor</b> action", date. */
 export function ActivityItem({ activity }: { activity: ActivityItemModel }) {

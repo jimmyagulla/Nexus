@@ -12,7 +12,7 @@ import {
 import { Textarea } from '../../shared/textarea';
 import { RequestFieldLabel } from './RequestFieldLabel';
 import { ExpenseTypeCard } from './ExpenseTypeCard';
-import type { ProfessionalExpenseFormModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
+import type { ProfessionalExpenseFormModel } from '../../../../adapters/presenters/professional-expenses/professional-expense-request.presenter';
 
 /** Numbered sections of the professional expense request (P7.2). */
 export function ProfessionalExpenseForm({

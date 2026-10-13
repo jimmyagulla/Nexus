@@ -6,7 +6,7 @@ import { ToggleGroup, ToggleGroupItem } from '../../shared/toggle-group';
 import { ExpenseFieldLabel } from './ExpenseFieldLabel';
 import { ExpenseProof } from './ExpenseProof';
 import { ExpenseSelect } from './ExpenseSelect';
-import type { ExpenseFormModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseFormModel } from '../../../../adapters/presenters/expense-reports/expense-report.presenter';
 
 const FIELD = 'gap-1';
 const LABEL = 'text-13';

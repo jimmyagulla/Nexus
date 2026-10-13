@@ -1,4 +1,4 @@
-import type { ChangeModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { ChangeModel } from '../../../../../adapters/presenters/personal-info/personal-info-edit.presenter';
 
 interface ChangeRowProps {
   model: ChangeModel;

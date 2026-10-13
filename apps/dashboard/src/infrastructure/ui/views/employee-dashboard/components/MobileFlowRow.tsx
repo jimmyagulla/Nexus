@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { IconTile } from '../../../common/data/IconTile';
 import { cn } from '../../../lib/utils';
-import type { MobileFlowRowModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { MobileFlowRowModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 /** One flow card of the mobile home (M.1). */
 export function MobileFlowRow({ row }: { row: MobileFlowRowModel }) {

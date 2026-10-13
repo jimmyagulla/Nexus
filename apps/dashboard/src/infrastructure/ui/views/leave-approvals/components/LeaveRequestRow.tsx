@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from '../../../shared/avatar';
 import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { LeaveRequestRowModel } from '../../../../../adapters/presenters/leave-approvals/leave-approvals.view-models';
+import type { LeaveRequestRowModel } from '../../../../../adapters/presenters/leave-approvals/leave-approvals.presenter';
 
 /** Pending leave request with its Refuser / Accepter decision. */
 export function LeaveRequestRow({ request }: { request: LeaveRequestRowModel }) {

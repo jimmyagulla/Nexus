@@ -6,7 +6,7 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card, CardFooter } from '../../shared/card';
-import type { ProfessionalExpenseRequestViewModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
+import type { ProfessionalExpenseRequestViewModel } from '../../../../adapters/presenters/professional-expenses/professional-expense-request.presenter';
 
 /** P7.2 — new professional expense request. */
 export function ProfessionalExpenseRequest({

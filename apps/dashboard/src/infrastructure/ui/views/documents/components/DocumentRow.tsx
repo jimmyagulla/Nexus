@@ -2,7 +2,7 @@ import { RowAction } from '../../../common/data/RowAction';
 import { i18n } from '../../../i18n/i18n';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentRowProps {
   model: DocumentRowModel;

@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../../../shared/sheet';
-import type { ExpenseFormModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseFormModel } from '../../../../../adapters/presenters/expense-reports/expense-report.presenter';
 
 /** P6.2 — floating panel adding an expense to the note. */
 export function AddExpenseSheet({ expense }: { expense: ExpenseFormModel }) {

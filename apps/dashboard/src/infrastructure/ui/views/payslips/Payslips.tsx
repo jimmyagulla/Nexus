@@ -7,7 +7,7 @@ import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { MobilePayslipRow } from './components/MobilePayslipRow';
 import { PayslipRow } from './components/PayslipRow';
-import type { PayslipsViewModel } from '../../../../adapters/presenters/payslips/payslips.view-models';
+import type { PayslipsViewModel } from '../../../../adapters/presenters/payslips/payslips.presenter';
 
 interface PayslipsProps {
   model: PayslipsViewModel;

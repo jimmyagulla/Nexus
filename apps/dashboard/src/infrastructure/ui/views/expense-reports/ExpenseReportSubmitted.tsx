@@ -5,7 +5,7 @@ import { ExpenseReportsTable } from './components/ExpenseReportsTable';
 import { ExpenseReportsToolbar } from './components/ExpenseReportsToolbar';
 import { NewExpenseReportButton } from './components/NewExpenseReportButton';
 import { SubmittedBanner } from './components/SubmittedBanner';
-import type { ExpenseReportSubmittedViewModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
+import type { ExpenseReportSubmittedViewModel } from '../../../../adapters/presenters/expense-reports/expense-report-submitted.presenter';
 
 /** P6.4 — the list again, once a note is submitted for refund. */
 export function ExpenseReportSubmitted({

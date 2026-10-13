@@ -2,7 +2,8 @@ import { i18n } from '../../../i18n/i18n';
 import { Card } from '../../../shared/card';
 import { LeaveCalendarDay } from './LeaveCalendarDay';
 import { LeaveCalendarLegendItem } from './LeaveCalendarLegendItem';
-import type { LeaveCalendarLegendTone, LeaveCalendarModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveCalendarModel } from '../../../../../adapters/presenters/leaves/leaves.presenter';
+import type { LeaveCalendarLegendTone } from './LeaveCalendarLegendItem';
 
 const legendTones: LeaveCalendarLegendTone[] = [
   'accepted',

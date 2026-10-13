@@ -1,4 +1,11 @@
-import type { PersonalInfoUpdatedViewModel } from './personal-info.view-models';
+import type { EditableInfoModel } from './personal-info.presenter';
+
+export interface PersonalInfoUpdatedViewModel {
+  /** "Le service RH a été informé le … Un e-mail de confirmation vous a été envoyé." */
+  notice: string;
+  lastUpdate: string;
+  contact: EditableInfoModel[];
+}
 
 /**
  * Presents the contact details update confirmation.

@@ -1,4 +1,21 @@
-import type { LeaveApprovalsViewModel } from './leave-approvals.view-models';
+import type { StatusViewModel } from '../display.types';
+
+export interface LeaveApprovalsViewModel {
+  summary: string;
+  statusFilter: string;
+  requests: LeaveRequestRowModel[];
+}
+
+export interface LeaveRequestRowModel {
+  id: string;
+  initials: string;
+  employee: string;
+  type: string;
+  period: string;
+  days: string;
+  balanceAfter: string;
+  status: StatusViewModel;
+}
 
 /**
  * Presents the leave requests to approve.

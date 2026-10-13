@@ -7,7 +7,7 @@ import { Button } from '../../shared/button';
 import { Card, CardFooter } from '../../shared/card';
 import { Dialog, DialogTrigger } from '../../shared/dialog';
 import { ConfirmChangesDialog } from './components/ConfirmChangesDialog';
-import type { PersonalInfoEditViewModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { PersonalInfoEditViewModel } from '../../../../adapters/presenters/personal-info/personal-info-edit.presenter';
 
 interface PersonalInfoEditProps {
   model: PersonalInfoEditViewModel;

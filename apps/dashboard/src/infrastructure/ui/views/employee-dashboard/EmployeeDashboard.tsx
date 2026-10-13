@@ -9,7 +9,8 @@ import { LeaveBalanceCard } from './components/LeaveBalanceCard';
 import { MobileFlowRow } from './components/MobileFlowRow';
 import { PayslipBanner } from './components/PayslipBanner';
 import { QuickAction } from './components/QuickAction';
-import type { EmployeeDashboardViewModel, QuickActionModel } from '../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { EmployeeDashboardViewModel } from '../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
+import type { QuickActionModel } from './components/QuickAction';
 
 interface EmployeeDashboardProps {
   model: EmployeeDashboardViewModel;

@@ -8,7 +8,7 @@ import { i18n } from '../../i18n/i18n';
 import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { LeaveRequestRow } from './components/LeaveRequestRow';
-import type { LeaveApprovalsViewModel } from '../../../../adapters/presenters/leave-approvals/leave-approvals.view-models';
+import type { LeaveApprovalsViewModel } from '../../../../adapters/presenters/leave-approvals/leave-approvals.presenter';
 
 const columns = 'minmax(0, 1.2fr) 120px 170px 60px 100px 110px 190px';
 

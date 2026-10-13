@@ -2,7 +2,7 @@ import { RowAction } from '../../../common/data/RowAction';
 import { i18n } from '../../../i18n/i18n';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { ExchangeRowModel } from '../../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
+import type { ExchangeRowModel } from '../../../../../adapters/presenters/accounting-firm/accounting-firm.presenter';
 
 /** Document exchanged with the accounting firm, with its direction. */
 export function ExchangeRow({ exchange }: { exchange: ExchangeRowModel }) {

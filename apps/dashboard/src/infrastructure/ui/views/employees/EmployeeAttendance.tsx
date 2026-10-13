@@ -6,7 +6,7 @@ import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { AttendanceMonthRow } from './components/AttendanceMonthRow';
 import { EmployeeHeader } from './components/EmployeeHeader';
-import type { EmployeeAttendanceViewModel } from '../../../../adapters/presenters/employees/employees.view-models';
+import type { EmployeeAttendanceViewModel } from '../../../../adapters/presenters/employees/employee-attendance.presenter';
 
 const columns = '150px 130px 100px 90px 80px 80px minmax(0, 1fr)';
 

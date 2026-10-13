@@ -1,4 +1,4 @@
-import type { LeaveApprovalsViewModel } from '../../../adapters/presenters/leave-approvals/leave-approvals.view-models';
+import type { LeaveApprovalsViewModel } from '../../../adapters/presenters/leave-approvals/leave-approvals.presenter';
 
 /** Placeholder data of the leave approvals screen (mockup v3, flow 9). */
 export const leaveApprovalsFixture: LeaveApprovalsViewModel = {

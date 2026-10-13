@@ -1,5 +1,5 @@
 import { i18n } from '../../../i18n/i18n';
-import type { LeaveBalanceImpactModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveBalanceImpactModel } from '../../../../../adapters/presenters/leaves/leave-request.presenter';
 
 /** "Impact sur votre compteur" box with its two-segment balance bar. */
 export function LeaveBalanceImpact({

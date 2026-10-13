@@ -1,4 +1,6 @@
-import type { PersonalInfoEditViewModel, PersonalInfoUpdatedViewModel, PersonalInfoViewModel } from '../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { PersonalInfoEditViewModel } from '../../../adapters/presenters/personal-info/personal-info-edit.presenter';
+import type { PersonalInfoUpdatedViewModel } from '../../../adapters/presenters/personal-info/personal-info-updated.presenter';
+import type { PersonalInfoViewModel } from '../../../adapters/presenters/personal-info/personal-info.presenter';
 
 /** Placeholder data of the personal information screens (mockup v3, flow 3). */
 export const personalInfoFixture: PersonalInfoViewModel = {

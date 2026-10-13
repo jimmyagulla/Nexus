@@ -13,10 +13,10 @@ import { ToggleGroup, ToggleGroupItem } from '../../../shared/toggle-group';
 import { FilterGroup } from './FilterGroup';
 import { FilterOption } from './FilterOption';
 import { PeriodField } from './PeriodField';
-import type { DocumentFiltersViewModel } from '../../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentFiltersModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentFiltersSheetProps {
-  model: DocumentFiltersViewModel;
+  model: DocumentFiltersModel;
 }
 
 /** Floating "Filtres" panel of the documents list. */

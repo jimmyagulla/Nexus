@@ -1,4 +1,14 @@
-import type { DocumentSentViewModel } from './documents.view-models';
+import type { ProgressStepViewModel, StatusViewModel } from '../display.types';
+
+export interface DocumentSentViewModel {
+  description: string;
+  type: string;
+  fileName: string;
+  sentAt: string;
+  recipient: string;
+  status: StatusViewModel;
+  steps: ProgressStepViewModel[];
+}
 
 /**
  * Presents the document sent confirmation.

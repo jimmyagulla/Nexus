@@ -1,4 +1,4 @@
-import type { IdentityRowModel } from '../../../../../adapters/presenters/employees/employees.view-models';
+import type { IdentityRowModel } from '../../../../../adapters/presenters/employees/employee.presenter';
 
 /** "Label ...... value" line of the identity card. */
 export function IdentityRow({ row }: { row: IdentityRowModel }) {

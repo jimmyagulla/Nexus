@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback } from '../../shared/avatar';
 import { NotificationBell } from './NotificationBell';
 import { SecureConnectionChip } from './SecureConnectionChip';
 import { SmartSearch } from './SmartSearch';
-import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface TopbarProps {
   model: ShellViewModel;

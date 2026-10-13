@@ -1,5 +1,5 @@
 import { Checkbox } from '../../../shared/checkbox';
-import type { FilterOptionModel } from '../../../../../adapters/presenters/documents/documents.view-models';
+import type { FilterOptionModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
 interface FilterOptionProps {
   model: FilterOptionModel;

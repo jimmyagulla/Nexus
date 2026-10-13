@@ -1,5 +1,5 @@
 import { i18n } from '../../../i18n/i18n';
-import type { OvertimeCounterPanelModel } from '../../../../../adapters/presenters/overtime/overtime.view-models';
+import type { OvertimeCounterPanelModel } from '../../../../../adapters/presenters/overtime/overtime-declaration.presenter';
 
 /** "Mon compteur" box: pending hours before and after this declaration. */
 export function OvertimeCounterPanel({

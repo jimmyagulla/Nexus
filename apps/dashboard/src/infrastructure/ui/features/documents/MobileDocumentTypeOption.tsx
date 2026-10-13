@@ -1,5 +1,5 @@
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import type { DocumentTypeOptionModel } from '../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentTypeOptionModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
 
 interface MobileDocumentTypeOptionProps {
   model: DocumentTypeOptionModel;

@@ -7,7 +7,7 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card, CardFooter } from '../../shared/card';
-import type { DocumentUploadViewModel } from '../../../../adapters/presenters/documents/documents.view-models';
+import type { DocumentUploadViewModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
 
 interface DocumentUploadProps {
   model: DocumentUploadViewModel;

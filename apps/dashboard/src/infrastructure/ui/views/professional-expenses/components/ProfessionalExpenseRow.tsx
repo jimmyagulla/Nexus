@@ -1,7 +1,7 @@
 import { IconTile } from '../../../common/data/IconTile';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { ProfessionalExpenseRowModel } from '../../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
+import type { ProfessionalExpenseRowModel } from '../../../../../adapters/presenters/professional-expenses/professional-expenses.presenter';
 
 export function ProfessionalExpenseRow({
   request,

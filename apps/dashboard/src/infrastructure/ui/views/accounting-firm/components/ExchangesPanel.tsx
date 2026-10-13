@@ -4,7 +4,7 @@ import { SortButton } from '../../../common/data/SortButton';
 import { i18n } from '../../../i18n/i18n';
 import { Table, TableHead, TableHeader } from '../../../shared/table';
 import { ExchangeRow } from './ExchangeRow';
-import type { ExchangeRowModel } from '../../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
+import type { ExchangeRowModel } from '../../../../../adapters/presenters/accounting-firm/accounting-firm.presenter';
 
 const columns = 'minmax(0, 1fr) 100px 190px 140px 80px';
 

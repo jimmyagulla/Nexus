@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { FlowTone } from '../../../../adapters/presenters/display.view-models';
+import type { FlowTone } from '../../../../adapters/presenters/display.types';
 import { cn } from '../../lib/utils';
 
 const tones = {

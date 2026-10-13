@@ -1,4 +1,23 @@
-import type { OvertimeViewModel } from './overtime.view-models';
+import type { StatusViewModel } from '../display.types';
+
+export interface OvertimeViewModel {
+  counters: {
+    pending: string;
+    approved: string;
+    processed: string;
+  };
+  declarations: OvertimeDeclarationRowModel[];
+}
+
+export interface OvertimeDeclarationRowModel {
+  date: string;
+  /** "+2h30" */
+  hours: string;
+  reason: string;
+  /** "1 fichier" or "—" */
+  proof: string;
+  status: StatusViewModel;
+}
 
 /**
  * Presents the overtime overview.

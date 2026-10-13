@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import type { StatusTone } from "../../../adapters/presenters/display.view-models"
+import type { StatusTone } from "../../../adapters/presenters/display.types"
 import { cn } from "../lib/utils"
 
 const tones = {

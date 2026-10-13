@@ -23,9 +23,10 @@ description: >-
 
 ## Layout
 - One folder per domain: `adapters/presenters/<domain>/`.
-- `<domain>.view-models.ts` declares every view model of the domain's screens (and their row / item models). Views and fixtures import these types; they never declare them.
-- One presenter per screen: `<screen>.presenter.ts`, class `<Screen>Presenter`, `present(): <Screen>ViewModel`.
-- Display vocabulary shared by all view models (status tones, flow tones, progress steps, navigation targets) lives in `display.view-models.ts`. View models never import UI types.
+- **One presenter per view model**: `<screen>.presenter.ts` declares the screen's `<Screen>ViewModel`, the sub-models it is made of (rows, items, cards), and the class `<Screen>Presenter` whose `present(): <Screen>ViewModel` produces it.
+- A sub-model shared by several screens is declared in one presenter file and imported by the others. Views and fixtures import view-model types from the presenter files; they never declare them.
+- Types that only the UI uses (static lists built by a view, legend tones…) stay in their component.
+- The display vocabulary shared by all view models (status tones, flow tones, progress steps, navigation targets) lives in `display.types.ts`. View models never import UI types.
 
 ## Placeholder presenters
 Until a screen's use case exists, its presenter receives a placeholder view model through its constructor (a fixture of `infrastructure/ui/fixtures/`, wired by the composition root) and returns it as is. When the use case lands, `present` takes its output and maps it; the view and the page do not change.

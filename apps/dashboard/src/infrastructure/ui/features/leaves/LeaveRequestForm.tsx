@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '../../shared/select';
 import { Textarea } from '../../shared/textarea';
-import type { LeaveRequestFormValues } from '../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveRequestFormValues } from '../../../../adapters/presenters/leaves/leave-request.presenter';
 
 interface LeaveRequestFormProps {
   defaults: LeaveRequestFormValues;

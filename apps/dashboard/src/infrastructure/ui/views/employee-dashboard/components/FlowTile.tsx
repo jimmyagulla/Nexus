@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { IconTile } from '../../../common/data/IconTile';
 import { cn } from '../../../lib/utils';
-import type { FlowTileModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { FlowTileModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 /** One cell of the flows grid: icon, flow name, its status and a link. */
 export function FlowTile({ tile }: { tile: FlowTileModel }) {

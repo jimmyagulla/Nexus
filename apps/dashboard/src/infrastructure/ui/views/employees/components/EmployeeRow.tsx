@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from '../../../shared/avatar';
 import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { EmployeeRowModel } from '../../../../../adapters/presenters/employees/employees.view-models';
+import type { EmployeeRowModel } from '../../../../../adapters/presenters/employees/employees.presenter';
 
 /** Line of the employees table. */
 export function EmployeeRow({ employee }: { employee: EmployeeRowModel }) {

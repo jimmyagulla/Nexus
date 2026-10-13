@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle } from '../../shared/card';
 import { ActivityItem } from './components/ActivityItem';
 import { StatTile } from './components/StatTile';
 import { TaskItem } from './components/TaskItem';
-import type { EmployerDashboardViewModel } from '../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
+import type { EmployerDashboardViewModel } from '../../../../adapters/presenters/employer-dashboard/employer-dashboard.presenter';
 
 /** P8.1 — employer dashboard: stats, tasks to process, recent activity. */
 export function EmployerDashboard({

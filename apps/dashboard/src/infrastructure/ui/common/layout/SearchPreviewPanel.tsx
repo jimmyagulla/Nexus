@@ -1,6 +1,6 @@
 import { i18n } from '../../i18n/i18n';
 import { SearchPreviewItem } from './SearchPreviewItem';
-import type { SearchPreview } from '../../../../adapters/presenters/shell/shell.view-models';
+import type { SearchPreview } from '../../../../adapters/presenters/shell/shell.presenter';
 
 interface SearchPreviewPanelProps {
   preview: SearchPreview;

@@ -1,4 +1,10 @@
-import type { ExpenseReportSubmittedViewModel } from './expense-reports.view-models';
+import type { ExpenseReportRowModel } from './expense-reports.presenter';
+
+export interface ExpenseReportSubmittedViewModel {
+  confirmation: { title: string; description: string };
+  draftId: string;
+  reports: ExpenseReportRowModel[];
+}
 
 /**
  * Presents the expense report submission confirmation.

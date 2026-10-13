@@ -1,6 +1,6 @@
 import { CSSProperties } from 'react';
 import { i18n } from '../../../i18n/i18n';
-import type { LeaveBalanceRingModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { LeaveBalanceRingModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 interface LeaveBalanceRingProps {
   ring: LeaveBalanceRingModel;

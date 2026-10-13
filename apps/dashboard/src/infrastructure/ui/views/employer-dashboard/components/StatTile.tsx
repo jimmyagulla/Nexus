@@ -1,5 +1,5 @@
 import { Card } from '../../../shared/card';
-import type { StatTileModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
+import type { StatTileModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.presenter';
 
 /** Figure of the employer stats strip: big number, label, hint. */
 export function StatTile({ stat }: { stat: StatTileModel }) {

@@ -1,4 +1,4 @@
-import type { EmployerInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
+import type { EmployerInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.presenter';
 
 interface EmployerInfoRowProps {
   model: EmployerInfoModel;

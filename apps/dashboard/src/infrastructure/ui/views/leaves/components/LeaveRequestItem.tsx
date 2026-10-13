@@ -1,5 +1,5 @@
 import { Badge } from '../../../shared/badge';
-import type { LeaveRequestItemModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveRequestItemModel } from '../../../../../adapters/presenters/leaves/leaves.presenter';
 
 /** One row of "Mes demandes": type and period, days, status. */
 export function LeaveRequestItem({ type, period, days, status }: LeaveRequestItemModel) {

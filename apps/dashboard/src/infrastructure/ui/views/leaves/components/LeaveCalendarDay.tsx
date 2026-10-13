@@ -1,5 +1,5 @@
 import { cn } from '../../../lib/utils';
-import type { LeaveCalendarDayModel, LeaveCalendarDayState } from '../../../../../adapters/presenters/leaves/leaves.view-models';
+import type { LeaveCalendarDayModel, LeaveCalendarDayState } from '../../../../../adapters/presenters/leaves/leaves.presenter';
 
 const stateClassName: Record<LeaveCalendarDayState, string> = {
   outside: 'border-transparent text-transparent',

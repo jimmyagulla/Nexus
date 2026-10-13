@@ -1,7 +1,7 @@
 import { IconTile } from '../../../common/data/IconTile';
 import { cn } from '../../../lib/utils';
 import { Badge } from '../../../shared/badge';
-import type { ActivityModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
+import type { ActivityModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.presenter';
 
 /** One line of the recent activities card. */
 export function ActivityRow({ activity }: { activity: ActivityModel }) {
