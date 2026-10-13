@@ -3,7 +3,28 @@ import { ErrorCode } from '@hexagonal-monorepo-template/domain';
 export const en = {
   navigation: {
     dashboard: 'Dashboard',
+    accounts: 'Accounts',
     settings: 'Settings',
+  },
+  accounts: {
+    title: 'Accounts',
+    identifier: 'Identifier',
+    role: 'Role',
+    status: 'Status',
+    invite: 'Invite',
+    disable: 'Disable',
+    restore: 'Restore',
+    activationLink: 'Activation link to hand over',
+    roles: {
+      EMPLOYER: 'Employer',
+      EMPLOYEE: 'Employee',
+      ACCOUNTANT: 'Accounting firm',
+    },
+    statuses: {
+      INVITED: 'Invited',
+      ACTIVE: 'Active',
+      DISABLED: 'Disabled',
+    },
   },
   loading: 'Loading…',
   home: {

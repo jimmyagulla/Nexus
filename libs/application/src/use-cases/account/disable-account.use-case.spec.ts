@@ -45,6 +45,7 @@ describe('DisableAccountUseCase', () => {
       identifier: 'partner',
       role: UserRole.EMPLOYER,
       status: AccountStatus.DISABLED,
+      locked: false,
     });
     expect((await accounts.findByIdentifier('partner'))?.status).toBe(
       AccountStatus.DISABLED,

@@ -3,6 +3,7 @@ import {
   ActivateAccountUseCase,
   DisableAccountUseCase,
   InviteEmployerUseCase,
+  ListCompanyAccountsUseCase,
   RestoreAccountUseCase,
   SignInUseCase,
 } from '@hexagonal-monorepo-template/application';
@@ -19,6 +20,7 @@ import {
   IClock,
   IDisableAccount,
   IInviteEmployer,
+  IListCompanyAccounts,
   IRestoreAccount,
   ISecretHasher,
   ISignIn,
@@ -77,6 +79,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       provide: IRestoreAccount,
       useFactory: (accounts: IAccountRepository) =>
         new RestoreAccountUseCase(accounts),
+      inject: [IAccountRepository],
+    },
+    {
+      provide: IListCompanyAccounts,
+      useFactory: (accounts: IAccountRepository) =>
+        new ListCompanyAccountsUseCase(accounts),
       inject: [IAccountRepository],
     },
     {

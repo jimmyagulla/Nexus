@@ -8,6 +8,7 @@ import {
   IActivateAccount,
   IDisableAccount,
   IInviteEmployer,
+  IListCompanyAccounts,
   IRestoreAccount,
   ISignIn,
 } from '@hexagonal-monorepo-template/ports';
@@ -106,6 +107,14 @@ describe('AccountModule', () => {
     }).compile();
 
     expect(moduleRef.get(IRestoreAccount)).toBeDefined();
+  });
+
+  it('wires the company accounts listing use case', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [testGlobals({}), ClockModule, AccountModule],
+    }).compile();
+
+    expect(moduleRef.get(IListCompanyAccounts)).toBeDefined();
   });
 
   it('seeds the local invited employer when authentication is disabled', async () => {

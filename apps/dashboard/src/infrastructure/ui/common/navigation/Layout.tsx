@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { LayoutDashboard, Settings } from 'lucide-react';
+import { LayoutDashboard, Settings, Users } from 'lucide-react';
 import { Workspace } from '@hexagonal-monorepo-template/domain';
 import { AppRoutes } from '../../routes/app-routes';
 import { i18n } from '../../i18n/i18n';
@@ -28,6 +28,11 @@ export function Layout({
               to={AppRoutes.home}
               icon={<LayoutDashboard className="h-5 w-5" />}
               label={i18n.messages.navigation.dashboard}
+            />
+            <NavigationLink
+              to={AppRoutes.accounts}
+              icon={<Users className="h-5 w-5" />}
+              label={i18n.messages.navigation.accounts}
             />
             <NavigationLink
               to={AppRoutes.settings}

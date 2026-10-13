@@ -7,5 +7,6 @@ export function toAccountSummary(account: Account): AccountSummary {
     identifier: account.identifier.value,
     role: account.role,
     status: account.status,
+    locked: account.isLocked(),
   };
 }

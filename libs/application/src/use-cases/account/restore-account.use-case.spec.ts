@@ -70,6 +70,7 @@ describe('RestoreAccountUseCase', () => {
       identifier: 'partner',
       role: UserRole.EMPLOYER,
       status: AccountStatus.ACTIVE,
+      locked: false,
     });
     expect((await accounts.findByIdentifier('partner'))?.status).toBe(
       AccountStatus.ACTIVE,

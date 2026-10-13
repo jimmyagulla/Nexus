@@ -43,20 +43,21 @@ async function renderLayoutAt(
 }
 
 describe('Layout', () => {
-  it('offers the dashboard and the settings as destinations', async () => {
+  it('offers the dashboard, the accounts and the settings as destinations', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(
       within(screen.getByRole('navigation'))
         .getAllByRole('link')
         .map((link) => link.getAttribute('href')),
-    ).toEqual([AppRoutes.home, AppRoutes.settings]);
+    ).toEqual([AppRoutes.home, AppRoutes.accounts, AppRoutes.settings]);
   });
 
   it('names its destinations in french', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(screen.getByText(i18n.messages.navigation.dashboard)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.navigation.accounts)).toBeTruthy();
     expect(screen.getByText(i18n.messages.navigation.settings)).toBeTruthy();
   });
 

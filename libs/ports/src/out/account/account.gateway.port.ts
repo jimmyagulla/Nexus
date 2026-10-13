@@ -1,4 +1,8 @@
-import { SignedInSession } from '@hexagonal-monorepo-template/domain';
+import {
+  AccountSummary,
+  InvitedAccount,
+  SignedInSession,
+} from '@hexagonal-monorepo-template/domain';
 
 export interface IAccountGateway {
   activate(input: {
@@ -9,6 +13,25 @@ export interface IAccountGateway {
     identifier: string;
     secret: string;
   }): Promise<SignedInSession>;
+  listByCompany(
+    companyId: string,
+    token: string,
+  ): Promise<readonly AccountSummary[]>;
+  invite(
+    companyId: string,
+    identifier: string,
+    token: string,
+  ): Promise<InvitedAccount>;
+  disable(
+    companyId: string,
+    accountId: string,
+    token: string,
+  ): Promise<AccountSummary>;
+  restore(
+    companyId: string,
+    accountId: string,
+    token: string,
+  ): Promise<AccountSummary>;
 }
 
 export const IAccountGateway = Symbol('IAccountGateway');

@@ -1,10 +1,19 @@
-import { Body, Controller, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   IDisableAccount,
   IInviteEmployer,
+  IListCompanyAccounts,
   IRestoreAccount,
 } from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
@@ -28,7 +37,15 @@ export class CompanyAccountsController {
     private readonly disableAccount: IDisableAccount,
     @Inject(IRestoreAccount)
     private readonly restoreAccount: IRestoreAccount,
+    @Inject(IListCompanyAccounts)
+    private readonly listCompanyAccounts: IListCompanyAccounts,
   ) {}
+
+  @Get(API_ROUTES.companies.accounts)
+  @ApiOperation({ summary: 'List the accounts of the company' })
+  list(@Actor() actor: ActorContext): Promise<readonly AccountSummaryResponseDto[]> {
+    return this.listCompanyAccounts.execute({ actor });
+  }
 
   @Post(API_ROUTES.companies.accounts)
   @ApiOperation({ summary: 'Invite another employer into the company' })

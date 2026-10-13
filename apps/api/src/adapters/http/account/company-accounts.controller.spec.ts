@@ -12,6 +12,7 @@ import {
 import {
   IDisableAccount,
   IInviteEmployer,
+  IListCompanyAccounts,
   IRestoreAccount,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
@@ -28,6 +29,9 @@ const disableAccount = {
 };
 const restoreAccount = {
   execute: vi.fn<IRestoreAccount['execute']>(),
+};
+const listCompanyAccounts = {
+  execute: vi.fn<IListCompanyAccounts['execute']>(),
 };
 
 const employer: ActorContext = {
@@ -49,6 +53,7 @@ const disabled: AccountSummary = {
   identifier: 'colleague',
   role: UserRole.EMPLOYER,
   status: AccountStatus.DISABLED,
+  locked: false,
 };
 
 const restored: AccountSummary = { ...disabled, status: AccountStatus.ACTIVE };
@@ -86,6 +91,7 @@ beforeAll(async () => {
       { provide: IInviteEmployer, useValue: inviteEmployer },
       { provide: IDisableAccount, useValue: disableAccount },
       { provide: IRestoreAccount, useValue: restoreAccount },
+      { provide: IListCompanyAccounts, useValue: listCompanyAccounts },
     ],
   }).compile();
 
@@ -115,9 +121,51 @@ beforeEach(() => {
   disableAccount.execute.mockResolvedValue(disabled);
   restoreAccount.execute.mockReset();
   restoreAccount.execute.mockResolvedValue(restored);
+  listCompanyAccounts.execute.mockReset();
+  listCompanyAccounts.execute.mockResolvedValue([disabled, restored]);
 });
 
 describe('CompanyAccountsController', () => {
+  describe('GET /companies/:companyId/accounts', () => {
+    it('answers 200 with the accounts of the company', async () => {
+      await expect(send('GET', ACCOUNTS_PATH)).resolves.toEqual({
+        status: 200,
+        payload: {
+          status: 200,
+          message: 'Success',
+          data: [disabled, restored],
+        },
+      });
+    });
+
+    it('hands the actor to the use case', async () => {
+      await send('GET', ACCOUNTS_PATH);
+
+      expect(listCompanyAccounts.execute).toHaveBeenCalledWith({
+        actor: employer,
+      });
+    });
+
+    it('answers 403 NON_AUTORISE when the actor is an employee', async () => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+
+      await expect(send('GET', ACCOUNTS_PATH)).resolves.toEqual({
+        status: 403,
+        payload: { status: 403, message: ErrorCode.ACCESS_DENIED },
+      });
+      expect(listCompanyAccounts.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the actor is an accountant', async () => {
+      actor = { ...employer, role: UserRole.ACCOUNTANT };
+
+      const { status } = await send('GET', ACCOUNTS_PATH);
+
+      expect(status).toBe(403);
+      expect(listCompanyAccounts.execute).not.toHaveBeenCalled();
+    });
+  });
+
   describe('POST /companies/:companyId/accounts/:accountId/restore', () => {
     it('answers 201 with the restored account', async () => {
       await expect(send('POST', RESTORE_PATH)).resolves.toEqual({

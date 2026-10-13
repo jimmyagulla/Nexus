@@ -13,4 +13,7 @@ export class AccountSummaryResponseDto {
 
   @ApiProperty({ enum: AccountStatus })
   status!: AccountStatus;
+
+  @ApiProperty()
+  locked!: boolean;
 }

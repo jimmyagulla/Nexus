@@ -158,6 +158,21 @@ describe('dependency injection entry point', () => {
     ]);
   });
 
+  it('wires the company accounts controller on the configured api for the session company', async () => {
+    transport.body = { status: 200, data: [] };
+    const { companyAccountsComposition } = await import('./di');
+
+    await expect(
+      companyAccountsComposition.controller.listAccounts(),
+    ).resolves.toEqual([]);
+    expect(transport.calls).toEqual([
+      {
+        url: 'https://api.nexus.test/api/companies/c1/accounts',
+        authorization: 'Bearer jwt',
+      },
+    ]);
+  });
+
   it('refuses to reach the api when nobody is signed in', async () => {
     supabase.session = null;
     const deps = await companySettings();

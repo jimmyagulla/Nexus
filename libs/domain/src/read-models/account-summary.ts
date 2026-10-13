@@ -6,4 +6,5 @@ export type AccountSummary = {
   identifier: string;
   role: UserRole;
   status: AccountStatus;
+  locked: boolean;
 };
