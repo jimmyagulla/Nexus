@@ -8,6 +8,7 @@ import {
   IActivateAccount,
   IDisableAccount,
   IInviteEmployer,
+  IRestoreAccount,
   ISignIn,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
@@ -97,6 +98,14 @@ describe('AccountModule', () => {
     }).compile();
 
     expect(moduleRef.get(IDisableAccount)).toBeDefined();
+  });
+
+  it('wires the account restoring use case', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [testGlobals({}), ClockModule, AccountModule],
+    }).compile();
+
+    expect(moduleRef.get(IRestoreAccount)).toBeDefined();
   });
 
   it('seeds the local invited employer when authentication is disabled', async () => {

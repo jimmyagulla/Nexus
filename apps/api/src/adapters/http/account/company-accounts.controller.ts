@@ -5,6 +5,7 @@ import {
   API_ROUTES,
   IDisableAccount,
   IInviteEmployer,
+  IRestoreAccount,
 } from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
 import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
@@ -25,6 +26,8 @@ export class CompanyAccountsController {
     private readonly inviteEmployer: IInviteEmployer,
     @Inject(IDisableAccount)
     private readonly disableAccount: IDisableAccount,
+    @Inject(IRestoreAccount)
+    private readonly restoreAccount: IRestoreAccount,
   ) {}
 
   @Post(API_ROUTES.companies.accounts)
@@ -46,5 +49,14 @@ export class CompanyAccountsController {
     @Param('accountId') accountId: string,
   ): Promise<AccountSummaryResponseDto> {
     return this.disableAccount.execute({ actor, accountId });
+  }
+
+  @Post(API_ROUTES.companies.accountRestore)
+  @ApiOperation({ summary: 'Restore a disabled or locked account' })
+  restore(
+    @Actor() actor: ActorContext,
+    @Param('accountId') accountId: string,
+  ): Promise<AccountSummaryResponseDto> {
+    return this.restoreAccount.execute({ actor, accountId });
   }
 }

@@ -127,6 +127,50 @@ describe('Account', () => {
     );
   });
 
+  it('restores a disabled account with its secret and a clean failure count', () => {
+    const disabled = failedSignIns(2).disable();
+
+    const restored = disabled.restore();
+
+    expect(restored.status).toBe(AccountStatus.ACTIVE);
+    expect(restored.failedSignInCount).toBe(0);
+    expect(restored.secretHash).toBe('hashed-secret');
+    expect(disabled.status).toBe(AccountStatus.DISABLED);
+  });
+
+  it('restores a disabled account that had been locked', () => {
+    const restored = failedSignIns(5).disable().restore();
+
+    expect(restored.status).toBe(AccountStatus.ACTIVE);
+    expect(restored.isLocked()).toBe(false);
+  });
+
+  it('restores an active account that is locked after five failures', () => {
+    const locked = failedSignIns(5);
+
+    const restored = locked.restore();
+
+    expect(restored.status).toBe(AccountStatus.ACTIVE);
+    expect(restored.failedSignInCount).toBe(0);
+    expect(restored.isLocked()).toBe(false);
+    expect(locked.isLocked()).toBe(true);
+  });
+
+  it('refuses to restore an active account that is not locked', () => {
+    expect(() => failedSignIns(4).restore()).toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  it('refuses to restore an invited account', () => {
+    const invited = Account.inviteEmployer(
+      'account-1',
+      'company-1',
+      AccountIdentifier.parse('founder'),
+      'invite-1',
+    );
+
+    expect(() => invited.restore()).toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
   it('refuses to activate an account whose invitation is already consumed', () => {
     const activated = Account.inviteEmployer(
       'account-1',

@@ -85,6 +85,24 @@ export class Account {
     );
   }
 
+  restore(): Account {
+    const disabled = this.status === AccountStatus.DISABLED;
+    const locked = this.status === AccountStatus.ACTIVE && this.isLocked();
+    if (!disabled && !locked) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+    return new Account(
+      this.id,
+      this.companyId,
+      this.identifier,
+      this.role,
+      AccountStatus.ACTIVE,
+      this.invitationToken,
+      this.secretHash,
+      0,
+    );
+  }
+
   private withFailedSignInCount(failedSignInCount: number): Account {
     return new Account(
       this.id,

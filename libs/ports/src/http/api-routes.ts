@@ -10,6 +10,7 @@ export const API_ROUTES = {
     name: ':companyId/name',
     accounts: ':companyId/accounts',
     accountDisable: ':companyId/accounts/:accountId/disable',
+    accountRestore: ':companyId/accounts/:accountId/restore',
     nonWorkingWeekdays: ':companyId/calendar/non-working-weekdays',
     publicHolidays: ':companyId/calendar/public-holidays',
     publicHoliday: ':companyId/calendar/public-holidays/:publicHolidayId',
