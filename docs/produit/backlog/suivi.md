@@ -6,17 +6,14 @@ Réalisable = un agent peut le prendre maintenant, dépendances terminées et pr
 
 ## En cours
 
-| Id       | Type  | Priorité | Réalisable | Branche             | Depuis                    |
-| :------- | :---- | :------- | :--------- | :------------------ | :------------------------ |
-| E01      | epic  | 1        | non        | next/e01-us01-socle | 2026-10-06T10:48:21+00:00 |
-| E01-US01 | story | 1        | non        | next/e01-us01-socle | 2026-10-06T10:48:21+00:00 |
+Aucune.
 
 ## À faire
 
 | Id       | Type  | Priorité | Réalisable | Branche | Depuis |
 | :------- | :---- | :------- | :--------- | :------ | :----- |
-| E02      | epic  | 1        | non        |         |        |
-| E02-US01 | story | 1        | non        |         |        |
+| E02      | epic  | 1        | oui        |         |        |
+| E02-US01 | story | 1        | oui        |         |        |
 | E02-US02 | story | 1        | non        |         |        |
 | E02-US03 | story | 2        | non        |         |        |
 | E03      | epic  | 1        | non        |         |        |
@@ -54,4 +51,7 @@ Réalisable = un agent peut le prendre maintenant, dépendances terminées et pr
 
 ## Terminées
 
-Aucune.
+| Id       | Type  | Priorité | Réalisable | Branche             | Depuis                    |
+| :------- | :---- | :------- | :--------- | :------------------ | :------------------------ |
+| E01      | epic  | 1        | non        |                     |                           |
+| E01-US01 | story | 1        | non        | next/e01-us01-socle | 2026-10-06T10:48:21+00:00 |

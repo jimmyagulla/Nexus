@@ -8,10 +8,10 @@
         "E01-US01"
       ],
       "priorite": 1,
-      "status": "en-cours",
-      "branch": "next/e01-us01-socle",
-      "worktree": "C:\\Users\\Jimmy\\Documents\\code\\Nexus-next-e01-us01-socle",
-      "claimedAt": "2026-10-06T10:48:21+00:00"
+      "status": "terminee",
+      "branch": null,
+      "worktree": null,
+      "claimedAt": null
     },
     "E01-US01": {
       "kind": "story",
@@ -19,7 +19,7 @@
       "epic": "E01",
       "priorite": 1,
       "dependDe": [],
-      "status": "en-cours",
+      "status": "terminee",
       "branch": "next/e01-us01-socle",
       "worktree": "C:\\Users\\Jimmy\\Documents\\code\\Nexus-next-e01-us01-socle",
       "claimedAt": "2026-10-06T10:48:21+00:00"
