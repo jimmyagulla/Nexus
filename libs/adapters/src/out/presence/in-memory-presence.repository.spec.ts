@@ -150,6 +150,26 @@ describe('InMemoryPresenceRepository', () => {
     expect(await presences.list({ companyId: 'c1' })).toEqual([mine]);
   });
 
+  it('lists the presences of one employee only', async () => {
+    const presences = new InMemoryPresenceRepository();
+    const mine = await presences.insert({
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: october,
+      workedDays: 22,
+    });
+    await presences.insert({
+      companyId: 'c1',
+      employeeId: 'e2',
+      month: october,
+      workedDays: 20,
+    });
+
+    expect(
+      await presences.list({ companyId: 'c1', employeeId: 'e1' }),
+    ).toEqual([mine]);
+  });
+
   it('lists nothing for a company without presences', async () => {
     const presences = new InMemoryPresenceRepository();
 

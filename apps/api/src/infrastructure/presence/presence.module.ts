@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
   AdjustPresenceWorkedDaysUseCase,
+  GetPresenceUseCase,
   ListPresencesUseCase,
   OpenPresenceUseCase,
 } from '@hexagonal-monorepo-template/application';
@@ -11,6 +12,7 @@ import {
   IClock,
   ICompanyRepository,
   IEmployeeDirectory,
+  IGetPresence,
   IHoursFactSource,
   IListPresences,
   IOpenPresence,
@@ -99,6 +101,24 @@ import { SickLeaveDocumentSourceModule } from '../sick-leave-document-source/sic
         IHoursFactSource,
         IPresenceRepository,
         IClock,
+      ],
+    },
+    {
+      provide: IGetPresence,
+      useFactory: (
+        employees: IEmployeeDirectory,
+        absences: IAbsenceFactSource,
+        sickLeaves: ISickLeaveDocumentSource,
+        hours: IHoursFactSource,
+        presences: IPresenceRepository,
+      ) =>
+        new GetPresenceUseCase(employees, absences, sickLeaves, hours, presences),
+      inject: [
+        IEmployeeDirectory,
+        IAbsenceFactSource,
+        ISickLeaveDocumentSource,
+        IHoursFactSource,
+        IPresenceRepository,
       ],
     },
     {

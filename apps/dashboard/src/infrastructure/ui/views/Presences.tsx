@@ -28,7 +28,11 @@ export function Presences({
 }: PresencesProps) {
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">{i18n.messages.presences.title}</h1>
+      <h1 className="text-2xl font-semibold">
+        {model.canManage
+          ? i18n.messages.presences.title
+          : i18n.messages.presences.ownTitle}
+      </h1>
 
       {model.canManage ? (
         <OpenPresenceDialog

@@ -29,11 +29,19 @@ const camille: EmployeeReference = {
   id: 'e1',
   companyId: 'c1',
   fullName: 'Camille Martin',
+  userId: 'user-camille',
 };
 const dominique: EmployeeReference = {
   id: 'e2',
   companyId: 'c1',
   fullName: 'Dominique Durand',
+  userId: 'user-dominique',
+};
+
+const employeeCamille: ActorContext = {
+  userId: 'user-camille',
+  companyId: 'c1',
+  role: UserRole.EMPLOYEE,
 };
 const stranger: EmployeeReference = {
   id: 'e9',
@@ -272,20 +280,109 @@ describe('ListPresencesUseCase', () => {
     expect(list.presences).toEqual([]);
   });
 
-  it('refuses an actor who is not the employer of the company', async () => {
-    const useCase = useCaseWith();
-
+  it('refuses an accountant', async () => {
     await expect(
-      useCase.execute({
-        actor: { ...employer, role: UserRole.EMPLOYEE },
+      useCaseWith().execute({
+        actor: { ...employer, role: UserRole.ACCOUNTANT },
         companyId: 'c1',
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  it('refuses an actor without role', async () => {
+    await expect(
+      useCaseWith().execute({
+        actor: { ...employer, role: null },
+        companyId: 'c1',
+      }),
+    ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  it('refuses an actor bound to another company, whatever the role', async () => {
+    const useCase = useCaseWith();
+
     await expect(
       useCase.execute({
         actor: { ...employer, companyId: 'c2' },
         companyId: 'c1',
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    await expect(
+      useCase.execute({
+        actor: { ...employeeCamille, companyId: 'c2' },
+        companyId: 'c1',
+      }),
+    ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  describe('for an employee', () => {
+    async function everyoneOfOctober() {
+      const presences = new InMemoryPresenceRepository();
+      for (const employeeId of ['e1', 'e2']) {
+        await presences.insert({
+          companyId: 'c1',
+          employeeId,
+          month: october,
+          workedDays: 22,
+        });
+      }
+      await presences.insert({
+        companyId: 'c1',
+        employeeId: 'e1',
+        month: PresenceMonth.parse('2026-09'),
+        workedDays: 21,
+      });
+      return presences;
+    }
+
+    it('lists only the months of the employee', async () => {
+      const list = await useCaseWith(await everyoneOfOctober()).execute({
+        actor: employeeCamille,
+        companyId: 'c1',
+      });
+
+      expect(
+        list.presences.map((presence) => [presence.employeeId, presence.month]),
+      ).toEqual([
+        ['e1', '2026-10'],
+        ['e1', '2026-09'],
+      ]);
+    });
+
+    it('does not let the employee manage the months', async () => {
+      const list = await useCaseWith(await everyoneOfOctober()).execute({
+        actor: employeeCamille,
+        companyId: 'c1',
+      });
+
+      expect(list.canManage).toBe(false);
+    });
+
+    it('does not reveal the colleagues', async () => {
+      const list = await useCaseWith(await everyoneOfOctober()).execute({
+        actor: employeeCamille,
+        companyId: 'c1',
+      });
+
+      expect(list.employees).toEqual([]);
+    });
+
+    it('lists nothing when no month of the employee was opened', async () => {
+      const list = await useCaseWith(await octoberOf('e2')).execute({
+        actor: employeeCamille,
+        companyId: 'c1',
+      });
+
+      expect(list.presences).toEqual([]);
+    });
+
+    it('refuses an employee whose account matches no employee file', async () => {
+      await expect(
+        useCaseWith().execute({
+          actor: { ...employeeCamille, userId: 'user-ghost' },
+          companyId: 'c1',
+        }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    });
   });
 });

@@ -16,6 +16,18 @@ export class InMemoryEmployeeDirectory implements IEmployeeDirectory {
     );
   }
 
+  async findByUserId(
+    companyId: string,
+    userId: string,
+  ): Promise<EmployeeReference | null> {
+    return (
+      this.employees.find(
+        (employee) =>
+          employee.companyId === companyId && employee.userId === userId,
+      ) ?? null
+    );
+  }
+
   async listInCompany(
     companyId: string,
   ): Promise<readonly EmployeeReference[]> {

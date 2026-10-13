@@ -49,7 +49,10 @@ export class InMemoryPresenceRepository implements IPresenceRepository {
 
   async list(filter: PresenceFilter): Promise<readonly Presence[]> {
     return [...this.presences.values()].filter(
-      (presence) => presence.companyId === filter.companyId,
+      (presence) =>
+        presence.companyId === filter.companyId &&
+        (filter.employeeId === undefined ||
+          presence.employeeId === filter.employeeId),
     );
   }
 }

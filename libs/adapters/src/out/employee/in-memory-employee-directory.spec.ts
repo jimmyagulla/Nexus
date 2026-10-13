@@ -32,6 +32,29 @@ describe('InMemoryEmployeeDirectory', () => {
     expect(await directory.findInCompany('c1', 'e9')).toBeNull();
   });
 
+  it('finds the employee a user account belongs to', async () => {
+    const withAccount = { ...camille, userId: 'user-camille' };
+    const directory = new InMemoryEmployeeDirectory([withAccount, dominique]);
+
+    expect(await directory.findByUserId('c1', 'user-camille')).toEqual(
+      withAccount,
+    );
+  });
+
+  it('finds nothing for a user account of another company', async () => {
+    const directory = new InMemoryEmployeeDirectory([
+      { ...dominique, userId: 'user-dominique' },
+    ]);
+
+    expect(await directory.findByUserId('c1', 'user-dominique')).toBeNull();
+  });
+
+  it('finds nothing for a user account no employee file refers to', async () => {
+    const directory = new InMemoryEmployeeDirectory([camille]);
+
+    expect(await directory.findByUserId('c1', 'user-ghost')).toBeNull();
+  });
+
   it('lists the employees of one company only', async () => {
     const directory = new InMemoryEmployeeDirectory([camille, dominique]);
 

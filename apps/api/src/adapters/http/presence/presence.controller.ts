@@ -13,6 +13,7 @@ import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   IAdjustPresenceWorkedDays,
+  IGetPresence,
   IListPresences,
   IOpenPresence,
 } from '@hexagonal-monorepo-template/ports';
@@ -34,13 +35,30 @@ export class PresenceController {
   constructor(
     @Inject(IOpenPresence) private readonly openPresence: IOpenPresence,
     @Inject(IListPresences) private readonly listPresences: IListPresences,
+    @Inject(IGetPresence) private readonly getPresence: IGetPresence,
     @Inject(IAdjustPresenceWorkedDays)
     private readonly adjustPresence: IAdjustPresenceWorkedDays,
   ) {}
 
+  @Get(API_ROUTES.companies.presence)
+  @Roles(UserRole.EMPLOYER, UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Read one presence month' })
+  async get(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('presenceId') presenceId: string,
+  ): Promise<PresenceResponseDto> {
+    const presence = await this.getPresence.execute({
+      actor,
+      companyId,
+      presenceId,
+    });
+    return toPresenceResponse(presence);
+  }
+
   @Get(API_ROUTES.companies.presences)
-  @Roles(UserRole.EMPLOYER)
-  @ApiOperation({ summary: 'List the presence months of the company' })
+  @Roles(UserRole.EMPLOYER, UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'List the presence months the actor may read' })
   async list(
     @Actor() actor: ActorContext,
     @Param('companyId') companyId: string,

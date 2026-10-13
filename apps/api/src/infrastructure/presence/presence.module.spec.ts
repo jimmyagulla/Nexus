@@ -6,6 +6,7 @@ import {
   IAbsenceFactSource,
   IAdjustPresenceWorkedDays,
   ICompanyRepository,
+  IGetPresence,
   IHoursFactSource,
   IListPresences,
   ISickLeaveDocumentSource,
@@ -40,6 +41,7 @@ describe('PresenceModule', () => {
     expect(moduleRef.get(IOpenPresence)).toBeDefined();
     expect(moduleRef.get(IListPresences)).toBeDefined();
     expect(moduleRef.get(IAdjustPresenceWorkedDays)).toBeDefined();
+    expect(moduleRef.get(IGetPresence)).toBeDefined();
   });
 
   it('reuses the company repository of the company module', async () => {

@@ -1,5 +1,6 @@
 export * from './use-cases/presence/adjust-presence-worked-days.use-case';
 export * from './use-cases/presence/adjust-presence-worked-days-from-session.use-case';
+export * from './use-cases/presence/get-presence.use-case';
 export * from './use-cases/presence/open-presence.use-case';
 export * from './use-cases/presence/list-presences.use-case';
 export * from './use-cases/presence/list-presences-from-session.use-case';

@@ -79,7 +79,12 @@ export class PrismaPresenceRepository implements IPresenceRepository {
 
   async list(filter: PresenceFilter): Promise<readonly Presence[]> {
     const rows = await this.prisma.presence.findMany({
-      where: { companyId: filter.companyId },
+      where: {
+        companyId: filter.companyId,
+        ...(filter.employeeId === undefined
+          ? {}
+          : { employeeId: filter.employeeId }),
+      },
       include: presenceInclude,
     });
     return rows.map(toPresence);

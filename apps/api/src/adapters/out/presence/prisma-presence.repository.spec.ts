@@ -133,9 +133,16 @@ function createFakePrisma(
               item.companyId === args.where.companyId,
           ),
         ),
-      findMany: async (args: { where: { companyId: string } }) =>
+      findMany: async (args: {
+        where: { companyId: string; employeeId?: string };
+      }) =>
         store.presences
-          .filter((item) => item.companyId === args.where.companyId)
+          .filter(
+            (item) =>
+              item.companyId === args.where.companyId &&
+              (args.where.employeeId === undefined ||
+                item.employeeId === args.where.employeeId),
+          )
           .map((item) => readPresence(store, item)),
       create: async (args: { data: PresenceCreateData }) => {
         const taken = store.presences.some(
@@ -300,6 +307,19 @@ describe('PrismaPresenceRepository', () => {
     });
 
     expect(presences.map((presence) => presence.id)).toEqual(['p1']);
+  });
+
+  it('lists the presences of one employee only', async () => {
+    const { client } = createFakePrisma({
+      presences: [row(), row({ id: 'p2', employeeId: 'e2' })],
+    });
+
+    const presences = await new PrismaPresenceRepository(client).list({
+      companyId: 'c1',
+      employeeId: 'e2',
+    });
+
+    expect(presences.map((presence) => presence.id)).toEqual(['p2']);
   });
 
   it('lists nothing for a company without presences', async () => {

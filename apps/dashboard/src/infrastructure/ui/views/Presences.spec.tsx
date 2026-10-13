@@ -45,6 +45,17 @@ describe('Presences', () => {
     ).toBeTruthy();
   });
 
+  it('titles the screen of an actor who cannot manage as his own months', () => {
+    renderView({ canManage: false });
+
+    expect(
+      screen.getByRole('heading', { name: i18n.messages.presences.ownTitle }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole('heading', { name: i18n.messages.presences.title }),
+    ).toBeNull();
+  });
+
   it('lists the months that were opened', () => {
     renderView();
 

@@ -9,6 +9,7 @@ export type NewPresence = {
 
 export type PresenceFilter = {
   companyId: string;
+  employeeId?: string;
 };
 
 export interface IPresenceRepository {

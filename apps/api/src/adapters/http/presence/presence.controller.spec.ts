@@ -9,6 +9,7 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAdjustPresenceWorkedDays,
+  IGetPresence,
   IListPresences,
   IOpenPresence,
 } from '@hexagonal-monorepo-template/ports';
@@ -20,6 +21,7 @@ import { PresenceController } from './presence.controller';
 
 const openPresence = { execute: vi.fn<IOpenPresence['execute']>() };
 const listPresences = { execute: vi.fn<IListPresences['execute']>() };
+const getPresence = { execute: vi.fn<IGetPresence['execute']>() };
 const adjustPresence = {
   execute: vi.fn<IAdjustPresenceWorkedDays['execute']>(),
 };
@@ -60,7 +62,8 @@ const presence: PresenceSnapshot = {
 };
 
 const PRESENCES_PATH = '/companies/company-1/presences';
-const WORKED_DAYS_PATH = `${PRESENCES_PATH}/presence-1/worked-days`;
+const PRESENCE_PATH = `${PRESENCES_PATH}/presence-1`;
+const WORKED_DAYS_PATH = `${PRESENCE_PATH}/worked-days`;
 
 let app: INestApplication;
 let baseUrl: string;
@@ -90,6 +93,7 @@ beforeAll(async () => {
     providers: [
       { provide: IOpenPresence, useValue: openPresence },
       { provide: IListPresences, useValue: listPresences },
+      { provide: IGetPresence, useValue: getPresence },
       { provide: IAdjustPresenceWorkedDays, useValue: adjustPresence },
     ],
   }).compile();
@@ -116,6 +120,8 @@ beforeEach(() => {
   actor = employer;
   openPresence.execute.mockReset();
   openPresence.execute.mockResolvedValue(presence);
+  getPresence.execute.mockReset();
+  getPresence.execute.mockResolvedValue(presence);
   adjustPresence.execute.mockReset();
   adjustPresence.execute.mockResolvedValue(presence);
   listPresences.execute.mockReset();
@@ -129,7 +135,83 @@ beforeEach(() => {
 });
 
 describe('PresenceController', () => {
+  describe('GET /companies/:companyId/presences/:presenceId', () => {
+    it('answers 200 with the month', async () => {
+      await expect(send('GET', PRESENCE_PATH)).resolves.toEqual({
+        status: 200,
+        payload: { status: 200, message: 'Success', data: presence },
+      });
+    });
+
+    it('hands the actor and the month of the path to the use case', async () => {
+      await send('GET', PRESENCE_PATH);
+
+      expect(getPresence.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+        presenceId: 'presence-1',
+      });
+    });
+
+    it('lets an employee ask for a month', async () => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+
+      const { status } = await send('GET', PRESENCE_PATH);
+
+      expect(status).toBe(200);
+    });
+
+    it('answers 403 to a direct link the use case refuses', async () => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+      getPresence.execute.mockRejectedValue(new Error(ErrorCode.ACCESS_DENIED));
+
+      await expect(send('GET', PRESENCE_PATH)).resolves.toEqual({
+        status: 403,
+        payload: { status: 403, message: ErrorCode.ACCESS_DENIED },
+      });
+    });
+
+    it('answers 403 when the actor is an accountant', async () => {
+      actor = { ...employer, role: UserRole.ACCOUNTANT };
+
+      const { status } = await send('GET', PRESENCE_PATH);
+
+      expect(status).toBe(403);
+      expect(getPresence.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the actor is bound to another company', async () => {
+      actor = { ...employer, companyId: 'company-2' };
+
+      const { status } = await send('GET', PRESENCE_PATH);
+
+      expect(status).toBe(403);
+      expect(getPresence.execute).not.toHaveBeenCalled();
+    });
+  });
+
   describe('GET /companies/:companyId/presences', () => {
+    it('lets an employee list its months', async () => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+
+      const { status } = await send('GET', PRESENCES_PATH);
+
+      expect(status).toBe(200);
+      expect(listPresences.execute).toHaveBeenCalledWith({
+        actor: { ...employer, role: UserRole.EMPLOYEE },
+        companyId: 'company-1',
+      });
+    });
+
+    it('answers 403 when the actor is an accountant', async () => {
+      actor = { ...employer, role: UserRole.ACCOUNTANT };
+
+      const { status } = await send('GET', PRESENCES_PATH);
+
+      expect(status).toBe(403);
+      expect(listPresences.execute).not.toHaveBeenCalled();
+    });
+
     it('answers 200 with the presences and the employees of the company', async () => {
       await expect(send('GET', PRESENCES_PATH)).resolves.toEqual({
         status: 200,

@@ -5,6 +5,10 @@ export interface IEmployeeDirectory {
     companyId: string,
     employeeId: string,
   ): Promise<EmployeeReference | null>;
+  findByUserId(
+    companyId: string,
+    userId: string,
+  ): Promise<EmployeeReference | null>;
   listInCompany(companyId: string): Promise<readonly EmployeeReference[]>;
 }
 
