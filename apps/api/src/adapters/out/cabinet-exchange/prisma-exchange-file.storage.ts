@@ -9,7 +9,7 @@ export class PrismaExchangeFileStorage implements IExchangeFileStorage {
     const stored = {
       fileName: file.fileName,
       mimeType: file.mimeType,
-      content: file.content,
+      content: Uint8Array.from(file.content),
     };
     await this.prisma.cabinetExchangeFile.upsert({
       where: { exchangeId },
