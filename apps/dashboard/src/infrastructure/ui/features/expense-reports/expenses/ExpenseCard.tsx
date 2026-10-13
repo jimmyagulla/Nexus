@@ -1,30 +1,15 @@
-import type { ExpenseCategoryViewModel } from '../../../../../adapters/presenters/expense-category.presenter';
 import type { ExpenseViewModel } from '../../../../../adapters/presenters/expense-report.presenter';
-import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
 import { Button } from '../../../shared/button';
 import { i18n } from '../../../i18n/i18n';
 import { EditExpenseDialog } from './EditExpenseDialog';
-import type { ExpenseValues } from './expense.schema';
+import type { ExpenseActions } from './expense-actions';
 
 interface ExpenseCardProps {
   expense: ExpenseViewModel;
-  editable: boolean;
-  categories: ExpenseCategoryViewModel[];
-  errorPresenter: ErrorPresenter;
-  editError: string | null;
-  onEdit: (expenseId: string, values: ExpenseValues) => Promise<boolean>;
-  onRemove: (expenseId: string) => void;
+  actions?: ExpenseActions;
 }
 
-export function ExpenseCard({
-  expense,
-  editable,
-  categories,
-  errorPresenter,
-  editError,
-  onEdit,
-  onRemove,
-}: ExpenseCardProps) {
+export function ExpenseCard({ expense, actions }: ExpenseCardProps) {
   return (
     <li className="flex flex-wrap items-center gap-4 py-2">
       <span>{expense.date}</span>
@@ -32,24 +17,24 @@ export function ExpenseCard({
       <span className="font-semibold">{expense.amount}</span>
       <span>{expense.description}</span>
       <span className="text-muted-foreground">{expense.assignment}</span>
-      {editable ? (
+      {actions === undefined ? null : (
         <>
           <EditExpenseDialog
             fields={expense.fields}
-            categories={categories}
-            errorPresenter={errorPresenter}
-            submissionError={editError}
-            onSubmit={(values) => onEdit(expense.id, values)}
+            categories={actions.categories}
+            errorPresenter={actions.errorPresenter}
+            submissionError={actions.editError}
+            onSubmit={(values) => actions.onEdit(expense.id, values)}
           />
           <Button
             type="button"
             variant="outline"
-            onClick={() => onRemove(expense.id)}
+            onClick={() => actions.onRemove(expense.id)}
           >
             {i18n.messages.expenseReports.removeExpense}
           </Button>
         </>
-      ) : null}
+      )}
     </li>
   );
 }

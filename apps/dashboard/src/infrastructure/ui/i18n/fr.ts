@@ -34,6 +34,9 @@ export const fr = {
     submitted: 'Votre note de frais a été soumise.',
     employerTitle: 'Notes de frais',
     openReceipt: 'Ouvrir',
+    requestInformation: 'Demander un complément',
+    validate: 'Valider',
+    refuse: 'Refuser',
     expense: {
       date: 'Date',
       category: 'Catégorie',

@@ -10,6 +10,10 @@ import {
   IGetExpenseReport,
   IGetReceipt,
   IListExpenseReports,
+  IOpenExpenseReport,
+  IRefuseExpenseReport,
+  IRequestExpenseReportInformation,
+  IValidateExpenseReport,
   IRemoveExpense,
   ISubmitExpenseReport,
   IUpdateExpense,
@@ -68,6 +72,10 @@ describe('ExpenseReportModule', () => {
     expect(moduleRef.get(IAttachReceipt)).toBeDefined();
     expect(moduleRef.get(ISubmitExpenseReport)).toBeDefined();
     expect(moduleRef.get(IGetReceipt)).toBeDefined();
+    expect(moduleRef.get(IOpenExpenseReport)).toBeDefined();
+    expect(moduleRef.get(IRequestExpenseReportInformation)).toBeDefined();
+    expect(moduleRef.get(IValidateExpenseReport)).toBeDefined();
+    expect(moduleRef.get(IRefuseExpenseReport)).toBeDefined();
   });
 
   it('stores reports in Postgres when the mode and the client are both set', async () => {

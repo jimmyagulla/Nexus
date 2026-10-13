@@ -46,6 +46,8 @@ export interface ExpenseReportViewModel {
   status: ExpenseReportStatus;
   statusLabel: string;
   editable: boolean;
+  requestable: boolean;
+  decidable: boolean;
   total: string;
   receipts: ReceiptViewModel[];
   expenses: ExpenseViewModel[];
@@ -72,6 +74,8 @@ export class ExpenseReportPresenter {
       status: snapshot.status,
       statusLabel: this.i18n.messages.expenseReports.status[snapshot.status],
       editable: snapshot.status === ExpenseReportStatus.DRAFT,
+      requestable: this.isRequestable(snapshot.status),
+      decidable: snapshot.status === ExpenseReportStatus.UNDER_REVIEW,
       total: this.euros.present(snapshot.total),
       receipts: snapshot.receipts.map((receipt) => this.presentReceipt(receipt)),
       expenses: snapshot.expenses.map((expense) =>
@@ -105,6 +109,13 @@ export class ExpenseReportPresenter {
       assignment: expense.assignment,
       fields: this.presentFields(expense),
     };
+  }
+
+  private isRequestable(status: ExpenseReportStatus): boolean {
+    return (
+      status === ExpenseReportStatus.SUBMITTED ||
+      status === ExpenseReportStatus.UNDER_REVIEW
+    );
   }
 
   private presentReceipt(receipt: ReceiptSnapshot): ReceiptViewModel {

@@ -23,9 +23,13 @@ import {
   IGetExpenseReport,
   IGetReceipt,
   IListExpenseReports,
+  IOpenExpenseReport,
+  IRefuseExpenseReport,
+  IRequestExpenseReportInformation,
   IRemoveExpense,
   ISubmitExpenseReport,
   IUpdateExpense,
+  IValidateExpenseReport,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
 import { AuthenticatedRequest } from '../common/guards/authenticated-request';
@@ -42,6 +46,12 @@ const removeExpense = { execute: vi.fn<IRemoveExpense['execute']>() };
 const attachReceipt = { execute: vi.fn<IAttachReceipt['execute']>() };
 const submitReport = { execute: vi.fn<ISubmitExpenseReport['execute']>() };
 const getReceipt = { execute: vi.fn<IGetReceipt['execute']>() };
+const openReport = { execute: vi.fn<IOpenExpenseReport['execute']>() };
+const requestInformation = {
+  execute: vi.fn<IRequestExpenseReportInformation['execute']>(),
+};
+const validateReport = { execute: vi.fn<IValidateExpenseReport['execute']>() };
+const refuseReport = { execute: vi.fn<IRefuseExpenseReport['execute']>() };
 
 const employee: ActorContext = {
   userId: 'e1',
@@ -111,6 +121,13 @@ beforeAll(async () => {
       { provide: IAttachReceipt, useValue: attachReceipt },
       { provide: ISubmitExpenseReport, useValue: submitReport },
       { provide: IGetReceipt, useValue: getReceipt },
+      { provide: IOpenExpenseReport, useValue: openReport },
+      {
+        provide: IRequestExpenseReportInformation,
+        useValue: requestInformation,
+      },
+      { provide: IValidateExpenseReport, useValue: validateReport },
+      { provide: IRefuseExpenseReport, useValue: refuseReport },
     ],
   }).compile();
 
@@ -142,6 +159,10 @@ beforeEach(() => {
     removeExpense,
     attachReceipt,
     submitReport,
+    openReport,
+    requestInformation,
+    validateReport,
+    refuseReport,
   ]) {
     useCase.execute.mockReset();
     useCase.execute.mockResolvedValue(report);
@@ -474,6 +495,66 @@ describe('ExpenseReportController', () => {
       expect((await send('GET', RECEIPT_PATH)).status).toBe(403);
     });
   });
+
+  describe.each([
+    ['opening', openReport],
+    ['information-request', requestInformation],
+    ['validation', validateReport],
+    ['refusal', refuseReport],
+  ] as const)(
+    'POST /companies/:companyId/expense-reports/:expenseReportId/%s',
+    (path, useCase) => {
+      const url = `${REPORT_PATH}/${path}`;
+
+      beforeEach(() => {
+        actor = { ...employee, role: UserRole.EMPLOYER };
+      });
+
+      it('answers 201 with the report', async () => {
+        await expect(send('POST', url)).resolves.toEqual({
+          status: 201,
+          payload: { status: 201, message: 'Success', data: report },
+        });
+      });
+
+      it('hands the report of the path to the use case', async () => {
+        actor = { ...employee, role: UserRole.EMPLOYER };
+
+        await send('POST', url);
+
+        expect(useCase.execute).toHaveBeenCalledWith({
+          actor: { ...employee, role: UserRole.EMPLOYER },
+          companyId: 'company-1',
+          reportId: 'r1',
+        });
+      });
+
+      it('answers 400 with the code when the report was already processed', async () => {
+        useCase.execute.mockRejectedValue(
+          new Error(ErrorCode.REQUEST_ALREADY_PROCESSED),
+        );
+
+        await expect(send('POST', url)).resolves.toEqual({
+          status: 400,
+          payload: { status: 400, message: ErrorCode.REQUEST_ALREADY_PROCESSED },
+        });
+      });
+
+      it('answers 403 when the actor is an employee', async () => {
+        actor = employee;
+
+        expect((await send('POST', url)).status).toBe(403);
+        expect(useCase.execute).not.toHaveBeenCalled();
+      });
+
+      it('answers 403 when the actor is bound to another company', async () => {
+        actor = { ...employee, role: UserRole.EMPLOYER, companyId: 'company-2' };
+
+        expect((await send('POST', url)).status).toBe(403);
+        expect(useCase.execute).not.toHaveBeenCalled();
+      });
+    },
+  );
 
   describe('POST /companies/:companyId/expense-reports/:expenseReportId/submission', () => {
     it('answers 201 with the submitted report', async () => {

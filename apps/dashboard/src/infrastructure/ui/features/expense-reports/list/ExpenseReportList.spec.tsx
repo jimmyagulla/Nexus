@@ -10,6 +10,8 @@ function report(id: string, label: string): ExpenseReportViewModel {
     status: 'DRAFT',
     statusLabel: 'Brouillon',
     editable: true,
+    requestable: false,
+    decidable: false,
     total: '0 €',
     receipts: [],
     expenses: [],

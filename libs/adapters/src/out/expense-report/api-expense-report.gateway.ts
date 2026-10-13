@@ -162,6 +162,73 @@ export class ApiExpenseReportGateway implements IExpenseReportGateway {
     };
   }
 
+  open(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return this.decide(
+      API_ROUTES.companies.expenseReportOpening,
+      companyId,
+      reportId,
+      token,
+    );
+  }
+
+  requestInformation(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return this.decide(
+      API_ROUTES.companies.expenseReportInformationRequest,
+      companyId,
+      reportId,
+      token,
+    );
+  }
+
+  validate(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return this.decide(
+      API_ROUTES.companies.expenseReportValidation,
+      companyId,
+      reportId,
+      token,
+    );
+  }
+
+  refuse(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return this.decide(
+      API_ROUTES.companies.expenseReportRefusal,
+      companyId,
+      reportId,
+      token,
+    );
+  }
+
+  private async decide(
+    template: string,
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<ExpenseReportSnapshot>>(
+        companyPath(template, { companyId, expenseReportId: reportId }),
+        undefined,
+        this.authorized(token),
+      ),
+    );
+  }
+
   async submit(
     companyId: string,
     reportId: string,

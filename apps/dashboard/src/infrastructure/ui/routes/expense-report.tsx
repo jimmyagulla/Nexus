@@ -1,6 +1,6 @@
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { expenseReportsScreenComposition } from '../../di';
-import { ExpenseReportDetailPage } from '../views/ExpenseReportDetailPage';
+import { EmployerExpenseReportPage } from '../views/EmployerExpenseReportPage';
 import { rootRoute } from './__root';
 import { AppRoutes } from './app-routes';
 
@@ -15,7 +15,7 @@ function ExpenseReportRoute() {
   const navigate = useNavigate();
 
   return (
-    <ExpenseReportDetailPage
+    <EmployerExpenseReportPage
       reportId={reportId}
       deps={expenseReportsScreenComposition}
       onBack={() => void navigate({ to: AppRoutes.expenseReports })}

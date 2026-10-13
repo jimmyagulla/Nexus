@@ -29,12 +29,17 @@ function renderCard(editable: boolean, removed: string[] = []) {
     <ul>
       <ExpenseCard
         expense={expense}
-        editable={editable}
-        categories={[{ id: 'restaurant', label: 'Restaurant' }]}
-        errorPresenter={new ErrorPresenter()}
-        editError={null}
-        onEdit={async () => true}
-        onRemove={(id) => removed.push(id)}
+        actions={
+          editable
+            ? {
+                categories: [{ id: 'restaurant', label: 'Restaurant' }],
+                errorPresenter: new ErrorPresenter(),
+                editError: null,
+                onEdit: async () => true,
+                onRemove: (id) => removed.push(id),
+              }
+            : undefined
+        }
       />
     </ul>,
   );

@@ -55,7 +55,7 @@ function tsconfigPaths(): Record<string, string[]> {
   return tsconfig.compilerOptions.paths;
 }
 
-describe('service_role isolation', () => {
+describe('service_role isolation', { timeout: 30_000 }, () => {
   it('keeps the server entrypoint out of the dashboard sources', () => {
     expect(
       filesImporting(

@@ -105,6 +105,33 @@ export class ExpenseReport {
     return this.with({ status: ExpenseReportStatus.SUBMITTED });
   }
 
+  startReview(): ExpenseReport {
+    if (this.status === ExpenseReportStatus.DRAFT) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+    return this.status === ExpenseReportStatus.SUBMITTED
+      ? this.with({ status: ExpenseReportStatus.UNDER_REVIEW })
+      : this;
+  }
+
+  requestInformation(): ExpenseReport {
+    this.requireStatus(
+      ExpenseReportStatus.SUBMITTED,
+      ExpenseReportStatus.UNDER_REVIEW,
+    );
+    return this;
+  }
+
+  validate(): ExpenseReport {
+    this.requireStatus(ExpenseReportStatus.UNDER_REVIEW);
+    return this.with({ status: ExpenseReportStatus.VALIDATED });
+  }
+
+  refuse(): ExpenseReport {
+    this.requireStatus(ExpenseReportStatus.UNDER_REVIEW);
+    return this.with({ status: ExpenseReportStatus.REFUSED });
+  }
+
   requireReceipt(receiptId: string): Receipt {
     const receipt = this.receipts.find((current) => current.id === receiptId);
     if (receipt === undefined) {
@@ -115,6 +142,12 @@ export class ExpenseReport {
 
   requireDraft(): void {
     if (this.status !== ExpenseReportStatus.DRAFT) {
+      throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    }
+  }
+
+  private requireStatus(...allowed: readonly ExpenseReportStatus[]): void {
+    if (!allowed.includes(this.status)) {
       throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);
     }
   }

@@ -16,6 +16,12 @@ export const API_ROUTES = {
       ':companyId/expense-reports/:expenseReportId/receipts',
     expenseReportSubmission:
       ':companyId/expense-reports/:expenseReportId/submission',
+    expenseReportOpening: ':companyId/expense-reports/:expenseReportId/opening',
+    expenseReportInformationRequest:
+      ':companyId/expense-reports/:expenseReportId/information-request',
+    expenseReportValidation:
+      ':companyId/expense-reports/:expenseReportId/validation',
+    expenseReportRefusal: ':companyId/expense-reports/:expenseReportId/refusal',
     expenseReportExpense:
       ':companyId/expense-reports/:expenseReportId/expenses/:expenseId',
   },

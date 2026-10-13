@@ -34,6 +34,9 @@ export const en = {
     submitted: 'Your expense report has been submitted.',
     employerTitle: 'Expense reports',
     openReceipt: 'Open',
+    requestInformation: 'Request more information',
+    validate: 'Validate',
+    refuse: 'Refuse',
     expense: {
       date: 'Date',
       category: 'Category',

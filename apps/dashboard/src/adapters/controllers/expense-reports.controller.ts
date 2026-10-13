@@ -12,9 +12,13 @@ import {
   IGetExpenseReportFromSession,
   IGetReceiptFromSession,
   IListExpenseReportsFromSession,
+  IOpenExpenseReportFromSession,
+  IRefuseExpenseReportFromSession,
+  IRequestExpenseReportInformationFromSession,
   IRemoveExpenseFromSession,
   ISubmitExpenseReportFromSession,
   IUpdateExpenseFromSession,
+  IValidateExpenseReportFromSession,
 } from '@hexagonal-monorepo-template/ports';
 
 export class ExpenseReportsController {
@@ -28,6 +32,10 @@ export class ExpenseReportsController {
     private readonly attachReceiptFromSession: IAttachReceiptFromSession,
     private readonly submitFromSession: ISubmitExpenseReportFromSession,
     private readonly getReceiptFromSession: IGetReceiptFromSession,
+    private readonly openFromSession: IOpenExpenseReportFromSession,
+    private readonly requestInformationFromSession: IRequestExpenseReportInformationFromSession,
+    private readonly validateFromSession: IValidateExpenseReportFromSession,
+    private readonly refuseFromSession: IRefuseExpenseReportFromSession,
   ) {}
 
   createReport(label: string): Promise<ExpenseReportSnapshot> {
@@ -76,6 +84,22 @@ export class ExpenseReportsController {
 
   submitReport(reportId: string): Promise<ExpenseReportSnapshot> {
     return this.submitFromSession.execute(reportId);
+  }
+
+  openReport(reportId: string): Promise<ExpenseReportSnapshot> {
+    return this.openFromSession.execute(reportId);
+  }
+
+  requestInformation(reportId: string): Promise<ExpenseReportSnapshot> {
+    return this.requestInformationFromSession.execute(reportId);
+  }
+
+  validateReport(reportId: string): Promise<ExpenseReportSnapshot> {
+    return this.validateFromSession.execute(reportId);
+  }
+
+  refuseReport(reportId: string): Promise<ExpenseReportSnapshot> {
+    return this.refuseFromSession.execute(reportId);
   }
 
   getReport(reportId: string): Promise<ExpenseReportSnapshot> {

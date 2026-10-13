@@ -300,6 +300,92 @@ describe('ExpenseReport', () => {
     expect(() => report.submit()).toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
   });
 
+  describe('processing by the employer', () => {
+    function inStatus(status: ExpenseReportStatus): ExpenseReport {
+      return new ExpenseReport({
+        ...draftProps(),
+        status,
+        expenses: [expense('x1', 'train', 68)],
+        receipts: [receipt('f1', null)],
+      });
+    }
+
+    it('goes under review when the employer starts the processing', () => {
+      expect(
+        inStatus(ExpenseReportStatus.SUBMITTED).startReview().status,
+      ).toBe(ExpenseReportStatus.UNDER_REVIEW);
+    });
+
+    it('stays under review when the employer opens it again', () => {
+      expect(
+        inStatus(ExpenseReportStatus.UNDER_REVIEW).startReview().status,
+      ).toBe(ExpenseReportStatus.UNDER_REVIEW);
+    });
+
+    it.each([
+      ExpenseReportStatus.VALIDATED,
+      ExpenseReportStatus.REFUSED,
+      ExpenseReportStatus.REIMBURSED,
+    ])('keeps its status when the employer opens it once %s', (status) => {
+      expect(inStatus(status).startReview().status).toBe(status);
+    });
+
+    it('cannot start the review of a draft', () => {
+      expect(() =>
+        inStatus(ExpenseReportStatus.DRAFT).startReview(),
+      ).toThrow(ErrorCode.ACCESS_DENIED);
+    });
+
+    it('is validated from under review', () => {
+      expect(inStatus(ExpenseReportStatus.UNDER_REVIEW).validate().status).toBe(
+        ExpenseReportStatus.VALIDATED,
+      );
+    });
+
+    it('is refused from under review', () => {
+      expect(inStatus(ExpenseReportStatus.UNDER_REVIEW).refuse().status).toBe(
+        ExpenseReportStatus.REFUSED,
+      );
+    });
+
+    it.each([
+      ExpenseReportStatus.DRAFT,
+      ExpenseReportStatus.SUBMITTED,
+      ExpenseReportStatus.VALIDATED,
+      ExpenseReportStatus.REFUSED,
+      ExpenseReportStatus.REIMBURSED,
+    ])('cannot be validated nor refused when %s', (status) => {
+      const report = inStatus(status);
+
+      expect(() => report.validate()).toThrow(
+        ErrorCode.REQUEST_ALREADY_PROCESSED,
+      );
+      expect(() => report.refuse()).toThrow(
+        ErrorCode.REQUEST_ALREADY_PROCESSED,
+      );
+    });
+
+    it.each([
+      ExpenseReportStatus.SUBMITTED,
+      ExpenseReportStatus.UNDER_REVIEW,
+    ])('accepts a request for information when %s without changing status', (status) => {
+      const report = inStatus(status);
+
+      expect(report.requestInformation()).toBe(report);
+    });
+
+    it.each([
+      ExpenseReportStatus.DRAFT,
+      ExpenseReportStatus.VALIDATED,
+      ExpenseReportStatus.REFUSED,
+      ExpenseReportStatus.REIMBURSED,
+    ])('refuses a request for information when %s', (status) => {
+      expect(() => inStatus(status).requestInformation()).toThrow(
+        ErrorCode.REQUEST_ALREADY_PROCESSED,
+      );
+    });
+  });
+
   it('exposes the date of an expense as a calendar date', () => {
     expect(expense('x1', 'train', 68).details.date).toEqual(
       CalendarDate.parse('2026-10-05'),

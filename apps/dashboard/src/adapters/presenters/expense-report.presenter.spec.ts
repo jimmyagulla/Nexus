@@ -75,6 +75,28 @@ describe('ExpenseReportPresenter', () => {
     ).toBe(false);
   });
 
+  it.each([
+    [ExpenseReportStatus.DRAFT, false, false],
+    [ExpenseReportStatus.SUBMITTED, true, false],
+    [ExpenseReportStatus.UNDER_REVIEW, true, true],
+    [ExpenseReportStatus.VALIDATED, false, false],
+    [ExpenseReportStatus.REFUSED, false, false],
+    [ExpenseReportStatus.REIMBURSED, false, false],
+  ])(
+    'tells what the employer can do with a report that is %s',
+    (status, requestable, decidable) => {
+      const model = new ExpenseReportPresenter().present(
+        { ...report, status },
+        categories,
+      );
+
+      expect([model.requestable, model.decidable]).toEqual([
+        requestable,
+        decidable,
+      ]);
+    },
+  );
+
   it('keeps the identity and the label of the report', () => {
     const model = new ExpenseReportPresenter().present(report, categories);
 

@@ -6,6 +6,10 @@ import {
   GetExpenseReportUseCase,
   GetReceiptUseCase,
   ListExpenseReportsUseCase,
+  OpenExpenseReportUseCase,
+  RefuseExpenseReportUseCase,
+  RequestExpenseReportInformationUseCase,
+  ValidateExpenseReportUseCase,
   RemoveExpenseUseCase,
   SubmitExpenseReportUseCase,
   UpdateExpenseUseCase,
@@ -23,6 +27,10 @@ import {
   IGetExpenseReport,
   IGetReceipt,
   IListExpenseReports,
+  IOpenExpenseReport,
+  IRefuseExpenseReport,
+  IRequestExpenseReportInformation,
+  IValidateExpenseReport,
   IRemoveExpense,
   ISubmitExpenseReport,
   IUpdateExpense,
@@ -114,6 +122,44 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         INotificationRepository,
         IClock,
       ],
+    },
+    {
+      provide: IOpenExpenseReport,
+      useFactory: (reports: IExpenseReportRepository) =>
+        new OpenExpenseReportUseCase(reports),
+      inject: [IExpenseReportRepository],
+    },
+    {
+      provide: IRequestExpenseReportInformation,
+      useFactory: (
+        reports: IExpenseReportRepository,
+        notifications: INotificationRepository,
+        clock: IClock,
+      ) =>
+        new RequestExpenseReportInformationUseCase(
+          reports,
+          notifications,
+          clock,
+        ),
+      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+    },
+    {
+      provide: IValidateExpenseReport,
+      useFactory: (
+        reports: IExpenseReportRepository,
+        notifications: INotificationRepository,
+        clock: IClock,
+      ) => new ValidateExpenseReportUseCase(reports, notifications, clock),
+      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+    },
+    {
+      provide: IRefuseExpenseReport,
+      useFactory: (
+        reports: IExpenseReportRepository,
+        notifications: INotificationRepository,
+        clock: IClock,
+      ) => new RefuseExpenseReportUseCase(reports, notifications, clock),
+      inject: [IExpenseReportRepository, INotificationRepository, IClock],
     },
     {
       provide: IGetReceipt,

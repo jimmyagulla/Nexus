@@ -5,9 +5,13 @@ import {
   GetExpenseReportFromSessionUseCase,
   GetReceiptFromSessionUseCase,
   ListExpenseReportsFromSessionUseCase,
+  OpenExpenseReportFromSessionUseCase,
+  RefuseExpenseReportFromSessionUseCase,
+  RequestExpenseReportInformationFromSessionUseCase,
   RemoveExpenseFromSessionUseCase,
   SubmitExpenseReportFromSessionUseCase,
   UpdateExpenseFromSessionUseCase,
+  ValidateExpenseReportFromSessionUseCase,
 } from '@hexagonal-monorepo-template/application';
 import { ApiExpenseReportGateway } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -42,6 +46,10 @@ export function createExpenseReportsComposition(
       new AttachReceiptFromSessionUseCase(sessions, reports),
       new SubmitExpenseReportFromSessionUseCase(sessions, reports),
       new GetReceiptFromSessionUseCase(sessions, reports),
+      new OpenExpenseReportFromSessionUseCase(sessions, reports),
+      new RequestExpenseReportInformationFromSessionUseCase(sessions, reports),
+      new ValidateExpenseReportFromSessionUseCase(sessions, reports),
+      new RefuseExpenseReportFromSessionUseCase(sessions, reports),
     ),
     presenter: new ExpenseReportPresenter(),
     errorPresenter: new ErrorPresenter(),

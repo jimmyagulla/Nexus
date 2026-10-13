@@ -210,6 +210,31 @@ describe('ApiExpenseReportGateway', () => {
     ]);
   });
 
+  it.each([
+    ['open', 'opening'],
+    ['requestInformation', 'information-request'],
+    ['validate', 'validation'],
+    ['refuse', 'refusal'],
+  ] as const)('asks the api to %s a report', async (method, path) => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', `companies/c1/expense-reports/r1/${path}`, {
+      status: 201,
+      data: report,
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http)[method]('c1', 'r1', 'token'),
+    ).resolves.toEqual(report);
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: `companies/c1/expense-reports/r1/${path}`,
+        data: undefined,
+        config: authorized,
+      },
+    ]);
+  });
+
   it('submits a report', async () => {
     const http = new InMemoryHttpClient();
     http.reply('post', 'companies/c1/expense-reports/r1/submission', {

@@ -73,12 +73,17 @@ export function ExpenseReportDetail({
         </h2>
         <ExpenseList
           expenses={report.expenses}
-          editable={report.editable}
-          categories={categories}
-          errorPresenter={errorPresenter}
-          editError={editExpenseError}
-          onEdit={onEditExpense}
-          onRemove={onRemoveExpense}
+          actions={
+            report.editable
+              ? {
+                  categories,
+                  errorPresenter,
+                  editError: editExpenseError,
+                  onEdit: onEditExpense,
+                  onRemove: onRemoveExpense,
+                }
+              : undefined
+          }
         />
         <SubmissionError message={removeExpenseError} />
         <p className="text-lg font-semibold">

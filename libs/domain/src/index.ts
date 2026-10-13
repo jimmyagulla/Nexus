@@ -47,3 +47,4 @@ export * from './notifications/notification';
 export * from './notifications/to-expense-report-notification';
 export * from './services/require-visible-expense-report';
 export * from './read-models/receipt-file-snapshot';
+export * from './services/require-employer-actor';

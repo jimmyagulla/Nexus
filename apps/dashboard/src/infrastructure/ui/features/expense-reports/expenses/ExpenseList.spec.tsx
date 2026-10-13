@@ -30,12 +30,17 @@ function renderList(expenses: ExpenseViewModel[], editable = false) {
   render(
     <ExpenseList
       expenses={expenses}
-      editable={editable}
-      categories={[{ id: 'restaurant', label: 'Restaurant' }]}
-      errorPresenter={new ErrorPresenter()}
-      editError={null}
-      onEdit={async () => true}
-      onRemove={() => undefined}
+      actions={
+        editable
+          ? {
+              categories: [{ id: 'restaurant', label: 'Restaurant' }],
+              errorPresenter: new ErrorPresenter(),
+              editError: null,
+              onEdit: async () => true,
+              onRemove: () => undefined,
+            }
+          : undefined
+      }
     />,
   );
 }

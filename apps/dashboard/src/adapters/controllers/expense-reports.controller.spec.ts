@@ -51,8 +51,10 @@ function controller() {
   const attached: { reportId: string; receipt: ReceiptDetailsInput }[] = [];
   const submitted: string[] = [];
   const opened: { reportId: string; receiptId: string }[] = [];
+  const processed: string[] = [];
   return {
     opened,
+    processed,
     created,
     added,
     read,
@@ -110,6 +112,30 @@ function controller() {
           return file;
         },
       },
+      {
+        execute: async (reportId) => {
+          processed.push(`open:${reportId}`);
+          return report;
+        },
+      },
+      {
+        execute: async (reportId) => {
+          processed.push(`information:${reportId}`);
+          return report;
+        },
+      },
+      {
+        execute: async (reportId) => {
+          processed.push(`validate:${reportId}`);
+          return report;
+        },
+      },
+      {
+        execute: async (reportId) => {
+          processed.push(`refuse:${reportId}`);
+          return report;
+        },
+      },
     ),
   };
 }
@@ -165,6 +191,22 @@ describe('ExpenseReportsController', () => {
 
     await expect(subject.getReceipt('r1', 'f1')).resolves.toEqual(file);
     expect(opened).toEqual([{ reportId: 'r1', receiptId: 'f1' }]);
+  });
+
+  it('lets the employer process a report', async () => {
+    const { controller: subject, processed } = controller();
+
+    await subject.openReport('r1');
+    await subject.requestInformation('r1');
+    await subject.validateReport('r1');
+    await subject.refuseReport('r1');
+
+    expect(processed).toEqual([
+      'open:r1',
+      'information:r1',
+      'validate:r1',
+      'refuse:r1',
+    ]);
   });
 
   it('submits a report', async () => {

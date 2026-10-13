@@ -49,6 +49,26 @@ export interface IExpenseReportGateway {
     receiptId: string,
     token: string,
   ): Promise<ReceiptFileSnapshot>;
+  open(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
+  requestInformation(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
+  validate(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
+  refuse(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
   submit(
     companyId: string,
     reportId: string,

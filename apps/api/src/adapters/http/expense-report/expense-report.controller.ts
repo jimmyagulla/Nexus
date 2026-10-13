@@ -19,9 +19,13 @@ import {
   IGetExpenseReport,
   IGetReceipt,
   IListExpenseReports,
+  IOpenExpenseReport,
+  IRefuseExpenseReport,
+  IRequestExpenseReportInformation,
   IRemoveExpense,
   ISubmitExpenseReport,
   IUpdateExpense,
+  IValidateExpenseReport,
 } from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
 import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
@@ -57,6 +61,14 @@ export class ExpenseReportController {
     private readonly attachReceipt: IAttachReceipt,
     @Inject(IGetReceipt)
     private readonly getReceipt: IGetReceipt,
+    @Inject(IOpenExpenseReport)
+    private readonly openReport: IOpenExpenseReport,
+    @Inject(IRequestExpenseReportInformation)
+    private readonly requestReportInformation: IRequestExpenseReportInformation,
+    @Inject(IValidateExpenseReport)
+    private readonly validateReport: IValidateExpenseReport,
+    @Inject(IRefuseExpenseReport)
+    private readonly refuseReport: IRefuseExpenseReport,
     @Inject(ISubmitExpenseReport)
     private readonly submitReport: ISubmitExpenseReport,
   ) {}
@@ -189,6 +201,62 @@ export class ExpenseReportController {
       },
     });
     return toExpenseReportResponse(report);
+  }
+
+  @Post(API_ROUTES.companies.expenseReportOpening)
+  @Roles(UserRole.EMPLOYER)
+  @ApiOperation({ summary: 'Open a submitted expense report to review it' })
+  async open(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    return toExpenseReportResponse(
+      await this.openReport.execute({ actor, companyId, reportId }),
+    );
+  }
+
+  @Post(API_ROUTES.companies.expenseReportInformationRequest)
+  @Roles(UserRole.EMPLOYER)
+  @ApiOperation({ summary: 'Ask the employee for more information' })
+  async requestInformation(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    return toExpenseReportResponse(
+      await this.requestReportInformation.execute({
+        actor,
+        companyId,
+        reportId,
+      }),
+    );
+  }
+
+  @Post(API_ROUTES.companies.expenseReportValidation)
+  @Roles(UserRole.EMPLOYER)
+  @ApiOperation({ summary: 'Validate an expense report under review' })
+  async validate(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    return toExpenseReportResponse(
+      await this.validateReport.execute({ actor, companyId, reportId }),
+    );
+  }
+
+  @Post(API_ROUTES.companies.expenseReportRefusal)
+  @Roles(UserRole.EMPLOYER)
+  @ApiOperation({ summary: 'Refuse an expense report under review' })
+  async refuse(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    return toExpenseReportResponse(
+      await this.refuseReport.execute({ actor, companyId, reportId }),
+    );
   }
 
   @Post(API_ROUTES.companies.expenseReportSubmission)

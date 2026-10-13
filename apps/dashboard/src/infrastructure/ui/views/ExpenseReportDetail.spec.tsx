@@ -10,6 +10,8 @@ const report: ExpenseReportViewModel = {
   status: 'DRAFT',
   statusLabel: 'Brouillon',
   editable: true,
+  requestable: false,
+  decidable: false,
   total: '125 €',
   receipts: [{ id: 'f1', fileName: 'ticket.pdf', size: '2 Ko' }],
   expenses: [
