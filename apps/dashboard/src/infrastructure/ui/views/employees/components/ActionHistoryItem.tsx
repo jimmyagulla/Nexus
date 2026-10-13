@@ -1,7 +1,4 @@
-export interface ActionHistoryItemModel {
-  label: string;
-  date: string;
-}
+import type { ActionHistoryItemModel } from '../../../../../adapters/presenters/employees/employees.view-models';
 
 /** Dotted line of an employee's actions history. */
 export function ActionHistoryItem({ item }: { item: ActionHistoryItemModel }) {

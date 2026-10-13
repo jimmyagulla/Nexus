@@ -1,15 +1,6 @@
 import { i18n } from '../../../i18n/i18n';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface AttendanceMonthRowModel {
-  month: string;
-  period: string;
-  worked: string;
-  absences: string;
-  leaves: string;
-  sickLeaves: string;
-  otherEvents: string;
-}
+import type { AttendanceMonthRowModel } from '../../../../../adapters/presenters/employees/employees.view-models';
 
 /** Monthly line of the employee attendance table. */
 export function AttendanceMonthRow({ row }: { row: AttendanceMonthRowModel }) {

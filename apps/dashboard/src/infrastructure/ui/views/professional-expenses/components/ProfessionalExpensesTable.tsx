@@ -1,9 +1,7 @@
 import { i18n } from '../../../i18n/i18n';
 import { Table, TableHead, TableHeader } from '../../../shared/table';
-import {
-  ProfessionalExpenseRow,
-  type ProfessionalExpenseRowModel,
-} from './ProfessionalExpenseRow';
+import { ProfessionalExpenseRow } from './ProfessionalExpenseRow';
+import type { ProfessionalExpenseRowModel } from '../../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 const COLUMNS = 'minmax(0,1fr) 140px minmax(0,1fr) 100px 190px 24px';
 

@@ -1,6 +1,7 @@
 import { i18n } from '../../../i18n/i18n';
 import { Table, TableHead, TableHeader } from '../../../shared/table';
-import { ExpenseReportRow, type ExpenseReportRowModel } from './ExpenseReportRow';
+import { ExpenseReportRow } from './ExpenseReportRow';
+import type { ExpenseReportRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 const COLUMNS = 'minmax(0,1fr) 140px 110px 110px 190px 24px';
 

@@ -1,13 +1,5 @@
-import { Badge, type BadgeProps } from '../../../shared/badge';
-
-export interface LeaveRequestItemModel {
-  type: string;
-  /** "29/10 – 30/10/2026" */
-  period: string;
-  /** "2 j" */
-  days: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import { Badge } from '../../../shared/badge';
+import type { LeaveRequestItemModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
 
 /** One row of "Mes demandes": type and period, days, status. */
 export function LeaveRequestItem({ type, period, days, status }: LeaveRequestItemModel) {

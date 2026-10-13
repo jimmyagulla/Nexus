@@ -1,7 +1,10 @@
-import { loginVerificationFixture } from '../../fixtures/auth.fixture';
+import type { AuthComposition } from '../../../composition/auth.composition';
 import { LoginVerification } from './LoginVerification';
 
-/** Placeholder data until the authentication presenter is wired. */
-export function LoginVerificationPage() {
-  return <LoginVerification model={loginVerificationFixture} />;
+interface LoginVerificationPageProps {
+  deps: AuthComposition;
+}
+
+export function LoginVerificationPage({ deps }: LoginVerificationPageProps) {
+  return <LoginVerification model={deps.loginVerificationPresenter.present()} />;
 }

@@ -1,11 +1,5 @@
 import { Checkbox } from '../../../shared/checkbox';
-
-export interface FilterOptionModel {
-  id: string;
-  label: string;
-  count: number;
-  checked: boolean;
-}
+import type { FilterOptionModel } from '../../../../../adapters/presenters/documents/documents.view-models';
 
 interface FilterOptionProps {
   model: FilterOptionModel;

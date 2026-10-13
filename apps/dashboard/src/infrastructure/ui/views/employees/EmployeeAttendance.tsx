@@ -4,17 +4,9 @@ import { PageContent } from '../../common/page/PageContent';
 import { i18n } from '../../i18n/i18n';
 import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
-import {
-  AttendanceMonthRow,
-  type AttendanceMonthRowModel,
-} from './components/AttendanceMonthRow';
-import { EmployeeHeader, type EmployeeHeaderModel } from './components/EmployeeHeader';
-
-export interface EmployeeAttendanceViewModel {
-  employee: EmployeeHeaderModel;
-  periodFilter: string;
-  months: AttendanceMonthRowModel[];
-}
+import { AttendanceMonthRow } from './components/AttendanceMonthRow';
+import { EmployeeHeader } from './components/EmployeeHeader';
+import type { EmployeeAttendanceViewModel } from '../../../../adapters/presenters/employees/employees.view-models';
 
 const columns = '150px 130px 100px 90px 80px 80px minmax(0, 1fr)';
 

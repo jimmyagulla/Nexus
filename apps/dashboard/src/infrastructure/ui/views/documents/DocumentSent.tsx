@@ -1,22 +1,13 @@
 import { Link } from '@tanstack/react-router';
 import { ConfirmationCard } from '../../common/feedback/ConfirmationCard';
-import { StepProgress, type Step } from '../../common/feedback/StepProgress';
+import { StepProgress } from '../../common/feedback/StepProgress';
 import { SummaryList } from '../../common/feedback/SummaryList';
 import { SummaryRow } from '../../common/feedback/SummaryRow';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
-import { Badge, type BadgeProps } from '../../shared/badge';
+import { Badge } from '../../shared/badge';
 import { Button } from '../../shared/button';
-
-export interface DocumentSentViewModel {
-  description: string;
-  type: string;
-  fileName: string;
-  sentAt: string;
-  recipient: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-  steps: Step[];
-}
+import type { DocumentSentViewModel } from '../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentSentProps {
   model: DocumentSentViewModel;

@@ -1,7 +1,10 @@
-import { overtimeDeclarationFixture } from '../../fixtures/overtime.fixture';
+import type { OvertimeComposition } from '../../../composition/overtime.composition';
 import { OvertimeDeclaration } from './OvertimeDeclaration';
 
-/** Placeholder data until the overtime presenter is wired. */
-export function OvertimeDeclarationPage() {
-  return <OvertimeDeclaration model={overtimeDeclarationFixture} />;
+interface OvertimeDeclarationPageProps {
+  deps: OvertimeComposition;
+}
+
+export function OvertimeDeclarationPage({ deps }: OvertimeDeclarationPageProps) {
+  return <OvertimeDeclaration model={deps.overtimeDeclarationPresenter.present()} />;
 }

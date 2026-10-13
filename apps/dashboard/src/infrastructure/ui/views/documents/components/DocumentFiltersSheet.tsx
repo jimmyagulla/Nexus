@@ -11,19 +11,9 @@ import {
 } from '../../../shared/sheet';
 import { ToggleGroup, ToggleGroupItem } from '../../../shared/toggle-group';
 import { FilterGroup } from './FilterGroup';
-import { FilterOption, type FilterOptionModel } from './FilterOption';
+import { FilterOption } from './FilterOption';
 import { PeriodField } from './PeriodField';
-
-export interface DocumentFiltersViewModel {
-  /** "2 filtres appliqués" */
-  appliedLabel: string;
-  /** "Afficher 2 résultats" */
-  showResultsLabel: string;
-  categories: FilterOptionModel[];
-  statuses: FilterOptionModel[];
-  emitters: { value: string; label: string }[];
-  emitter: string;
-}
+import type { DocumentFiltersViewModel } from '../../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentFiltersSheetProps {
   model: DocumentFiltersViewModel;

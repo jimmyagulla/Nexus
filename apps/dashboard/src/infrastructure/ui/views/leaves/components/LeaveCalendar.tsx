@@ -1,17 +1,8 @@
 import { i18n } from '../../../i18n/i18n';
 import { Card } from '../../../shared/card';
-import { LeaveCalendarDay, type LeaveCalendarDayModel } from './LeaveCalendarDay';
-import {
-  LeaveCalendarLegendItem,
-  type LeaveCalendarLegendTone,
-} from './LeaveCalendarLegendItem';
-
-export interface LeaveCalendarModel {
-  /** "Octobre 2026" */
-  month: string;
-  /** Monday-first grid, padding cells included. */
-  days: LeaveCalendarDayModel[];
-}
+import { LeaveCalendarDay } from './LeaveCalendarDay';
+import { LeaveCalendarLegendItem } from './LeaveCalendarLegendItem';
+import type { LeaveCalendarLegendTone, LeaveCalendarModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
 
 const legendTones: LeaveCalendarLegendTone[] = [
   'accepted',

@@ -5,14 +5,9 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { PendingRequestAlert } from './components/PendingRequestAlert';
-import { type ProfessionalExpenseRowModel } from './components/ProfessionalExpenseRow';
 import { ProfessionalExpensesTable } from './components/ProfessionalExpensesTable';
 import { ProfessionalExpensesToolbar } from './components/ProfessionalExpensesToolbar';
-
-export interface ProfessionalExpensesViewModel {
-  pending: { title: string; description: string };
-  requests: ProfessionalExpenseRowModel[];
-}
+import type { ProfessionalExpensesViewModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 /** P7.1 — the employee's professional expense requests. */
 export function ProfessionalExpenses({

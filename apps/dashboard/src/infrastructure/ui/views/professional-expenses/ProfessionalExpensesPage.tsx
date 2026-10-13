@@ -1,7 +1,10 @@
-import { professionalExpensesFixture } from '../../fixtures/professional-expenses.fixture';
+import type { ProfessionalExpensesComposition } from '../../../composition/professional-expenses.composition';
 import { ProfessionalExpenses } from './ProfessionalExpenses';
 
-/** Placeholder data until the professional expenses presenter is wired. */
-export function ProfessionalExpensesPage() {
-  return <ProfessionalExpenses model={professionalExpensesFixture} />;
+interface ProfessionalExpensesPageProps {
+  deps: ProfessionalExpensesComposition;
+}
+
+export function ProfessionalExpensesPage({ deps }: ProfessionalExpensesPageProps) {
+  return <ProfessionalExpenses model={deps.professionalExpensesPresenter.present()} />;
 }

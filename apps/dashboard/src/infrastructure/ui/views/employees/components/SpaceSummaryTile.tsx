@@ -1,11 +1,5 @@
 import { Card } from '../../../shared/card';
-
-export interface SpaceSummaryTileModel {
-  icon: string;
-  label: string;
-  value: string;
-  hint: string;
-}
+import type { SpaceSummaryTileModel } from '../../../../../adapters/presenters/employees/employees.view-models';
 
 /** Summary figure of an employee space (documents, payslips…). */
 export function SpaceSummaryTile({ tile }: { tile: SpaceSummaryTileModel }) {

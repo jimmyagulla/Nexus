@@ -1,7 +1,4 @@
-import type { ExpenseReportRowModel } from '../views/expense-reports/components/ExpenseReportRow';
-import type { ExpenseReportViewModel } from '../views/expense-reports/ExpenseReport';
-import type { ExpenseReportsViewModel } from '../views/expense-reports/ExpenseReports';
-import type { ExpenseReportSubmittedViewModel } from '../views/expense-reports/ExpenseReportSubmitted';
+import type { ExpenseReportRowModel, ExpenseReportSubmittedViewModel, ExpenseReportViewModel, ExpenseReportsViewModel } from '../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 /** Placeholder data of the expense reports screens (mockup v3, flow 6). */
 

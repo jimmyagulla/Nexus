@@ -12,13 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../../shared/dialog';
-import { ChangeRow, type ChangeModel } from './ChangeRow';
-
-export interface ConfirmChangesViewModel {
-  changes: ChangeModel[];
-  /** "Un e-mail de confirmation sera envoyé à … et le service RH sera informé." */
-  emailNotice: string;
-}
+import { ChangeRow } from './ChangeRow';
+import type { ConfirmChangesViewModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface ConfirmChangesDialogProps {
   model: ConfirmChangesViewModel;

@@ -1,8 +1,8 @@
-import { type ExpenseFormModel } from '../../../features/expense-reports/ExpenseForm';
 import { i18n } from '../../../i18n/i18n';
 import { Table, TableHead, TableHeader } from '../../../shared/table';
 import { AddExpenseSheet } from './AddExpenseSheet';
-import { ExpenseRow, type ExpenseRowModel } from './ExpenseRow';
+import { ExpenseRow } from './ExpenseRow';
+import type { ExpenseFormModel, ExpenseRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 const COLUMNS = '96px 130px minmax(0,1fr) 140px 80px 90px 32px';
 

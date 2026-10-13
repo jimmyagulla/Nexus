@@ -1,12 +1,8 @@
-import { StepProgressItem, type StepState } from './StepProgressItem';
-
-export interface Step {
-  label: string;
-  state: StepState;
-}
+import type { ProgressStepViewModel } from '../../../../adapters/presenters/display.view-models';
+import { StepProgressItem } from './StepProgressItem';
 
 interface StepProgressProps {
-  steps: Step[];
+  steps: ProgressStepViewModel[];
 }
 
 /** Three-bar progress of a request: done (green), current (amber), upcoming (grey). */

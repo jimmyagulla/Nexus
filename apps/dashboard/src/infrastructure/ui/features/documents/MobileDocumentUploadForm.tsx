@@ -3,17 +3,10 @@ import { InfoNote } from '../../common/feedback/InfoNote';
 import { FormField } from '../../common/forms/FormField';
 import { i18n } from '../../i18n/i18n';
 import { Textarea } from '../../shared/textarea';
-import type { DocumentTypeOptionModel } from './DocumentTypeOption';
 import { MobileDocumentTypeOption } from './MobileDocumentTypeOption';
 import { MobileFilePicker } from './MobileFilePicker';
 import { MobileUploadedFile } from './MobileUploadedFile';
-
-export interface MobileDocumentUploadFormModel {
-  types: DocumentTypeOptionModel[];
-  selectedType: string;
-  note: string;
-  file: { name: string; details: string };
-}
+import type { MobileDocumentUploadFormModel } from '../../../../adapters/presenters/documents/documents.view-models';
 
 interface MobileDocumentUploadFormProps {
   model: MobileDocumentUploadFormModel;

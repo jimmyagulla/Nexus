@@ -1,7 +1,10 @@
-import { documentUploadFixture } from '../../fixtures/documents.fixture';
+import type { DocumentsComposition } from '../../../composition/documents.composition';
 import { DocumentUpload } from './DocumentUpload';
 
-/** Placeholder data until the documents presenter is wired. */
-export function DocumentUploadPage() {
-  return <DocumentUpload model={documentUploadFixture} />;
+interface DocumentUploadPageProps {
+  deps: DocumentsComposition;
+}
+
+export function DocumentUploadPage({ deps }: DocumentUploadPageProps) {
+  return <DocumentUpload model={deps.documentUploadPresenter.present()} />;
 }

@@ -1,7 +1,10 @@
-import { payslipsFixture } from '../../fixtures/payslips.fixture';
+import type { PayslipsComposition } from '../../../composition/payslips.composition';
 import { Payslips } from './Payslips';
 
-/** Placeholder data until the payslips presenter is wired. */
-export function PayslipsPage() {
-  return <Payslips model={payslipsFixture} />;
+interface PayslipsPageProps {
+  deps: PayslipsComposition;
+}
+
+export function PayslipsPage({ deps }: PayslipsPageProps) {
+  return <Payslips model={deps.payslipsPresenter.present()} />;
 }

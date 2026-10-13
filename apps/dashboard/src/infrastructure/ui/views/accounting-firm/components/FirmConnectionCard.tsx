@@ -3,11 +3,7 @@ import { i18n } from '../../../i18n/i18n';
 import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { Card } from '../../../shared/card';
-
-export interface FirmConnectionModel {
-  name: string;
-  contact: string;
-}
+import type { FirmConnectionModel } from '../../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
 
 /** Linked accounting firm: name, connection state, contact, access actions. */
 export function FirmConnectionCard({ firm }: { firm: FirmConnectionModel }) {

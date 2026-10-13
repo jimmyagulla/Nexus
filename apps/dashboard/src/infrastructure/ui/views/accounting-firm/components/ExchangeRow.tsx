@@ -1,17 +1,8 @@
 import { RowAction } from '../../../common/data/RowAction';
 import { i18n } from '../../../i18n/i18n';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface ExchangeRowModel {
-  id: string;
-  icon: string;
-  name: string;
-  category: string;
-  date: string;
-  direction: 'toFirm' | 'fromFirm';
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import type { ExchangeRowModel } from '../../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
 
 /** Document exchanged with the accounting firm, with its direction. */
 export function ExchangeRow({ exchange }: { exchange: ExchangeRowModel }) {

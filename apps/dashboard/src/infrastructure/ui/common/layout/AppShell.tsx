@@ -3,10 +3,10 @@ import { MobileHeader } from './MobileHeader';
 import { MobileTabBar } from './MobileTabBar';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
-import type { ShellModel } from './shell.types';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface AppShellProps {
-  model: ShellModel;
+  model: ShellViewModel;
   children: ReactNode;
 }
 

@@ -1,20 +1,8 @@
 import { RowAction } from '../../../common/data/RowAction';
 import { i18n } from '../../../i18n/i18n';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface DocumentRowModel {
-  id: string;
-  /** Remix Icon class of the document kind, e.g. `ri-file-text-line`. */
-  icon: string;
-  name: string;
-  category: string;
-  date: string;
-  format: string;
-  size: string;
-  emitter: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentRowProps {
   model: DocumentRowModel;

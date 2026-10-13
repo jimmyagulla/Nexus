@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '../../shared/dropdown-menu';
 import { IconTile } from '../data/IconTile';
-import type { ShellRole } from './shell.types';
+import type { ShellRole } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface RoleCardProps {
   role: ShellRole;

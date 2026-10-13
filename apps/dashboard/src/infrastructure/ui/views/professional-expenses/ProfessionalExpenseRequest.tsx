@@ -1,18 +1,12 @@
 import { Link } from '@tanstack/react-router';
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
-import {
-  ProfessionalExpenseForm,
-  type ProfessionalExpenseFormModel,
-} from '../../features/professional-expenses/ProfessionalExpenseForm';
+import { ProfessionalExpenseForm } from '../../features/professional-expenses/ProfessionalExpenseForm';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card, CardFooter } from '../../shared/card';
-
-export interface ProfessionalExpenseRequestViewModel {
-  request: ProfessionalExpenseFormModel;
-}
+import type { ProfessionalExpenseRequestViewModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 /** P7.2 — new professional expense request. */
 export function ProfessionalExpenseRequest({

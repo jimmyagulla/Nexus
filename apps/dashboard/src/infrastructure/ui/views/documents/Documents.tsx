@@ -11,20 +11,9 @@ import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Sheet, SheetTrigger } from '../../shared/sheet';
 import { Table, TableHead, TableHeader } from '../../shared/table';
-import {
-  DocumentFiltersSheet,
-  type DocumentFiltersViewModel,
-} from './components/DocumentFiltersSheet';
-import { DocumentRow, type DocumentRowModel } from './components/DocumentRow';
-
-export interface DocumentsViewModel {
-  appliedFilterCount: number;
-  /** "2 résultats sur 7 ·" */
-  resultSummary: string;
-  activeFilters: { label: string; value: string }[];
-  filters: DocumentFiltersViewModel;
-  documents: DocumentRowModel[];
-}
+import { DocumentFiltersSheet } from './components/DocumentFiltersSheet';
+import { DocumentRow } from './components/DocumentRow';
+import type { DocumentsViewModel } from '../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentsProps {
   model: DocumentsViewModel;

@@ -1,7 +1,8 @@
 import { i18n } from '../../../i18n/i18n';
 import { Button } from '../../../shared/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '../../../shared/card';
-import { EmployerInfoRow, type EmployerInfoModel } from './EmployerInfoRow';
+import { EmployerInfoRow } from './EmployerInfoRow';
+import type { EmployerInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface EmployerInfoCardProps {
   fields: EmployerInfoModel[];

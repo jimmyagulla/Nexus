@@ -1,7 +1,10 @@
-import { leaveApprovalsFixture } from '../../fixtures/leave-approvals.fixture';
+import type { LeaveApprovalsComposition } from '../../../composition/leave-approvals.composition';
 import { LeaveApprovals } from './LeaveApprovals';
 
-/** Placeholder data until the leave approvals presenter is wired. */
-export function LeaveApprovalsPage() {
-  return <LeaveApprovals model={leaveApprovalsFixture} />;
+interface LeaveApprovalsPageProps {
+  deps: LeaveApprovalsComposition;
+}
+
+export function LeaveApprovalsPage({ deps }: LeaveApprovalsPageProps) {
+  return <LeaveApprovals model={deps.leaveApprovalsPresenter.present()} />;
 }

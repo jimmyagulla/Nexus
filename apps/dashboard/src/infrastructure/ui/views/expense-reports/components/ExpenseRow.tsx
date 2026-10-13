@@ -1,18 +1,7 @@
 import { i18n } from '../../../i18n/i18n';
 import { cn } from '../../../lib/utils';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface ExpenseRowModel {
-  id: string;
-  date: string;
-  category: string;
-  /** Remix Icon class of the category, e.g. `ri-train-line`. */
-  categoryIcon: string;
-  description: string;
-  paymentMethod: string;
-  vat: string;
-  amount: string;
-}
+import type { ExpenseRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 export function ExpenseRow({ expense }: { expense: ExpenseRowModel }) {
   return (

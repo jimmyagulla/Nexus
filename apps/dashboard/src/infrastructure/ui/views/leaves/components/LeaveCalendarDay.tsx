@@ -1,18 +1,5 @@
 import { cn } from '../../../lib/utils';
-
-export type LeaveCalendarDayState =
-  | 'outside'
-  | 'workday'
-  | 'weekend'
-  | 'accepted'
-  | 'pending';
-
-export interface LeaveCalendarDayModel {
-  /** Day number; empty for the padding cells before the 1st. */
-  label: string;
-  state: LeaveCalendarDayState;
-  today?: boolean;
-}
+import type { LeaveCalendarDayModel, LeaveCalendarDayState } from '../../../../../adapters/presenters/leaves/leaves.view-models';
 
 const stateClassName: Record<LeaveCalendarDayState, string> = {
   outside: 'border-transparent text-transparent',

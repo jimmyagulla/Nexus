@@ -1,15 +1,7 @@
-import { Link, type LinkOptions } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../shared/button';
-
-export interface QuickActionModel {
-  id: string;
-  /** Remix Icon class, e.g. `ri-time-line`. */
-  icon: string;
-  label: string;
-  link: LinkOptions;
-  primary?: boolean;
-}
+import type { QuickActionModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 /** Full-width action button of the quick actions card. */
 export function QuickAction({ action }: { action: QuickActionModel }) {

@@ -4,21 +4,10 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Tabs, TabsContent, TabsList } from '../../shared/tabs';
-import { type ExchangeRowModel } from './components/ExchangeRow';
 import { ExchangesPanel } from './components/ExchangesPanel';
 import { ExchangesTab } from './components/ExchangesTab';
-import {
-  FirmConnectionCard,
-  type FirmConnectionModel,
-} from './components/FirmConnectionCard';
-
-export interface AccountingFirmViewModel {
-  firm: FirmConnectionModel;
-  all: ExchangeRowModel[];
-  sent: ExchangeRowModel[];
-  received: ExchangeRowModel[];
-  counts: { all: string; sent: string; received: string };
-}
+import { FirmConnectionCard } from './components/FirmConnectionCard';
+import type { AccountingFirmViewModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
 
 /** P10.1 — document exchanges with the accounting firm. */
 export function AccountingFirm({ model }: { model: AccountingFirmViewModel }) {

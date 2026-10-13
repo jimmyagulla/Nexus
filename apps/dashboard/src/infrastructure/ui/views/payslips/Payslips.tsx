@@ -6,15 +6,8 @@ import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { MobilePayslipRow } from './components/MobilePayslipRow';
-import { PayslipRow, type PayslipRowModel } from './components/PayslipRow';
-
-export interface PayslipsViewModel {
-  summary: string;
-  year: string;
-  yearSummary: string;
-  hasNextYear: boolean;
-  payslips: PayslipRowModel[];
-}
+import { PayslipRow } from './components/PayslipRow';
+import type { PayslipsViewModel } from '../../../../adapters/presenters/payslips/payslips.view-models';
 
 interface PayslipsProps {
   model: PayslipsViewModel;

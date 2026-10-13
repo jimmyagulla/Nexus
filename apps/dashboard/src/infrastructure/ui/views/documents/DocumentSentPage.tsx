@@ -1,7 +1,10 @@
-import { documentSentFixture } from '../../fixtures/documents.fixture';
+import type { DocumentsComposition } from '../../../composition/documents.composition';
 import { DocumentSent } from './DocumentSent';
 
-/** Placeholder data until the documents presenter is wired. */
-export function DocumentSentPage() {
-  return <DocumentSent model={documentSentFixture} />;
+interface DocumentSentPageProps {
+  deps: DocumentsComposition;
+}
+
+export function DocumentSentPage({ deps }: DocumentSentPageProps) {
+  return <DocumentSent model={deps.documentSentPresenter.present()} />;
 }

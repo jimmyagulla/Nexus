@@ -1,12 +1,5 @@
 import { cn } from '../../../lib/utils';
-
-export type LeaveBalanceKind = 'acquired' | 'taken' | 'pending' | 'remaining';
-
-export interface LeaveBalanceItemModel {
-  kind: LeaveBalanceKind;
-  label: string;
-  value: string;
-}
+import type { LeaveBalanceItemModel, LeaveBalanceKind } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 const dotClassName: Record<LeaveBalanceKind, string> = {
   acquired: 'bg-grey-300',

@@ -1,14 +1,5 @@
 import { RadioGroupItem } from '../../shared/radio-group';
-
-export interface DocumentTypeOptionModel {
-  value: string;
-  /** Remix Icon class, e.g. `ri-first-aid-kit-line`. */
-  icon: string;
-  label: string;
-  /** Label of the compact mobile chip ("Administratif"). */
-  shortLabel: string;
-  description: string;
-}
+import type { DocumentTypeOptionModel } from '../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentTypeOptionProps {
   model: DocumentTypeOptionModel;

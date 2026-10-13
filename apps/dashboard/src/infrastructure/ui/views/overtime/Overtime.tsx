@@ -9,17 +9,8 @@ import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { OvertimeCounter } from './components/OvertimeCounter';
 import { OvertimeDeclarationTable } from './components/OvertimeDeclarationTable';
-import type { OvertimeDeclarationRowModel } from './components/OvertimeDeclarationRow';
 import { OvertimeHighlightCounter } from './components/OvertimeHighlightCounter';
-
-export interface OvertimeViewModel {
-  counters: {
-    pending: string;
-    approved: string;
-    processed: string;
-  };
-  declarations: OvertimeDeclarationRowModel[];
-}
+import type { OvertimeViewModel } from '../../../../adapters/presenters/overtime/overtime.view-models';
 
 interface OvertimeProps {
   model: OvertimeViewModel;

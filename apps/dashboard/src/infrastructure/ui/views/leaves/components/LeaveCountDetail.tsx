@@ -1,15 +1,6 @@
 import { i18n } from '../../../i18n/i18n';
 import { LeaveCountDetailRow } from './LeaveCountDetailRow';
-
-export interface LeaveCountDetailModel {
-  /** "jeu. 29/10 → ven. 30/10" */
-  range: string;
-  calendarDays: string;
-  weekendsExcluded: string;
-  holidaysExcluded: string;
-  countedDays: string;
-  expectedReturn: string;
-}
+import type { LeaveCountDetailModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
 
 /** "Détail du décompte": how the working days of the request are counted. */
 export function LeaveCountDetail({

@@ -1,17 +1,11 @@
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
-import { ExpenseKpiCard, type ExpenseKpiModel } from './components/ExpenseKpiCard';
-import { type ExpenseReportRowModel } from './components/ExpenseReportRow';
+import { ExpenseKpiCard } from './components/ExpenseKpiCard';
 import { ExpenseReportsTable } from './components/ExpenseReportsTable';
 import { ExpenseReportsToolbar } from './components/ExpenseReportsToolbar';
 import { NewExpenseReportButton } from './components/NewExpenseReportButton';
-
-export interface ExpenseReportsViewModel {
-  draftId: string;
-  kpis: ExpenseKpiModel[];
-  reports: ExpenseReportRowModel[];
-}
+import type { ExpenseReportsViewModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 /** P6.1 — the employee's expense reports. */
 export function ExpenseReports({ model }: { model: ExpenseReportsViewModel }) {

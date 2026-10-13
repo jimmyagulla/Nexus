@@ -2,10 +2,10 @@ import { Avatar, AvatarFallback } from '../../shared/avatar';
 import { NotificationBell } from './NotificationBell';
 import { SecureConnectionChip } from './SecureConnectionChip';
 import { SmartSearch } from './SmartSearch';
-import type { ShellModel } from './shell.types';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface TopbarProps {
-  model: ShellModel;
+  model: ShellViewModel;
 }
 
 /** 56px top bar: smart search, secure connection chip, notifications, avatar. */

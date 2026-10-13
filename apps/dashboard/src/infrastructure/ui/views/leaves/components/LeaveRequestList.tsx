@@ -1,7 +1,8 @@
 import { FilterButton } from '../../../common/data/FilterButton';
 import { i18n } from '../../../i18n/i18n';
 import { Card } from '../../../shared/card';
-import { LeaveRequestItem, type LeaveRequestItemModel } from './LeaveRequestItem';
+import { LeaveRequestItem } from './LeaveRequestItem';
+import type { LeaveRequestItemModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
 
 interface LeaveRequestListProps {
   requests: LeaveRequestItemModel[];

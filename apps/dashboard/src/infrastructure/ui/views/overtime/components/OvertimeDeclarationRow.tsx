@@ -1,15 +1,6 @@
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface OvertimeDeclarationRowModel {
-  date: string;
-  /** "+2h30" */
-  hours: string;
-  reason: string;
-  /** "1 fichier" or "—" */
-  proof: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import type { OvertimeDeclarationRowModel } from '../../../../../adapters/presenters/overtime/overtime.view-models';
 
 export function OvertimeDeclarationRow({
   date,

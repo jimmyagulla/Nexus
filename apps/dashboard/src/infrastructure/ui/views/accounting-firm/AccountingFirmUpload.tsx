@@ -1,18 +1,11 @@
 import { Link } from '@tanstack/react-router';
 import { PageContent } from '../../common/page/PageContent';
-import {
-  AccountingFirmUploadForm,
-  type AccountingFirmUploadFormModel,
-} from '../../features/accounting-firm/AccountingFirmUploadForm';
+import { AccountingFirmUploadForm } from '../../features/accounting-firm/AccountingFirmUploadForm';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card } from '../../shared/card';
-
-export interface AccountingFirmUploadViewModel {
-  firmName: string;
-  form: AccountingFirmUploadFormModel;
-}
+import type { AccountingFirmUploadViewModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
 
 /** P10.2 — upload a document for the accounting firm. */
 export function AccountingFirmUpload({

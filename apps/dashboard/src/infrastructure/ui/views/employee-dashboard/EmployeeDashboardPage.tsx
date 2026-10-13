@@ -1,7 +1,10 @@
-import { employeeDashboardFixture } from '../../fixtures/employee-dashboard.fixture';
+import type { EmployeeDashboardComposition } from '../../../composition/employee-dashboard.composition';
 import { EmployeeDashboard } from './EmployeeDashboard';
 
-/** Placeholder data until the employee dashboard presenter is wired. */
-export function EmployeeDashboardPage() {
-  return <EmployeeDashboard model={employeeDashboardFixture} />;
+interface EmployeeDashboardPageProps {
+  deps: EmployeeDashboardComposition;
+}
+
+export function EmployeeDashboardPage({ deps }: EmployeeDashboardPageProps) {
+  return <EmployeeDashboard model={deps.employeeDashboardPresenter.present()} />;
 }

@@ -1,8 +1,4 @@
-export interface EmployerInfoModel {
-  id: string;
-  label: string;
-  value: string;
-}
+import type { EmployerInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface EmployerInfoRowProps {
   model: EmployerInfoModel;

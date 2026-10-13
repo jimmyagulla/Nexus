@@ -1,16 +1,7 @@
-import { IconTile, type IconTileTone } from '../../../common/data/IconTile';
+import { IconTile } from '../../../common/data/IconTile';
 import { cn } from '../../../lib/utils';
-import { Badge, type BadgeProps } from '../../../shared/badge';
-
-export interface ActivityModel {
-  id: string;
-  /** Remix Icon class, e.g. `ri-sun-line`. */
-  icon: string;
-  tone: IconTileTone;
-  title: string;
-  detail: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import { Badge } from '../../../shared/badge';
+import type { ActivityModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 /** One line of the recent activities card. */
 export function ActivityRow({ activity }: { activity: ActivityModel }) {

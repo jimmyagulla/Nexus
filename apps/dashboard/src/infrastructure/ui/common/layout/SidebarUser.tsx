@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Avatar, AvatarFallback } from '../../shared/avatar';
-import type { ShellUser } from './shell.types';
+import type { ShellUser } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface SidebarUserProps {
   user: ShellUser;

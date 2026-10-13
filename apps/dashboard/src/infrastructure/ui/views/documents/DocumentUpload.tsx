@@ -1,23 +1,13 @@
 import { Link } from '@tanstack/react-router';
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
-import {
-  DocumentUploadForm,
-  type DocumentUploadFormModel,
-} from '../../features/documents/DocumentUploadForm';
-import {
-  MobileDocumentUploadForm,
-  type MobileDocumentUploadFormModel,
-} from '../../features/documents/MobileDocumentUploadForm';
+import { DocumentUploadForm } from '../../features/documents/DocumentUploadForm';
+import { MobileDocumentUploadForm } from '../../features/documents/MobileDocumentUploadForm';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card, CardFooter } from '../../shared/card';
-
-export interface DocumentUploadViewModel {
-  form: DocumentUploadFormModel;
-  mobileForm: MobileDocumentUploadFormModel;
-}
+import type { DocumentUploadViewModel } from '../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentUploadProps {
   model: DocumentUploadViewModel;

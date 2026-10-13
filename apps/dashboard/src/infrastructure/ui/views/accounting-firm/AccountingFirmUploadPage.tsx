@@ -1,7 +1,10 @@
-import { accountingFirmUploadFixture } from '../../fixtures/accounting-firm.fixture';
+import type { AccountingFirmComposition } from '../../../composition/accounting-firm.composition';
 import { AccountingFirmUpload } from './AccountingFirmUpload';
 
-/** Placeholder data until the accounting firm upload presenter is wired. */
-export function AccountingFirmUploadPage() {
-  return <AccountingFirmUpload model={accountingFirmUploadFixture} />;
+interface AccountingFirmUploadPageProps {
+  deps: AccountingFirmComposition;
+}
+
+export function AccountingFirmUploadPage({ deps }: AccountingFirmUploadPageProps) {
+  return <AccountingFirmUpload model={deps.accountingFirmUploadPresenter.present()} />;
 }

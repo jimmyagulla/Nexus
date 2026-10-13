@@ -1,7 +1,4 @@
-import type { DocumentTypeOptionModel } from '../features/documents/DocumentTypeOption';
-import type { DocumentSentViewModel } from '../views/documents/DocumentSent';
-import type { DocumentUploadViewModel } from '../views/documents/DocumentUpload';
-import type { DocumentsViewModel } from '../views/documents/Documents';
+import type { DocumentSentViewModel, DocumentTypeOptionModel, DocumentUploadViewModel, DocumentsViewModel } from '../../../adapters/presenters/documents/documents.view-models';
 
 /** Placeholder data of the documents screens (mockup v3, flow 2). */
 export const documentsFixture: DocumentsViewModel = {

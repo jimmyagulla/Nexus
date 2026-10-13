@@ -1,7 +1,10 @@
-import { personalInfoEditFixture } from '../../fixtures/personal-info.fixture';
+import type { PersonalInfoComposition } from '../../../composition/personal-info.composition';
 import { PersonalInfoEdit } from './PersonalInfoEdit';
 
-/** Placeholder data until the personal information presenter is wired. */
-export function PersonalInfoEditPage() {
-  return <PersonalInfoEdit model={personalInfoEditFixture} />;
+interface PersonalInfoEditPageProps {
+  deps: PersonalInfoComposition;
+}
+
+export function PersonalInfoEditPage({ deps }: PersonalInfoEditPageProps) {
+  return <PersonalInfoEdit model={deps.personalInfoEditPresenter.present()} />;
 }

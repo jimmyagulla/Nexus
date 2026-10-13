@@ -3,10 +3,10 @@ import { BrandLogo } from './BrandLogo';
 import { RoleCard } from './RoleCard';
 import { SidebarNavSection } from './SidebarNavSection';
 import { SidebarUser } from './SidebarUser';
-import type { ShellModel } from './shell.types';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface SidebarProps {
-  model: ShellModel;
+  model: ShellViewModel;
   className?: string;
 }
 

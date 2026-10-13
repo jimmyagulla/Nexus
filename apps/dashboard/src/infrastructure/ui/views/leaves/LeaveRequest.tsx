@@ -2,30 +2,14 @@ import { Link } from '@tanstack/react-router';
 import { InfoNote } from '../../common/feedback/InfoNote';
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
-import {
-  LeaveRequestForm,
-  type LeaveRequestFormValues,
-} from '../../features/leaves/LeaveRequestForm';
+import { LeaveRequestForm } from '../../features/leaves/LeaveRequestForm';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card } from '../../shared/card';
-import {
-  LeaveBalanceImpact,
-  type LeaveBalanceImpactModel,
-} from './components/LeaveBalanceImpact';
-import {
-  LeaveCountDetail,
-  type LeaveCountDetailModel,
-} from './components/LeaveCountDetail';
-
-export interface LeaveRequestViewModel {
-  form: LeaveRequestFormValues;
-  impact: LeaveBalanceImpactModel;
-  detail: LeaveCountDetailModel;
-  /** "Nadia Roussel, service RH" */
-  validator: string;
-}
+import { LeaveBalanceImpact } from './components/LeaveBalanceImpact';
+import { LeaveCountDetail } from './components/LeaveCountDetail';
+import type { LeaveRequestViewModel } from '../../../../adapters/presenters/leaves/leaves.view-models';
 
 interface LeaveRequestProps {
   model: LeaveRequestViewModel;

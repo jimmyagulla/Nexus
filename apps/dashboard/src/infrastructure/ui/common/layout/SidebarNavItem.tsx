@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '../../lib/utils';
-import type { ShellNavItem } from './shell.types';
+import type { ShellNavItem } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface SidebarNavItemProps {
   item: ShellNavItem;

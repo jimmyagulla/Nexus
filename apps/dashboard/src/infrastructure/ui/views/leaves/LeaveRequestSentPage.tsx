@@ -1,7 +1,10 @@
-import { leaveRequestSentFixture } from '../../fixtures/leaves.fixture';
+import type { LeavesComposition } from '../../../composition/leaves.composition';
 import { LeaveRequestSent } from './LeaveRequestSent';
 
-/** Placeholder data until the leaves presenter is wired. */
-export function LeaveRequestSentPage() {
-  return <LeaveRequestSent model={leaveRequestSentFixture} />;
+interface LeaveRequestSentPageProps {
+  deps: LeavesComposition;
+}
+
+export function LeaveRequestSentPage({ deps }: LeaveRequestSentPageProps) {
+  return <LeaveRequestSent model={deps.leaveRequestSentPresenter.present()} />;
 }

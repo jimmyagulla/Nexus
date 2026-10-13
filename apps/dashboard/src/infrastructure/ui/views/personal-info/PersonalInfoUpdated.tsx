@@ -2,15 +2,8 @@ import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
 import { EditableInfoCard } from './components/EditableInfoCard';
-import type { EditableInfoModel } from './components/EditableInfoRow';
 import { UpdateSuccessBanner } from './components/UpdateSuccessBanner';
-
-export interface PersonalInfoUpdatedViewModel {
-  /** "Le service RH a été informé le … Un e-mail de confirmation vous a été envoyé." */
-  notice: string;
-  lastUpdate: string;
-  contact: EditableInfoModel[];
-}
+import type { PersonalInfoUpdatedViewModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface PersonalInfoUpdatedProps {
   model: PersonalInfoUpdatedViewModel;

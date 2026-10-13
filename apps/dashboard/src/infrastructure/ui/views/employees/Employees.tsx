@@ -8,14 +8,8 @@ import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
 import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
-import { EmployeeRow, type EmployeeRowModel } from './components/EmployeeRow';
-
-export interface EmployeesViewModel {
-  summary: string;
-  resultsSummary: string;
-  serviceFilter: string;
-  employees: EmployeeRowModel[];
-}
+import { EmployeeRow } from './components/EmployeeRow';
+import type { EmployeesViewModel } from '../../../../adapters/presenters/employees/employees.view-models';
 
 const columns =
   'minmax(0, 1.4fr) minmax(0, 1fr) 96px 120px 92px 124px 112px';

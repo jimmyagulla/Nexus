@@ -2,19 +2,12 @@ import { Link } from '@tanstack/react-router';
 import { IconTile } from '../../../common/data/IconTile';
 import { i18n } from '../../../i18n/i18n';
 import { AppRoutes } from '../../../routes/app-routes';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { Card } from '../../../shared/card';
-import { LeaveBalanceItem, type LeaveBalanceItemModel } from './LeaveBalanceItem';
-import { LeaveBalanceRing, type LeaveBalanceRingModel } from './LeaveBalanceRing';
-
-export interface LeaveBalanceModel {
-  available: string;
-  period: string;
-  ring: LeaveBalanceRingModel;
-  items: LeaveBalanceItemModel[];
-  nextLeave: { dates: string; status: { label: string; tone: BadgeProps['tone'] } };
-}
+import { LeaveBalanceItem } from './LeaveBalanceItem';
+import { LeaveBalanceRing } from './LeaveBalanceRing';
+import type { LeaveBalanceModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 /** Paid-leave balance: ring, figures, next leave and leave actions. */
 export function LeaveBalanceCard({ balance }: { balance: LeaveBalanceModel }) {

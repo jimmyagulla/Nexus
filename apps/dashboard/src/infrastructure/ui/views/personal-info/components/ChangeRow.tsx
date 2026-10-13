@@ -1,9 +1,4 @@
-export interface ChangeModel {
-  id: string;
-  label: string;
-  previous: string;
-  next: string;
-}
+import type { ChangeModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface ChangeRowProps {
   model: ChangeModel;

@@ -1,13 +1,6 @@
 import { cn } from '../../../lib/utils';
 import { i18n } from '../../../i18n/i18n';
-
-export interface EditableInfoModel {
-  id: string;
-  label: string;
-  value: string;
-  /** Just changed: tinted green with a "Modifié" tag. */
-  modified?: boolean;
-}
+import type { EditableInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface EditableInfoRowProps {
   model: EditableInfoModel;

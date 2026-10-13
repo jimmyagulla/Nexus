@@ -1,10 +1,5 @@
 import { i18n } from '../../../i18n/i18n';
-
-export interface OvertimeCounterPanelModel {
-  pending: string;
-  thisDeclaration: string;
-  pendingAfter: string;
-}
+import type { OvertimeCounterPanelModel } from '../../../../../adapters/presenters/overtime/overtime.view-models';
 
 /** "Mon compteur" box: pending hours before and after this declaration. */
 export function OvertimeCounterPanel({

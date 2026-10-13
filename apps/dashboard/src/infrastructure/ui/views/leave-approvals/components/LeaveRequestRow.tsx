@@ -1,19 +1,9 @@
 import { i18n } from '../../../i18n/i18n';
 import { Avatar, AvatarFallback } from '../../../shared/avatar';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface LeaveRequestRowModel {
-  id: string;
-  initials: string;
-  employee: string;
-  type: string;
-  period: string;
-  days: string;
-  balanceAfter: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import type { LeaveRequestRowModel } from '../../../../../adapters/presenters/leave-approvals/leave-approvals.view-models';
 
 /** Pending leave request with its Refuser / Accepter decision. */
 export function LeaveRequestRow({ request }: { request: LeaveRequestRowModel }) {

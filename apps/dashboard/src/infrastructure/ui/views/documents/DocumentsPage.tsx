@@ -1,7 +1,10 @@
-import { documentsFixture } from '../../fixtures/documents.fixture';
+import type { DocumentsComposition } from '../../../composition/documents.composition';
 import { Documents } from './Documents';
 
-/** Placeholder data until the documents presenter is wired. */
-export function DocumentsPage() {
-  return <Documents model={documentsFixture} />;
+interface DocumentsPageProps {
+  deps: DocumentsComposition;
+}
+
+export function DocumentsPage({ deps }: DocumentsPageProps) {
+  return <Documents model={deps.documentsPresenter.present()} />;
 }

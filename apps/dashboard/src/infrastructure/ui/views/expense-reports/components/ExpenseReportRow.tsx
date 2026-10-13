@@ -1,17 +1,7 @@
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
 import { cn } from '../../../lib/utils';
-
-export interface ExpenseReportRowModel {
-  id: string;
-  title: string;
-  period: string;
-  expenseCount: string;
-  total: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-  /** Freshly submitted note, tinted blue. */
-  highlighted?: boolean;
-}
+import type { ExpenseReportRowModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 export function ExpenseReportRow({ report }: { report: ExpenseReportRowModel }) {
   return (

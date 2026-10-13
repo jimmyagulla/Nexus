@@ -1,7 +1,10 @@
-import { employeeAttendanceFixture } from '../../fixtures/employees.fixture';
+import type { EmployeesComposition } from '../../../composition/employees.composition';
 import { EmployeeAttendance } from './EmployeeAttendance';
 
-/** Placeholder data until the employee attendance presenter is wired. */
-export function EmployeeAttendancePage() {
-  return <EmployeeAttendance model={employeeAttendanceFixture} />;
+interface EmployeeAttendancePageProps {
+  deps: EmployeesComposition;
+}
+
+export function EmployeeAttendancePage({ deps }: EmployeeAttendancePageProps) {
+  return <EmployeeAttendance model={deps.employeeAttendancePresenter.present()} />;
 }

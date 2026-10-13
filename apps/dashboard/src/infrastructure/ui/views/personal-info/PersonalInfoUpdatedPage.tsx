@@ -1,7 +1,10 @@
-import { personalInfoUpdatedFixture } from '../../fixtures/personal-info.fixture';
+import type { PersonalInfoComposition } from '../../../composition/personal-info.composition';
 import { PersonalInfoUpdated } from './PersonalInfoUpdated';
 
-/** Placeholder data until the personal information presenter is wired. */
-export function PersonalInfoUpdatedPage() {
-  return <PersonalInfoUpdated model={personalInfoUpdatedFixture} />;
+interface PersonalInfoUpdatedPageProps {
+  deps: PersonalInfoComposition;
+}
+
+export function PersonalInfoUpdatedPage({ deps }: PersonalInfoUpdatedPageProps) {
+  return <PersonalInfoUpdated model={deps.personalInfoUpdatedPresenter.present()} />;
 }

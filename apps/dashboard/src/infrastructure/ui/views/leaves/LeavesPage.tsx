@@ -1,7 +1,10 @@
-import { leavesFixture } from '../../fixtures/leaves.fixture';
+import type { LeavesComposition } from '../../../composition/leaves.composition';
 import { Leaves } from './Leaves';
 
-/** Placeholder data until the leaves presenter is wired. */
-export function LeavesPage() {
-  return <Leaves model={leavesFixture} />;
+interface LeavesPageProps {
+  deps: LeavesComposition;
+}
+
+export function LeavesPage({ deps }: LeavesPageProps) {
+  return <Leaves model={deps.leavesPresenter.present()} />;
 }

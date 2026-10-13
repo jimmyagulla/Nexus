@@ -1,11 +1,11 @@
-import type { ShellModel } from '../common/layout/shell.types';
+import type { ShellViewModel } from '../../../adapters/presenters/shell/shell.view-models';
 import { i18n } from '../i18n/i18n';
 import { AppRoutes } from '../routes/app-routes';
 
 const nav = i18n.messages.shell.employerNav;
 
 /** Placeholder data of the employer shell, until a presenter provides it. */
-export const employerShellFixture: ShellModel = {
+export const employerShellFixture: ShellViewModel = {
   role: 'employer',
   companyName: 'Atelier Moreau',
   user: {

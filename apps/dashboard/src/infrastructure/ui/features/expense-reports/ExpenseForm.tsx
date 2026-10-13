@@ -6,22 +6,7 @@ import { ToggleGroup, ToggleGroupItem } from '../../shared/toggle-group';
 import { ExpenseFieldLabel } from './ExpenseFieldLabel';
 import { ExpenseProof } from './ExpenseProof';
 import { ExpenseSelect } from './ExpenseSelect';
-
-export type ExpensePaymentMethod = 'personal' | 'company' | 'cash';
-
-export interface ExpenseFormModel {
-  date: string;
-  category: string;
-  categories: string[];
-  amount: string;
-  vat: string;
-  vatOptions: string[];
-  paymentMethod: ExpensePaymentMethod;
-  description: string;
-  project: string;
-  projects: string[];
-  proof: { name: string; details: string };
-}
+import type { ExpenseFormModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 const FIELD = 'gap-1';
 const LABEL = 'text-13';

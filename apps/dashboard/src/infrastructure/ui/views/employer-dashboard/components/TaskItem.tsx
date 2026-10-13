@@ -1,17 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import { IconTile, type IconTileTone } from '../../../common/data/IconTile';
+import { IconTile } from '../../../common/data/IconTile';
 import { i18n } from '../../../i18n/i18n';
-import type { AppRoute } from '../../../routes/app-routes';
 import { Button } from '../../../shared/button';
-
-export interface TaskItemModel {
-  icon: string;
-  tone: IconTileTone;
-  count: string;
-  label: string;
-  hint: string;
-  to: AppRoute;
-}
+import type { TaskItemModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
 
 /** Line of the "À traiter" list: flow tile, count, label, "Traiter". */
 export function TaskItem({ task }: { task: TaskItemModel }) {

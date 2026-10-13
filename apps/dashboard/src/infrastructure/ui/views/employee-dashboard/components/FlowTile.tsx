@@ -1,17 +1,7 @@
-import { Link, type LinkOptions } from '@tanstack/react-router';
-import { IconTile, type IconTileTone } from '../../../common/data/IconTile';
+import { Link } from '@tanstack/react-router';
+import { IconTile } from '../../../common/data/IconTile';
 import { cn } from '../../../lib/utils';
-
-export interface FlowTileModel {
-  id: string;
-  /** Remix Icon class, e.g. `ri-folder-shield-2-line`. */
-  icon: string;
-  tone: IconTileTone;
-  label: string;
-  value: string;
-  action: string;
-  link: LinkOptions;
-}
+import type { FlowTileModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 /** One cell of the flows grid: icon, flow name, its status and a link. */
 export function FlowTile({ tile }: { tile: FlowTileModel }) {

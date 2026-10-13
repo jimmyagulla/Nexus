@@ -1,15 +1,7 @@
 import { FormField } from '../../common/forms/FormField';
 import { cn } from '../../lib/utils';
 import { Input } from '../../shared/input';
-
-export interface ContactFieldModel {
-  id: string;
-  label: string;
-  value: string;
-  type?: 'text' | 'tel' | 'email';
-  /** Differs from the saved value: blue 2px border. */
-  modified?: boolean;
-}
+import type { ContactFieldModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface ContactFieldProps {
   model: ContactFieldModel;

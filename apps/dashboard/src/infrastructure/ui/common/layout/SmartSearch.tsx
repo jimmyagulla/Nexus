@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from '../../shared/popover';
 import { SearchPreviewPanel } from './SearchPreviewPanel';
-import type { SearchPreview } from './shell.types';
+import type { SearchPreview } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface SmartSearchProps {
   placeholder: string;

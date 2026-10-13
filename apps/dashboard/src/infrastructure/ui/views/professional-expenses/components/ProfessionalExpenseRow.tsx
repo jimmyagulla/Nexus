@@ -1,17 +1,7 @@
 import { IconTile } from '../../../common/data/IconTile';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface ProfessionalExpenseRowModel {
-  id: string;
-  type: string;
-  /** Remix Icon class of the expense type, e.g. `ri-bus-2-line`. */
-  icon: string;
-  period: string;
-  detail: string;
-  amount: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-}
+import type { ProfessionalExpenseRowModel } from '../../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 export function ProfessionalExpenseRow({
   request,

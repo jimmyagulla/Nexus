@@ -1,10 +1,4 @@
-import type { LeaveRequestViewModel } from '../views/leaves/LeaveRequest';
-import type { LeaveRequestSentViewModel } from '../views/leaves/LeaveRequestSent';
-import type { LeavesViewModel } from '../views/leaves/Leaves';
-import type {
-  LeaveCalendarDayModel,
-  LeaveCalendarDayState,
-} from '../views/leaves/components/LeaveCalendarDay';
+import type { LeaveCalendarDayModel, LeaveCalendarDayState, LeaveRequestSentViewModel, LeaveRequestViewModel, LeavesViewModel } from '../../../adapters/presenters/leaves/leaves.view-models';
 
 /** Placeholder data of the leaves screens (mockup v3, flow 4). */
 

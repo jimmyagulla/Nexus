@@ -1,10 +1,5 @@
-import { Link, type LinkOptions } from '@tanstack/react-router';
-
-export interface PayslipBannerModel {
-  title: string;
-  subtitle: string;
-  link: LinkOptions;
-}
+import { Link } from '@tanstack/react-router';
+import type { PayslipBannerModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 /** Blue banner of the latest payslip on the mobile home (M.1). */
 export function PayslipBanner({ banner }: { banner: PayslipBannerModel }) {

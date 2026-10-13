@@ -1,7 +1,10 @@
-import { loginFixture } from '../../fixtures/auth.fixture';
+import type { AuthComposition } from '../../../composition/auth.composition';
 import { Login } from './Login';
 
-/** Placeholder data until the authentication presenter is wired. */
-export function LoginPage() {
-  return <Login model={loginFixture} />;
+interface LoginPageProps {
+  deps: AuthComposition;
+}
+
+export function LoginPage({ deps }: LoginPageProps) {
+  return <Login model={deps.loginPresenter.present()} />;
 }

@@ -38,7 +38,7 @@ export interface SearchPreview {
   action: string;
 }
 
-export interface ShellModel {
+export interface ShellViewModel {
   role: ShellRole;
   companyName: string;
   user: ShellUser;

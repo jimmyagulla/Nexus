@@ -7,16 +7,8 @@ import { PageContent } from '../../common/page/PageContent';
 import { i18n } from '../../i18n/i18n';
 import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
-import {
-  LeaveRequestRow,
-  type LeaveRequestRowModel,
-} from './components/LeaveRequestRow';
-
-export interface LeaveApprovalsViewModel {
-  summary: string;
-  statusFilter: string;
-  requests: LeaveRequestRowModel[];
-}
+import { LeaveRequestRow } from './components/LeaveRequestRow';
+import type { LeaveApprovalsViewModel } from '../../../../adapters/presenters/leave-approvals/leave-approvals.view-models';
 
 const columns = 'minmax(0, 1.2fr) 120px 170px 60px 100px 110px 190px';
 

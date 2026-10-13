@@ -1,19 +1,18 @@
+import type { ProgressStepState } from '../../../../adapters/presenters/display.view-models';
 import { cn } from '../../lib/utils';
-
-export type StepState = 'done' | 'current' | 'upcoming';
 
 interface StepProgressItemProps {
   label: string;
-  state: StepState;
+  state: ProgressStepState;
 }
 
-const barClassName: Record<StepState, string> = {
+const barClassName: Record<ProgressStepState, string> = {
   done: 'bg-green-500',
   current: 'bg-amber-500',
   upcoming: 'bg-grey-200',
 };
 
-const labelClassName: Record<StepState, string> = {
+const labelClassName: Record<ProgressStepState, string> = {
   done: 'font-bold text-green-700',
   current: 'font-bold text-amber-800',
   upcoming: 'text-subtle',

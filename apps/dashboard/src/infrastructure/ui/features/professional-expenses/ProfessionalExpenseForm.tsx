@@ -11,21 +11,8 @@ import {
 } from '../../shared/select';
 import { Textarea } from '../../shared/textarea';
 import { RequestFieldLabel } from './RequestFieldLabel';
-import { ExpenseTypeCard, type ExpenseTypeOption } from './ExpenseTypeCard';
-
-export interface ProfessionalExpenseFormModel {
-  types: ExpenseTypeOption[];
-  type: string;
-  period: string;
-  periods: string[];
-  days: string;
-  /** "2,50 € / jour" */
-  rate: string;
-  total: string;
-  description: string;
-  /** "Non requis pour ce type de frais" */
-  proofNotice: string;
-}
+import { ExpenseTypeCard } from './ExpenseTypeCard';
+import type { ProfessionalExpenseFormModel } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 /** Numbered sections of the professional expense request (P7.2). */
 export function ProfessionalExpenseForm({

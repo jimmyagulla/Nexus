@@ -1,6 +1,7 @@
 import { InfoNote } from '../../common/feedback/InfoNote';
 import { i18n } from '../../i18n/i18n';
-import { ContactField, type ContactFieldModel } from './ContactField';
+import { ContactField } from './ContactField';
+import type { ContactFieldModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface PersonalInfoEditFormProps {
   fields: ContactFieldModel[];

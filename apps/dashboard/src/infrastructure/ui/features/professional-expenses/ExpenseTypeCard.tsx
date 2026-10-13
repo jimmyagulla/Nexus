@@ -1,13 +1,6 @@
 import { cn } from '../../lib/utils';
 import { RadioGroupItem } from '../../shared/radio-group';
-
-export interface ExpenseTypeOption {
-  value: string;
-  label: string;
-  description: string;
-  /** Remix Icon class, e.g. `ri-home-wifi-line`. */
-  icon: string;
-}
+import type { ExpenseTypeOption } from '../../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 /** Radio card of the "Type de frais" choice. */
 export function ExpenseTypeCard({ option }: { option: ExpenseTypeOption }) {

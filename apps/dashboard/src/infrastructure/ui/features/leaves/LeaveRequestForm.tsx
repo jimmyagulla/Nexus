@@ -9,16 +9,7 @@ import {
   SelectValue,
 } from '../../shared/select';
 import { Textarea } from '../../shared/textarea';
-
-export interface LeaveRequestFormValues {
-  typeOptions: string[];
-  type: string;
-  startDate: string;
-  endDate: string;
-  /** Computed, read-only: "2 jours ouvrés". */
-  dayCount: string;
-  comment: string;
-}
+import type { LeaveRequestFormValues } from '../../../../adapters/presenters/leaves/leaves.view-models';
 
 interface LeaveRequestFormProps {
   defaults: LeaveRequestFormValues;

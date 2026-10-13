@@ -1,5 +1,4 @@
-import type { ProfessionalExpenseRequestViewModel } from '../views/professional-expenses/ProfessionalExpenseRequest';
-import type { ProfessionalExpensesViewModel } from '../views/professional-expenses/ProfessionalExpenses';
+import type { ProfessionalExpenseRequestViewModel, ProfessionalExpensesViewModel } from '../../../adapters/presenters/professional-expenses/professional-expenses.view-models';
 
 /** Placeholder data of the professional expenses screens (mockup v3, flow 7). */
 

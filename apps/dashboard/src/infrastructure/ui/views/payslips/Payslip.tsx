@@ -7,22 +7,7 @@ import { Card } from '../../shared/card';
 import { DownloadToast } from './components/DownloadToast';
 import { PayslipDetailRow } from './components/PayslipDetailRow';
 import { PayslipPreview } from './components/PayslipPreview';
-
-export interface PayslipViewModel {
-  fileName: string;
-  zoom: string;
-  pages: string;
-  title: string;
-  period: string;
-  availableOn: string;
-  issuer: string;
-  size: string;
-  netPay: string;
-  previous?: { id: string; label: string };
-  /** Following month, shown disabled when not yet available. */
-  next: { id?: string; label: string };
-  downloadedFileName?: string;
-}
+import type { PayslipViewModel } from '../../../../adapters/presenters/payslips/payslips.view-models';
 
 interface PayslipProps {
   model: PayslipViewModel;

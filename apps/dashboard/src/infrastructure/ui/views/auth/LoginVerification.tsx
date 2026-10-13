@@ -4,12 +4,7 @@ import { i18n } from '../../i18n/i18n';
 import { Button } from '../../shared/button';
 import { AuthHeading } from './components/AuthHeading';
 import { AuthLayout } from './components/AuthLayout';
-
-export interface LoginVerificationViewModel {
-  maskedEmail: string;
-  code: string;
-  resendIn: string;
-}
+import type { LoginVerificationViewModel } from '../../../../adapters/presenters/auth/auth.view-models';
 
 interface LoginVerificationProps {
   model: LoginVerificationViewModel;

@@ -1,12 +1,6 @@
 import { CSSProperties } from 'react';
 import { i18n } from '../../../i18n/i18n';
-
-export interface LeaveBalanceRingModel {
-  /** End of the "taken" arc, in % of the ring. */
-  takenUntil: number;
-  /** End of the "pending" arc, in % of the ring; the rest is the remaining balance. */
-  pendingUntil: number;
-}
+import type { LeaveBalanceRingModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 interface LeaveBalanceRingProps {
   ring: LeaveBalanceRingModel;

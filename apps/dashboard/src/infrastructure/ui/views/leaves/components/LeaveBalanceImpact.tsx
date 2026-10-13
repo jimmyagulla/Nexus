@@ -1,15 +1,5 @@
 import { i18n } from '../../../i18n/i18n';
-
-export interface LeaveBalanceImpactModel {
-  available: string;
-  /** "− 2 j" */
-  deducted: string;
-  balanceAfter: string;
-  /** Share of the acquired days left after approval, in %. */
-  remainingPercent: number;
-  /** Share of the acquired days this request deducts, in %. */
-  deductedPercent: number;
-}
+import type { LeaveBalanceImpactModel } from '../../../../../adapters/presenters/leaves/leaves.view-models';
 
 /** "Impact sur votre compteur" box with its two-segment balance bar. */
 export function LeaveBalanceImpact({

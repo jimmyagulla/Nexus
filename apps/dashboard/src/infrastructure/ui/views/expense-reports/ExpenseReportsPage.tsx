@@ -1,7 +1,10 @@
-import { expenseReportsFixture } from '../../fixtures/expense-reports.fixture';
+import type { ExpenseReportsComposition } from '../../../composition/expense-reports.composition';
 import { ExpenseReports } from './ExpenseReports';
 
-/** Placeholder data until the expense reports presenter is wired. */
-export function ExpenseReportsPage() {
-  return <ExpenseReports model={expenseReportsFixture} />;
+interface ExpenseReportsPageProps {
+  deps: ExpenseReportsComposition;
+}
+
+export function ExpenseReportsPage({ deps }: ExpenseReportsPageProps) {
+  return <ExpenseReports model={deps.expenseReportsPresenter.present()} />;
 }

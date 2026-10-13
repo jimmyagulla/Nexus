@@ -4,15 +4,7 @@ import { FormField } from '../../common/forms/FormField';
 import { i18n } from '../../i18n/i18n';
 import { Textarea } from '../../shared/textarea';
 import { HoursStepper } from './HoursStepper';
-
-export interface OvertimeDeclarationFormValues {
-  date: string;
-  /** "2 h 30" */
-  hours: string;
-  startTime: string;
-  endTime: string;
-  reason: string;
-}
+import type { OvertimeDeclarationFormValues } from '../../../../adapters/presenters/overtime/overtime.view-models';
 
 interface OvertimeDeclarationFormProps {
   defaults: OvertimeDeclarationFormValues;

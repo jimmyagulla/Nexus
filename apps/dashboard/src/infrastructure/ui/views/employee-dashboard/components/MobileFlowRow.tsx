@@ -1,15 +1,7 @@
-import { Link, type LinkOptions } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { IconTile } from '../../../common/data/IconTile';
 import { cn } from '../../../lib/utils';
-
-export interface MobileFlowRowModel {
-  id: string;
-  /** Remix Icon class, e.g. `ri-sun-line`. */
-  icon: string;
-  title: string;
-  detail: string;
-  link: LinkOptions;
-}
+import type { MobileFlowRowModel } from '../../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 /** One flow card of the mobile home (M.1). */
 export function MobileFlowRow({ row }: { row: MobileFlowRowModel }) {

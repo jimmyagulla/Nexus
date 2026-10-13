@@ -3,24 +3,13 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card, CardHeader, CardTitle } from '../../shared/card';
-import { ActivityRow, type ActivityModel } from './components/ActivityRow';
-import { FlowTile, type FlowTileModel } from './components/FlowTile';
-import { LeaveBalanceCard, type LeaveBalanceModel } from './components/LeaveBalanceCard';
-import { MobileFlowRow, type MobileFlowRowModel } from './components/MobileFlowRow';
-import { PayslipBanner, type PayslipBannerModel } from './components/PayslipBanner';
-import { QuickAction, type QuickActionModel } from './components/QuickAction';
-
-export interface EmployeeDashboardViewModel {
-  firstName: string;
-  lastLogin: string;
-  leaveBalance: LeaveBalanceModel;
-  flows: FlowTileModel[];
-  activities: ActivityModel[];
-  mobile: {
-    payslipBanner: PayslipBannerModel;
-    flows: MobileFlowRowModel[];
-  };
-}
+import { ActivityRow } from './components/ActivityRow';
+import { FlowTile } from './components/FlowTile';
+import { LeaveBalanceCard } from './components/LeaveBalanceCard';
+import { MobileFlowRow } from './components/MobileFlowRow';
+import { PayslipBanner } from './components/PayslipBanner';
+import { QuickAction } from './components/QuickAction';
+import type { EmployeeDashboardViewModel, QuickActionModel } from '../../../../adapters/presenters/employee-dashboard/employee-dashboard.view-models';
 
 interface EmployeeDashboardProps {
   model: EmployeeDashboardViewModel;

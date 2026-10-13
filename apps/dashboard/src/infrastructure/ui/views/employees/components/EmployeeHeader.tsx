@@ -2,17 +2,10 @@ import { Link } from '@tanstack/react-router';
 import { i18n } from '../../../i18n/i18n';
 import { AppRoutes } from '../../../routes/app-routes';
 import { Avatar, AvatarFallback } from '../../../shared/avatar';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { tabsTriggerClassName } from '../../../shared/tabs';
-
-export interface EmployeeHeaderModel {
-  id: string;
-  initials: string;
-  name: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-  meta: string;
-}
+import type { EmployeeHeaderModel } from '../../../../../adapters/presenters/employees/employees.view-models';
 
 /** Banner of an employee space: identity, actions and the space tabs. */
 export function EmployeeHeader({ employee }: { employee: EmployeeHeaderModel }) {

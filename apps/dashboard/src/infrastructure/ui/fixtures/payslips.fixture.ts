@@ -1,5 +1,4 @@
-import type { PayslipViewModel } from '../views/payslips/Payslip';
-import type { PayslipsViewModel } from '../views/payslips/Payslips';
+import type { PayslipViewModel, PayslipsViewModel } from '../../../adapters/presenters/payslips/payslips.view-models';
 
 const seen = { label: 'Consulté', tone: 'neutral' } as const;
 

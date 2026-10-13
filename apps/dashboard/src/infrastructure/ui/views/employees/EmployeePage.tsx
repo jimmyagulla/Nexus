@@ -1,7 +1,10 @@
-import { employeeFixture } from '../../fixtures/employees.fixture';
+import type { EmployeesComposition } from '../../../composition/employees.composition';
 import { Employee } from './Employee';
 
-/** Placeholder data until the employee space presenter is wired. */
-export function EmployeePage() {
-  return <Employee model={employeeFixture} />;
+interface EmployeePageProps {
+  deps: EmployeesComposition;
+}
+
+export function EmployeePage({ deps }: EmployeePageProps) {
+  return <Employee model={deps.employeePresenter.present()} />;
 }

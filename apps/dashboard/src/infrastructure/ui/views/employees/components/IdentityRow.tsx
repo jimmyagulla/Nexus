@@ -1,7 +1,4 @@
-export interface IdentityRowModel {
-  label: string;
-  value: string;
-}
+import type { IdentityRowModel } from '../../../../../adapters/presenters/employees/employees.view-models';
 
 /** "Label ...... value" line of the identity card. */
 export function IdentityRow({ row }: { row: IdentityRowModel }) {

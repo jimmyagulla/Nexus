@@ -5,16 +5,8 @@ import { UploadedFile } from '../../common/forms/UploadedFile';
 import { i18n } from '../../i18n/i18n';
 import { RadioGroup } from '../../shared/radio-group';
 import { Textarea } from '../../shared/textarea';
-import { DocumentTypeOption, type DocumentTypeOptionModel } from './DocumentTypeOption';
-
-export interface DocumentUploadFormModel {
-  types: DocumentTypeOptionModel[];
-  selectedType: string;
-  /** Reminder tied to the selected type. */
-  note: string;
-  file: { name: string; details: string };
-  comment: string;
-}
+import { DocumentTypeOption } from './DocumentTypeOption';
+import type { DocumentUploadFormModel } from '../../../../adapters/presenters/documents/documents.view-models';
 
 interface DocumentUploadFormProps {
   model: DocumentUploadFormModel;

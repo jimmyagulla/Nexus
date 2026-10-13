@@ -1,23 +1,9 @@
 import { PageContent } from '../../common/page/PageContent';
-import { type ExpenseFormModel } from '../../features/expense-reports/ExpenseForm';
 import { i18n } from '../../i18n/i18n';
-import { Badge, type BadgeProps } from '../../shared/badge';
+import { Badge } from '../../shared/badge';
 import { ExpenseReportTotals } from './components/ExpenseReportTotals';
-import { type ExpenseRowModel } from './components/ExpenseRow';
 import { ExpensesTable } from './components/ExpensesTable';
-
-export interface ExpenseReportViewModel {
-  title: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-  expenses: ExpenseRowModel[];
-  /** "dont TVA 12,27 €" */
-  vatTotal: string;
-  total: string;
-  /** "3 dépenses · 3 justificatifs · validation par …" */
-  summary: string;
-  /** Prefilled values of the "Ajouter une dépense" panel. */
-  newExpense: ExpenseFormModel;
-}
+import type { ExpenseReportViewModel } from '../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 /** P6.3 — a draft expense report and its expenses. */
 export function ExpenseReport({ model }: { model: ExpenseReportViewModel }) {

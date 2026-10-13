@@ -5,18 +5,10 @@ import { AppRoutes } from '../../routes/app-routes';
 import { Badge } from '../../shared/badge';
 import { Button } from '../../shared/button';
 import { Card, CardHeader, CardTitle } from '../../shared/card';
-import { ActivityItem, type ActivityItemModel } from './components/ActivityItem';
-import { StatTile, type StatTileModel } from './components/StatTile';
-import { TaskItem, type TaskItemModel } from './components/TaskItem';
-
-export interface EmployerDashboardViewModel {
-  greeting: string;
-  summary: string;
-  stats: StatTileModel[];
-  taskCount: string;
-  tasks: TaskItemModel[];
-  activities: ActivityItemModel[];
-}
+import { ActivityItem } from './components/ActivityItem';
+import { StatTile } from './components/StatTile';
+import { TaskItem } from './components/TaskItem';
+import type { EmployerDashboardViewModel } from '../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
 
 /** P8.1 — employer dashboard: stats, tasks to process, recent activity. */
 export function EmployerDashboard({

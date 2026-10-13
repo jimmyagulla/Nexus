@@ -2,18 +2,10 @@ import { Link } from '@tanstack/react-router';
 import { i18n } from '../../../i18n/i18n';
 import { cn } from '../../../lib/utils';
 import { AppRoutes } from '../../../routes/app-routes';
-import { Badge, type BadgeProps } from '../../../shared/badge';
+import { Badge } from '../../../shared/badge';
 import { Button } from '../../../shared/button';
 import { TableCell, TableRow } from '../../../shared/table';
-
-export interface PayslipRowModel {
-  id: string;
-  period: string;
-  availableOn: string;
-  netPay: string;
-  status: { label: string; tone: BadgeProps['tone'] };
-  isNew?: boolean;
-}
+import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslips.view-models';
 
 /** One payslip line of the P1.5 table. */
 export function PayslipRow({ payslip }: { payslip: PayslipRowModel }) {

@@ -3,10 +3,10 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../../shared/shee
 import { BrandLogo } from './BrandLogo';
 import { NotificationBell } from './NotificationBell';
 import { Sidebar } from './Sidebar';
-import type { ShellModel } from './shell.types';
+import type { ShellViewModel } from '../../../../adapters/presenters/shell/shell.view-models';
 
 interface MobileHeaderProps {
-  model: ShellModel;
+  model: ShellViewModel;
 }
 
 /** 52px header of the mobile layout; the menu opens the full sidebar. */

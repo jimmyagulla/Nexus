@@ -1,9 +1,4 @@
-export interface ActivityItemModel {
-  icon: string;
-  actor: string;
-  action: string;
-  date: string;
-}
+import type { ActivityItemModel } from '../../../../../adapters/presenters/employer-dashboard/employer-dashboard.view-models';
 
 /** Line of the recent activity feed: icon, "<b>Actor</b> action", date. */
 export function ActivityItem({ activity }: { activity: ActivityItemModel }) {

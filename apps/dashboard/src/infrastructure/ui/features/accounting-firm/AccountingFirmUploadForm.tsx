@@ -12,17 +12,7 @@ import {
   SelectValue,
 } from '../../shared/select';
 import { ToggleGroup, ToggleGroupItem } from '../../shared/toggle-group';
-
-export interface AccountingFirmUploadFormModel {
-  documentTypes: string[];
-  documentType: string;
-  recipients: string[];
-  recipient: string;
-  files: { icon: string; name: string; details: string }[];
-  transmission: 'immediate' | 'scheduled';
-  transmissionDate: string;
-  comment: string;
-}
+import type { AccountingFirmUploadFormModel } from '../../../../adapters/presenters/accounting-firm/accounting-firm.view-models';
 
 const toggleItemClassName = 'h-9.5 flex-none border-l-0 px-3';
 

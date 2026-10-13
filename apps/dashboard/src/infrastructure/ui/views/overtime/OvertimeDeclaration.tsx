@@ -2,25 +2,13 @@ import { Link } from '@tanstack/react-router';
 import { InfoNote } from '../../common/feedback/InfoNote';
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
-import {
-  OvertimeDeclarationForm,
-  type OvertimeDeclarationFormValues,
-} from '../../features/overtime/OvertimeDeclarationForm';
+import { OvertimeDeclarationForm } from '../../features/overtime/OvertimeDeclarationForm';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card } from '../../shared/card';
-import {
-  OvertimeCounterPanel,
-  type OvertimeCounterPanelModel,
-} from './components/OvertimeCounterPanel';
-
-export interface OvertimeDeclarationViewModel {
-  form: OvertimeDeclarationFormValues;
-  counter: OvertimeCounterPanelModel;
-  /** "Nadia Roussel, service RH" */
-  validator: string;
-}
+import { OvertimeCounterPanel } from './components/OvertimeCounterPanel';
+import type { OvertimeDeclarationViewModel } from '../../../../adapters/presenters/overtime/overtime.view-models';
 
 interface OvertimeDeclarationProps {
   model: OvertimeDeclarationViewModel;

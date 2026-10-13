@@ -2,16 +2,8 @@ import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
 import { EditableInfoCard } from './components/EditableInfoCard';
-import type { EditableInfoModel } from './components/EditableInfoRow';
 import { EmployerInfoCard } from './components/EmployerInfoCard';
-import type { EmployerInfoModel } from './components/EmployerInfoRow';
-
-export interface PersonalInfoViewModel {
-  /** "Dernière mise à jour le 12/06/2026" */
-  lastUpdate: string;
-  contact: EditableInfoModel[];
-  employer: EmployerInfoModel[];
-}
+import type { PersonalInfoViewModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface PersonalInfoProps {
   model: PersonalInfoViewModel;

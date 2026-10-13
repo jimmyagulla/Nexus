@@ -1,21 +1,13 @@
 import { Link } from '@tanstack/react-router';
 import { PageContent } from '../../common/page/PageContent';
-import type { ContactFieldModel } from '../../features/personal-info/ContactField';
 import { PersonalInfoEditForm } from '../../features/personal-info/PersonalInfoEditForm';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Card, CardFooter } from '../../shared/card';
 import { Dialog, DialogTrigger } from '../../shared/dialog';
-import {
-  ConfirmChangesDialog,
-  type ConfirmChangesViewModel,
-} from './components/ConfirmChangesDialog';
-
-export interface PersonalInfoEditViewModel {
-  fields: ContactFieldModel[];
-  confirmation: ConfirmChangesViewModel;
-}
+import { ConfirmChangesDialog } from './components/ConfirmChangesDialog';
+import type { PersonalInfoEditViewModel } from '../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface PersonalInfoEditProps {
   model: PersonalInfoEditViewModel;

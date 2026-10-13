@@ -4,7 +4,8 @@ import { cn } from '../../../lib/utils';
 import { AppRoutes } from '../../../routes/app-routes';
 import { Button } from '../../../shared/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '../../../shared/card';
-import { EditableInfoRow, type EditableInfoModel } from './EditableInfoRow';
+import { EditableInfoRow } from './EditableInfoRow';
+import type { EditableInfoModel } from '../../../../../adapters/presenters/personal-info/personal-info.view-models';
 
 interface EditableInfoCardProps {
   fields: EditableInfoModel[];

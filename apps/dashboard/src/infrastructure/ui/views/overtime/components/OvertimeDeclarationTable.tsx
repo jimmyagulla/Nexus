@@ -1,9 +1,7 @@
 import { i18n } from '../../../i18n/i18n';
 import { Table, TableHead, TableHeader } from '../../../shared/table';
-import {
-  OvertimeDeclarationRow,
-  type OvertimeDeclarationRowModel,
-} from './OvertimeDeclarationRow';
+import { OvertimeDeclarationRow } from './OvertimeDeclarationRow';
+import type { OvertimeDeclarationRowModel } from '../../../../../adapters/presenters/overtime/overtime.view-models';
 
 interface OvertimeDeclarationTableProps {
   declarations: OvertimeDeclarationRowModel[];

@@ -1,12 +1,6 @@
 import { IconTile } from '../../../common/data/IconTile';
 import { Card } from '../../../shared/card';
-
-export interface ExpenseKpiModel {
-  label: string;
-  value: string;
-  /** Remix Icon class of the leading tile, e.g. `ri-receipt-line`. */
-  icon?: string;
-}
+import type { ExpenseKpiModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.view-models';
 
 /** Key figure card of the expense reports list. */
 export function ExpenseKpiCard({ kpi }: { kpi: ExpenseKpiModel }) {
