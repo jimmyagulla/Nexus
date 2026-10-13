@@ -8,6 +8,7 @@ describe('isErrorCode', () => {
     expect(isErrorCode('INVITATION_INVALID')).toBe(true);
     expect(isErrorCode('ACCOUNT_LOCKED')).toBe(true);
     expect(isErrorCode('SECOND_FACTOR_REQUIRED')).toBe(true);
+    expect(isErrorCode('EMPLOYEE_INACTIVE')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {

@@ -288,6 +288,96 @@ describe('InviteEmployeeUseCase', () => {
     expect(first.invitationToken).not.toBe(second.invitationToken);
   });
 
+  describe('an inactive employee record', () => {
+    function inactive(id: string, companyId = 'c1'): Employee {
+      return new Employee(
+        id,
+        companyId,
+        'Alice',
+        'Martin',
+        EmployeeStatus.INACTIVE,
+        null,
+      );
+    }
+
+    it('is refused as inactive, and opens no account', async () => {
+      const { accounts, useCase } = await setup([inactive('e1')]);
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          employeeId: 'e1',
+          identifier: 'alice',
+        }),
+      ).rejects.toThrow(ErrorCode.EMPLOYEE_INACTIVE);
+      expect(await accounts.findByEmployeeId('e1')).toBeNull();
+    });
+
+    it('is refused as inactive when it already holds an invitation, which stays as it was', async () => {
+      const employees = new InMemoryEmployeeRepository();
+      await employees.insert(employee('e1'));
+      const accounts = new InMemoryAccountRepository();
+      const useCase = new InviteEmployeeUseCase(
+        employees,
+        accounts,
+        new UuidGenerator(),
+      );
+      const first = await useCase.execute({
+        actor: employer,
+        employeeId: 'e1',
+        identifier: 'alice',
+      });
+      await employees.save(inactive('e1'));
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          employeeId: 'e1',
+          identifier: 'alice',
+        }),
+      ).rejects.toThrow(ErrorCode.EMPLOYEE_INACTIVE);
+      expect(
+        (await accounts.findByInvitationToken(first.invitationToken))?.employeeId,
+      ).toBe('e1');
+    });
+
+    it('does not tell an actor of another company that the record exists', async () => {
+      const { useCase } = await setup([inactive('e1', 'c2')]);
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          employeeId: 'e1',
+          identifier: 'alice',
+        }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    });
+
+    it('does not tell an actor who is not an employer that the record is inactive', async () => {
+      const { useCase } = await setup([inactive('e1')]);
+
+      await expect(
+        useCase.execute({
+          actor: { ...employer, role: UserRole.EMPLOYEE },
+          employeeId: 'e1',
+          identifier: 'alice',
+        }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    });
+
+    it('does not block the invitation of an active record of the same company', async () => {
+      const { useCase } = await setup([inactive('e1'), employee('e2')]);
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          employeeId: 'e2',
+          identifier: 'bruno',
+        }),
+      ).resolves.toMatchObject({ employeeId: 'e2' });
+    });
+  });
+
   it('refuses a record that does not exist, as an access denial', async () => {
     const { useCase } = await setup([]);
 

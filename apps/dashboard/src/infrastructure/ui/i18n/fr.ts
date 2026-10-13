@@ -68,5 +68,7 @@ export const fr = {
       "La connexion est bloquée. Un employeur doit rétablir l'accès.",
     [ErrorCode.SECOND_FACTOR_REQUIRED]:
       'La vérification complémentaire est nécessaire pour accéder à votre espace.',
+    [ErrorCode.EMPLOYEE_INACTIVE]:
+      "Ce salarié est inactif. Cette action n'est plus possible.",
   },
 } as const;

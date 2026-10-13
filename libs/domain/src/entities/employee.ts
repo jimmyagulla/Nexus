@@ -1,3 +1,4 @@
+import { ErrorCode } from '../errors/error-code';
 import { EmployeeStatus } from './employee-status';
 
 export class Employee {
@@ -12,6 +13,12 @@ export class Employee {
 
   isActive(): boolean {
     return this.status === EmployeeStatus.ACTIVE;
+  }
+
+  requireActive(): void {
+    if (!this.isActive()) {
+      throw new Error(ErrorCode.EMPLOYEE_INACTIVE);
+    }
   }
 
   recordActivity(at: Date): Employee {

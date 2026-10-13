@@ -32,6 +32,7 @@ export class InviteEmployeeUseCase implements IInviteEmployee {
       input.actor,
       input.employeeId,
     );
+    employee.requireActive();
     const identifier = AccountIdentifier.parse(input.identifier);
     const existing = await this.accounts.findByEmployeeId(employee.id);
     const invited =

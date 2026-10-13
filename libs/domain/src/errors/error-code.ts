@@ -5,6 +5,7 @@ export const ErrorCode = {
   INVITATION_INVALID: 'INVITATION_INVALID',
   ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
   SECOND_FACTOR_REQUIRED: 'SECOND_FACTOR_REQUIRED',
+  EMPLOYEE_INACTIVE: 'EMPLOYEE_INACTIVE',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

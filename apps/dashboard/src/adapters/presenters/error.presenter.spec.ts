@@ -20,6 +20,12 @@ describe('ErrorPresenter', () => {
     );
   });
 
+  it('maps EMPLOYEE_INACTIVE to the phrase of the reference', () => {
+    expect(presenter.present(new Error(ErrorCode.EMPLOYEE_INACTIVE))).toBe(
+      "Ce salarié est inactif. Cette action n'est plus possible.",
+    );
+  });
+
   it('maps ACCESS_DENIED to the french phrase', () => {
     expect(presenter.present(new Error(ErrorCode.ACCESS_DENIED))).toBe(
       i18n.messages.errors.ACCESS_DENIED,

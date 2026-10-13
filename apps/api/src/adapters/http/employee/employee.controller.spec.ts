@@ -143,6 +143,19 @@ describe('EmployeeController', () => {
       expect(inviteEmployee.execute).not.toHaveBeenCalled();
     });
 
+    it('answers 400 with the inactive employee refusal', async () => {
+      inviteEmployee.execute.mockRejectedValue(
+        new Error(ErrorCode.EMPLOYEE_INACTIVE),
+      );
+
+      await expect(
+        send('POST', INVITATION_PATH, { identifier: 'alice' }),
+      ).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.EMPLOYEE_INACTIVE },
+      });
+    });
+
     it('answers 400 with the business refusal of the use case', async () => {
       inviteEmployee.execute.mockRejectedValue(
         new Error(ErrorCode.POTENTIAL_DUPLICATE),

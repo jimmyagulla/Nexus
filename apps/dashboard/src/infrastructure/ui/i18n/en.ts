@@ -66,5 +66,7 @@ export const en = {
       'Sign-in is locked. An employer must restore access.',
     [ErrorCode.SECOND_FACTOR_REQUIRED]:
       'Additional verification is required to access your workspace.',
+    [ErrorCode.EMPLOYEE_INACTIVE]:
+      'This employee is inactive. This action is no longer possible.',
   },
 } as const;

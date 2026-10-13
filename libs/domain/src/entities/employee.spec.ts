@@ -1,3 +1,4 @@
+import { ErrorCode } from '../errors/error-code';
 import { Employee } from './employee';
 import { EmployeeStatus } from './employee-status';
 
@@ -12,6 +13,16 @@ describe('Employee', () => {
 
   it('is closed to new actions once inactive', () => {
     expect(employeeWith(EmployeeStatus.INACTIVE).isActive()).toBe(false);
+  });
+
+  it('accepts a new action while active', () => {
+    expect(() => employeeWith(EmployeeStatus.ACTIVE).requireActive()).not.toThrow();
+  });
+
+  it('refuses a new action once inactive, with the inactive employee refusal', () => {
+    expect(() => employeeWith(EmployeeStatus.INACTIVE).requireActive()).toThrow(
+      ErrorCode.EMPLOYEE_INACTIVE,
+    );
   });
 
   it('records the last activity of the employee', () => {
