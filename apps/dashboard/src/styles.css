@@ -2,99 +2,176 @@
 
 @plugin "tailwindcss-animate";
 
+/*
+ * My Docs design system — mirrors infrastructure/ui/design-system/tokens.ts.
+ * The default Tailwind palette is removed: only the colors below exist.
+ */
 @theme {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  --color-grey-50: #f5f7f9;
+  --color-grey-100: #eef0f4;
+  --color-grey-200: #dde2eb;
+  --color-grey-300: #c5cddd;
+  --color-grey-400: #aeb9cf;
+  --color-grey-500: #96a4c1;
+  --color-grey-600: #7e8fb3;
+  --color-grey-700: #6a7896;
+  --color-grey-800: #57617a;
+  --color-grey-900: #434b5d;
+  --color-grey-950: #303441;
+
+  --color-blue-25: #fafcff;
+  --color-blue-50: #f7f9ff;
+  --color-blue-100: #eef4ff;
+  --color-blue-200: #dce4fd;
+  --color-blue-300: #b9c7fb;
+  --color-blue-400: #96acf9;
+  --color-blue-500: #3d64ed;
+  --color-blue-600: #324cab;
+  --color-blue-700: #304287;
+  --color-blue-900: #2e3862;
+
+  --color-orange-50: #fff2ed;
+  --color-orange-200: #ffbea8;
+  --color-orange-500: #fa420f;
+  --color-orange-700: #c62e08;
+  --color-orange-900: #7e2210;
+
+  --color-amber-50: #fff4d5;
+  --color-amber-300: #fed173;
+  --color-amber-500: #fb9814;
+  --color-amber-800: #9b4911;
+
+  --color-green-25: #f2fbf9;
+  --color-green-100: #d2f5ee;
+  --color-green-200: #a6e9de;
+  --color-green-300: #64d3c5;
+  --color-green-500: #2ba198;
+  --color-green-700: #1d6864;
+  --color-green-900: #1b4644;
+
+  --color-red-50: #ffe2e4;
+  --color-red-500: #ed1136;
+  --color-red-700: #c8082d;
+
+  --color-purple-25: #f4f0ff;
+  --color-purple-50: #e8e2fe;
+  --color-purple-100: #e0d5ff;
+  --color-purple-200: #c8b4fe;
+  --color-purple-600: #691fc1;
+  --color-purple-800: #4d198a;
+
+  --color-ink-800: #1f2129;
+  --color-ink-900: #191e25;
+
+  /* Semantic aliases */
+  --color-background: var(--color-grey-50);
+  --color-foreground: var(--color-grey-950);
+  --color-card: var(--color-white);
+  --color-card-foreground: var(--color-grey-950);
+  --color-popover: var(--color-white);
+  --color-popover-foreground: var(--color-grey-950);
+  --color-primary: var(--color-blue-700);
+  --color-primary-foreground: var(--color-white);
+  --color-secondary: var(--color-blue-100);
+  --color-secondary-foreground: var(--color-blue-700);
+  --color-muted: var(--color-grey-50);
+  --color-muted-foreground: var(--color-grey-800);
+  --color-accent: var(--color-blue-100);
+  --color-accent-foreground: var(--color-blue-700);
+  --color-destructive: var(--color-red-700);
+  --color-destructive-foreground: var(--color-white);
+  --color-border: var(--color-grey-200);
+  --color-input: var(--color-grey-400);
+  --color-ring: var(--color-blue-500);
+  --color-heading: var(--color-blue-900);
+  --color-body: var(--color-grey-900);
+  --color-subtle: var(--color-grey-700);
+  --color-placeholder: var(--color-grey-600);
+  --color-disabled: var(--color-grey-500);
+  --color-link: var(--color-blue-500);
+  --color-link-hover: var(--color-blue-600);
+  --color-brand: var(--color-orange-500);
+  --color-overlay: #1c1d24;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --font-mono: ui-monospace, Menlo, monospace;
+
+  --text-10: 10px;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-16: 16px;
+  --text-17: 17px;
+  --text-18: 18px;
+  --text-20: 20px;
+  --text-22: 22px;
+  --text-24: 24px;
+  --text-26: 26px;
+  --text-28: 28px;
+  --text-30: 30px;
+
+  --radius-xs: 2px;
+  --radius-3: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-10: 10px;
+  --radius-xl: 12px;
+  --radius-14: 14px;
+
+  --shadow-popover-soft: 0 8px 24px rgb(25 30 37 / 0.08);
+  --shadow-popover: 0 8px 24px rgb(25 30 37 / 0.12);
+  --shadow-popover-md: 0 8px 24px rgb(25 30 37 / 0.14);
+  --shadow-popover-strong: 0 8px 24px rgb(25 30 37 / 0.16);
+  --shadow-panel: 0 12px 32px rgb(25 30 37 / 0.18);
+  --shadow-active-left: inset 3px 0 0 var(--color-orange-500);
+  --shadow-tab-active: inset 0 -3px 0 var(--color-orange-500);
+  --shadow-focus: 0 0 0 4px var(--color-blue-200);
+
+  --tracking-logo: -0.01em;
+
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 25%;
-    --accent: 0 0% 95%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 10%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+  html {
+    line-height: normal;
   }
 
-  .dark {
-    --background: 220 10% 12%;
-    --foreground: 0 0% 98%;
-    --card: 220 10% 15%;
-    --card-foreground: 0 0% 98%;
-    --popover: 220 10% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 220 10% 12%;
-    --secondary: 220 10% 20%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 220 10% 20%;
-    --muted-foreground: 0 0% 90%;
-    --accent: 220 10% 20%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 10% 20%;
-    --input: 220 10% 20%;
-    --ring: 0 0% 80%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  input[type="search"]::-webkit-search-cancel-button {
+    appearance: none;
   }
 }

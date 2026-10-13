@@ -1,14 +1,37 @@
 import { ErrorCode } from '@hexagonal-monorepo-template/domain';
+import { common } from './fr/common';
+import { shell } from './fr/shell';
+import { auth } from './fr/auth';
+import { employeeDashboard } from './fr/employee-dashboard';
+import { payslips } from './fr/payslips';
+import { documents } from './fr/documents';
+import { personalInfo } from './fr/personal-info';
+import { leaves } from './fr/leaves';
+import { overtime } from './fr/overtime';
+import { expenseReports } from './fr/expense-reports';
+import { professionalExpenses } from './fr/professional-expenses';
+import { employerDashboard } from './fr/employer-dashboard';
+import { employees } from './fr/employees';
+import { leaveApprovals } from './fr/leave-approvals';
+import { accountingFirm } from './fr/accounting-firm';
 
 export const fr = {
-  navigation: {
-    dashboard: 'Tableau de bord',
-    settings: 'Paramètres',
-  },
+  common,
+  shell,
+  auth,
+  employeeDashboard,
+  payslips,
+  documents,
+  personalInfo,
+  leaves,
+  overtime,
+  expenseReports,
+  professionalExpenses,
+  employerDashboard,
+  employees,
+  leaveApprovals,
+  accountingFirm,
   loading: 'Chargement…',
-  home: {
-    title: 'Dashboard',
-  },
   settings: {
     title: 'Paramètres',
     name: 'Nom',
