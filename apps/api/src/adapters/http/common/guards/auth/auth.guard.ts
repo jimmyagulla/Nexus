@@ -6,11 +6,13 @@ import {
   Injectable,
   Optional,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { localDevActor } from '@hexagonal-monorepo-template/adapters';
 import { ErrorCode } from '@hexagonal-monorepo-template/domain';
 import { IJwtVerifier } from '@hexagonal-monorepo-template/ports';
 import { API_CONFIG, type ApiConfig } from '../../../../../infrastructure/config/load-api-config';
 import { AuthenticatedRequest } from '../authenticated-request';
+import { IS_PUBLIC } from './public.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,9 +22,20 @@ export class AuthGuard implements CanActivate {
     @Optional()
     @Inject(API_CONFIG)
     private readonly config?: Pick<ApiConfig, 'authDisabled'>,
+    @Optional()
+    private readonly reflector?: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (
+      this.reflector?.getAllAndOverride<boolean>(IS_PUBLIC, [
+        context.getHandler(),
+        context.getClass(),
+      ]) === true
+    ) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     if ((request.url ?? '').includes('/docs')) {
       return true;

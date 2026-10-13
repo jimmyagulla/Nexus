@@ -1,14 +1,19 @@
 import { ReactNode } from 'react';
 import { LayoutDashboard, Settings } from 'lucide-react';
+import { Workspace } from '@hexagonal-monorepo-template/domain';
 import { AppRoutes } from '../../routes/app-routes';
 import { i18n } from '../../i18n/i18n';
 import { NavigationLink } from './NavigationLink';
 
 interface LayoutProps {
   children: ReactNode;
+  workspace?: Workspace;
 }
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({
+  children,
+  workspace = Workspace.COMPANY,
+}: LayoutProps) {
   return (
     <div className="flex h-screen bg-background text-foreground font-sans">
       <aside className="hidden md:flex flex-col w-72 bg-card border-r border-border">
@@ -17,18 +22,20 @@ export function Layout({ children }: LayoutProps) {
             Nexus
           </h1>
         </div>
-        <nav className="flex-1 px-4 space-y-1">
-          <NavigationLink
-            to={AppRoutes.home}
-            icon={<LayoutDashboard className="h-5 w-5" />}
-            label={i18n.messages.navigation.dashboard}
-          />
-          <NavigationLink
-            to={AppRoutes.settings}
-            icon={<Settings className="h-5 w-5" />}
-            label={i18n.messages.navigation.settings}
-          />
-        </nav>
+        {workspace === Workspace.COMPANY ? (
+          <nav className="flex-1 px-4 space-y-1">
+            <NavigationLink
+              to={AppRoutes.home}
+              icon={<LayoutDashboard className="h-5 w-5" />}
+              label={i18n.messages.navigation.dashboard}
+            />
+            <NavigationLink
+              to={AppRoutes.settings}
+              icon={<Settings className="h-5 w-5" />}
+              label={i18n.messages.navigation.settings}
+            />
+          </nav>
+        ) : null}
       </aside>
       <main className="flex-1 overflow-y-auto p-8 bg-background">
         <div className="max-w-7xl mx-auto">{children}</div>

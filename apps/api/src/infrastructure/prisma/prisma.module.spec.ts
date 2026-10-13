@@ -63,6 +63,7 @@ describe('PrismaModule', () => {
 
     expect(typeof fromPort.$transaction).toBe('function');
     expect(typeof fromPort.company.findUnique).toBe('function');
+    expect(typeof fromPort.account.findMany).toBe('function');
     expect(typeof fromPort.publicHoliday.upsert).toBe('function');
     expect(typeof fromPort.auditEvent.create).toBe('function');
   });

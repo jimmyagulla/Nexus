@@ -9,6 +9,18 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum UserRole {
+  EMPLOYER
+  EMPLOYEE
+  ACCOUNTANT
+}
+
+enum AccountStatus {
+  INVITED
+  ACTIVE
+  DISABLED
+}
+
 enum DayOfWeek {
   SUNDAY
   MONDAY
@@ -23,12 +35,14 @@ enum AuditAction {
   MODIFICATION
   ADDITION
   DELETION
+  CONNECTION
 }
 
 enum AuditSubject {
   COMPANY_NAME
   COMPANY_NON_WORKING_WEEKDAY
   COMPANY_PUBLIC_HOLIDAY
+  ACCOUNT
 }
 
 enum AuditSide {
@@ -37,11 +51,26 @@ enum AuditSide {
 }
 
 model Company {
-  id                   String                   @id @default(uuid())
+  id                   String                     @id @default(uuid())
   name                 String
   nonWorkingWeekdays   CompanyNonWorkingWeekday[]
   publicHolidays       CompanyPublicHoliday[]
   auditEvents          AuditEvent[]
+  accounts             Account[]
+}
+
+model Account {
+  id              String        @id @default(uuid())
+  companyId       String
+  identifier      String
+  role            UserRole
+  status          AccountStatus
+  invitationToken   String?       @unique
+  secretHash        String?
+  failedSignInCount Int           @default(0)
+  company           Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, identifier])
 }
 
 model CompanyNonWorkingWeekday {

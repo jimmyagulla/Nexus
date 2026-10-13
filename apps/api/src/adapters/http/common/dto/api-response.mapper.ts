@@ -69,7 +69,10 @@ export function httpStatusForError(exception: unknown): number {
     return exception.getStatus();
   }
   if (exception instanceof Error && isErrorCode(exception.message)) {
-    return exception.message === ErrorCode.ACCESS_DENIED ? 403 : 400;
+    return exception.message === ErrorCode.ACCESS_DENIED ||
+      exception.message === ErrorCode.ACCOUNT_LOCKED
+      ? 403
+      : 400;
   }
   return 500;
 }

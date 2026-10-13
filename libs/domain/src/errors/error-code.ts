@@ -2,6 +2,8 @@ export const ErrorCode = {
   ACCESS_DENIED: 'ACCESS_DENIED',
   REQUIRED_INFORMATION: 'REQUIRED_INFORMATION',
   POTENTIAL_DUPLICATE: 'POTENTIAL_DUPLICATE',
+  INVITATION_INVALID: 'INVITATION_INVALID',
+  ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
