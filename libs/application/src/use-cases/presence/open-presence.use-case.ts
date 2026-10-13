@@ -10,6 +10,7 @@ import {
   proposeWorkedDays,
   requireAccessibleCompany,
   requireEmployerOfCompany,
+  selectHoursToProcess,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAbsenceFactSource,
@@ -51,7 +52,25 @@ export class OpenPresenceUseCase implements IOpenPresence {
       month,
       workedDays: await this.proposeWorkedDays(company, employee, month),
     });
+    await this.processValidatedHours(employee, month);
     return buildPresenceSnapshot(presence, employee, this.factSources());
+  }
+
+  private async processValidatedHours(
+    employee: EmployeeReference,
+    month: PresenceMonth,
+  ): Promise<void> {
+    const facts = await this.hours.listForEmployee(
+      employee.companyId,
+      employee.id,
+    );
+    const toProcess = selectHoursToProcess(month, facts);
+    if (toProcess.length > 0) {
+      await this.hours.markProcessed(
+        employee.companyId,
+        toProcess.map((fact) => fact.id),
+      );
+    }
   }
 
   private loadCompany(actor: ActorContext, companyId: string): Promise<Company> {

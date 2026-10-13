@@ -18,6 +18,7 @@ import {
   ErrorCode,
   HoursFact,
   HoursFactStatus,
+  PresenceMonth,
   PublicHoliday,
   SickLeaveDocument,
   UserRole,
@@ -67,20 +68,157 @@ function useCaseWith(
   } = {},
 ) {
   const presences = new InMemoryPresenceRepository();
+  const hours = new InMemoryHoursFactSource(options.hours ?? []);
   const company = options.company ?? acme();
   const useCase = new OpenPresenceUseCase(
     new InMemoryCompanyRepository(new Map([[company.id, company]])),
     new InMemoryEmployeeDirectory(employees),
     new InMemoryAbsenceFactSource(options.absences ?? []),
     new InMemorySickLeaveDocumentSource(options.sickLeaves ?? []),
-    new InMemoryHoursFactSource(options.hours ?? []),
+    hours,
     presences,
   );
 
-  return { useCase, presences };
+  return { useCase, presences, hours };
 }
 
+function hoursFact(
+  id: string,
+  date: string,
+  status: HoursFactStatus,
+  employeeId = 'e1',
+): HoursFact {
+  return {
+    id,
+    companyId: 'c1',
+    employeeId,
+    date: CalendarDate.parse(date),
+    hours: 2,
+    sourceDeclarationId: `d-${id}`,
+    status,
+  };
+}
+
+const statuses = async (
+  hours: InMemoryHoursFactSource,
+  employeeId = 'e1',
+): Promise<Record<string, HoursFactStatus>> =>
+  Object.fromEntries(
+    (await hours.listForEmployee('c1', employeeId)).map((fact) => [
+      fact.id,
+      fact.status,
+    ]),
+  );
+
+const openOctober = {
+  actor: employer,
+  companyId: 'c1',
+  employeeId: 'e1',
+  month: '2026-10',
+};
+
 describe('OpenPresenceUseCase', () => {
+  describe('the hours of the month', () => {
+    it('turns the validated hours of the month into processed hours', async () => {
+      const { useCase, hours } = useCaseWith([camille], {
+        hours: [hoursFact('h1', '2026-10-12', HoursFactStatus.VALIDATED)],
+      });
+
+      await useCase.execute(openOctober);
+
+      expect(await statuses(hours)).toEqual({ h1: HoursFactStatus.PROCESSED });
+    });
+
+    it('shows the hours it has just processed in the opened month', async () => {
+      const { useCase } = useCaseWith([camille], {
+        hours: [hoursFact('h1', '2026-10-12', HoursFactStatus.VALIDATED)],
+      });
+
+      const presence = await useCase.execute(openOctober);
+
+      expect(presence.overtime).toEqual([
+        { id: 'h1', date: '2026-10-12', hours: 2 },
+      ]);
+    });
+
+    it('leaves the hours that are already processed as they are', async () => {
+      const { useCase, hours } = useCaseWith([camille], {
+        hours: [hoursFact('h1', '2026-10-12', HoursFactStatus.PROCESSED)],
+      });
+
+      await useCase.execute(openOctober);
+
+      expect(await statuses(hours)).toEqual({ h1: HoursFactStatus.PROCESSED });
+    });
+
+    it('leaves the validated hours of another month waiting', async () => {
+      const { useCase, hours } = useCaseWith([camille], {
+        hours: [
+          hoursFact('h1', '2026-09-30', HoursFactStatus.VALIDATED),
+          hoursFact('h2', '2026-11-02', HoursFactStatus.VALIDATED),
+        ],
+      });
+
+      await useCase.execute(openOctober);
+
+      expect(await statuses(hours)).toEqual({
+        h1: HoursFactStatus.VALIDATED,
+        h2: HoursFactStatus.VALIDATED,
+      });
+    });
+
+    it('leaves the validated hours of another employee waiting', async () => {
+      const { useCase, hours } = useCaseWith([camille], {
+        hours: [hoursFact('h1', '2026-10-12', HoursFactStatus.VALIDATED, 'e2')],
+      });
+
+      await useCase.execute(openOctober);
+
+      expect(await statuses(hours, 'e2')).toEqual({
+        h1: HoursFactStatus.VALIDATED,
+      });
+    });
+
+    it('opens a month without any hours', async () => {
+      const { useCase } = useCaseWith();
+
+      await expect(useCase.execute(openOctober)).resolves.toMatchObject({
+        overtime: [],
+      });
+    });
+
+    it('does not process the hours when the month is already open', async () => {
+      const { useCase, presences, hours } = useCaseWith([camille], {
+        hours: [hoursFact('h1', '2026-10-12', HoursFactStatus.VALIDATED)],
+      });
+      await presences.insert({
+        companyId: 'c1',
+        employeeId: 'e1',
+        month: PresenceMonth.parse('2026-10'),
+        workedDays: 22,
+      });
+
+      await expect(useCase.execute(openOctober)).rejects.toThrow(
+        ErrorCode.POTENTIAL_DUPLICATE,
+      );
+      expect(await statuses(hours)).toEqual({ h1: HoursFactStatus.VALIDATED });
+    });
+
+    it('does not process the hours of a refused opening', async () => {
+      const { useCase, hours } = useCaseWith([camille], {
+        hours: [hoursFact('h1', '2026-10-12', HoursFactStatus.VALIDATED)],
+      });
+
+      await expect(
+        useCase.execute({
+          ...openOctober,
+          actor: { ...employer, role: UserRole.EMPLOYEE },
+        }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+      expect(await statuses(hours)).toEqual({ h1: HoursFactStatus.VALIDATED });
+    });
+  });
+
   it('opens the month of an employee', async () => {
     const { useCase } = useCaseWith();
 

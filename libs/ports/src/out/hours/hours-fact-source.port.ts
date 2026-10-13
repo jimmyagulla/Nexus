@@ -5,6 +5,7 @@ export interface IHoursFactSource {
     companyId: string,
     employeeId: string,
   ): Promise<readonly HoursFact[]>;
+  markProcessed(companyId: string, factIds: readonly string[]): Promise<void>;
 }
 
 export const IHoursFactSource = Symbol('IHoursFactSource');

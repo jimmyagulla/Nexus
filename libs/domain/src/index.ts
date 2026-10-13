@@ -29,6 +29,7 @@ export * from './services/build-presence-snapshot';
 export * from './services/is-leave-type';
 export * from './services/parse-presence-period';
 export * from './services/propose-worked-days';
+export * from './services/select-hours-to-process';
 export * from './services/require-employer-of-company';
 export * from './services/require-public-holiday-label';
 export * from './audit/audit-action';
