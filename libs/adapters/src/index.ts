@@ -1,3 +1,4 @@
+export * from './out/absence/in-memory-absence-fact.source';
 export * from './out/audit/in-memory-audit-log.repository';
 export * from './out/clock/fixed-clock';
 export * from './out/clock/system-clock';

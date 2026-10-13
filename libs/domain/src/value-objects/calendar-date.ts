@@ -1,5 +1,16 @@
 import { ErrorCode } from '../errors/error-code';
 import { CALENDAR_DATE_PATTERN } from './calendar-date.pattern';
+import { DayOfWeek } from './day-of-week';
+
+const WEEKDAYS: readonly DayOfWeek[] = [
+  DayOfWeek.SUNDAY,
+  DayOfWeek.MONDAY,
+  DayOfWeek.TUESDAY,
+  DayOfWeek.WEDNESDAY,
+  DayOfWeek.THURSDAY,
+  DayOfWeek.FRIDAY,
+  DayOfWeek.SATURDAY,
+];
 
 export class CalendarDate {
   private constructor(readonly value: string) {}
@@ -25,5 +36,14 @@ export class CalendarDate {
 
   equals(other: CalendarDate): boolean {
     return this.value === other.value;
+  }
+
+  isWithin(start: CalendarDate, end: CalendarDate): boolean {
+    return this.value >= start.value && this.value <= end.value;
+  }
+
+  dayOfWeek(): DayOfWeek {
+    const [year, month, day] = this.value.split('-').map(Number);
+    return WEEKDAYS[new Date(Date.UTC(year, month - 1, day)).getUTCDay()];
   }
 }

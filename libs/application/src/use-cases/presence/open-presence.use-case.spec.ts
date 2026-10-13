@@ -1,11 +1,20 @@
 import {
+  InMemoryAbsenceFactSource,
+  InMemoryCompanyRepository,
   InMemoryEmployeeDirectory,
   InMemoryPresenceRepository,
 } from '@hexagonal-monorepo-template/adapters';
 import {
+  AbsenceFact,
   ActorContext,
+  CalendarDate,
+  Company,
+  CompanyName,
+  CompanyPublicHoliday,
+  DayOfWeek,
   EmployeeReference,
   ErrorCode,
+  PublicHoliday,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { OpenPresenceUseCase } from './open-presence.use-case';
@@ -22,10 +31,37 @@ const camille: EmployeeReference = {
   fullName: 'Camille Martin',
 };
 
-function useCaseWith(employees: readonly EmployeeReference[] = [camille]) {
+function absence(
+  start: string,
+  end: string,
+  employeeId = 'e1',
+): AbsenceFact {
+  return {
+    id: `a-${employeeId}-${start}`,
+    companyId: 'c1',
+    employeeId,
+    start: CalendarDate.parse(start),
+    end: CalendarDate.parse(end),
+    type: 'Congés payés',
+    days: 3,
+    sourceRequestId: 'r1',
+  };
+}
+
+function acme(): Company {
+  return Company.create('c1', CompanyName.parse('Acme'));
+}
+
+function useCaseWith(
+  employees: readonly EmployeeReference[] = [camille],
+  options: { company?: Company; absences?: readonly AbsenceFact[] } = {},
+) {
   const presences = new InMemoryPresenceRepository();
+  const company = options.company ?? acme();
   const useCase = new OpenPresenceUseCase(
+    new InMemoryCompanyRepository(new Map([[company.id, company]])),
     new InMemoryEmployeeDirectory(employees),
+    new InMemoryAbsenceFactSource(options.absences ?? []),
     presences,
   );
 
@@ -120,6 +156,123 @@ describe('OpenPresenceUseCase', () => {
         actor: employer,
         companyId: 'c1',
         employeeId: 'ghost',
+        month: '2026-10',
+      }),
+    ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    expect(await presences.list({ companyId: 'c1' })).toEqual([]);
+  });
+
+  it('proposes the days the company calendar leaves working', async () => {
+    const { useCase } = useCaseWith();
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect(presence.workedDays).toBe(22);
+  });
+
+  it('does not count a Sunday of the default calendar as worked', async () => {
+    const { useCase } = useCaseWith();
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-02',
+    });
+
+    expect(presence.workedDays).toBe(20);
+  });
+
+  it('follows the calendar of the company', async () => {
+    const company = acme();
+    const calendar = company.calendar
+      .withNonWorkingWeekdays([DayOfWeek.SUNDAY])
+      .addPublicHoliday(
+        new CompanyPublicHoliday(
+          'c1',
+          new PublicHoliday('ph-1', CalendarDate.parse('2026-10-12'), 'Férié'),
+        ),
+      );
+    const { useCase } = useCaseWith([camille], {
+      company: company.withCalendar(calendar),
+    });
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect(presence.workedDays).toBe(26);
+  });
+
+  it('leaves out the days covered by the absences already published', async () => {
+    const { useCase } = useCaseWith([camille], {
+      absences: [absence('2026-10-05', '2026-10-07')],
+    });
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect(presence.workedDays).toBe(19);
+  });
+
+  it('leaves out the absences of another employee', async () => {
+    const { useCase } = useCaseWith([camille], {
+      absences: [absence('2026-10-05', '2026-10-07', 'e2')],
+    });
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect(presence.workedDays).toBe(22);
+  });
+
+  it('keeps the proposed days in the stored presence', async () => {
+    const { useCase, presences } = useCaseWith();
+
+    await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect(
+      (await presences.list({ companyId: 'c1' })).map(
+        (presence) => presence.workedDays,
+      ),
+    ).toEqual([22]);
+  });
+
+  it('refuses a company nobody knows', async () => {
+    const presences = new InMemoryPresenceRepository();
+    const useCase = new OpenPresenceUseCase(
+      new InMemoryCompanyRepository(),
+      new InMemoryEmployeeDirectory([camille]),
+      new InMemoryAbsenceFactSource(),
+      presences,
+    );
+
+    await expect(
+      useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        employeeId: 'e1',
         month: '2026-10',
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);

@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { describe, expect, it } from 'vitest';
 import { InMemoryPresenceRepository } from '@hexagonal-monorepo-template/adapters';
 import {
+  IAbsenceFactSource,
+  ICompanyRepository,
   IListPresences,
   IOpenPresence,
   IPresenceRepository,
@@ -34,6 +36,18 @@ describe('PresenceModule', () => {
 
     expect(moduleRef.get(IOpenPresence)).toBeDefined();
     expect(moduleRef.get(IListPresences)).toBeDefined();
+  });
+
+  it('reuses the company repository of the company module', async () => {
+    const moduleRef = await compile();
+
+    expect(moduleRef.get(ICompanyRepository)).toBeDefined();
+  });
+
+  it('reads the absence facts through the absence fact source', async () => {
+    const moduleRef = await compile();
+
+    expect(moduleRef.get(IAbsenceFactSource)).toBeDefined();
   });
 
   it('keeps the presences in memory when the persistence is not postgres', async () => {

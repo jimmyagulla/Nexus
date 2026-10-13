@@ -1,5 +1,6 @@
 import { ErrorCode } from '../errors/error-code';
 import { CalendarDate } from './calendar-date';
+import { DayOfWeek } from './day-of-week';
 
 describe('CalendarDate', () => {
   it('parses a calendar day without time', () => {
@@ -61,6 +62,34 @@ describe('CalendarDate', () => {
     expect(() => CalendarDate.parse('2026-07-14T10:00:00Z')).toThrow(
       ErrorCode.REQUIRED_INFORMATION,
     );
+  });
+
+  it('names the weekday of a day', () => {
+    expect(CalendarDate.parse('2026-10-04').dayOfWeek()).toBe(DayOfWeek.SUNDAY);
+    expect(CalendarDate.parse('2026-10-05').dayOfWeek()).toBe(DayOfWeek.MONDAY);
+    expect(CalendarDate.parse('2026-10-10').dayOfWeek()).toBe(
+      DayOfWeek.SATURDAY,
+    );
+  });
+
+  it('tells whether a day falls within a period, bounds included', () => {
+    const start = CalendarDate.parse('2026-10-05');
+    const end = CalendarDate.parse('2026-10-09');
+
+    expect(CalendarDate.parse('2026-10-04').isWithin(start, end)).toBe(false);
+    expect(CalendarDate.parse('2026-10-05').isWithin(start, end)).toBe(true);
+    expect(CalendarDate.parse('2026-10-07').isWithin(start, end)).toBe(true);
+    expect(CalendarDate.parse('2026-10-09').isWithin(start, end)).toBe(true);
+    expect(CalendarDate.parse('2026-10-10').isWithin(start, end)).toBe(false);
+  });
+
+  it('compares days across months and years', () => {
+    const start = CalendarDate.parse('2026-12-30');
+    const end = CalendarDate.parse('2027-01-02');
+
+    expect(CalendarDate.parse('2026-12-31').isWithin(start, end)).toBe(true);
+    expect(CalendarDate.parse('2027-01-01').isWithin(start, end)).toBe(true);
+    expect(CalendarDate.parse('2027-02-01').isWithin(start, end)).toBe(false);
   });
 
   it('considers two dates equal when they name the same day', () => {

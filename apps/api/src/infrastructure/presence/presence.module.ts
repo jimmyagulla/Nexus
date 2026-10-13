@@ -5,6 +5,8 @@ import {
 } from '@hexagonal-monorepo-template/application';
 import { InMemoryPresenceRepository } from '@hexagonal-monorepo-template/adapters';
 import {
+  IAbsenceFactSource,
+  ICompanyRepository,
   IEmployeeDirectory,
   IListPresences,
   IOpenPresence,
@@ -12,12 +14,14 @@ import {
 } from '@hexagonal-monorepo-template/ports';
 import { PresenceController } from '../../adapters/http/presence/presence.controller';
 import { PrismaPresenceRepository } from '../../adapters/out/presence/prisma-presence.repository';
+import { AbsenceFactSourceModule } from '../absence-fact-source/absence-fact-source.module';
+import { CompanyModule } from '../company/company.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { EmployeeDirectoryModule } from '../employee-directory/employee-directory.module';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
-  imports: [EmployeeDirectoryModule],
+  imports: [CompanyModule, EmployeeDirectoryModule, AbsenceFactSourceModule],
   controllers: [PresenceController],
   providers: [
     {
@@ -33,10 +37,17 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
     {
       provide: IOpenPresence,
       useFactory: (
+        companies: ICompanyRepository,
         employees: IEmployeeDirectory,
+        absences: IAbsenceFactSource,
         presences: IPresenceRepository,
-      ) => new OpenPresenceUseCase(employees, presences),
-      inject: [IEmployeeDirectory, IPresenceRepository],
+      ) => new OpenPresenceUseCase(companies, employees, absences, presences),
+      inject: [
+        ICompanyRepository,
+        IEmployeeDirectory,
+        IAbsenceFactSource,
+        IPresenceRepository,
+      ],
     },
     {
       provide: IListPresences,

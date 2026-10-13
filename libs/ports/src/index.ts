@@ -14,6 +14,7 @@ export * from './in/presence/open-presence.port';
 export * from './in/presence/list-presences.port';
 export * from './in/presence/list-presences-from-session.port';
 export * from './in/presence/open-presence-from-session.port';
+export * from './out/absence/absence-fact-source.port';
 export * from './out/audit/audit-log.repository.port';
 export * from './out/auth/jwt-verifier.port';
 export * from './out/company/company.repository.port';
