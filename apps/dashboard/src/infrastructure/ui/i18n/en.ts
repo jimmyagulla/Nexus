@@ -27,6 +27,7 @@ export const en = {
   presences: {
     title: 'Attendance',
     ownTitle: 'My attendance',
+    noPresence: 'No attendance record is available for this period.',
     openMonth: 'Open a month',
     openMonthTitle: "Open an employee's month",
     employee: 'Employee',

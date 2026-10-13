@@ -64,6 +64,22 @@ describe('Presences', () => {
     expect(screen.getByText('Octobre 2026')).toBeTruthy();
   });
 
+  it('announces the empty state and still lets the employer open the month', () => {
+    renderView({ rows: [] });
+
+    expect(screen.getByText(i18n.messages.presences.noPresence)).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: i18n.messages.presences.openMonth }),
+    ).toBeTruthy();
+  });
+
+  it('announces the empty state to an employee without any action', () => {
+    renderView({ rows: [], canManage: false });
+
+    expect(screen.getByText(i18n.messages.presences.noPresence)).toBeTruthy();
+    expect(screen.queryAllByRole('button')).toEqual([]);
+  });
+
   it('lets the employer open a month', () => {
     renderView();
 

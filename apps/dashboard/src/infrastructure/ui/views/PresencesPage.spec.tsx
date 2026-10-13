@@ -274,6 +274,23 @@ describe('PresencesPage', () => {
     expect(screen.getByText('12/10/2026 : 2 h')).toBeTruthy();
   });
 
+  it('announces the empty state when no month matches', async () => {
+    renderPage(compositionOf(async () => listWith([])));
+
+    expect(
+      await screen.findByText(i18n.messages.presences.noPresence),
+    ).toBeTruthy();
+  });
+
+  it('offers no action to an employee when no month matches', async () => {
+    renderPage(compositionOf(async () => listWith([], false)));
+
+    expect(
+      await screen.findByText(i18n.messages.presences.noPresence),
+    ).toBeTruthy();
+    expect(screen.queryAllByRole('button')).toEqual([]);
+  });
+
   it('shows a readable message when the presences cannot be loaded', async () => {
     renderPage(
       compositionOf(async () => {

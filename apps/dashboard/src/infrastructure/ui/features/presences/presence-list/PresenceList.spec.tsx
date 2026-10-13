@@ -19,12 +19,18 @@ function row(id: string, employeeName: string): PresenceRowViewModel {
   };
 }
 
-function renderList(canManage = true) {
+function renderList(
+  canManage = true,
+  presences: PresenceRowViewModel[] = [
+    row('p1', 'Camille Martin'),
+    row('p2', 'Dominique Durand'),
+  ],
+) {
   const adjusted: { presenceId: string; workedDays: number }[] = [];
 
   render(
     <PresenceList
-      presences={[row('p1', 'Camille Martin'), row('p2', 'Dominique Durand')]}
+      presences={presences}
       canManage={canManage}
       errorPresenter={new ErrorPresenter()}
       adjustError={null}
@@ -44,6 +50,24 @@ describe('PresenceList', () => {
 
     expect(screen.getByText('Camille Martin')).toBeTruthy();
     expect(screen.getByText('Dominique Durand')).toBeTruthy();
+  });
+
+  it('announces that no month matches', () => {
+    renderList(true, []);
+
+    expect(screen.getByText(i18n.messages.presences.noPresence)).toBeTruthy();
+  });
+
+  it('announces the empty list the same way to an actor who cannot manage', () => {
+    renderList(false, []);
+
+    expect(screen.getByText(i18n.messages.presences.noPresence)).toBeTruthy();
+  });
+
+  it('announces nothing when a month matches', () => {
+    renderList();
+
+    expect(screen.queryByText(i18n.messages.presences.noPresence)).toBeNull();
   });
 
   it('lets the actor who manages adjust each month', () => {

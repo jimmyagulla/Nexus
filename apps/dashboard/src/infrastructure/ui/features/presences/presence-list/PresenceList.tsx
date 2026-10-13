@@ -1,6 +1,7 @@
 import type { PresenceRowViewModel } from '../../../../../adapters/presenters/presence.presenter';
 import { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
 import type { AdjustWorkedDaysValues } from '../adjust-worked-days/adjust-worked-days.schema';
+import { i18n } from '../../../i18n/i18n';
 import { PresenceCard } from './PresenceCard';
 
 interface PresenceListProps {
@@ -21,6 +22,14 @@ export function PresenceList({
   adjustError,
   onAdjust,
 }: PresenceListProps) {
+  if (presences.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {i18n.messages.presences.noPresence}
+      </p>
+    );
+  }
+
   return (
     <ul>
       {presences.map((presence) => (

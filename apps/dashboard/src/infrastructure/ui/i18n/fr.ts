@@ -27,6 +27,7 @@ export const fr = {
   presences: {
     title: 'Présences',
     ownTitle: 'Mes présences',
+    noPresence: "Aucun état de présence n'est disponible pour cette période.",
     openMonth: 'Ouvrir un mois',
     openMonthTitle: "Ouvrir le mois d'un salarié",
     employee: 'Salarié',
