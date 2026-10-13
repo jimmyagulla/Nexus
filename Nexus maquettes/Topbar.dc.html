@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="height:56px;padding:0 32px;background:#fff;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:16px;font-family:Inter,sans-serif;box-sizing:border-box;position:relative">
+<sc-if value="{{ legacy }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;align-items:center;gap:8px;font-size:14px;line-height:20px;min-width:0">
+<sc-if value="{{ hasParent }}" hint-placeholder-val="{{ false }}"><span style="color:#57617A">{{ parent }}</span><i class="ri-arrow-right-s-line" style="color:#96A4C1;font-size:16px"></i></sc-if>
+<span style="font-weight:600;color:#303441">{{ current }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ search }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1 1 520px;max-width:520px;min-width:0;position:relative">
+<div style="display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;background:{{ sb.bg }};border:{{ sb.bw }} solid {{ sb.bd }};border-radius:8px;box-sizing:border-box">
+<i class="ri-search-line" style="font-size:18px;color:#6A7896"></i>
+<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:{{ sb.fg }}">{{ sb.text }}</span>
+<span style="font-weight:700;font-size:11px;color:#6A7896;padding:2px 6px;border-radius:4px;background:#fff;border:1px solid #DDE2EB">⌘ K</span>
+</div>
+<sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:0;right:0;top:46px;z-index:20;background:#fff;border:1px solid #DDE2EB;border-radius:8px;box-shadow:0 8px 24px rgba(25,30,37,.14);display:flex;flex-direction:column;overflow:hidden">
+<div style="padding:12px 16px;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:#57617A"><i class="ri-sparkling-2-line" style="font-size:16px;color:#3D64ED"></i>Recherche comprise comme
+<span style="height:22px;padding:0 8px;border-radius:11px;background:#EEF4FF;color:#304287;font-weight:700;display:inline-flex;align-items:center">Bulletins de salaire</span>
+<span style="height:22px;padding:0 8px;border-radius:11px;background:#EEF4FF;color:#304287;font-weight:700;display:inline-flex;align-items:center">Mois : mars</span>
+<span style="height:22px;padding:0 8px;border-radius:11px;background:#EEF4FF;color:#304287;font-weight:700;display:inline-flex;align-items:center">Toutes années</span>
+</div>
+<span style="padding:12px 16px 4px;font-weight:600;font-size:12px;color:#6A7896">Bulletins de salaire</span>
+<sc-for list="{{ results }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;padding:8px 16px;background:{{ r.bg }}">
+<i class="ri-file-paper-2-line" style="font-size:20px;color:#304287"></i>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600;font-size:14px;color:#303441">{{ r.t }}</span><span style="font-size:12px;color:#6A7896">{{ r.s }}</span></div>
+<span style="font-size:12px;font-weight:600;color:#304287">{{ r.a }}</span>
+<i class="ri-download-2-line" style="font-size:18px;color:#304287"></i>
+</div>
+</sc-for>
+<span style="padding:12px 16px 4px;font-weight:600;font-size:12px;color:#6A7896;border-top:1px solid #DDE2EB;margin-top:8px">Actions</span>
+<div style="display:flex;align-items:center;gap:12px;padding:8px 16px 12px"><i class="ri-download-cloud-2-line" style="font-size:20px;color:#304287"></i><span style="flex:1;font-weight:600;font-size:14px;color:#303441">Télécharger les 6 bulletins de mars (ZIP)</span><i class="ri-arrow-right-line" style="color:#96A4C1"></i></div>
+<div style="padding:8px 16px;background:#F5F7F9;border-top:1px solid #DDE2EB;display:flex;gap:16px;font-size:11px;color:#6A7896"><span>↵ ouvrir</span><span>↑ ↓ naviguer</span><span>Échap fermer</span></div>
+</div>
+</sc-if>
+</div>
+<div style="flex:0 1 auto;margin-left:auto"></div>
+</sc-if>
+<span style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:#F2FBF9;color:#1D6864;font-weight:600;font-size:12px;flex:none"><i class="ri-lock-2-line" style="font-size:14px"></i>Connexion sécurisée</span>
+<span style="position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#304287;font-size:20px;flex:none"><i class="ri-notification-3-line"></i><span style="position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#FA420F;border:2px solid #fff"></span></span>
+<span style="width:1px;height:24px;background:#DDE2EB;flex:none"></span>
+<span style="width:32px;height:32px;border-radius:50%;background:#2E3862;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex:none">{{ ini }}</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:420},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;s&quot;,&quot;e&quot;],&quot;default&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;'s'|'e'&quot;},&quot;parent&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;current&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Mon espace&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;search&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;q&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;open&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props.parent || '', e = this.props.role === 'e';
+    const search = !!this.props.search, q = this.props.q || '', open = !!this.props.open;
+    const ph = e ? 'Rechercher un salarié, un document, une note de frais…' : 'Rechercher un bulletin, un document… ex. « bulletin mars »';
+    return {
+      legacy: !search, search, open, hasParent: !!p, parent: p, current: this.props.current || '', ini: e ? 'NR' : 'CM',
+      chip: e ? { bg: '#2E3862', fg: '#fff', icon: 'ri-building-2-line', label: 'Vue employeur' } : { bg: '#EEF4FF', fg: '#304287', icon: 'ri-user-line', label: 'Vue salarié' },
+      sb: q ? { bg: '#fff', bd: '#3D64ED', bw: '2px', fg: '#303441', text: q } : { bg: '#F5F7F9', bd: '#F5F7F9', bw: '1px', fg: '#7E8FB3', text: ph },
+      results: [
+        { t: 'Mars 2026', s: 'Mis à disposition le 31/03/2026 · Consulté', a: 'Voir', bg: '#EEF4FF' },
+        { t: 'Mars 2025', s: 'Mis à disposition le 31/03/2025 · Consulté', a: 'Voir', bg: '#fff' },
+        { t: 'Mars 2024', s: 'Mis à disposition le 29/03/2024 · Consulté', a: 'Voir', bg: '#fff' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

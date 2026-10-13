@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="width:240px;height:100%;overflow:hidden;background:{{ c.bg }};border-right:1px solid {{ c.bd }};display:flex;flex-direction:column;font-family:Inter,sans-serif;box-sizing:border-box">
+<div style="height:56px;padding:0 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid {{ c.line }};flex:none">
+<img src="assets/icon-septeo-orange.svg" width="24" height="24" alt="" style="display:block">
+<span style="font:700 18px/1 Poppins,sans-serif;color:{{ c.logo }};letter-spacing:-.01em">My Docs</span>
+</div>
+<sc-if value="{{ legacy }}" hint-placeholder-val="{{ true }}">
+<div style="padding:16px 20px 10px;display:flex;flex-direction:column;gap:2px">
+<span style="font-size:11px;line-height:14px;color:#6A7896">{{ spaceLabel }}</span>
+<span style="font-weight:600;font-size:13px;line-height:18px;color:#303441">Atelier Moreau</span>
+</div>
+</sc-if>
+<sc-if value="{{ v2 }}" hint-placeholder-val="{{ false }}">
+<div style="margin:{{ rmar }};padding:10px 12px;border-radius:8px;background:{{ c.roleBg }};display:flex;align-items:center;gap:10px">
+<span style="width:32px;height:32px;border-radius:8px;background:{{ c.roleIcBg }};color:{{ c.roleIc }};display:flex;align-items:center;justify-content:center;font-size:18px;flex:none"><i class="{{ roleIcon }}"></i></span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font-weight:700;font-size:13px;line-height:18px;color:{{ c.roleFg }}">{{ roleLabel }}</span><span style="font-size:12px;line-height:16px;color:{{ c.roleMut }}">Atelier Moreau</span></div>
+</div>
+</sc-if>
+<nav style="display:flex;flex-direction:column;gap:2px;padding:4px 8px 12px;flex:1 1 auto;min-height:0;overflow-y:auto">
+<sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+<sc-if value="{{ it.h }}" hint-placeholder-val="{{ false }}"><div style="padding:{{ it.hp }};font-weight:700;font-size:11px;line-height:14px;color:{{ it.hc }}">{{ it.label }}</div></sc-if>
+<sc-if value="{{ it.i }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:{{ it.gap }};padding:{{ it.pad }};border-radius:8px;background:{{ it.bg }};color:{{ it.fg }};font-weight:600;font-size:{{ it.fs }};line-height:20px;box-shadow:{{ it.sh }}">
+<i class="{{ it.icon }}" style="font-size:20px;color:{{ it.ic }};flex:none"></i>
+<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span>
+<sc-if value="{{ it.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="flex:none;font-weight:700;font-size:11px;line-height:14px;padding:1px 7px;border-radius:999px;background:{{ it.bb }};color:{{ it.bf }}">{{ it.badge }}</span></sc-if>
+</div>
+</sc-if>
+</sc-for>
+</nav>
+<sc-if value="{{ showBox }}" hint-placeholder-val="{{ true }}">
+<div style="margin:0 12px 12px;padding:12px;border-radius:8px;background:{{ c.box }};display:flex;gap:10px">
+<i class="ri-shield-check-line" style="font-size:18px;color:{{ c.shield }};line-height:20px"></i>
+<div style="display:flex;flex-direction:column;gap:2px">
+<span style="font-weight:600;font-size:12px;line-height:16px;color:{{ c.co }}">Dernière connexion</span>
+<span style="font-size:12px;line-height:16px;color:{{ c.mut }}">{{ lastLogin }}</span>
+</div>
+</div>
+</sc-if>
+<div style="padding:12px 16px;border-top:1px solid {{ c.line }};display:flex;align-items:center;gap:10px">
+<span style="width:32px;height:32px;border-radius:50%;background:{{ c.av }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex:none">{{ u.ini }}</span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<span style="font-weight:700;font-size:13px;line-height:16px;color:{{ c.co }}">{{ u.name }}</span>
+<span style="font-size:11px;line-height:14px;color:{{ c.mut }}">{{ u.sub }}</span>
+</div>
+<i class="ri-logout-box-r-line" style="font-size:18px;color:{{ c.out }}"></i>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:240,&quot;height&quot;:800},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;s&quot;,&quot;e&quot;],&quot;default&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;'s'|'e'&quot;},&quot;active&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;v2&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const role = this.props.role || 's', active = this.props.active || '', v3 = !!this.props.v3, v2 = !!this.props.v2 || v3;
+    const lightE = v3 && role === 'e';
+    const dark = v2 && role === 'e' && !lightE;
+    const S3 = [['Mon espace'], ['dash','ri-home-5-line','Tableau de bord'], ['Mes documents'], ['docs','ri-folder-shield-2-line','Documents','3'], ['pay','ri-file-paper-2-line','Bulletins de salaire','1'], ['transmit','ri-upload-cloud-2-line','Documents à transmettre'], ['Mon temps'], ['conges','ri-sun-line','Congés & absences'], ['hs','ri-time-line','Heures supplémentaires'], ['pres','ri-calendar-check-line','Présences'], ['Mes frais'], ['ndf','ri-receipt-line','Notes de frais'], ['fpro','ri-briefcase-4-line','Frais professionnels','1'], ['Mes informations'], ['info','ri-user-settings-line','Informations personnelles']];
+    const E3 = [['Pilotage'], ['dash','ri-dashboard-line','Tableau de bord'], ['emp','ri-team-line','Salariés'], ['reg','ri-book-2-line','Registre du personnel'], ['RH'], ['docs','ri-folder-shield-2-line','Documents','8'], ['pay','ri-file-paper-2-line','Bulletins de salaire'], ['pres','ri-calendar-check-line','Présences'], ['conges','ri-sun-line','Congés & absences','4'], ['hs','ri-time-line','Heures supplémentaires','2'], ['Frais'], ['ndf','ri-receipt-line','Notes de frais','5'], ['fpro','ri-briefcase-4-line','Frais professionnels','1'], ['Partenaires'], ['cab','ri-building-4-line','Cabinet comptable','3'], ['Administration'], ['users','ri-shield-user-line','Utilisateurs & accès'], ['set','ri-settings-3-line','Paramètres'], ['hist','ri-history-line','Historique des activités']];
+    const S = [['home','ri-home-5-line','Mon espace'],['docs','ri-folder-shield-2-line','Mes documents','2'],['pay','ri-file-paper-2-line','Mes bulletins de salaire','1'],['pres','ri-calendar-check-line','Mes présences'],['exp','ri-receipt-line','Mes frais professionnels'],['info','ri-user-settings-line','Mes informations']];
+    const E = [['dash','ri-dashboard-line','Tableau de bord'],['emp','ri-team-line','Salariés'],['docs','ri-folder-shield-2-line','Documents','8'],['pay','ri-file-paper-2-line','Bulletins de salaire'],['pres','ri-calendar-check-line','Présences'],['exp','ri-receipt-line','Frais professionnels','3'],['reg','ri-book-2-line','Registre du personnel'],['hist','ri-history-line','Historique'],['set','ri-settings-3-line','Paramètres']];
+    const pad = v3 ? '7px 12px' : '10px 12px';
+    const hpad = '10px 12px 3px';
+    const rmar = '12px 12px 8px';
+    const fs = v3 ? '13px' : '14px', gap = v3 ? '10px' : '12px';
+    const items0 = (v3 ? (role === 'e' ? E3 : S3) : (role === 'e' ? E : S)).map((row) => {
+      if (row.length === 1) return { h: true, i: false, label: row[0], hc: dark ? '#96ACF9' : '#6A7896', hp: hpad };
+      const [k, icon, label, badge] = row;
+      const a = k === active;
+      if (v3) return { h: false, i: true, pad, icon, label, badge, hasBadge: !!badge, bg: a ? '#EEF4FF' : 'transparent', fg: a ? '#304287' : '#434B5D', ic: a ? '#304287' : '#434B5D', bb: a ? '#304287' : '#DDE2EB', bf: a ? '#fff' : '#434B5D', sh: 'none' };
+      if (dark) return { h: false, i: true, pad, icon, label, badge, hasBadge: !!badge, bg: a ? 'rgba(255,255,255,.12)' : 'transparent', fg: a ? '#fff' : '#DCE4FD', ic: a ? '#fff' : '#96ACF9', bb: '#FA420F', bf: '#fff', sh: a ? 'inset 3px 0 0 #FA420F' : 'none' };
+      return { h: false, i: true, pad, icon, label, badge, hasBadge: !!badge, bg: a ? '#EEF4FF' : 'transparent', fg: a ? '#304287' : '#434B5D', ic: a ? '#304287' : '#6A7896', bb: a ? '#304287' : '#DDE2EB', bf: a ? '#fff' : '#434B5D', sh: 'none' };
+    });
+    const items = items0.map(it => Object.assign(it, { fs, gap }));
+    const c = lightE
+      ? { bg: '#fff', bd: '#DDE2EB', line: '#DDE2EB', logo: '#2E3862', co: '#303441', mut: '#57617A', box: '#F5F7F9', shield: '#2BA198', av: '#2E3862', out: '#304287' }
+      : dark
+      ? { bg: '#2E3862', bd: '#2E3862', line: 'rgba(255,255,255,.12)', logo: '#fff', co: '#fff', mut: '#B9C7FB', box: 'rgba(255,255,255,.08)', shield: '#64D3C5', av: '#FA420F', out: '#DCE4FD', tagBg: '#FA420F', tagFg: '#fff', tagW: 700, tagPad: '2px 6px' }
+      : v2
+        ? { bg: '#fff', bd: '#DDE2EB', line: '#DDE2EB', logo: '#2E3862', co: '#303441', mut: '#57617A', box: '#F5F7F9', shield: '#2BA198', av: '#2E3862', out: '#304287', tagBg: '#EEF4FF', tagFg: '#304287', tagW: 700, tagPad: '2px 6px' }
+        : { bg: '#fff', bd: '#DDE2EB', line: '#DDE2EB', logo: '#2E3862', co: '#303441', mut: '#57617A', box: '#F5F7F9', shield: '#2BA198', av: '#2E3862', out: '#304287', tagBg: 'transparent', tagFg: '#6A7896', tagW: 400, tagPad: '0' };
+    const u = role === 'e' ? { name: 'Nadia Roussel', sub: 'Responsable RH · Administratrice', ini: 'NR' } : { name: 'Camille Martin', sub: 'Chargée de clientèle', ini: 'CM' };
+    Object.assign(c, lightE ? { roleBg: '#2E3862', roleIcBg: 'rgba(255,255,255,.14)', roleIc: '#fff', roleFg: '#fff', roleMut: '#C5CDDD' } : dark ? { roleBg: 'rgba(255,255,255,.10)', roleIcBg: '#FA420F', roleIc: '#fff', roleFg: '#fff', roleMut: '#B9C7FB' } : { roleBg: '#EEF4FF', roleIcBg: '#304287', roleIc: '#fff', roleFg: '#2E3862', roleMut: '#57617A' });
+    if (v3) u.sub = 'Dernière connexion ' + (role === 'e' ? '08:47' : '09:12');
+    return { items, u, c, v2, rmar, showBox: !v3, legacy: !v2, roleLabel: role === 'e' ? 'Vue employeur' : 'Vue salarié', roleIcon: role === 'e' ? 'ri-building-2-line' : 'ri-user-line', spaceLabel: role === 'e' ? 'Espace employeur' : 'Espace personnel', lastLogin: role === 'e' ? "Aujourd'hui à 08:47 · Montpellier" : "Aujourd'hui à 09:12 · Montpellier" };
+  }
+}
+</script>
+</body>
+</html>

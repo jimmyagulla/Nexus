@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+body{margin:0;background:#E9ECF1;font-family:Inter,system-ui,sans-serif;color:#303441;-webkit-font-smoothing:antialiased}
+a{color:#3D64ED;text-decoration:none}a:hover{color:#324CAB;text-decoration:underline}
+button,input,select,textarea{font:inherit}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 Inter,system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-flow{display:flex;flex-wrap:nowrap;gap:20px;align-items:center}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 Inter,system-ui,sans-serif;color:rgba(0,0,0,.6)}
+.dv-card{max-width:none;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 Inter,system-ui,sans-serif;color:rgba(0,0,0,.5)}
+.dv-group{margin:44px 0 16px;display:flex;flex-direction:column;gap:4px}
+.dv-gt{font:700 16px/1.3 Inter,system-ui,sans-serif;color:#1a1a1a}
+.dv-gs{font:400 13px/1.4 Inter,system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-arrow{font-size:28px;color:rgba(0,0,0,.3);flex:none;margin-top:24px}
+</style>
+</helmet>
+<section class="dv-turn" id="t1">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:900px;margin:0 0 8px">
+<div style="font:700 28px/1.2 Poppins,sans-serif;color:#2E3862">My Docs — coffre numérique RH · v2</div>
+<div style="font-size:14px;line-height:22px;color:#434B5D;text-wrap:pretty">Version consolidée des choix validés : tableau de bord salarié avec recherche intelligente dans l'en-tête, vue employeur (barre latérale bleu marine) et vue salarié (barre latérale blanche) identifiées sous le logo, filtres de tableau dans un panneau latéral flottant avec badges pour les filtres appliqués, bulletins avec sélecteur d'année. Base Septeo DSS, double authentification par code e-mail, coordonnées bancaires gérées par l'employeur.</div>
+</div>
+<div class="dv-group"><span class="dv-gt">Parcours 1 — Consulter un bulletin</span><span class="dv-gs">Connexion → code e-mail → tableau de bord → recherche ou Bulletins → 2026 → Septembre → consultation et téléchargement</span></div>
+<div class="dv-flow">
+<div class="dv-opt" id="p1-1"><div class="dv-olabel"><a class="dv-oid" href="#p1-1">P1.1</a>Connexion</div>
+<div class="dv-card" data-screen-label="P1.1 Connexion" style="width:1280px;height:800px;background:#F5F7F9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;position:relative">
+<div style="display:flex;align-items:center;gap:10px"><img src="assets/icon-septeo-orange.svg" width="32" height="32" alt=""><span style="font:700 24px/1 Poppins,sans-serif;color:#2E3862">My Docs</span></div>
+<div style="width:440px;background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:32px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:22px;line-height:28px;color:#2E3862">Connexion à votre coffre</span><span style="font-size:14px;line-height:20px;color:#57617A">Atelier Moreau · Espace RH sécurisé</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px;color:#303441">Adresse e-mail</span><div style="height:40px;border:1px solid #AEB9CF;border-radius:4px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#303441">camille.martin@mail.fr</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between"><span style="font-weight:700;font-size:14px;color:#303441">Mot de passe</span><span style="font-size:13px;font-weight:600;color:#3D64ED">Mot de passe oublié ?</span></div><div style="height:40px;border:2px solid #3D64ED;border-radius:4px;padding:0 11px;display:flex;align-items:center;justify-content:space-between;font-size:16px;color:#303441;letter-spacing:2px">••••••••••<i class="ri-eye-off-line" style="font-size:18px;color:#6A7896;letter-spacing:0"></i></div></div>
+<div style="height:48px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center">Se connecter</div>
+<div style="display:flex;gap:10px;padding-top:16px;border-top:1px solid #DDE2EB"><i class="ri-lock-2-line" style="font-size:18px;color:#2BA198"></i><span style="font-size:13px;line-height:18px;color:#57617A">Connexion chiffrée. Vos documents sont accessibles uniquement aux personnes autorisées.</span></div>
+</div>
+<span style="font-size:12px;color:#6A7896">Mentions légales · Confidentialité · Aide</span>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p1-2"><div class="dv-olabel"><a class="dv-oid" href="#p1-2">P1.2</a>Double authentification — code e-mail</div>
+<div class="dv-card" data-screen-label="P1.2 Double authentification" style="width:1280px;height:800px;background:#F5F7F9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px">
+<div style="display:flex;align-items:center;gap:10px"><img src="assets/icon-septeo-orange.svg" width="32" height="32" alt=""><span style="font:700 24px/1 Poppins,sans-serif;color:#2E3862">My Docs</span></div>
+<div style="width:440px;background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:32px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+<span style="width:48px;height:48px;border-radius:50%;background:#EEF4FF;color:#304287;display:flex;align-items:center;justify-content:center;font-size:24px"><i class="ri-mail-lock-line"></i></span>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:22px;line-height:28px;color:#2E3862">Vérification en deux étapes</span><span style="font-size:14px;line-height:20px;color:#57617A;text-wrap:pretty">Un code à 6 chiffres a été envoyé à <b style="color:#303441">c•••••••@mail.fr</b>. Il expire dans 10 minutes.</span></div>
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+<span style="height:52px;border:1px solid #AEB9CF;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">4</span>
+<span style="height:52px;border:1px solid #AEB9CF;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">8</span>
+<span style="height:52px;border:1px solid #AEB9CF;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">2</span>
+<span style="height:52px;border:1px solid #AEB9CF;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">9</span>
+<span style="height:52px;border:1px solid #AEB9CF;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">1</span>
+<span style="height:52px;border:2px solid #3D64ED;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:400;font-size:22px;color:#3D64ED">|</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#303441"><span style="width:18px;height:18px;border-radius:4px;background:#304287;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px"><i class="ri-check-line"></i></span>Faire confiance à cet appareil pendant 30 jours</div>
+<div style="height:48px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center">Vérifier</div>
+<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#57617A">Code non reçu ?</span><span style="font-weight:600;color:#3D64ED">Renvoyer le code (0:42)</span></div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p1-3">
+<div class="dv-olabel"><a class="dv-oid" href="#p1-3">P1.3</a>Tableau de bord salarié — recherche intelligente dans l'en-tête</div>
+<div class="dv-card" data-screen-label="P1.3 Dashboard salarié" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="home" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:24px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Bienvenue Camille</div>
+<div style="font-size:14px;line-height:20px;color:#57617A">4 éléments ajoutés à votre coffre depuis votre dernière connexion</div>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:16px;color:#2E3862">À consulter</span><span style="font-size:13px;color:#3D64ED;font-weight:600">Tout voir</span></div>
+<sc-for list="{{ feed }}" as="f" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid #DDE2EB">
+<span style="width:40px;height:40px;border-radius:8px;background:#F5F7F9;color:#304287;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none"><i class="{{ f.icon }}"></i></span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:14px;line-height:20px;color:#303441">{{ f.t }}</span><span style="font-size:13px;line-height:18px;color:#57617A">{{ f.s }}</span></div>
+<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:{{ f.p.bg }};color:{{ f.p.fg }}">{{ f.p.label }}</span>
+<span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:13px;width:84px;justify-content:center;box-sizing:border-box">{{ f.a }}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#57617A"><i class="ri-lock-2-line" style="font-size:16px;color:#2BA198"></i>Vos documents sont accessibles uniquement aux personnes autorisées.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700;font-size:16px;color:#2E3862;margin-bottom:4px">Actions rapides</span>
+<sc-for list="{{ quick }}" as="q" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;border-radius:8px;background:{{ q.bg }};color:{{ q.fg }};font-weight:700;font-size:14px;border:1px solid {{ q.bd }}"><i class="{{ q.icon }}" style="font-size:20px"></i><span style="flex:1">{{ q.t }}</span><i class="ri-arrow-right-line"></i></div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;font-weight:700;font-size:16px;color:#2E3862">Mon coffre</div>
+<sc-for list="{{ vault }}" as="v" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid #DDE2EB;font-size:14px"><i class="{{ v.icon }}" style="font-size:18px;color:#6A7896"></i><span style="flex:1;color:#303441">{{ v.t }}</span><span style="font-weight:600;color:#57617A">{{ v.n }}</span><i class="ri-arrow-right-s-line" style="color:#96A4C1"></i></div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p1-4">
+<div class="dv-olabel"><a class="dv-oid" href="#p1-4">P1.4</a>Recherche intelligente ouverte — « bulletin mars »</div>
+<div class="dv-card" data-screen-label="P1.4 Recherche intelligente" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="home" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;position:relative">
+<dc-import name="Topbar" role="s" search="{{ true }}" q="bulletin mars" open="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:24px;align-items:start;opacity:.45">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Bienvenue Camille</div>
+<div style="height:420px;background:#fff;border:1px solid #DDE2EB;border-radius:8px"></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px"><div style="height:210px;background:#fff;border:1px solid #DDE2EB;border-radius:8px"></div><div style="height:300px;background:#fff;border:1px solid #DDE2EB;border-radius:8px"></div></div>
+</div>
+</div>
+</div>
+</div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p1-5">
+<div class="dv-olabel"><a class="dv-oid" href="#p1-5">P1.5</a>Mes bulletins de salaire — sélecteur d'année</div>
+<div class="dv-card" data-screen-label="P1.5 Bulletins" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="pay" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:24px 40px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Mes bulletins de salaire</span><span style="font-size:14px;color:#57617A">67 bulletins conservés dans votre coffre jusqu'à vos 75 ans.</span></div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;overflow:hidden">
+<div style="padding:10px 16px;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;height:36px;border:1px solid #AEB9CF;border-radius:8px;background:#fff;box-sizing:border-box">
+<span style="width:36px;height:34px;display:flex;align-items:center;justify-content:center;color:#304287;font-size:20px;border-right:1px solid #DDE2EB"><i class="ri-arrow-left-s-line"></i></span>
+<span style="padding:0 14px;font-weight:700;font-size:15px;color:#2E3862;display:flex;align-items:center;gap:6px">2026<i class="ri-arrow-down-s-line" style="font-size:16px;color:#304287"></i></span>
+<span style="width:36px;height:34px;display:flex;align-items:center;justify-content:center;color:#C5CDDD;font-size:20px;border-left:1px solid #DDE2EB"><i class="ri-arrow-right-s-line"></i></span>
+</div>
+<span style="font-size:13px;color:#57617A">9 bulletins en 2026</span>
+<span style="flex:1"></span>
+<span style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box"><i class="ri-download-cloud-2-line"></i>Tout télécharger (2026)</span>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 140px 150px 160px 200px;gap:16px;padding:10px 20px;border-bottom:1px solid #DDE2EB;font-weight:600;font-size:13px;color:#57617A"><span>Période</span><span>Mis à disposition</span><span>Net à payer</span><span>Statut</span><span style="text-align:right">Actions</span></div>
+<sc-for list="{{ pay26 }}" as="b" hint-placeholder-count="9">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 140px 150px 160px 200px;gap:16px;align-items:center;padding:7px 20px;border-bottom:1px solid #DDE2EB;background:{{ b.hl }};font-size:14px">
+<span style="display:flex;align-items:center;gap:12px;font-weight:600;color:#303441"><i class="ri-file-paper-2-line" style="font-size:20px;color:#304287"></i>{{ b.label }}</span>
+<span style="color:#57617A">{{ b.d }}</span>
+<span>{{ b.net }}</span>
+<span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:{{ b.p.bg }};color:{{ b.p.fg }}">{{ b.p.label }}</span></span>
+<div style="display:flex;justify-content:flex-end;gap:8px"><span style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box"><i class="ri-eye-line"></i>Voir</span><span style="height:32px;width:32px;border-radius:8px;color:#304287;display:inline-flex;align-items:center;justify-content:center;font-size:18px;background:#EEF4FF"><i class="ri-download-2-line"></i></span></div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p1-6"><div class="dv-olabel"><a class="dv-oid" href="#p1-6">P1.6</a>Consultation du bulletin de septembre — téléchargement</div>
+<div class="dv-card" data-screen-label="P1.6 Consultation bulletin" style="width:1280px;height:800px;display:flex;background:#F5F7F9;position:relative">
+<dc-import name="Sidebar" role="s" active="pay" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:24px 40px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;min-height:0">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;display:flex;flex-direction:column;min-height:0">
+<div style="height:48px;padding:0 16px;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:12px;font-size:13px;color:#57617A"><i class="ri-file-pdf-2-line" style="font-size:18px;color:#304287"></i><span style="flex:1;font-weight:600;color:#303441">Bulletin_2026-09_Martin_Camille.pdf</span><i class="ri-zoom-out-line" style="font-size:18px"></i><span>100 %</span><i class="ri-zoom-in-line" style="font-size:18px"></i><span style="width:1px;height:20px;background:#DDE2EB"></span><span>Page 1 / 1</span></div>
+<div style="flex:1;background:#EEF0F4;display:flex;justify-content:center;padding:24px;min-height:0">
+<div style="width:440px;height:100%;background:repeating-linear-gradient(135deg,#FFFFFF 0 12px,#F5F7F9 12px 24px);border:1px solid #DDE2EB;box-shadow:0 8px 24px rgba(25,30,37,.08);display:flex;align-items:center;justify-content:center"><span style="font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#6A7896;background:#fff;padding:6px 10px;border:1px solid #DDE2EB;border-radius:4px">aperçu PDF du bulletin</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:700;font-size:20px;line-height:26px;color:#2E3862">Septembre 2026</span><span style="font-size:13px;color:#57617A">Bulletin de salaire</span></div>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Période</span><span style="font-weight:600">01/09 – 30/09/2026</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Mis à disposition</span><span style="font-weight:600">30/09/2026</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Émetteur</span><span style="font-weight:600">Service RH</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Taille</span><span style="font-weight:600">PDF · 212 Ko</span></div>
+<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE2EB"><span style="color:#57617A">Net à payer</span><span style="font-weight:700;font-size:16px;color:#2E3862">2 184,37 €</span></div>
+</div>
+<div style="height:44px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px"><i class="ri-download-2-line"></i>Télécharger</div>
+<div style="height:44px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box"><i class="ri-printer-line"></i>Imprimer</div>
+</div>
+<div style="display:flex;gap:10px;padding:14px;border-radius:8px;background:#fff;border:1px solid #DDE2EB"><i class="ri-shield-check-line" style="font-size:18px;color:#2BA198"></i><span style="font-size:13px;line-height:18px;color:#57617A">Ce bulletin est conservé dans votre coffre jusqu'à vos 75 ans, conformément à la réglementation.</span></div>
+<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:#3D64ED"><span><i class="ri-arrow-left-s-line"></i> Août 2026</span><span style="color:#AEB9CF">Octobre 2026 <i class="ri-arrow-right-s-line"></i></span></div>
+</div>
+</div>
+</div>
+<div style="position:absolute;right:24px;bottom:24px;display:flex;align-items:center;gap:12px;padding:12px 16px;background:#1F2129;color:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(25,30,37,.16);font-size:14px"><i class="ri-checkbox-circle-fill" style="font-size:20px;color:#64D3C5"></i>Téléchargement terminé · Bulletin_2026-09.pdf</div>
+</div></div>
+</div>
+
+<div class="dv-group"><span class="dv-gt">Parcours 2 — Déposer un arrêt maladie</span><span class="dv-gs">Tableau de bord → Mes documents → Déposer un document → Arrêt maladie → import → transmission → confirmation</span></div>
+<div class="dv-flow">
+<div class="dv-opt" id="p2-1">
+<div class="dv-olabel"><a class="dv-oid" href="#p2-1">P2.1</a>Mes documents — panneau de filtres ouvert, filtres appliqués en badges</div>
+<div class="dv-card" data-screen-label="P2.1 Mes documents" style="width:1280px;height:800px;display:flex;background:#F5F7F9;position:relative">
+<dc-import name="Sidebar" role="s" active="docs" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Mes documents</span><span style="display:flex;align-items:center;gap:6px;font-size:14px;color:#57617A"><i class="ri-lock-2-line" style="color:#2BA198"></i>Vos documents sont accessibles uniquement aux personnes autorisées.</span></div>
+<span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-upload-cloud-2-line" style="font-size:18px"></i>Déposer un document</span>
+</div>
+<div style="display:flex;gap:8px;align-items:center"><div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;width:300px;background:#fff;border:1px solid #AEB9CF;border-radius:4px;box-sizing:border-box"><i class="ri-search-line" style="color:#6A7896"></i><span style="font-size:14px;color:#7E8FB3">Rechercher dans mes documents</span></div><span style="height:36px;padding:0 12px;border:2px solid #3D64ED;border-radius:8px;background:#EEF4FF;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#304287;box-sizing:border-box"><i class="ri-filter-3-line" style="font-size:18px"></i>Filtres<span style="height:18px;min-width:18px;padding:0 5px;border-radius:9px;background:#304287;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">2</span></span><span style="flex:1"></span><span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#304287;font-weight:600"><i class="ri-arrow-up-down-line"></i>Trier : date, récent d'abord</span></div>
+<div style="position:absolute;top:72px;right:16px;bottom:16px;width:380px;z-index:6;background:#fff;border:1px solid #DDE2EB;border-radius:8px;box-shadow:0 12px 32px rgba(25,30,37,.18);display:flex;flex-direction:column;overflow:hidden">
+<div style="padding:12px 20px;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:10px"><i class="ri-filter-3-line" style="font-size:20px;color:#304287"></i><div style="flex:1;display:flex;flex-direction:column"><span style="font-weight:700;font-size:16px;color:#2E3862">Filtres</span><span style="font-size:12px;color:#57617A">2 filtres appliqués</span></div><i class="ri-close-line" style="font-size:22px;color:#57617A"></i></div>
+<div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+<div style="display:flex;flex-direction:column;gap:4px;padding:8px 20px;border-bottom:1px solid #DDE2EB"><span style="font-weight:700;font-size:13px;color:#303441">Catégorie</span><sc-for list="{{ catOpts }}" as="o" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:10px;padding:3px 8px;border-radius:4px;background:{{ o.bg }};font-size:14px;color:#303441"><i class="{{ o.ic }}" style="font-size:18px;color:{{ o.icc }}"></i><span style="flex:1">{{ o.t }}</span><span style="font-size:12px;color:#6A7896">{{ o.n }}</span></div></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:8px 20px;border-bottom:1px solid #DDE2EB"><span style="font-weight:700;font-size:13px;color:#303441">Statut</span><sc-for list="{{ statOpts }}" as="o" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:10px;padding:3px 8px;border-radius:4px;background:{{ o.bg }};font-size:14px;color:#303441"><i class="{{ o.ic }}" style="font-size:18px;color:{{ o.icc }}"></i><span style="flex:1">{{ o.t }}</span><span style="font-size:12px;color:#6A7896">{{ o.n }}</span></div></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:8px 20px;border-bottom:1px solid #DDE2EB"><span style="font-weight:700;font-size:13px;color:#303441">Période</span><div style="display:flex;gap:10px"><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#57617A">Du</span><div style="height:36px;border:1px solid #AEB9CF;border-radius:4px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;font-size:14px;color:#7E8FB3;box-sizing:border-box">jj/mm/aaaa<i class="ri-calendar-line" style="color:#304287"></i></div></div><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#57617A">Au</span><div style="height:36px;border:1px solid #AEB9CF;border-radius:4px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;font-size:14px;color:#7E8FB3;box-sizing:border-box">jj/mm/aaaa<i class="ri-calendar-line" style="color:#304287"></i></div></div></div></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:8px 20px;border-bottom:1px solid #DDE2EB"><span style="font-weight:700;font-size:13px;color:#303441">Émetteur</span><div style="display:flex;border:1px solid #AEB9CF;border-radius:8px;overflow:hidden"><span style="flex:1;height:34px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;background:#304287;color:#fff">Tous</span><span style="flex:1;height:34px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#434B5D;border-left:1px solid #AEB9CF">Service RH</span><span style="flex:1;height:34px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#434B5D;border-left:1px solid #AEB9CF">Vous</span></div></div>
+</div>
+<div style="padding:14px 20px;border-top:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;font-weight:600;color:#3D64ED">Réinitialiser</span><span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center">Afficher 2 résultats</span></div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<span style="font-size:13px;color:#57617A">2 résultats sur 7 ·</span>
+<span style="flex:none;white-space:nowrap;height:28px;padding:0 6px 0 10px;border-radius:14px;background:#EEF4FF;border:1px solid #B9C7FB;color:#2E3862;font-size:13px;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box"><span style="color:#57617A">Catégorie :</span><b style="font-weight:700">Avenants, Mutuelle</b><i class="ri-close-line" style="font-size:16px;color:#304287"></i></span>
+<span style="flex:none;white-space:nowrap;height:28px;padding:0 6px 0 10px;border-radius:14px;background:#EEF4FF;border:1px solid #B9C7FB;color:#2E3862;font-size:13px;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box"><span style="color:#57617A">Statut :</span><b style="font-weight:700">Nouveau</b><i class="ri-close-line" style="font-size:16px;color:#304287"></i></span>
+<span style="font-size:13px;font-weight:600;color:#3D64ED;margin-left:4px">Effacer les filtres</span>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) 92px 92px 96px 130px 100px;gap:12px;padding:12px 16px;border-bottom:1px solid #DDE2EB;font-weight:600;font-size:13px;color:#57617A"><span>Nom</span><span>Catégorie</span><span style="display:flex;align-items:center;gap:4px">Date<i class="ri-arrow-down-s-line" style="color:#2E3862"></i></span><span>Taille</span><span>Émetteur</span><span>Statut</span><span style="text-align:right">Actions</span></div>
+<sc-for list="{{ docsF }}" as="d" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) 92px 92px 96px 130px 100px;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid #DDE2EB;font-size:14px">
+<span style="display:flex;align-items:center;gap:10px;min-width:0"><i class="{{ d.icon }}" style="font-size:20px;color:#304287;flex:none"></i><span style="font-weight:600;color:#303441">{{ d.name }}</span></span>
+<span style="color:#57617A">{{ d.cat }}</span><span style="color:#57617A">{{ d.date }}</span><span style="color:#57617A">PDF · {{ d.size }}</span><span style="color:#57617A">{{ d.from }}</span>
+<span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:{{ d.p.bg }};color:{{ d.p.fg }}">{{ d.p.label }}</span></span>
+<span style="display:flex;justify-content:flex-end;gap:2px;color:#304287;font-size:18px"><span style="width:32px;height:32px;display:flex;align-items:center;justify-content:center"><i class="ri-eye-line"></i></span><span style="width:32px;height:32px;display:flex;align-items:center;justify-content:center"><i class="ri-download-2-line"></i></span><span style="width:32px;height:32px;display:flex;align-items:center;justify-content:center"><i class="ri-more-2-fill"></i></span></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p2-2"><div class="dv-olabel"><a class="dv-oid" href="#p2-2">P2.2</a>Déposer un document — arrêt maladie, fichier importé</div>
+<div class="dv-card" data-screen-label="P2.2 Dépôt arrêt maladie" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="docs" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:24px 40px;display:flex;flex-direction:column;gap:16px;align-items:center">
+<div style="width:760px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:700;font-size:24px;line-height:32px;color:#2E3862">Déposer un document</span><span style="font-size:14px;color:#57617A">Le document est transmis de façon sécurisée au service RH.</span></div>
+<div style="width:760px;background:#fff;border:1px solid #DDE2EB;border-radius:8px;display:flex;flex-direction:column">
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #DDE2EB">
+<span style="font-weight:700;font-size:14px;color:#303441">1. Type de document <span style="color:#ED1136">*</span></span>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+<sc-for list="{{ upTypes }}" as="u" hint-placeholder-count="4">
+<div style="border:{{ u.bw }} solid {{ u.bd }};background:{{ u.bg }};border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative">
+<div style="display:flex;justify-content:space-between"><i class="{{ u.icon }}" style="font-size:22px;color:#304287"></i><i class="{{ u.ic }}" style="font-size:18px;color:{{ u.icc }}"></i></div>
+<span style="font-weight:700;font-size:14px;color:#2E3862">{{ u.t }}</span>
+<span style="font-size:12px;line-height:16px;color:#57617A">{{ u.d }}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:10px;padding:10px 12px;border-radius:8px;background:#F4F0FF;border:1px solid #E0D5FF"><i class="ri-information-line" style="color:#691FC1;font-size:18px"></i><span style="font-size:13px;line-height:18px;color:#4D198A">Transmettez le volet 3 de votre avis d'arrêt de travail dans les 48 heures suivant sa date de prescription.</span></div>
+</div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #DDE2EB">
+<span style="font-weight:700;font-size:14px;color:#303441">2. Fichier <span style="color:#ED1136">*</span></span>
+<div style="border:1px dashed #96A4C1;border-radius:8px;background:#FAFCFF;padding:16px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;color:#57617A"><i class="ri-upload-cloud-2-line" style="font-size:24px;color:#3D64ED"></i>Glissez votre fichier ici ou <b style="color:#3D64ED">sélectionnez un fichier</b><span style="font-size:12px;color:#6A7896">PDF, JPG, PNG · 10 Mo max.</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #DDE2EB;border-radius:8px"><i class="ri-file-pdf-2-line" style="font-size:22px;color:#304287"></i><div style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600;font-size:14px">arret_travail_2026-10-02.pdf</span><span style="font-size:12px;color:#6A7896">1,2 Mo · Importé</span></div><i class="ri-checkbox-circle-fill" style="font-size:20px;color:#2BA198"></i><i class="ri-close-line" style="font-size:20px;color:#57617A"></i></div>
+</div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:8px">
+<span style="font-weight:700;font-size:14px;color:#303441">3. Commentaire <span style="font-weight:400;color:#6A7896">(optionnel)</span></span>
+<div style="height:56px;border:1px solid #AEB9CF;border-radius:4px;padding:10px 12px;font-size:14px;color:#303441;box-sizing:border-box">Arrêt prescrit du 02/10 au 09/10/2026.</div>
+</div>
+<div style="padding:16px 24px;border-top:1px solid #DDE2EB;display:flex;justify-content:flex-end;gap:12px">
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;box-sizing:border-box">Annuler</span>
+<span style="height:40px;padding:0 20px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-send-plane-line"></i>Transmettre</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p2-3"><div class="dv-olabel"><a class="dv-oid" href="#p2-3">P2.3</a>Confirmation de transmission et statut</div>
+<div class="dv-card" data-screen-label="P2.3 Confirmation transmission" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="docs" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;display:flex;align-items:center;justify-content:center">
+<div style="width:560px;background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:32px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+<span style="width:56px;height:56px;border-radius:50%;background:#D2F5EE;color:#1D6864;display:flex;align-items:center;justify-content:center;font-size:30px"><i class="ri-check-line"></i></span>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:24px;line-height:32px;color:#2E3862">Document transmis</span><span style="font-size:14px;line-height:20px;color:#57617A;text-wrap:pretty">Votre arrêt maladie a été transmis au service RH. Vous serez notifié par e-mail dès sa prise en compte.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:14px;padding:16px;border-radius:8px;background:#F5F7F9">
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Type</span><span style="font-weight:600">Arrêt maladie</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Fichier</span><span style="font-weight:600">arret_travail_2026-10-02.pdf</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Transmis le</span><span style="font-weight:600">03/10/2026 à 10:24</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Destinataire</span><span style="font-weight:600">Service RH — Atelier Moreau</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#57617A">Statut</span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:#FFF4D5;color:#9B4911">En attente de prise en compte</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px;line-height:16px">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="height:4px;border-radius:2px;background:#2BA198"></span><span style="font-weight:700;color:#1D6864">Transmis</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="height:4px;border-radius:2px;background:#FB9814"></span><span style="font-weight:700;color:#9B4911">Prise en compte RH</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="height:4px;border-radius:2px;background:#DDE2EB"></span><span style="color:#6A7896">Classé dans votre coffre</span></div>
+</div>
+<div style="display:flex;gap:12px">
+<span style="flex:1;height:44px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center">Voir mes documents</span>
+<span style="flex:1;height:44px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;box-sizing:border-box">Retour à l'accueil</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="dv-group"><span class="dv-gt">Parcours 3 — Modifier ses coordonnées</span><span class="dv-gs">Tableau de bord → Mes informations → Modifier → validation → confirmation</span></div>
+<div class="dv-flow">
+<div class="dv-opt" id="p3-1"><div class="dv-olabel"><a class="dv-oid" href="#p3-1">P3.1</a>Mes informations — consultation</div>
+<div class="dv-card" data-screen-label="P3.1 Mes informations" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="info" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Mes informations</span><span style="font-size:14px;color:#57617A">Dernière mise à jour le 12/06/2026</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700;font-size:16px;color:#2E3862">Informations modifiables par vous</span><span style="font-size:13px;color:#57617A">Coordonnées personnelles</span></div><span style="height:36px;padding:0 14px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 0 0 4px #DCE4FD"><i class="ri-edit-line"></i>Modifier</span></div>
+<sc-for list="{{ editable }}" as="f" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:4px;padding:14px 20px;border-bottom:1px solid #DDE2EB"><span style="font-size:13px;color:#57617A">{{ f.k }}</span><span style="font-weight:600;font-size:15px;color:#303441">{{ f.v }}</span></div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;display:flex;gap:12px;align-items:center"><i class="ri-lock-2-line" style="font-size:20px;color:#6A7896"></i><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700;font-size:16px;color:#2E3862">Informations gérées par l'employeur</span><span style="font-size:13px;color:#57617A">Pour toute correction, contactez le service RH.</span></div></div>
+<sc-for list="{{ managed }}" as="f" hint-placeholder-count="9">
+<div style="display:flex;justify-content:space-between;gap:16px;padding:11px 20px;border-bottom:1px solid #DDE2EB;font-size:14px"><span style="color:#57617A">{{ f.k }}</span><span style="font-weight:600;color:#303441;text-align:right">{{ f.v }}</span></div>
+</sc-for>
+<div style="padding:12px 20px;font-size:13px;font-weight:600;color:#3D64ED;display:flex;align-items:center;gap:6px"><i class="ri-question-answer-line"></i>Signaler une erreur au service RH</div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p3-2"><div class="dv-olabel"><a class="dv-oid" href="#p3-2">P3.2</a>Modification de l'adresse</div>
+<div class="dv-card" data-screen-label="P3.2 Modification" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="info" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:24px;align-items:center">
+<div style="width:640px;display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:24px;line-height:32px;color:#2E3862">Modifier mes coordonnées</span><span style="font-size:14px;color:#57617A">Les champs modifiés sont signalés en bleu. Le service RH est informé de chaque changement.</span></div>
+<div style="width:640px;background:#fff;border:1px solid #DDE2EB;border-radius:8px;display:flex;flex-direction:column">
+<div style="padding:24px;display:flex;flex-direction:column;gap:18px">
+<sc-for list="{{ editableNew }}" as="f" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px;color:#303441">{{ f.k }}</span><div style="height:40px;border:{{ f.bw }} solid {{ f.bd }};border-radius:4px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#303441;box-sizing:border-box">{{ f.v }}</div></div>
+</sc-for>
+<div style="display:flex;gap:10px;padding:12px;border-radius:8px;background:#F5F7F9"><i class="ri-bank-line" style="font-size:18px;color:#6A7896"></i><span style="font-size:13px;line-height:18px;color:#57617A">Vos coordonnées bancaires sont gérées par l'employeur. Pour les modifier, adressez un RIB au service RH.</span></div>
+</div>
+<div style="padding:16px 24px;border-top:1px solid #DDE2EB;display:flex;justify-content:flex-end;gap:12px">
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;box-sizing:border-box">Annuler</span>
+<span style="height:40px;padding:0 20px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center">Enregistrer</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p3-3"><div class="dv-olabel"><a class="dv-oid" href="#p3-3">P3.3</a>Validation — récapitulatif avant enregistrement</div>
+<div class="dv-card" data-screen-label="P3.3 Validation" style="width:1280px;height:800px;display:flex;background:#F5F7F9;position:relative">
+<dc-import name="Sidebar" role="s" active="info" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;justify-content:center"><div style="width:640px;height:520px;background:#fff;border:1px solid #DDE2EB;border-radius:8px"></div></div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(28,29,36,.32);display:flex;align-items:center;justify-content:center">
+<div style="width:520px;background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(25,30,37,.16);display:flex;flex-direction:column">
+<div style="padding:20px 24px;border-bottom:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:18px;color:#2E3862">Confirmer la modification</span><i class="ri-close-line" style="font-size:20px;color:#57617A"></i></div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+<span style="font-size:14px;line-height:20px;color:#434B5D">Vérifiez les informations avant de les enregistrer.</span>
+<div style="border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:12px 16px;border-bottom:1px solid #DDE2EB;display:flex;flex-direction:column;gap:4px;font-size:14px"><span style="font-size:12px;color:#57617A">Adresse</span><span style="color:#6A7896;text-decoration:line-through">14 rue des Tilleuls</span><span style="font-weight:700;color:#2E3862">8 avenue de Lodève</span></div>
+<div style="padding:12px 16px;display:flex;flex-direction:column;gap:4px;font-size:14px"><span style="font-size:12px;color:#57617A">Code postal et ville</span><span style="color:#6A7896;text-decoration:line-through">34000 Montpellier</span><span style="font-weight:700;color:#2E3862">34070 Montpellier</span></div>
+</div>
+<div style="display:flex;gap:10px;padding:12px;border-radius:8px;background:#EEF4FF"><i class="ri-mail-send-line" style="font-size:18px;color:#3D64ED"></i><span style="font-size:13px;line-height:18px;color:#2E3862">Un e-mail de confirmation sera envoyé à camille.martin@mail.fr et le service RH sera informé.</span></div>
+</div>
+<div style="padding:16px 24px;border-top:1px solid #DDE2EB;display:flex;justify-content:flex-end;gap:12px">
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;box-sizing:border-box">Revenir</span>
+<span style="height:40px;padding:0 20px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center">Confirmer</span>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p3-4"><div class="dv-olabel"><a class="dv-oid" href="#p3-4">P3.4</a>Confirmation de modification</div>
+<div class="dv-card" data-screen-label="P3.4 Confirmation modification" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="info" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:8px;background:#F2FBF9;border:1px solid #A6E9DE"><i class="ri-checkbox-circle-fill" style="font-size:22px;color:#2BA198"></i><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:700;font-size:14px;color:#1B4644">Vos coordonnées ont été mises à jour.</span><span style="font-size:13px;color:#1D6864">Le service RH a été informé le 03/10/2026 à 10:41. Un e-mail de confirmation vous a été envoyé.</span></div><i class="ri-close-line" style="font-size:20px;color:#1D6864"></i></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Mes informations</span><span style="font-size:14px;color:#57617A">Dernière mise à jour le 03/10/2026</span></div>
+<div style="width:calc(50% - 12px);background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:16px;color:#2E3862">Informations modifiables par vous</span><span style="height:36px;padding:0 14px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box"><i class="ri-edit-line"></i>Modifier</span></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:14px 20px;border-bottom:1px solid #DDE2EB;background:#F2FBF9"><span style="font-size:13px;color:#57617A">Adresse</span><span style="font-weight:600;font-size:15px;color:#303441;display:flex;align-items:center;gap:8px">8 avenue de Lodève<span style="font-size:12px;font-weight:600;color:#1D6864">Modifié</span></span></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:14px 20px;border-bottom:1px solid #DDE2EB;background:#F2FBF9"><span style="font-size:13px;color:#57617A">Code postal et ville</span><span style="font-weight:600;font-size:15px;color:#303441;display:flex;align-items:center;gap:8px">34070 Montpellier<span style="font-size:12px;font-weight:600;color:#1D6864">Modifié</span></span></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:14px 20px;border-bottom:1px solid #DDE2EB"><span style="font-size:13px;color:#57617A">Téléphone</span><span style="font-weight:600;font-size:15px;color:#303441">06 12 34 56 47</span></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:14px 20px"><span style="font-size:13px;color:#57617A">Adresse e-mail personnelle</span><span style="font-weight:600;font-size:15px;color:#303441">camille.martin@mail.fr</span></div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="dv-group"><span class="dv-gt">Parcours 4 — Déclarer un frais</span><span class="dv-gs">Tableau de bord → Mes frais → Nouvelle déclaration → saisie → justificatif → envoi → statut « Envoyé »</span></div>
+<div class="dv-flow">
+<div class="dv-opt" id="p4-1"><div class="dv-olabel"><a class="dv-oid" href="#p4-1">P4.1</a>Mes frais professionnels — suivi</div>
+<div class="dv-card" data-screen-label="P4.1 Mes frais" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="exp" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Mes frais professionnels</span><span style="font-size:14px;color:#57617A">Déclarer et suivre mes demandes de remboursement.</span></div>
+<span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 0 0 4px #DCE4FD"><i class="ri-add-line" style="font-size:18px"></i>Nouvelle déclaration</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#57617A">En attente de remboursement</span><span style="font-weight:700;font-size:22px;color:#2E3862">113,18 €</span><span style="font-size:12px;color:#6A7896">2 demandes</span></div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#57617A">Remboursé en 2026</span><span style="font-weight:700;font-size:22px;color:#2E3862">1 284,60 €</span><span style="font-size:12px;color:#6A7896">Versé avec le salaire</span></div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#57617A">Brouillons</span><span style="font-weight:700;font-size:22px;color:#2E3862">1</span><span style="font-size:12px;color:#6A7896">À compléter et envoyer</span></div>
+</div>
+<div style="display:flex;gap:8px;align-items:center"><div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;width:300px;background:#fff;border:1px solid #AEB9CF;border-radius:4px;box-sizing:border-box"><i class="ri-search-line" style="color:#6A7896"></i><span style="font-size:14px;color:#7E8FB3">Rechercher une dépense</span></div><span style="height:36px;padding:0 12px;border:1px solid #304287;border-radius:8px;background:#fff;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#304287;box-sizing:border-box;flex:none"><i class="ri-filter-3-line" style="font-size:18px"></i>Filtres</span><span style="flex:1"></span><span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#304287;font-weight:600"><i class="ri-arrow-up-down-line"></i>Trier : date, récent d'abord</span></div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="display:grid;grid-template-columns:100px minmax(0,1fr) 110px 110px 180px 24px;gap:16px;padding:12px 20px;border-bottom:1px solid #DDE2EB;font-weight:600;font-size:13px;color:#57617A"><span>Date</span><span>Dépense</span><span style="text-align:right">Montant</span><span>Justificatif</span><span>Statut</span><span></span></div>
+<sc-for list="{{ expBase }}" as="e" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:100px minmax(0,1fr) 110px 110px 180px 24px;gap:16px;align-items:center;padding:12px 20px;border-bottom:1px solid #DDE2EB;font-size:14px;background:{{ e.hl }}">
+<span style="color:#57617A">{{ e.date }}</span>
+<span style="display:flex;align-items:center;gap:12px;min-width:0"><i class="{{ e.icon }}" style="font-size:20px;color:#304287"></i><span style="display:flex;flex-direction:column"><span style="font-weight:600;color:#303441">{{ e.type }}</span><span style="font-size:12px;color:#6A7896">{{ e.desc }}</span></span></span>
+<span style="text-align:right;font-weight:600">{{ e.amount }}</span>
+<span style="color:#3D64ED;display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px"><i class="ri-attachment-2"></i>1 fichier</span>
+<span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:{{ e.p.bg }};color:{{ e.p.fg }}">{{ e.p.label }}</span></span>
+<i class="ri-arrow-right-s-line" style="color:#96A4C1;font-size:18px"></i>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p4-2"><div class="dv-olabel"><a class="dv-oid" href="#p4-2">P4.2</a>Nouvelle déclaration — saisie et justificatif</div>
+<div class="dv-card" data-screen-label="P4.2 Nouvelle déclaration" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="exp" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:24px 40px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:700;font-size:24px;line-height:32px;color:#2E3862">Nouvelle déclaration</span><span style="font-size:14px;color:#57617A">Les champs marqués d'un <span style="color:#ED1136">*</span> sont obligatoires.</span></div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;display:flex;flex-direction:column">
+<div style="padding:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 32px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Date <span style="color:#ED1136">*</span></span><div style="height:40px;border:1px solid #AEB9CF;border-radius:4px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px;box-sizing:border-box">28/09/2026<i class="ri-calendar-line" style="color:#304287"></i></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Montant TTC <span style="color:#ED1136">*</span></span><div style="height:40px;border:1px solid #AEB9CF;border-radius:4px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px;box-sizing:border-box">86,40<span style="color:#6A7896">€</span></div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Type de dépense <span style="color:#ED1136">*</span></span><div style="height:40px;border:1px solid #AEB9CF;border-radius:4px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px;box-sizing:border-box">Transport — Train<i class="ri-arrow-down-s-line" style="color:#304287;font-size:18px"></i></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Centre de coût / projet <span style="font-weight:400;color:#6A7896">(optionnel)</span></span><div style="height:40px;border:1px solid #AEB9CF;border-radius:4px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px;box-sizing:border-box">Client Valette — Déploiement<i class="ri-arrow-down-s-line" style="color:#304287;font-size:18px"></i></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:14px">Description <span style="color:#ED1136">*</span></span><div style="height:80px;border:2px solid #3D64ED;border-radius:4px;padding:10px 11px;font-size:14px;line-height:20px;box-sizing:border-box">Train Montpellier – Lyon, rendez-vous client</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="font-weight:700;font-size:14px">Justificatif <span style="color:#ED1136">*</span></span>
+<div style="border:1px dashed #96A4C1;border-radius:8px;background:#FAFCFF;padding:20px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:14px;color:#57617A;text-align:center"><i class="ri-upload-cloud-2-line" style="font-size:28px;color:#3D64ED"></i><span>Glissez votre justificatif ici ou <b style="color:#3D64ED">sélectionnez un fichier</b></span><span style="font-size:12px;color:#6A7896">Photo ou PDF · 10 Mo max.</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #DDE2EB;border-radius:8px"><span style="width:40px;height:48px;border-radius:4px;background:repeating-linear-gradient(135deg,#F5F7F9 0 6px,#E6EAF1 6px 12px);flex:none"></span><div style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600;font-size:14px">billet_train_lyon.pdf</span><span style="font-size:12px;color:#6A7896">214 Ko · Importé</span></div><i class="ri-checkbox-circle-fill" style="font-size:20px;color:#2BA198"></i><i class="ri-close-line" style="font-size:20px;color:#57617A"></i></div>
+<div style="display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:8px;background:#F5F7F9;font-size:14px">
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Montant à rembourser</span><span style="font-weight:700;color:#2E3862">86,40 €</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#57617A">Validation par</span><span style="font-weight:600">Nadia Roussel, RH</span></div>
+</div>
+</div>
+</div>
+<div style="padding:16px 24px;border-top:1px solid #DDE2EB;display:flex;justify-content:flex-end;gap:12px">
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;box-sizing:border-box">Enregistrer en brouillon</span>
+<span style="height:40px;padding:0 20px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-send-plane-line"></i>Envoyer pour remboursement</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p4-3"><div class="dv-olabel"><a class="dv-oid" href="#p4-3">P4.3</a>Demande envoyée — statut « Envoyé »</div>
+<div class="dv-card" data-screen-label="P4.3 Frais envoyé" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="s" active="exp" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="s" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px 40px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:8px;background:#F2FBF9;border:1px solid #A6E9DE"><i class="ri-checkbox-circle-fill" style="font-size:22px;color:#2BA198"></i><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:700;font-size:14px;color:#1B4644">Votre demande de 86,40 € a été envoyée pour remboursement.</span><span style="font-size:13px;color:#1D6864">Statut : Envoyé. Vous serez notifié à chaque étape du traitement.</span></div><i class="ri-close-line" style="font-size:20px;color:#1D6864"></i></div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+<span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Mes frais professionnels</span>
+<span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-add-line" style="font-size:18px"></i>Nouvelle déclaration</span>
+</div>
+<div style="display:flex;gap:8px;align-items:center"><div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;width:300px;background:#fff;border:1px solid #AEB9CF;border-radius:4px;box-sizing:border-box"><i class="ri-search-line" style="color:#6A7896"></i><span style="font-size:14px;color:#7E8FB3">Rechercher une dépense</span></div><span style="height:36px;padding:0 12px;border:1px solid #304287;border-radius:8px;background:#fff;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#304287;box-sizing:border-box;flex:none"><i class="ri-filter-3-line" style="font-size:18px"></i>Filtres</span><span style="flex:1"></span><span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#304287;font-weight:600"><i class="ri-arrow-up-down-line"></i>Trier : date, récent d'abord</span></div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="display:grid;grid-template-columns:100px minmax(0,1fr) 110px 110px 180px 24px;gap:16px;padding:12px 20px;border-bottom:1px solid #DDE2EB;font-weight:600;font-size:13px;color:#57617A"><span>Date</span><span>Dépense</span><span style="text-align:right">Montant</span><span>Justificatif</span><span>Statut</span><span></span></div>
+<sc-for list="{{ expAfter }}" as="e" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:100px minmax(0,1fr) 110px 110px 180px 24px;gap:16px;align-items:center;padding:12px 20px;border-bottom:1px solid #DDE2EB;font-size:14px;background:{{ e.hl }}">
+<span style="color:#57617A">{{ e.date }}</span>
+<span style="display:flex;align-items:center;gap:12px;min-width:0"><i class="{{ e.icon }}" style="font-size:20px;color:#304287"></i><span style="display:flex;flex-direction:column"><span style="font-weight:600;color:#303441">{{ e.type }}</span><span style="font-size:12px;color:#6A7896">{{ e.desc }}</span></span></span>
+<span style="text-align:right;font-weight:600">{{ e.amount }}</span>
+<span style="color:#3D64ED;display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px"><i class="ri-attachment-2"></i>1 fichier</span>
+<span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:{{ e.p.bg }};color:{{ e.p.fg }}">{{ e.p.label }}</span></span>
+<i class="ri-arrow-right-s-line" style="color:#96A4C1;font-size:18px"></i>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="dv-group"><span class="dv-gt">Parcours 5 — Côté employeur</span><span class="dv-gs">Tableau de bord → Salariés → sélection d'un salarié → consultation de son espace</span></div>
+<div class="dv-flow">
+<div class="dv-opt" id="p5-1">
+<div class="dv-olabel"><a class="dv-oid" href="#p5-1">P5.1</a>Tableau de bord employeur</div>
+<div class="dv-card" data-screen-label="P5.1 Dashboard employeur" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="e" active="dash" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="e" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:32px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Bonjour Nadia</span><span style="font-size:14px;color:#57617A">Atelier Moreau · activité RH au 3 octobre 2026</span></div>
+<div style="display:flex;gap:12px"><span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box"><i class="ri-user-add-line"></i>Ajouter un salarié</span><span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-upload-cloud-2-line"></i>Déposer des documents</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:30px;line-height:36px;color:#2E3862">{{ s.n }}</span><span style="width:36px;height:36px;border-radius:8px;background:{{ s.bg }};color:{{ s.c }};display:flex;align-items:center;justify-content:center;font-size:18px"><i class="{{ s.icon }}"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:14px;color:#303441">{{ s.t }}</span><span style="font-size:12px;color:#6A7896">{{ s.s }}</span></div>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:16px;color:#2E3862">Actions à effectuer</span><span style="height:22px;padding:0 8px;border-radius:11px;background:#FFF4D5;color:#9B4911;font-weight:700;font-size:12px;display:inline-flex;align-items:center">4</span></div>
+<sc-for list="{{ todo }}" as="t" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #DDE2EB">
+<span style="width:36px;height:36px;border-radius:8px;background:#FFF4D5;color:#9B4911;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none"><i class="{{ t.icon }}"></i></span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:14px;color:#303441">{{ t.t }}</span><span style="font-size:12px;color:#6A7896">{{ t.s }}</span></div>
+<span style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:13px;display:inline-flex;align-items:center;box-sizing:border-box">{{ t.a }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:16px 20px;border-bottom:1px solid #DDE2EB;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:16px;color:#2E3862">Activité récente</span><span style="font-size:13px;font-weight:600;color:#3D64ED">Historique complet</span></div>
+<sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+<div style="display:flex;gap:12px;padding:12px 20px;border-bottom:1px solid #DDE2EB"><i class="{{ a.icon }}" style="font-size:18px;color:#6A7896;line-height:20px"></i><div style="flex:1;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:20px"><span style="color:#303441"><b style="font-weight:700">{{ a.who }}</b> {{ a.what }}</span><span style="font-size:12px;color:#6A7896">{{ a.t }}</span></div></div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p5-2">
+<div class="dv-olabel"><a class="dv-oid" href="#p5-2">P5.2</a>Salariés — filtre appliqué en badge</div>
+<div class="dv-card" data-screen-label="P5.2 Salariés" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="e" active="emp" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="e" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="flex:1;padding:28px 32px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:700;font-size:28px;line-height:36px;color:#2E3862">Salariés</span><span style="font-size:14px;color:#57617A">12 salariés · 11 actifs</span></div>
+<span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-user-add-line"></i>Ajouter un salarié</span>
+</div>
+<div style="display:flex;gap:8px;align-items:center"><div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;width:300px;background:#fff;border:1px solid #AEB9CF;border-radius:4px;box-sizing:border-box"><i class="ri-search-line" style="color:#6A7896"></i><span style="font-size:14px;color:#7E8FB3">Rechercher un nom ou un poste</span></div><span style="height:36px;padding:0 12px;border:1px solid #304287;border-radius:8px;background:#fff;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#304287;box-sizing:border-box"><i class="ri-filter-3-line" style="font-size:18px"></i>Filtres<span style="height:18px;min-width:18px;padding:0 5px;border-radius:9px;background:#304287;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">1</span></span><span style="flex:1"></span><span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#304287;font-weight:600"><i class="ri-arrow-up-down-line"></i>Trier : nom A → Z</span></div>
+<div style="display:flex;gap:8px;align-items:center">
+<span style="font-size:13px;color:#57617A">4 résultats sur 12 ·</span>
+<span style="flex:none;white-space:nowrap;height:28px;padding:0 6px 0 10px;border-radius:14px;background:#EEF4FF;border:1px solid #B9C7FB;color:#2E3862;font-size:13px;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box"><span style="color:#57617A">Service :</span><b style="font-weight:700">Technique</b><i class="ri-close-line" style="font-size:16px;color:#304287"></i></span>
+<span style="font-size:13px;font-weight:600;color:#3D64ED;margin-left:4px">Effacer les filtres</span>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 96px 120px 92px 124px 112px;gap:12px;padding:12px 16px;border-bottom:1px solid #DDE2EB;font-weight:600;font-size:13px;color:#57617A"><span style="display:flex;align-items:center;gap:4px">Nom et prénom<i class="ri-arrow-up-s-line" style="color:#2E3862"></i></span><span>Poste</span><span>Service</span><span>Statut</span><span>Entrée</span><span>Dernière activité</span><span></span></div>
+<sc-for list="{{ empsTech }}" as="m" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 96px 120px 92px 124px 112px;gap:12px;align-items:center;padding:8px 16px;border-bottom:1px solid #DDE2EB;font-size:14px">
+<span style="display:flex;align-items:center;gap:10px;min-width:0"><span style="width:32px;height:32px;border-radius:50%;background:#2E3862;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex:none">{{ m.ini }}</span><span style="font-weight:600;color:#303441">{{ m.name }}</span></span>
+<span style="color:#434B5D">{{ m.poste }}</span><span style="color:#57617A">{{ m.service }}</span>
+<span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:{{ m.p.bg }};color:{{ m.p.fg }}">{{ m.p.label }}</span></span>
+<span style="color:#57617A">{{ m.entry }}</span><span style="color:#57617A;font-size:13px">{{ m.last }}</span>
+<span style="height:32px;padding:0 10px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">Voir l'espace</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p5-3"><div class="dv-olabel"><a class="dv-oid" href="#p5-3">P5.3</a>Espace salarié — vue d'ensemble</div>
+<div class="dv-card" data-screen-label="P5.3 Espace salarié" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="e" active="emp" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="e" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="background:#fff;border-bottom:1px solid #DDE2EB;padding:24px 32px 0;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:center;gap:16px">
+<span style="width:56px;height:56px;border-radius:50%;background:#2E3862;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px">CM</span>
+<div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="display:flex;align-items:center;gap:10px"><span style="font-weight:700;font-size:22px;color:#2E3862">Camille Martin</span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:#D2F5EE;color:#1D6864">Actif</span></span><span style="font-size:14px;color:#57617A">Chargée de clientèle · Commercial · CDI depuis le 02/03/2021 · Matricule 00042</span></div>
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box"><i class="ri-mail-line"></i>Contacter</span>
+<span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-upload-cloud-2-line"></i>Déposer un document</span>
+</div>
+<div style="display:flex;gap:28px">
+<sc-for list="{{ tabsOverview }}" as="t" hint-placeholder-count="6"><span style="height:44px;display:flex;align-items:center;font-weight:700;font-size:14px;color:{{ t.fg }};box-shadow:inset 0 -3px 0 {{ t.bd }}">{{ t.t }}</span></sc-for>
+</div>
+</div>
+<div style="flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:20px">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+<sc-for list="{{ space }}" as="s" hint-placeholder-count="4">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;color:#303441"><i class="{{ s.icon }}" style="font-size:18px;color:#304287"></i>{{ s.t }}</div>
+<span style="font-weight:700;font-size:24px;color:#2E3862">{{ s.n }}</span>
+<span style="font-size:12px;color:#6A7896">{{ s.s }}</span>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:14px 20px;border-bottom:1px solid #DDE2EB;font-weight:700;font-size:16px;color:#2E3862">Identité et coordonnées</div>
+<sc-for list="{{ managed }}" as="f" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:16px;padding:8px 20px;font-size:14px"><span style="color:#57617A">{{ f.k }}</span><span style="font-weight:600;color:#303441;text-align:right">{{ f.v }}</span></div></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="padding:14px 20px;border-bottom:1px solid #DDE2EB;font-weight:700;font-size:16px;color:#2E3862">Historique des actions</div>
+<sc-for list="{{ empHist }}" as="h" hint-placeholder-count="4"><div style="display:flex;gap:12px;padding:10px 20px;border-bottom:1px solid #DDE2EB;font-size:14px"><span style="width:8px;height:8px;border-radius:50%;background:#3D64ED;margin-top:6px;flex:none"></span><div style="display:flex;flex-direction:column;gap:2px"><span style="color:#303441">{{ h.a }}</span><span style="font-size:12px;color:#6A7896">{{ h.t }}</span></div></div></sc-for>
+</div>
+<div style="display:flex;gap:10px;padding:12px 14px;border-radius:8px;background:#fff;border:1px solid #DDE2EB"><i class="ri-shield-keyhole-line" style="font-size:18px;color:#2BA198"></i><span style="font-size:13px;line-height:18px;color:#57617A">Votre consultation de cet espace est enregistrée dans l'historique des accès.</span></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<i class="ri-arrow-right-line dv-arrow"></i>
+<div class="dv-opt" id="p5-4"><div class="dv-olabel"><a class="dv-oid" href="#p5-4">P5.4</a>Espace salarié — onglet Présences</div>
+<div class="dv-card" data-screen-label="P5.4 Espace salarié présences" style="width:1280px;height:800px;display:flex;background:#F5F7F9">
+<dc-import name="Sidebar" role="e" active="emp" v2="{{ true }}" hint-size="240px,800px" style="width:240px;height:800px;flex:none"></dc-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<dc-import name="Topbar" role="e" search="{{ true }}" hint-size="100%,56px" style="width:100%;height:56px;position:relative;z-index:5"></dc-import>
+<div style="background:#fff;border-bottom:1px solid #DDE2EB;padding:24px 32px 0;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:center;gap:16px">
+<span style="width:56px;height:56px;border-radius:50%;background:#2E3862;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px">CM</span>
+<div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="display:flex;align-items:center;gap:10px"><span style="font-weight:700;font-size:22px;color:#2E3862">Camille Martin</span><span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-weight:600;font-size:12px;background:#D2F5EE;color:#1D6864">Actif</span></span><span style="font-size:14px;color:#57617A">Chargée de clientèle · Commercial · CDI depuis le 02/03/2021 · Matricule 00042</span></div>
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box"><i class="ri-mail-line"></i>Contacter</span>
+<span style="height:40px;padding:0 16px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px"><i class="ri-upload-cloud-2-line"></i>Déposer un document</span>
+</div>
+<div style="display:flex;gap:28px">
+<sc-for list="{{ tabsPres }}" as="t" hint-placeholder-count="6"><span style="height:44px;display:flex;align-items:center;font-weight:700;font-size:14px;color:{{ t.fg }};box-shadow:inset 0 -3px 0 {{ t.bd }}">{{ t.t }}</span></sc-for>
+</div>
+</div>
+<div style="flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:12px;align-items:center">
+<span style="height:36px;padding:0 12px;border:1px solid #304287;border-radius:8px;background:#fff;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#304287;box-sizing:border-box;flex:none"><i class="ri-filter-3-line" style="font-size:18px"></i>Filtres<span style="height:18px;min-width:18px;padding:0 5px;border-radius:9px;background:#304287;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">1</span></span><span style="flex:none;white-space:nowrap;height:28px;padding:0 6px 0 10px;border-radius:14px;background:#EEF4FF;border:1px solid #B9C7FB;color:#2E3862;font-size:13px;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box"><span style="color:#57617A">Période :</span><b style="font-weight:700">2026</b><i class="ri-close-line" style="font-size:16px;color:#304287"></i></span>
+<span style="font-size:13px;color:#57617A">Données utilisées pour la préparation de la paie</span>
+<span style="flex:1"></span>
+<span style="height:40px;padding:0 16px;border-radius:8px;border:1px solid #304287;color:#304287;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box"><i class="ri-file-excel-2-line"></i>Exporter</span>
+</div>
+<div style="background:#fff;border:1px solid #DDE2EB;border-radius:8px">
+<div style="display:grid;grid-template-columns:150px 130px 100px 90px 80px 80px minmax(0,1fr);gap:12px;padding:12px 20px;border-bottom:1px solid #DDE2EB;font-weight:600;font-size:13px;color:#57617A"><span>Mois</span><span>Période</span><span style="text-align:right">Travaillés</span><span style="text-align:right">Absences</span><span style="text-align:right">Congés</span><span style="text-align:right">Arrêts</span><span>Autres événements</span></div>
+<sc-for list="{{ presRows }}" as="r" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:150px 130px 100px 90px 80px 80px minmax(0,1fr);gap:12px;align-items:center;padding:11px 20px;border-bottom:1px solid #DDE2EB;font-size:14px">
+<span style="font-weight:600">{{ r.m }}</span><span style="color:#57617A">{{ r.p }}</span><span style="text-align:right;font-weight:600">{{ r.w }} j</span><span style="text-align:right">{{ r.a }}</span><span style="text-align:right">{{ r.c }}</span><span style="text-align:right">{{ r.ar }}</span><span style="color:#57617A">{{ r.o }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="dv-group"><span class="dv-gt">Aperçu mobile — salarié</span><span class="dv-gs">Accueil, bulletins, dépôt d'un arrêt maladie</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="m-1"><div class="dv-olabel"><a class="dv-oid" href="#m-1">M.1</a>Accueil</div>
+<div data-screen-label="M1 Mobile accueil" style="width:390px;height:844px;border-radius:48px;border:10px solid #1F2129;background:#F5F7F9;overflow:hidden;display:flex;flex-direction:column;box-sizing:content-box;box-shadow:0 8px 24px rgba(25,30,37,.12)">
+<div style="height:44px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:15px;background:#fff"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ri-signal-wifi-3-fill"></i><i class="ri-battery-2-fill"></i></span></div>
+<div style="height:52px;padding:0 20px;background:#fff;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:10px"><img src="assets/icon-septeo-orange.svg" width="22" height="22" alt=""><span style="flex:1;font:700 17px/1 Poppins,sans-serif;color:#2E3862">My Docs</span><i class="ri-notification-3-line" style="font-size:22px;color:#304287"></i></div>
+<div style="flex:1;padding:20px;display:flex;flex-direction:column;gap:14px;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:700;font-size:24px;line-height:30px;color:#2E3862">Bienvenue Camille</span><span style="font-size:13px;color:#57617A;display:flex;align-items:center;gap:6px"><i class="ri-lock-2-line" style="color:#2BA198"></i>Espace personnel sécurisé</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:8px;background:#304287;color:#fff"><i class="ri-file-paper-2-line" style="font-size:22px"></i><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:700;font-size:15px">Bulletin de septembre 2026</span><span style="font-size:12px;color:#DCE4FD">Nouveau · disponible</span></div><i class="ri-arrow-right-line" style="font-size:20px"></i></div>
+<sc-for list="{{ mBlocks }}" as="b" hint-placeholder-count="5">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;min-height:56px;border-radius:8px;background:#fff;border:1px solid #DDE2EB;box-sizing:border-box">
+<span style="width:36px;height:36px;border-radius:8px;background:#EEF4FF;color:#304287;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none"><i class="{{ b.icon }}"></i></span>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:700;font-size:15px;color:#2E3862">{{ b.t }}</span><span style="font-size:12px;color:#57617A">{{ b.m }}</span></div>
+<i class="ri-arrow-right-s-line" style="font-size:20px;color:#96A4C1"></i>
+</div>
+</sc-for>
+</div>
+<div style="height:72px;background:#fff;border-top:1px solid #DDE2EB;display:grid;grid-template-columns:repeat(4,1fr);font-size:11px;font-weight:600;padding-bottom:12px;box-sizing:border-box">
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#304287"><i class="ri-home-5-fill" style="font-size:22px"></i>Accueil</span>
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#6A7896"><i class="ri-folder-shield-2-line" style="font-size:22px"></i>Documents</span>
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#6A7896"><i class="ri-file-paper-2-line" style="font-size:22px"></i>Bulletins</span>
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#6A7896"><i class="ri-user-line" style="font-size:22px"></i>Profil</span>
+</div>
+</div></div>
+<div class="dv-opt" id="m-2"><div class="dv-olabel"><a class="dv-oid" href="#m-2">M.2</a>Bulletins — sélecteur d'année</div>
+<div data-screen-label="M2 Mobile bulletins" style="width:390px;height:844px;border-radius:48px;border:10px solid #1F2129;background:#F5F7F9;overflow:hidden;display:flex;flex-direction:column;box-sizing:content-box;box-shadow:0 8px 24px rgba(25,30,37,.12)">
+<div style="height:44px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:15px;background:#fff"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ri-signal-wifi-3-fill"></i><i class="ri-battery-2-fill"></i></span></div>
+<div style="height:52px;padding:0 12px;background:#fff;display:flex;align-items:center;gap:6px"><span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#304287"><i class="ri-arrow-left-line"></i></span><span style="font-weight:700;font-size:17px;color:#2E3862">Mes bulletins de salaire</span></div>
+<div style="padding:0 20px 12px;background:#fff;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;justify-content:space-between"><span style="width:44px;height:44px;border-radius:8px;border:1px solid #AEB9CF;display:flex;align-items:center;justify-content:center;color:#304287;font-size:22px;box-sizing:border-box"><i class="ri-arrow-left-s-line"></i></span><span style="font-weight:700;font-size:18px;color:#2E3862;display:flex;align-items:center;gap:6px">2026<i class="ri-arrow-down-s-line" style="font-size:18px;color:#304287"></i></span><span style="width:44px;height:44px;border-radius:8px;border:1px solid #DDE2EB;display:flex;align-items:center;justify-content:center;color:#C5CDDD;font-size:22px;box-sizing:border-box"><i class="ri-arrow-right-s-line"></i></span></div>
+<div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+<sc-for list="{{ pay26m }}" as="b" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:#fff;border:1px solid #DDE2EB">
+<i class="ri-file-paper-2-line" style="font-size:22px;color:#304287"></i>
+<div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-weight:700;font-size:15px;color:#2E3862">{{ b.label }}</span><span><span style="display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:10px;font-weight:600;font-size:11px;background:{{ b.p.bg }};color:{{ b.p.fg }}">{{ b.p.label }}</span></span></div>
+<span style="width:44px;height:44px;border-radius:8px;background:#EEF4FF;color:#304287;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="ri-download-2-line"></i></span>
+</div>
+</sc-for>
+</div>
+<div style="height:72px;background:#fff;border-top:1px solid #DDE2EB;display:grid;grid-template-columns:repeat(4,1fr);font-size:11px;font-weight:600;padding-bottom:12px;box-sizing:border-box">
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#6A7896"><i class="ri-home-5-line" style="font-size:22px"></i>Accueil</span>
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#6A7896"><i class="ri-folder-shield-2-line" style="font-size:22px"></i>Documents</span>
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#304287"><i class="ri-file-paper-2-fill" style="font-size:22px"></i>Bulletins</span>
+<span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#6A7896"><i class="ri-user-line" style="font-size:22px"></i>Profil</span>
+</div>
+</div></div>
+<div class="dv-opt" id="m-3"><div class="dv-olabel"><a class="dv-oid" href="#m-3">M.3</a>Dépôt d'un arrêt maladie</div>
+<div data-screen-label="M3 Mobile dépôt" style="width:390px;height:844px;border-radius:48px;border:10px solid #1F2129;background:#F5F7F9;overflow:hidden;display:flex;flex-direction:column;box-sizing:content-box;box-shadow:0 8px 24px rgba(25,30,37,.12)">
+<div style="height:44px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:15px;background:#fff"><span>9:41</span><span style="display:flex;gap:6px;font-size:16px"><i class="ri-signal-wifi-3-fill"></i><i class="ri-battery-2-fill"></i></span></div>
+<div style="height:52px;padding:0 12px;background:#fff;border-bottom:1px solid #DDE2EB;display:flex;align-items:center;gap:6px"><span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#304287"><i class="ri-close-line"></i></span><span style="font-weight:700;font-size:17px;color:#2E3862">Déposer un document</span></div>
+<div style="flex:1;padding:20px;display:flex;flex-direction:column;gap:18px;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font-weight:700;font-size:14px">Type de document <span style="color:#ED1136">*</span></span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<span style="height:48px;border-radius:8px;border:2px solid #3D64ED;background:#EEF4FF;display:flex;align-items:center;gap:8px;padding:0 12px;font-weight:700;font-size:14px;color:#2E3862"><i class="ri-first-aid-kit-line" style="font-size:18px;color:#304287"></i>Arrêt maladie</span>
+<span style="height:48px;border-radius:8px;border:1px solid #C5CDDD;background:#fff;display:flex;align-items:center;gap:8px;padding:0 12px;font-weight:600;font-size:14px;color:#434B5D;box-sizing:border-box"><i class="ri-file-check-line" style="font-size:18px;color:#304287"></i>Justificatif</span>
+<span style="height:48px;border-radius:8px;border:1px solid #C5CDDD;background:#fff;display:flex;align-items:center;gap:8px;padding:0 12px;font-weight:600;font-size:14px;color:#434B5D;box-sizing:border-box"><i class="ri-file-text-line" style="font-size:18px;color:#304287"></i>Administratif</span>
+<span style="height:48px;border-radius:8px;border:1px solid #C5CDDD;background:#fff;display:flex;align-items:center;gap:8px;padding:0 12px;font-weight:600;font-size:14px;color:#434B5D;box-sizing:border-box"><i class="ri-file-line" style="font-size:18px;color:#304287"></i>Autre</span>
+</div></div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font-weight:700;font-size:14px">Fichier <span style="color:#ED1136">*</span></span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<span style="height:72px;border-radius:8px;border:1px dashed #96A4C1;background:#FAFCFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:600;font-size:13px;color:#304287"><i class="ri-camera-line" style="font-size:22px"></i>Prendre une photo</span>
+<span style="height:72px;border-radius:8px;border:1px dashed #96A4C1;background:#FAFCFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:600;font-size:13px;color:#304287"><i class="ri-folder-open-line" style="font-size:22px"></i>Choisir un fichier</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #DDE2EB;border-radius:8px;background:#fff"><i class="ri-image-line" style="font-size:20px;color:#304287"></i><div style="flex:1;display:flex;flex-direction:column"><span style="font-weight:600;font-size:14px">IMG_2041.jpg</span><span style="font-size:12px;color:#6A7896">2,4 Mo · Importé</span></div><i class="ri-checkbox-circle-fill" style="font-size:20px;color:#2BA198"></i></div>
+</div>
+<div style="display:flex;gap:10px;padding:10px 12px;border-radius:8px;background:#F4F0FF;border:1px solid #E0D5FF"><i class="ri-information-line" style="color:#691FC1;font-size:18px"></i><span style="font-size:12px;line-height:17px;color:#4D198A">Transmettez le volet 3 de votre avis d'arrêt dans les 48 heures.</span></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-weight:700;font-size:14px">Commentaire <span style="font-weight:400;color:#6A7896">(optionnel)</span></span><div style="height:64px;border:1px solid #AEB9CF;border-radius:4px;background:#fff"></div></div>
+</div>
+<div style="padding:12px 20px 28px;background:#fff;border-top:1px solid #DDE2EB"><div style="height:52px;border-radius:8px;background:#304287;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px"><i class="ri-send-plane-line"></i>Transmettre</div></div>
+</div></div>
+</div>
+<p class="dv-next">Prochaine étape : écrans restants de la section 14 (gestion RH des documents, bulletins et frais, registre unique du personnel, historique, paramètres et accès, Mes présences, consultation d'un document).</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const P = {
+  nouveau: ['Nouveau', '#DCE4FD', '#2E3862'],
+  consulte: ['Consulté', '#EEF0F4', '#57617A'],
+  attente: ['En attente de prise en compte', '#FFF4D5', '#9B4911'],
+  pris: ['Pris en compte', '#D2F5EE', '#1D6864'],
+  brouillon: ['Brouillon', '#EEF0F4', '#434B5D'],
+  envoye: ['Envoyé', '#DCE4FD', '#304287'],
+  traitement: ['En cours de traitement', '#FFF4D5', '#9B4911'],
+  valide: ['Validé', '#D2F5EE', '#1D6864'],
+  rembourse: ['Remboursé', '#A6E9DE', '#1B4644'],
+  refuse: ['Refusé', '#FFE2E4', '#C8082D'],
+  actif: ['Actif', '#D2F5EE', '#1D6864'],
+  essai: ["Période d'essai", '#E8E2FE', '#691FC1'],
+  conge: ['En congé', '#FFF4D5', '#9B4911'],
+  arret: ['Arrêt maladie', '#FFF4D5', '#9B4911'],
+  preavis: ['Préavis', '#EEF0F4', '#434B5D'],
+  aTraiter: ['À traiter', '#FFF4D5', '#9B4911'],
+};
+const pill = k => ({ label: P[k][0], bg: P[k][1], fg: P[k][2] });
+const MONTHS = ['Septembre', 'Août', 'Juillet', 'Juin', 'Mai', 'Avril', 'Mars', 'Février', 'Janvier'];
+const ENDS = ['30/09', '31/08', '31/07', '30/06', '31/05', '30/04', '31/03', '28/02', '31/01'];
+
+class Component extends DCLogic {
+  renderVals() {
+    const blocks = [
+      { icon: 'ri-folder-shield-2-line', t: 'Mes documents', d: 'Contrats, avenants, mutuelle et autres documents RH.', m: '2 nouveaux documents', dot: '#3D64ED' },
+      { icon: 'ri-file-paper-2-line', t: 'Mes bulletins de salaire', d: 'Accéder à mes bulletins classés par année.', m: 'Septembre 2026 disponible', dot: '#3D64ED' },
+      { icon: 'ri-receipt-line', t: 'Mes frais professionnels', d: 'Déclarer et suivre mes demandes de remboursement.', m: '1 demande en cours de traitement', dot: '#FB9814' },
+      { icon: 'ri-user-settings-line', t: 'Mes informations', d: 'Vérifier et modifier mes coordonnées personnelles.', m: 'Mises à jour le 12/06/2026', dot: '#AEB9CF' },
+      { icon: 'ri-upload-cloud-2-line', t: 'Mes documents à transmettre', d: 'Déposer un arrêt maladie ou un autre document administratif.', m: 'Aucun document en attente', dot: '#2BA198' },
+      { icon: 'ri-calendar-check-line', t: 'Mes présences', d: 'Consulter les jours travaillés, congés et absences.', m: 'Septembre : 20 jours travaillés', dot: '#AEB9CF' },
+    ];
+    const feed = [
+      { icon: 'ri-file-paper-2-line', t: 'Bulletin de salaire — septembre 2026', s: 'Mis à disposition le 30/09/2026', p: pill('nouveau'), a: 'Voir' },
+      { icon: 'ri-file-text-line', t: 'Avenant n°2 — Temps de travail', s: 'Ajouté par le service RH le 15/09/2026', p: pill('nouveau'), a: 'Consulter' },
+      { icon: 'ri-receipt-line', t: 'Indemnités kilométriques — 70,68 €', s: 'Validé le 24/09/2026', p: pill('valide'), a: 'Détails' },
+      { icon: 'ri-receipt-line', t: 'Repas client — 42,50 €', s: 'Envoyé le 22/09/2026', p: pill('traitement'), a: 'Suivre' },
+    ];
+    const quick = [
+      { icon: 'ri-upload-cloud-2-line', t: 'Déposer un document', bg: '#304287', fg: '#fff', bd: '#304287' },
+      { icon: 'ri-receipt-line', t: 'Déclarer un frais', bg: '#fff', fg: '#304287', bd: '#304287' },
+      { icon: 'ri-user-settings-line', t: 'Modifier mes coordonnées', bg: '#fff', fg: '#304287', bd: '#304287' },
+    ];
+    const vault = [
+      { icon: 'ri-file-text-line', t: 'Contrat et avenants', n: '3' },
+      { icon: 'ri-heart-pulse-line', t: 'Mutuelle', n: '1' },
+      { icon: 'ri-file-paper-2-line', t: 'Bulletins de salaire', n: '67' },
+      { icon: 'ri-folder-2-line', t: 'Documents administratifs', n: '1' },
+      { icon: 'ri-first-aid-kit-line', t: 'Arrêts maladie', n: '1' },
+      { icon: 'ri-file-line', t: 'Autres documents', n: '1' },
+    ];
+    const chips = ['Bulletin septembre 2026', 'Contrat de travail', 'Attestation employeur'];
+    const tiles = [
+      { icon: 'ri-folder-shield-2-line', t: 'Mes documents', m: '2 nouveaux' },
+      { icon: 'ri-file-paper-2-line', t: 'Mes bulletins', m: '67 bulletins' },
+      { icon: 'ri-calendar-check-line', t: 'Mes présences', m: 'Septembre à jour' },
+      { icon: 'ri-receipt-line', t: 'Mes frais', m: '1 en cours' },
+      { icon: 'ri-user-settings-line', t: 'Mes informations', m: 'À jour' },
+    ];
+    const nets = ['2 184,37 €', '2 179,12 €', '2 236,80 €', '2 184,37 €', '2 190,05 €', '2 184,37 €', '2 201,44 €', '2 176,90 €', '2 184,37 €'];
+    const pay26 = MONTHS.map((m, i) => ({ label: m + ' 2026', date: 'Mis à disposition le ' + ENDS[i] + '/2026', d: ENDS[i] + '/2026', p: pill(i === 0 ? 'nouveau' : 'consulte'), net: nets[i], hl: i === 0 ? '#F7F9FF' : '#fff' }));
+    const years = [['2026', '9 bulletins'], ['2025', '12 bulletins'], ['2024', '12 bulletins'], ['2023', '12 bulletins'], ['2022', '12 bulletins'], ['2021', '10 bulletins']].map(([y, n], i) => ({ y, n, bg: i === 0 ? '#EEF4FF' : 'transparent', fg: i === 0 ? '#304287' : '#434B5D', bd: i === 0 ? '#304287' : 'transparent' }));
+    const docRow = (name, cat, date, size, from, st, icon) => ({ name, cat, date, size, from, p: pill(st), icon, menu: name === 'Attestation employeur' });
+    const docs = [
+      docRow('Avenant n°2 — Temps de travail', 'Avenants', '15/09/2026', '188 Ko', 'Service RH', 'nouveau', 'ri-file-text-line'),
+      docRow('Notice mutuelle 2026', 'Mutuelle', '05/01/2026', '1,4 Mo', 'Service RH', 'nouveau', 'ri-heart-pulse-line'),
+      docRow('Arrêt de travail — février 2026', 'Arrêts maladie', '03/02/2026', '640 Ko', 'Vous', 'pris', 'ri-first-aid-kit-line'),
+      docRow('Attestation employeur', 'Documents administratifs', '12/06/2025', '96 Ko', 'Service RH', 'consulte', 'ri-folder-2-line'),
+      docRow('Avenant n°1 — Rémunération', 'Avenants', '01/04/2024', '174 Ko', 'Service RH', 'consulte', 'ri-file-text-line'),
+      docRow('Contrat de travail — CDI', 'Contrat de travail', '02/03/2021', '412 Ko', 'Service RH', 'consulte', 'ri-file-text-line'),
+      docRow('Charte informatique', 'Autres documents', '02/03/2021', '230 Ko', 'Service RH', 'consulte', 'ri-file-line'),
+    ];
+    const cats = [['Tous', 7], ['Contrat de travail', 1], ['Avenants', 2], ['Mutuelle', 1], ['Bulletins de salaire', 67], ['Documents administratifs', 1], ['Arrêts maladie', 1], ['Autres documents', 1]].map(([t, n], i) => ({ t, n, bg: i === 0 ? '#304287' : '#fff', fg: i === 0 ? '#fff' : '#434B5D', bd: i === 0 ? '#304287' : '#C5CDDD' }));
+    const upTypes = [['ri-first-aid-kit-line', 'Arrêt maladie', 'Avis d\'arrêt de travail, prolongation'], ['ri-file-check-line', 'Justificatif', 'Domicile, transport, formation'], ['ri-file-text-line', 'Document administratif', 'Attestation, certificat'], ['ri-file-line', 'Autre', 'Tout autre document RH']].map(([icon, t, d], i) => ({ icon, t, d, bg: i === 0 ? '#EEF4FF' : '#fff', bd: i === 0 ? '#3D64ED' : '#C5CDDD', bw: i === 0 ? '2px' : '1px', ic: i === 0 ? 'ri-radio-button-line' : 'ri-checkbox-blank-circle-line', icc: i === 0 ? '#3D64ED' : '#96A4C1' }));
+    const ex = (date, type, desc, amount, st, icon) => ({ date, type, desc, amount, p: pill(st), icon, hl: '#fff' });
+    const expBase = [
+      ex('22/09/2026', 'Repas', 'Déjeuner client — Société Valette', '42,50 €', 'traitement', 'ri-restaurant-line'),
+      ex('10/09/2026', 'Indemnités kilométriques', 'Rendez-vous client Nîmes — 124 km', '70,68 €', 'valide', 'ri-car-line'),
+      ex('28/08/2026', 'Hébergement', 'Salon professionnel Bordeaux', '112,00 €', 'rembourse', 'ri-hotel-bed-line'),
+      ex('14/08/2026', 'Parking', 'Parking gare Saint-Roch', '18,00 €', 'refuse', 'ri-parking-box-line'),
+      ex('05/08/2026', 'Taxi', 'Trajet aéroport', '23,90 €', 'brouillon', 'ri-taxi-line'),
+    ];
+    const newExp = Object.assign(ex('28/09/2026', 'Transport', 'Train Montpellier – Lyon, rendez-vous client', '86,40 €', 'envoye', 'ri-train-line'), { hl: '#F7F9FF' });
+    const expAfter = [newExp].concat(expBase);
+    const editable = [['Adresse', '14 rue des Tilleuls'], ['Code postal et ville', '34000 Montpellier'], ['Téléphone', '06 12 34 56 47'], ['Adresse e-mail personnelle', 'camille.martin@mail.fr']].map(([k, v]) => ({ k, v }));
+    const editableNew = [['Adresse', '8 avenue de Lodève', true], ['Code postal et ville', '34070 Montpellier', true], ['Téléphone', '06 12 34 56 47', false], ['Adresse e-mail personnelle', 'camille.martin@mail.fr', false]].map(([k, v, ch]) => ({ k, v, bd: ch ? '#3D64ED' : '#AEB9CF', bw: ch ? '2px' : '1px' }));
+    const managed = [['Nom', 'Martin'], ['Prénom', 'Camille'], ['Date de naissance', '18/05/1992'], ['N° de sécurité sociale', '2 92 05 •• ••• ••• 41'], ['Poste', 'Chargée de clientèle'], ['Service', 'Commercial'], ['Type de contrat', 'CDI — temps plein'], ["Date d'entrée", '02/03/2021'], ['Coordonnées bancaires', 'FR76 •••• •••• •••• •••• •••• 189']].map(([k, v]) => ({ k, v }));
+    const E = (ini, name, poste, service, st, entry, last) => ({ ini, name, poste, service, p: pill(st), entry, last });
+    const emps = [
+      E('CM', 'Camille Martin', 'Chargée de clientèle', 'Commercial', 'actif', '02/03/2021', "Aujourd'hui, 09:12"),
+      E('JB', 'Julien Bernard', 'Comptable', 'Finance', 'actif', '14/09/2019', 'Hier, 17:40'),
+      E('SL', 'Sarah Lefèvre', 'Développeuse', 'Technique', 'actif', '03/01/2023', 'Hier, 11:05'),
+      E('TP', 'Thomas Petit', 'Chef de projet', 'Technique', 'actif', '17/06/2020', '30/09/2026'),
+      E('NR', 'Nadia Roussel', 'Responsable RH', 'RH', 'actif', '05/02/2018', "Aujourd'hui, 08:47"),
+      E('LG', 'Lucas Garnier', 'Technicien support', 'Technique', 'essai', '01/09/2026', '29/09/2026'),
+      E('ER', 'Emma Roux', 'Commerciale', 'Commercial', 'conge', '11/04/2022', '18/09/2026'),
+      E('HF', 'Hugo Fontaine', 'Magasinier', 'Logistique', 'arret', '22/08/2021', 'Hier, 17:30'),
+      E('LC', 'Léa Chevalier', 'Graphiste', 'Marketing', 'actif', '06/03/2024', '01/10/2026'),
+      E('NG', 'Nathan Girard', 'Alternant développeur', 'Technique', 'actif', '02/09/2025', '28/09/2026'),
+    ];
+    const stats = [
+      { n: '12', t: 'Salariés', s: '1 en période d\'essai', icon: 'ri-team-line', c: '#304287', bg: '#EEF4FF' },
+      { n: '8', t: 'Documents à consulter', s: 'Non ouverts par les salariés', icon: 'ri-file-search-line', c: '#304287', bg: '#EEF4FF' },
+      { n: '3', t: 'Frais professionnels à traiter', s: '241,40 € au total', icon: 'ri-receipt-line', c: '#9B4911', bg: '#FFF4D5' },
+      { n: '2', t: 'Nouveaux documents salariés', s: 'Déposés depuis hier', icon: 'ri-upload-cloud-2-line', c: '#1D6864', bg: '#D2F5EE' },
+    ];
+    const todo = [
+      { icon: 'ri-receipt-line', t: '3 frais professionnels à traiter', s: 'Plus ancienne demande : 22/09/2026', a: 'Traiter' },
+      { icon: 'ri-first-aid-kit-line', t: 'Arrêt maladie déposé par Hugo Fontaine', s: 'Reçu le 02/10/2026 à 17:30', a: 'Consulter' },
+      { icon: 'ri-file-check-line', t: 'Justificatif de domicile — Léa Chevalier', s: 'Reçu le 01/10/2026', a: 'Consulter' },
+      { icon: 'ri-calendar-event-line', t: "Fin de période d'essai — Lucas Garnier", s: 'Le 31/10/2026', a: 'Voir' },
+    ];
+    const activity = [
+      { icon: 'ri-eye-line', who: 'Camille Martin', what: 'a consulté le bulletin de septembre 2026', t: "Aujourd'hui, 09:12" },
+      { icon: 'ri-upload-2-line', who: 'Hugo Fontaine', what: 'a déposé un arrêt maladie', t: 'Hier, 17:30' },
+      { icon: 'ri-file-paper-2-line', who: 'Nadia Roussel', what: 'a publié 12 bulletins — septembre 2026', t: '01/10/2026' },
+      { icon: 'ri-shield-user-line', who: 'Nadia Roussel', what: 'a modifié les droits de Thomas Petit', t: '30/09/2026' },
+      { icon: 'ri-receipt-line', who: 'Sarah Lefèvre', what: 'a envoyé une note de frais — 112,00 €', t: '29/09/2026' },
+    ];
+    const tabs = (active) => ['Vue d\'ensemble', 'Documents', 'Bulletins', 'Présences', 'Frais', 'Historique'].map(t => ({ t, fg: t === active ? '#304287' : '#57617A', bd: t === active ? '#FA420F' : 'transparent' }));
+    const space = [
+      { icon: 'ri-folder-shield-2-line', t: 'Documents', n: '7', s: '2 non consultés' },
+      { icon: 'ri-file-paper-2-line', t: 'Bulletins de salaire', n: '67', s: 'Septembre 2026 consulté' },
+      { icon: 'ri-calendar-check-line', t: 'Présences', n: '20 j', s: 'Travaillés en septembre' },
+      { icon: 'ri-receipt-line', t: 'Frais professionnels', n: '1', s: 'Demande à traiter' },
+    ];
+    const empHist = [
+      { t: "Aujourd'hui, 09:12", a: 'Consultation du bulletin de septembre 2026' },
+      { t: '01/10/2026', a: 'Bulletin de septembre 2026 mis à disposition' },
+      { t: '28/09/2026', a: 'Note de frais envoyée — Train, 86,40 €' },
+      { t: '15/09/2026', a: 'Avenant n°2 déposé par Nadia Roussel' },
+    ];
+    const presRows = [
+      ['Septembre 2026', '01/09 – 30/09', '20', '0', '2', '0', '—'],
+      ['Août 2026', '01/08 – 31/08', '11', '0', '10', '0', '—'],
+      ['Juillet 2026', '01/07 – 31/07', '22', '0', '0', '0', '1 jour férié (14/07)'],
+      ['Juin 2026', '01/06 – 30/06', '21', '1', '0', '0', 'Absence autorisée (12/06)'],
+      ['Mai 2026', '01/05 – 31/05', '17', '0', '0', '0', '4 jours fériés'],
+      ['Avril 2026', '01/04 – 30/04', '16', '0', '5', '0', '1 jour férié (06/04)'],
+      ['Mars 2026', '01/03 – 31/03', '22', '0', '0', '0', '—'],
+      ['Février 2026', '01/02 – 28/02', '16', '0', '0', '4', 'Arrêt maladie (03/02 – 06/02)'],
+    ].map(([m, p, w, a, c, ar, o]) => ({ m, p, w, a, c, ar, o }));
+    // mobile
+    const mBlocks = blocks.slice(0, 5);
+    const pay26m = pay26.slice(0, 6);
+    const docsF = docs.filter(d => d.p.label === 'Nouveau').map(d => Object.assign({}, d, { menu: false }));
+    const catOpts = [['Contrat de travail', 1, false], ['Avenants', 2, true], ['Mutuelle', 1, true], ['Documents administratifs', 1, false], ['Arrêts maladie', 1, false], ['Autres documents', 1, false]].map(([t, n, on]) => ({ t, n, ic: on ? 'ri-checkbox-fill' : 'ri-checkbox-blank-line', icc: on ? '#304287' : '#96A4C1', bg: on ? '#EEF4FF' : '#fff' }));
+    const statOpts = [['Nouveau', 2, true], ['Consulté', 4, false], ['Pris en compte', 1, false], ['En attente de prise en compte', 0, false]].map(([t, n, on]) => ({ t, n, ic: on ? 'ri-checkbox-fill' : 'ri-checkbox-blank-line', icc: on ? '#304287' : '#96A4C1', bg: on ? '#EEF4FF' : '#fff' }));
+    const empsTech = emps.filter(m => m.service === 'Technique');
+    const yearTabs = ['2026', '2025', '2024', '2023', '2022', '2021'].map((y, i) => ({ y, bg: i === 0 ? '#304287' : 'transparent', fg: i === 0 ? '#fff' : '#434B5D', w: i === 0 ? 700 : 600 }));
+    const mg = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'].map((m, i) => {
+      const avail = i <= 8, isNew = i === 8;
+      return { m, s: avail ? (isNew ? 'Nouveau' : 'Consulté') : 'À venir', bg: isNew ? '#EEF4FF' : avail ? '#fff' : '#F5F7F9', bd: isNew ? '#3D64ED' : '#DDE2EB', bw: isNew ? '2px' : '1px', fg: avail ? '#2E3862' : '#96A4C1', sfg: isNew ? '#304287' : avail ? '#57617A' : '#96A4C1', dot: isNew ? '#3D64ED' : avail ? '#2BA198' : '#C5CDDD', avail };
+    });
+    return { yearTabs, mg, statOpts, docsF, catOpts, empsTech, blocks, feed, quick, vault, chips, tiles, pay26, years, docs, cats, upTypes, expBase, expAfter, editable, editableNew, managed, emps, stats, todo, activity, tabsOverview: tabs("Vue d'ensemble"), tabsDocs: tabs('Documents'), tabsPres: tabs('Présences'), space, empHist, presRows, docs5: docs.slice(0, 5), mBlocks, pay26m };
+  }
+}
+</script>
+</body>
+</html>
