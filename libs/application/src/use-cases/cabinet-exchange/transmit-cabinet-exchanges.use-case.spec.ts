@@ -3,6 +3,7 @@ import {
   InMemoryCabinetConnectionRepository,
   InMemoryCabinetExchangeRepository,
   InMemoryExchangeFileStorage,
+  InMemoryNotificationRepository,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -14,6 +15,7 @@ import {
   ExchangeEventKind,
   ExchangeFile,
   ExchangeStatus,
+  NotificationType,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { TransmitCabinetExchangesUseCase } from './transmit-cabinet-exchanges.use-case';
@@ -54,13 +56,15 @@ async function build(
     await exchanges.save(toTransmit(id));
     await files.save(id, file);
   }
+  const notifications = new InMemoryNotificationRepository();
   const useCase = new TransmitCabinetExchangesUseCase(
     exchanges,
     files,
     connections,
+    notifications,
     new FixedClock(now),
   );
-  return { exchanges, files, connections, useCase };
+  return { exchanges, files, connections, notifications, useCase };
 }
 
 describe('TransmitCabinetExchangesUseCase', () => {
@@ -267,5 +271,81 @@ describe('TransmitCabinetExchangesUseCase', () => {
     ).rejects.toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
     expect((await exchanges.findById('ex-1'))?.history).toHaveLength(2);
     await expect(exchanges.listByCompany('c1')).resolves.toHaveLength(1);
+  });
+
+  describe('notifying the cabinet', () => {
+    it('tells the cabinet, with the exchange as target, that a document was received', async () => {
+      const { notifications, useCase } = await build();
+
+      await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        exchangeIds: ['ex-1'],
+      });
+
+      await expect(
+        notifications.listForRole('c1', UserRole.ACCOUNTANT),
+      ).resolves.toEqual([
+        expect.objectContaining({
+          type: NotificationType.CABINET_DOCUMENT_RECEIVED,
+          companyId: 'c1',
+          recipientRole: UserRole.ACCOUNTANT,
+          targetId: 'ex-1',
+          createdAt: now,
+          readAt: null,
+        }),
+      ]);
+    });
+
+    it('tells the cabinet once per received document of a group', async () => {
+      const { notifications, useCase } = await build(
+        CabinetConnectionStatus.CONNECTED,
+        ['ex-1', 'ex-2'],
+      );
+
+      await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        exchangeIds: ['ex-1', 'ex-2'],
+      });
+
+      const told = await notifications.listForRole('c1', UserRole.ACCOUNTANT);
+      expect(told.map((notification) => notification.targetId).sort()).toEqual([
+        'ex-1',
+        'ex-2',
+      ]);
+    });
+
+    it('never tells an employee, nor the employer who sent it', async () => {
+      const { notifications, useCase } = await build();
+
+      await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        exchangeIds: ['ex-1'],
+      });
+
+      await expect(
+        notifications.listForRole('c1', UserRole.EMPLOYEE),
+      ).resolves.toEqual([]);
+      await expect(
+        notifications.listForRole('c1', UserRole.EMPLOYER),
+      ).resolves.toEqual([]);
+    });
+
+    it('tells nothing when the transmission fails', async () => {
+      const { notifications, useCase } = await build(null);
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          companyId: 'c1',
+          exchangeIds: ['ex-1'],
+        }),
+      ).rejects.toThrow(ErrorCode.TRANSMISSION_FAILED);
+      await expect(
+        notifications.listForRole('c1', UserRole.ACCOUNTANT),
+      ).resolves.toEqual([]);
+    });
   });
 });

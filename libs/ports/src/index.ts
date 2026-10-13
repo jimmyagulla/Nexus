@@ -45,3 +45,4 @@ export * from './out/cabinet-exchange/exchange-file.storage.port';
 export * from './out/cabinet-exchange/cabinet-exchange.gateway.port';
 export * from './out/cabinet-connection/cabinet-connection.repository.port';
 export * from './in/session/get-current-role-from-session.port';
+export * from './out/notification/notification.repository.port';

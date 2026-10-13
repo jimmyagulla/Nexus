@@ -4,6 +4,7 @@ import {
   CabinetExchange,
   CabinetExchangeSnapshot,
   ErrorCode,
+  Notification,
   requireCompanyEmployer,
   requireVisibleExchange,
   toCabinetExchangeSnapshot,
@@ -13,6 +14,7 @@ import {
   ICabinetExchangeRepository,
   IClock,
   IExchangeFileStorage,
+  INotificationRepository,
   ITransmitCabinetExchanges,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -23,6 +25,7 @@ export class TransmitCabinetExchangesUseCase
     private readonly exchanges: ICabinetExchangeRepository,
     private readonly files: IExchangeFileStorage,
     private readonly connections: ICabinetConnectionRepository,
+    private readonly notifications: INotificationRepository,
     private readonly clock: IClock,
   ) {}
 
@@ -91,7 +94,14 @@ export class TransmitCabinetExchangesUseCase
     );
     for (const exchange of delivered) {
       await this.exchanges.save(exchange);
+      await this.tellTheRecipient(exchange, now);
     }
     return delivered.map(toCabinetExchangeSnapshot);
+  }
+
+  private tellTheRecipient(exchange: CabinetExchange, at: Date): Promise<void> {
+    return this.notifications.save(
+      Notification.exchangeReceived(this.notifications.nextId(), exchange, at),
+    );
   }
 }

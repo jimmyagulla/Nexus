@@ -48,3 +48,5 @@ export * from './services/exchange-filters';
 export * from './services/filter-exchanges';
 export * from './read-models/cabinet-indicators';
 export * from './read-models/compute-cabinet-indicators';
+export * from './entities/notification-type';
+export * from './entities/notification';

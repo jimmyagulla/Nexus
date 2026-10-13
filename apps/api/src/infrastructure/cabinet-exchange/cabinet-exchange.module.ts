@@ -26,6 +26,7 @@ import {
   IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
+  INotificationRepository,
   IOpenCabinetExchange,
   ITransmitCabinetExchanges,
 } from '@hexagonal-monorepo-template/ports';
@@ -33,11 +34,12 @@ import { CabinetExchangeController } from '../../adapters/http/cabinet-exchange/
 import { PrismaCabinetExchangeRepository } from '../../adapters/out/cabinet-exchange/prisma-cabinet-exchange.repository';
 import { PrismaExchangeFileStorage } from '../../adapters/out/cabinet-exchange/prisma-exchange-file.storage';
 import { CabinetConnectionModule } from '../cabinet-connection/cabinet-connection.module';
+import { NotificationModule } from '../notification/notification.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
-  imports: [CabinetConnectionModule],
+  imports: [CabinetConnectionModule, NotificationModule],
   controllers: [CabinetExchangeController],
   providers: [
     {
@@ -83,18 +85,21 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         exchanges: ICabinetExchangeRepository,
         files: IExchangeFileStorage,
         connections: ICabinetConnectionRepository,
+        notifications: INotificationRepository,
         clock: IClock,
       ) =>
         new TransmitCabinetExchangesUseCase(
           exchanges,
           files,
           connections,
+          notifications,
           clock,
         ),
       inject: [
         ICabinetExchangeRepository,
         IExchangeFileStorage,
         ICabinetConnectionRepository,
+        INotificationRepository,
         IClock,
       ],
     },
@@ -135,13 +140,21 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         exchanges: ICabinetExchangeRepository,
         files: IExchangeFileStorage,
         connections: ICabinetConnectionRepository,
+        notifications: INotificationRepository,
         clock: IClock,
       ) =>
-        new DepositCabinetExchangeUseCase(exchanges, files, connections, clock),
+        new DepositCabinetExchangeUseCase(
+          exchanges,
+          files,
+          connections,
+          notifications,
+          clock,
+        ),
       inject: [
         ICabinetExchangeRepository,
         IExchangeFileStorage,
         ICabinetConnectionRepository,
+        INotificationRepository,
         IClock,
       ],
     },

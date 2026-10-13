@@ -3,6 +3,7 @@ import {
   InMemoryCabinetConnectionRepository,
   InMemoryCabinetExchangeRepository,
   InMemoryExchangeFileStorage,
+  InMemoryNotificationRepository,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -12,6 +13,7 @@ import {
   ExchangeDirection,
   ExchangeEventKind,
   ExchangeStatus,
+  NotificationType,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { DepositCabinetExchangeUseCase } from './deposit-cabinet-exchange.use-case';
@@ -39,13 +41,16 @@ async function build(
   if (status !== null) {
     await connections.save(new CabinetConnection('c1', status));
   }
+  const notifications = new InMemoryNotificationRepository();
   return {
     exchanges,
     files,
+    notifications,
     useCase: new DepositCabinetExchangeUseCase(
       exchanges,
       files,
       connections,
+      notifications,
       new FixedClock(now),
     ),
   };
@@ -173,5 +178,63 @@ describe('DepositCabinetExchangeUseCase', () => {
         file: pdf,
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  describe('notifying the company', () => {
+    it('tells the employers, with the exchange as target, that a document was received', async () => {
+      const { notifications, useCase } = await build();
+
+      const snapshot = await useCase.execute({
+        actor: accountant,
+        companyId: 'c1',
+        category: 'Bilan',
+        file: pdf,
+      });
+
+      await expect(
+        notifications.listForRole('c1', UserRole.EMPLOYER),
+      ).resolves.toEqual([
+        expect.objectContaining({
+          type: NotificationType.CABINET_DOCUMENT_RECEIVED,
+          recipientRole: UserRole.EMPLOYER,
+          targetId: snapshot.id,
+          createdAt: now,
+          readAt: null,
+        }),
+      ]);
+    });
+
+    it('never tells an employee', async () => {
+      const { notifications, useCase } = await build();
+
+      await useCase.execute({
+        actor: accountant,
+        companyId: 'c1',
+        category: 'Bilan',
+        file: pdf,
+      });
+
+      await expect(
+        notifications.listForRole('c1', UserRole.EMPLOYEE),
+      ).resolves.toEqual([]);
+    });
+
+    it('tells nothing when a revoked cabinet deposits', async () => {
+      const { notifications, useCase } = await build(
+        CabinetConnectionStatus.REVOKED,
+      );
+
+      await expect(
+        useCase.execute({
+          actor: accountant,
+          companyId: 'c1',
+          category: 'Bilan',
+          file: pdf,
+        }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+      await expect(
+        notifications.listForRole('c1', UserRole.EMPLOYER),
+      ).resolves.toEqual([]);
+    });
   });
 });

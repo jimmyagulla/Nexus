@@ -6,6 +6,7 @@ import {
   ExchangeCategory,
   ExchangeFile,
   ExchangeFileInput,
+  Notification,
   requireConnectedCabinet,
   toCabinetExchangeSnapshot,
 } from '@hexagonal-monorepo-template/domain';
@@ -15,6 +16,7 @@ import {
   IClock,
   IDepositCabinetExchange,
   IExchangeFileStorage,
+  INotificationRepository,
 } from '@hexagonal-monorepo-template/ports';
 
 export class DepositCabinetExchangeUseCase implements IDepositCabinetExchange {
@@ -22,6 +24,7 @@ export class DepositCabinetExchangeUseCase implements IDepositCabinetExchange {
     private readonly exchanges: ICabinetExchangeRepository,
     private readonly files: IExchangeFileStorage,
     private readonly connections: ICabinetConnectionRepository,
+    private readonly notifications: INotificationRepository,
     private readonly clock: IClock,
   ) {}
 
@@ -36,6 +39,7 @@ export class DepositCabinetExchangeUseCase implements IDepositCabinetExchange {
     const file = this.requireFile(input.file);
     const received = this.depositAndDeliver(input, category, file);
     await this.keep(received, file);
+    await this.tellTheCompany(received);
     return toCabinetExchangeSnapshot(received);
   }
 
@@ -72,6 +76,16 @@ export class DepositCabinetExchangeUseCase implements IDepositCabinetExchange {
       file,
       now,
     ).receive(now);
+  }
+
+  private tellTheCompany(received: CabinetExchange): Promise<void> {
+    return this.notifications.save(
+      Notification.exchangeReceived(
+        this.notifications.nextId(),
+        received,
+        received.date(),
+      ),
+    );
   }
 
   private async keep(

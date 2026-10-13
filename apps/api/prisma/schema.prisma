@@ -51,6 +51,12 @@ enum ExchangeEventKind {
   DOWNLOADED
 }
 
+enum NotificationRecipientRole {
+  EMPLOYER
+  EMPLOYEE
+  ACCOUNTANT
+}
+
 enum CabinetConnectionStatus {
   INVITATION_SENT
   CONNECTED
@@ -70,6 +76,7 @@ model Company {
   auditEvents          AuditEvent[]
   cabinetExchanges     CabinetExchange[]
   cabinetConnection    CabinetConnection?
+  notifications        Notification[]
 }
 
 model CompanyNonWorkingWeekday {
@@ -171,4 +178,15 @@ model CabinetExchangeFile {
   mimeType   String
   content    Bytes
   exchange   CabinetExchange @relation(fields: [exchangeId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id            String                    @id
+  type          String
+  companyId     String
+  recipientRole NotificationRecipientRole
+  targetId      String
+  createdAt     DateTime
+  readAt        DateTime?
+  company       Company                   @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
