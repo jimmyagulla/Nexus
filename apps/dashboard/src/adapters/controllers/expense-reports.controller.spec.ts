@@ -4,6 +4,7 @@ import {
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ExpenseReportStatus,
+  ReceiptDetailsInput,
 } from '@hexagonal-monorepo-template/domain';
 import { ExpenseReportsController } from './expense-reports.controller';
 
@@ -14,6 +15,7 @@ const report: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 0,
+  receipts: [],
   expenses: [],
 };
 
@@ -39,12 +41,16 @@ function controller() {
     expense: ExpenseDetailsInput;
   }[] = [];
   const removed: { reportId: string; expenseId: string }[] = [];
+  const attached: { reportId: string; receipt: ReceiptDetailsInput }[] = [];
+  const submitted: string[] = [];
   return {
     created,
     added,
     read,
     updated,
     removed,
+    attached,
+    submitted,
     controller: new ExpenseReportsController(
       {
         execute: async (label) => {
@@ -74,6 +80,18 @@ function controller() {
       {
         execute: async (input) => {
           removed.push(input);
+          return report;
+        },
+      },
+      {
+        execute: async (input) => {
+          attached.push(input);
+          return report;
+        },
+      },
+      {
+        execute: async (reportId) => {
+          submitted.push(reportId);
           return report;
         },
       },
@@ -112,6 +130,26 @@ describe('ExpenseReportsController', () => {
 
     await expect(subject.removeExpense('r1', 'x1')).resolves.toEqual(report);
     expect(removed).toEqual([{ reportId: 'r1', expenseId: 'x1' }]);
+  });
+
+  it('attaches a receipt to a report', async () => {
+    const { controller: subject, attached } = controller();
+    const receipt: ReceiptDetailsInput = {
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+      content: new Uint8Array([1, 2, 3]),
+      expenseId: null,
+    };
+
+    await expect(subject.attachReceipt('r1', receipt)).resolves.toEqual(report);
+    expect(attached).toEqual([{ reportId: 'r1', receipt }]);
+  });
+
+  it('submits a report', async () => {
+    const { controller: subject, submitted } = controller();
+
+    await expect(subject.submitReport('r1')).resolves.toEqual(report);
+    expect(submitted).toEqual(['r1']);
   });
 
   it('reads a report', async () => {

@@ -2,6 +2,7 @@ import {
   ExpenseDetailsInput,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
+  ReceiptDetailsInput,
 } from '@hexagonal-monorepo-template/domain';
 
 export interface IExpenseReportGateway {
@@ -33,6 +34,17 @@ export interface IExpenseReportGateway {
     companyId: string,
     reportId: string,
     expenseId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
+  attachReceipt(
+    companyId: string,
+    reportId: string,
+    receipt: ReceiptDetailsInput,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
+  submit(
+    companyId: string,
+    reportId: string,
     token: string,
   ): Promise<ExpenseReportSnapshot>;
 }

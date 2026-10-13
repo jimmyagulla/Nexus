@@ -10,6 +10,7 @@ const report: ExpenseReportViewModel = {
   statusLabel: 'Brouillon',
   editable: true,
   total: '0 €',
+  receipts: [],
   expenses: [],
 };
 

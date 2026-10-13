@@ -58,6 +58,7 @@ describe('useCreateExpenseReport', () => {
         label: 'Lyon',
         status: 'DRAFT',
         total: 0,
+        receipts: [],
         expenses: [],
       },
     });

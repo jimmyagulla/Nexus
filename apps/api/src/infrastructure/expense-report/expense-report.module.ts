@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
 import {
   AddExpenseUseCase,
+  AttachReceiptUseCase,
   CreateExpenseReportUseCase,
   GetExpenseReportUseCase,
   ListExpenseReportsUseCase,
   RemoveExpenseUseCase,
+  SubmitExpenseReportUseCase,
   UpdateExpenseUseCase,
 } from '@hexagonal-monorepo-template/application';
 import { InMemoryExpenseReportRepository } from '@hexagonal-monorepo-template/adapters';
 import {
   IAddExpense,
+  IAttachReceipt,
   ICreateExpenseReport,
   IEmployeeRepository,
   IExpenseCategoryRepository,
@@ -17,6 +20,7 @@ import {
   IGetExpenseReport,
   IListExpenseReports,
   IRemoveExpense,
+  ISubmitExpenseReport,
   IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { ExpenseReportController } from '../../adapters/http/expense-report/expense-report.controller';
@@ -80,6 +84,22 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         employees: IEmployeeRepository,
         reports: IExpenseReportRepository,
       ) => new RemoveExpenseUseCase(employees, reports),
+      inject: [IEmployeeRepository, IExpenseReportRepository],
+    },
+    {
+      provide: IAttachReceipt,
+      useFactory: (
+        employees: IEmployeeRepository,
+        reports: IExpenseReportRepository,
+      ) => new AttachReceiptUseCase(employees, reports),
+      inject: [IEmployeeRepository, IExpenseReportRepository],
+    },
+    {
+      provide: ISubmitExpenseReport,
+      useFactory: (
+        employees: IEmployeeRepository,
+        reports: IExpenseReportRepository,
+      ) => new SubmitExpenseReportUseCase(employees, reports),
       inject: [IEmployeeRepository, IExpenseReportRepository],
     },
     {

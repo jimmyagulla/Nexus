@@ -2,9 +2,11 @@ import {
   ExpenseDetailsInput,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
+  ReceiptDetailsInput,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
+  encodeBase64,
   unwrapResponse,
 } from '@hexagonal-monorepo-template/infrastructure';
 import {
@@ -99,6 +101,46 @@ export class ApiExpenseReportGateway implements IExpenseReportGateway {
     return unwrapResponse(
       await this.httpClient.delete<ApiResponse<ExpenseReportSnapshot>>(
         this.expensePath(companyId, reportId, expenseId),
+        this.authorized(token),
+      ),
+    );
+  }
+
+  async attachReceipt(
+    companyId: string,
+    reportId: string,
+    receipt: ReceiptDetailsInput,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<ExpenseReportSnapshot>>(
+        companyPath(API_ROUTES.companies.expenseReportReceipts, {
+          companyId,
+          expenseReportId: reportId,
+        }),
+        {
+          fileName: receipt.fileName,
+          mimeType: receipt.mimeType,
+          contentBase64: encodeBase64(receipt.content),
+          expenseId: receipt.expenseId,
+        },
+        this.authorized(token),
+      ),
+    );
+  }
+
+  async submit(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<ExpenseReportSnapshot>>(
+        companyPath(API_ROUTES.companies.expenseReportSubmission, {
+          companyId,
+          expenseReportId: reportId,
+        }),
+        undefined,
         this.authorized(token),
       ),
     );

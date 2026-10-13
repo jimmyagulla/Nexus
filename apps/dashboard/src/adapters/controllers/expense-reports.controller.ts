@@ -2,13 +2,16 @@ import {
   ExpenseDetailsInput,
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
+  ReceiptDetailsInput,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAddExpenseFromSession,
+  IAttachReceiptFromSession,
   ICreateExpenseReportFromSession,
   IGetExpenseReportFromSession,
   IListExpenseReportsFromSession,
   IRemoveExpenseFromSession,
+  ISubmitExpenseReportFromSession,
   IUpdateExpenseFromSession,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -20,6 +23,8 @@ export class ExpenseReportsController {
     private readonly listFromSession: IListExpenseReportsFromSession,
     private readonly updateExpenseFromSession: IUpdateExpenseFromSession,
     private readonly removeExpenseFromSession: IRemoveExpenseFromSession,
+    private readonly attachReceiptFromSession: IAttachReceiptFromSession,
+    private readonly submitFromSession: ISubmitExpenseReportFromSession,
   ) {}
 
   createReport(label: string): Promise<ExpenseReportSnapshot> {
@@ -50,6 +55,17 @@ export class ExpenseReportsController {
     expenseId: string,
   ): Promise<ExpenseReportSnapshot> {
     return this.removeExpenseFromSession.execute({ reportId, expenseId });
+  }
+
+  attachReceipt(
+    reportId: string,
+    receipt: ReceiptDetailsInput,
+  ): Promise<ExpenseReportSnapshot> {
+    return this.attachReceiptFromSession.execute({ reportId, receipt });
+  }
+
+  submitReport(reportId: string): Promise<ExpenseReportSnapshot> {
+    return this.submitFromSession.execute(reportId);
   }
 
   getReport(reportId: string): Promise<ExpenseReportSnapshot> {

@@ -41,3 +41,5 @@ export * from './services/require-own-expense-report';
 export * from './read-models/expense-report-list-snapshot';
 export * from './services/require-active-employee-actor';
 export * from './services/require-offered-expense-category';
+export * from './entities/receipt-details';
+export * from './entities/receipt';

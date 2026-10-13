@@ -1,8 +1,10 @@
 import { Expense } from '../entities/expense';
 import { ExpenseReport } from '../entities/expense-report';
+import { Receipt } from '../entities/receipt';
 import {
   ExpenseReportSnapshot,
   ExpenseSnapshot,
+  ReceiptSnapshot,
 } from './expense-report-snapshot';
 
 export function toExpenseReportSnapshot(
@@ -15,7 +17,19 @@ export function toExpenseReportSnapshot(
     label: report.label.value,
     status: report.status,
     total: report.total().euros,
+    receipts: report.receipts.map(toReceiptSnapshot),
     expenses: report.expenses.map(toExpenseSnapshot),
+  };
+}
+
+function toReceiptSnapshot(receipt: Receipt): ReceiptSnapshot {
+  const { details } = receipt;
+  return {
+    id: receipt.id,
+    fileName: details.fileName,
+    mimeType: details.mimeType,
+    size: details.content.length,
+    expenseId: details.expenseId,
   };
 }
 

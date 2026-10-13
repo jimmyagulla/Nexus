@@ -65,4 +65,20 @@ describe('createNestApp', () => {
     expect(status).toBe(200);
     expect(body).toContain('Swagger');
   });
+
+  it('accepts a request body large enough to carry a receipt', async () => {
+    app = await createNestApp();
+    await app.listen(0);
+
+    const response = await fetch(
+      `${await app.getUrl()}/api/companies/c1/expense-reports/r1/receipts`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ contentBase64: 'a'.repeat(300_000) }),
+      },
+    );
+
+    expect(response.status).toBe(403);
+  });
 });

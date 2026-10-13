@@ -18,10 +18,12 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAddExpense,
+  IAttachReceipt,
   ICreateExpenseReport,
   IGetExpenseReport,
   IListExpenseReports,
   IRemoveExpense,
+  ISubmitExpenseReport,
   IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
@@ -36,6 +38,8 @@ const getReport = { execute: vi.fn<IGetExpenseReport['execute']>() };
 const listReports = { execute: vi.fn<IListExpenseReports['execute']>() };
 const updateExpense = { execute: vi.fn<IUpdateExpense['execute']>() };
 const removeExpense = { execute: vi.fn<IRemoveExpense['execute']>() };
+const attachReceipt = { execute: vi.fn<IAttachReceipt['execute']>() };
+const submitReport = { execute: vi.fn<ISubmitExpenseReport['execute']>() };
 
 const employee: ActorContext = {
   userId: 'e1',
@@ -50,6 +54,7 @@ const report: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 0,
+  receipts: [],
   expenses: [],
 };
 
@@ -57,6 +62,8 @@ const REPORTS_PATH = '/companies/company-1/expense-reports';
 const REPORT_PATH = `${REPORTS_PATH}/r1`;
 const EXPENSES_PATH = `${REPORT_PATH}/expenses`;
 const EXPENSE_PATH = `${EXPENSES_PATH}/x1`;
+const RECEIPTS_PATH = `${REPORT_PATH}/receipts`;
+const SUBMISSION_PATH = `${REPORT_PATH}/submission`;
 
 const expenseBody = {
   date: '2026-10-05',
@@ -98,6 +105,8 @@ beforeAll(async () => {
       { provide: IListExpenseReports, useValue: listReports },
       { provide: IUpdateExpense, useValue: updateExpense },
       { provide: IRemoveExpense, useValue: removeExpense },
+      { provide: IAttachReceipt, useValue: attachReceipt },
+      { provide: ISubmitExpenseReport, useValue: submitReport },
     ],
   }).compile();
 
@@ -127,6 +136,8 @@ beforeEach(() => {
     getReport,
     updateExpense,
     removeExpense,
+    attachReceipt,
+    submitReport,
   ]) {
     useCase.execute.mockReset();
     useCase.execute.mockResolvedValue(report);
@@ -308,6 +319,110 @@ describe('ExpenseReportController', () => {
 
       expect((await send('POST', EXPENSES_PATH, expenseBody)).status).toBe(403);
       expect(addExpense.execute).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('POST /companies/:companyId/expense-reports/:expenseReportId/receipts', () => {
+    const receiptBody = {
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+      contentBase64: 'SGVsbG8=',
+    };
+
+    it('answers 201 with the updated report', async () => {
+      await expect(send('POST', RECEIPTS_PATH, receiptBody)).resolves.toEqual({
+        status: 201,
+        payload: { status: 201, message: 'Success', data: report },
+      });
+    });
+
+    it('hands the decoded file to the use case', async () => {
+      await send('POST', RECEIPTS_PATH, receiptBody);
+
+      expect(attachReceipt.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+        reportId: 'r1',
+        receipt: {
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([72, 101, 108, 108, 111]),
+          expenseId: null,
+        },
+      });
+    });
+
+    it('hands the expense the receipt proves', async () => {
+      await send('POST', RECEIPTS_PATH, { ...receiptBody, expenseId: 'x1' });
+
+      expect(attachReceipt.execute).toHaveBeenCalledWith(
+        expect.objectContaining({
+          receipt: expect.objectContaining({ expenseId: 'x1' }),
+        }),
+      );
+    });
+
+    it('answers 400 when the content is missing', async () => {
+      const { status } = await send('POST', RECEIPTS_PATH, {
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+      });
+
+      expect(status).toBe(400);
+      expect(attachReceipt.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 400 with the code when the file is invalid', async () => {
+      attachReceipt.execute.mockRejectedValue(new Error(ErrorCode.INVALID_FILE));
+
+      await expect(send('POST', RECEIPTS_PATH, receiptBody)).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.INVALID_FILE },
+      });
+    });
+
+    it('answers 403 when the actor is an employer', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('POST', RECEIPTS_PATH, receiptBody)).status).toBe(403);
+      expect(attachReceipt.execute).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('POST /companies/:companyId/expense-reports/:expenseReportId/submission', () => {
+    it('answers 201 with the submitted report', async () => {
+      await expect(send('POST', SUBMISSION_PATH)).resolves.toEqual({
+        status: 201,
+        payload: { status: 201, message: 'Success', data: report },
+      });
+    });
+
+    it('hands the report of the path to the use case', async () => {
+      await send('POST', SUBMISSION_PATH);
+
+      expect(submitReport.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+        reportId: 'r1',
+      });
+    });
+
+    it('answers 400 with the code when a receipt is missing', async () => {
+      submitReport.execute.mockRejectedValue(
+        new Error(ErrorCode.MISSING_DOCUMENT),
+      );
+
+      await expect(send('POST', SUBMISSION_PATH)).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.MISSING_DOCUMENT },
+      });
+    });
+
+    it('answers 403 when the actor is an employer', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('POST', SUBMISSION_PATH)).status).toBe(403);
+      expect(submitReport.execute).not.toHaveBeenCalled();
     });
   });
 

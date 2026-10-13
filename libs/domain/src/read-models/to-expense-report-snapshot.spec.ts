@@ -2,6 +2,8 @@ import { Expense } from '../entities/expense';
 import { ExpenseDetails } from '../entities/expense-details';
 import { ExpenseReport } from '../entities/expense-report';
 import { ExpenseReportStatus } from '../entities/expense-report-status';
+import { Receipt } from '../entities/receipt';
+import { ReceiptDetails } from '../entities/receipt-details';
 import { ExpenseReportLabel } from '../value-objects/expense-report-label';
 import { toExpenseReportSnapshot } from './to-expense-report-snapshot';
 
@@ -38,6 +40,7 @@ describe('toExpenseReportSnapshot', () => {
       label: 'Déplacement Lyon',
       status: 'DRAFT',
       total: 45,
+      receipts: [],
       expenses: [
         {
           id: 'x1',
@@ -71,6 +74,34 @@ describe('toExpenseReportSnapshot', () => {
     );
 
     expect(toExpenseReportSnapshot(bigger).total).toBe(113);
+  });
+
+  it('exposes the receipts without their content', () => {
+    const report = reportWith(null).attachReceipt(
+      new Receipt(
+        'f1',
+        ReceiptDetails.parse({
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([1, 2, 3]),
+          expenseId: 'x1',
+        }),
+      ),
+    );
+
+    expect(toExpenseReportSnapshot(report).receipts).toEqual([
+      {
+        id: 'f1',
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+        size: 3,
+        expenseId: 'x1',
+      },
+    ]);
+  });
+
+  it('exposes no receipt for a report without any', () => {
+    expect(toExpenseReportSnapshot(reportWith(null)).receipts).toEqual([]);
   });
 
   it('exposes a total of zero for an empty report', () => {

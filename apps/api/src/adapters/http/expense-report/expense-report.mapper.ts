@@ -11,6 +11,7 @@ export function toExpenseReportResponse(
     label: snapshot.label,
     status: snapshot.status,
     total: snapshot.total,
+    receipts: snapshot.receipts.map((receipt) => ({ ...receipt })),
     expenses: snapshot.expenses.map((expense) => ({ ...expense })),
   };
 }

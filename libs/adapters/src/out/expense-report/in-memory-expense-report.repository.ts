@@ -4,6 +4,8 @@ import {
   ExpenseDetails,
   ExpenseReport,
   ExpenseReportLabel,
+  Receipt,
+  ReceiptDetails,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ExpenseReportCriteria,
@@ -56,6 +58,20 @@ export class InMemoryExpenseReportRepository
   async deleteExpense(reportId: string, expenseId: string): Promise<void> {
     const report = this.requireReport(reportId);
     this.reports.set(reportId, report.removeExpense(expenseId));
+  }
+
+  async insertReceipt(
+    reportId: string,
+    details: ReceiptDetails,
+  ): Promise<Receipt> {
+    const report = this.requireReport(reportId);
+    const receipt = new Receipt(globalThis.crypto.randomUUID(), details);
+    this.reports.set(reportId, report.attachReceipt(receipt));
+    return receipt;
+  }
+
+  async save(report: ExpenseReport): Promise<void> {
+    this.reports.set(report.id, report);
   }
 
   async list(

@@ -6,6 +6,8 @@ export const ErrorCode = {
   INVALID_VAT: 'INVALID_VAT',
   INACTIVE_EMPLOYEE: 'INACTIVE_EMPLOYEE',
   REQUEST_ALREADY_PROCESSED: 'REQUEST_ALREADY_PROCESSED',
+  MISSING_DOCUMENT: 'MISSING_DOCUMENT',
+  INVALID_FILE: 'INVALID_FILE',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

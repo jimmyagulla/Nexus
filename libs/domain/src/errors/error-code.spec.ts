@@ -9,6 +9,8 @@ describe('isErrorCode', () => {
     expect(isErrorCode('INVALID_VAT')).toBe(true);
     expect(isErrorCode('INACTIVE_EMPLOYEE')).toBe(true);
     expect(isErrorCode('REQUEST_ALREADY_PROCESSED')).toBe(true);
+    expect(isErrorCode('MISSING_DOCUMENT')).toBe(true);
+    expect(isErrorCode('INVALID_FILE')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {

@@ -147,6 +147,7 @@ model ExpenseReport {
   company    Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   employee   Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   expenses   Expense[]
+  receipts   Receipt[]
 }
 
 model Expense {
@@ -161,4 +162,17 @@ model Expense {
   assignment    String
   createdAt     DateTime      @default(now())
   report        ExpenseReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  receipts      Receipt[]
+}
+
+model Receipt {
+  id        String        @id @default(uuid())
+  reportId  String
+  expenseId String?
+  fileName  String
+  mimeType  String
+  content   Bytes
+  createdAt DateTime      @default(now())
+  report    ExpenseReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  expense   Expense?      @relation(fields: [expenseId], references: [id], onDelete: SetNull)
 }

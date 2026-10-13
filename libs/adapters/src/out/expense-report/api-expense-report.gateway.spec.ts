@@ -14,6 +14,7 @@ const report: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 0,
+  receipts: [],
   expenses: [
     {
       id: 'x1',
@@ -138,6 +139,61 @@ describe('ApiExpenseReportGateway', () => {
       {
         method: 'delete',
         url: 'companies/c1/expense-reports/r1/expenses/x1',
+        data: undefined,
+        config: authorized,
+      },
+    ]);
+  });
+
+  it('sends a receipt with its content encoded in base64', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'companies/c1/expense-reports/r1/receipts', {
+      status: 201,
+      data: report,
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http).attachReceipt(
+        'c1',
+        'r1',
+        {
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([72, 101, 108, 108, 111]),
+          expenseId: 'x1',
+        },
+        'token',
+      ),
+    ).resolves.toEqual(report);
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'companies/c1/expense-reports/r1/receipts',
+        data: {
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          contentBase64: 'SGVsbG8=',
+          expenseId: 'x1',
+        },
+        config: authorized,
+      },
+    ]);
+  });
+
+  it('submits a report', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'companies/c1/expense-reports/r1/submission', {
+      status: 201,
+      data: report,
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http).submit('c1', 'r1', 'token'),
+    ).resolves.toEqual(report);
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'companies/c1/expense-reports/r1/submission',
         data: undefined,
         config: authorized,
       },

@@ -5,6 +5,9 @@ import { SubmissionError } from '../common/errors/SubmissionError';
 import { AddExpenseDialog } from '../features/expense-reports/expenses/AddExpenseDialog';
 import { ExpenseList } from '../features/expense-reports/expenses/ExpenseList';
 import type { ExpenseValues } from '../features/expense-reports/expenses/expense.schema';
+import { AttachReceiptDialog } from '../features/expense-reports/receipts/AttachReceiptDialog';
+import { ReceiptList } from '../features/expense-reports/receipts/ReceiptList';
+import type { ReceiptValues } from '../features/expense-reports/receipts/receipt.schema';
 import { Button } from '../shared/button';
 import { i18n } from '../i18n/i18n';
 
@@ -15,9 +18,13 @@ interface ExpenseReportDetailProps {
   addExpenseError: string | null;
   editExpenseError: string | null;
   removeExpenseError: string | null;
+  attachReceiptError: string | null;
+  submitError: string | null;
   onAddExpense: (values: ExpenseValues) => Promise<boolean>;
   onEditExpense: (expenseId: string, values: ExpenseValues) => Promise<boolean>;
   onRemoveExpense: (expenseId: string) => void;
+  onAttachReceipt: (values: ReceiptValues) => Promise<boolean>;
+  onSubmit: () => void;
   onBack: () => void;
 }
 
@@ -28,9 +35,13 @@ export function ExpenseReportDetail({
   addExpenseError,
   editExpenseError,
   removeExpenseError,
+  attachReceiptError,
+  submitError,
   onAddExpense,
   onEditExpense,
   onRemoveExpense,
+  onAttachReceipt,
+  onSubmit,
   onBack,
 }: ExpenseReportDetailProps) {
   return (
@@ -70,6 +81,29 @@ export function ExpenseReportDetail({
           />
         ) : null}
       </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">
+          {i18n.messages.expenseReports.receiptsTitle}
+        </h2>
+        <ReceiptList receipts={report.receipts} />
+        {report.editable ? (
+          <AttachReceiptDialog
+            errorPresenter={errorPresenter}
+            submissionError={attachReceiptError}
+            onSubmit={onAttachReceipt}
+          />
+        ) : null}
+      </section>
+
+      {report.editable ? (
+        <section className="space-y-2">
+          <SubmissionError message={submitError} />
+          <Button type="button" onClick={onSubmit}>
+            {i18n.messages.expenseReports.submit}
+          </Button>
+        </section>
+      ) : null}
     </div>
   );
 }

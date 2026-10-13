@@ -4,6 +4,7 @@ import {
   ExpenseDetails,
   ExpenseReportLabel,
   ExpenseReportStatus,
+  ReceiptDetails,
 } from '@hexagonal-monorepo-template/domain';
 import { InMemoryExpenseReportRepository } from './in-memory-expense-report.repository';
 
@@ -99,6 +100,50 @@ describe('InMemoryExpenseReportRepository', () => {
     await repository.deleteExpense(created.id, expense.id);
 
     expect((await repository.findById('c1', created.id))?.expenses).toEqual([]);
+  });
+
+  it('keeps an inserted receipt on its report', async () => {
+    const repository = new InMemoryExpenseReportRepository();
+    const created = await repository.insert('c1', 'e1', label);
+
+    const receipt = await repository.insertReceipt(
+      created.id,
+      ReceiptDetails.parse({
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+        content: new Uint8Array([1, 2, 3]),
+        expenseId: null,
+      }),
+    );
+    const found = await repository.findById('c1', created.id);
+
+    expect(receipt.id).toMatch(ASSIGNED_ID);
+    expect(found?.receipts.map((item) => item.id)).toEqual([receipt.id]);
+  });
+
+  it('stores the new state of a report', async () => {
+    const repository = new InMemoryExpenseReportRepository();
+    const created = await repository.insert('c1', 'e1', label);
+    const withExpense = created.addExpense(
+      await repository.insertExpense(created.id, details),
+    );
+    const withReceipt = withExpense.attachReceipt(
+      await repository.insertReceipt(
+        created.id,
+        ReceiptDetails.parse({
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([1]),
+          expenseId: null,
+        }),
+      ),
+    );
+
+    await repository.save(withReceipt.submit());
+
+    expect((await repository.findById('c1', created.id))?.status).toBe(
+      ExpenseReportStatus.SUBMITTED,
+    );
   });
 
   it('lists the reports of the company', async () => {

@@ -11,6 +11,7 @@ const report: ExpenseReportViewModel = {
   statusLabel: 'Brouillon',
   editable: true,
   total: '125 €',
+  receipts: [{ id: 'f1', fileName: 'ticket.pdf', size: '2 Ko' }],
   expenses: [
     {
       id: 'x1',
@@ -40,6 +41,8 @@ function renderView(
     onBack?: () => void;
     onRemove?: (id: string) => void;
     removeError?: string | null;
+    submitError?: string | null;
+    onSubmit?: () => void;
   } = {},
 ) {
   render(
@@ -50,6 +53,10 @@ function renderView(
       addExpenseError={null}
       editExpenseError={null}
       removeExpenseError={options.removeError ?? null}
+      attachReceiptError={null}
+      submitError={options.submitError ?? null}
+      onAttachReceipt={async () => true}
+      onSubmit={options.onSubmit ?? (() => undefined)}
       onAddExpense={async () => true}
       onEditExpense={async () => true}
       onRemoveExpense={options.onRemove ?? (() => undefined)}
@@ -124,6 +131,76 @@ describe('ExpenseReportDetail', () => {
 
     expect(screen.getByRole('alert').textContent).toBe(
       i18n.messages.errors.ACCESS_DENIED,
+    );
+  });
+
+  it('lists the receipts of the report', () => {
+    renderView(report);
+
+    expect(
+      screen.getByRole('heading', {
+        name: i18n.messages.expenseReports.receiptsTitle,
+      }),
+    ).toBeTruthy();
+    expect(screen.getByText('ticket.pdf')).toBeTruthy();
+  });
+
+  it('announces a draft without any receipt', () => {
+    renderView({ ...report, receipts: [] });
+
+    expect(
+      screen.getByText(i18n.messages.expenseReports.noReceipts),
+    ).toBeTruthy();
+  });
+
+  it('lets the employee add a receipt and submit a draft', () => {
+    renderView(report);
+
+    expect(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.attachReceipt,
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: i18n.messages.expenseReports.submit }),
+    ).toBeTruthy();
+  });
+
+  it('no longer lets the employee add a receipt or submit once submitted', () => {
+    renderView({ ...report, status: 'SUBMITTED', editable: false });
+
+    expect(
+      screen.queryByRole('button', {
+        name: i18n.messages.expenseReports.attachReceipt,
+      }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole('button', {
+        name: i18n.messages.expenseReports.submit,
+      }),
+    ).toBeNull();
+  });
+
+  it('submits the report on demand', () => {
+    let submitted = 0;
+    renderView(report, {
+      onSubmit: () => {
+        submitted += 1;
+      },
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: i18n.messages.expenseReports.submit }),
+    );
+
+    expect(submitted).toBe(1);
+  });
+
+  it('explains why the report could not be submitted', () => {
+    renderView(report, { submitError: i18n.messages.errors.MISSING_DOCUMENT });
+
+    expect(screen.getByRole('alert').textContent).toBe(
+      i18n.messages.errors.MISSING_DOCUMENT,
     );
   });
 

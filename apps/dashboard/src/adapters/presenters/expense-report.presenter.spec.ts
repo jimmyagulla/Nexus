@@ -22,6 +22,15 @@ const report: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 57,
+  receipts: [
+    {
+      id: 'f1',
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+      size: 2048,
+      expenseId: null,
+    },
+  ],
   expenses: [
     {
       id: 'x1',
@@ -140,6 +149,38 @@ describe('ExpenseReportPresenter', () => {
       assignment: 'Client Dupont',
     });
     expect(second?.fields.vat).toBe('');
+  });
+
+  it('lists the receipts by file name and size', () => {
+    const presenter = new ExpenseReportPresenter();
+
+    expect(presenter.present(report, categories).receipts).toEqual([
+      { id: 'f1', fileName: 'ticket.pdf', size: '2 Ko' },
+    ]);
+  });
+
+  it.each([
+    [999, '999 o'],
+    [1536, '1,5 Ko'],
+    [3 * 1024 * 1024, '3 Mo'],
+  ])('writes a file of %i bytes as %s', (size, expected) => {
+    const [receipt] = new ExpenseReportPresenter().present(
+      {
+        ...report,
+        receipts: [
+          {
+            id: 'f2',
+            fileName: 'scan.png',
+            mimeType: 'image/png',
+            size,
+            expenseId: null,
+          },
+        ],
+      },
+      categories,
+    ).receipts;
+
+    expect(receipt?.size.replace(/\s/g, ' ')).toBe(expected);
   });
 
   it('presents every report of a list and whether a report can be created', () => {

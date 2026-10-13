@@ -18,6 +18,7 @@ const lyon = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: 'DRAFT',
+  receipts: [],
   expenses: [],
 };
 

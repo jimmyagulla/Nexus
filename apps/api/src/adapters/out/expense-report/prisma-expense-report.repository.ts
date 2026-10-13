@@ -3,16 +3,23 @@ import {
   ExpenseDetails,
   ExpenseReport,
   ExpenseReportLabel,
+  Receipt,
+  ReceiptDetails,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ExpenseReportCriteria,
   IExpenseReportRepository,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
-import { toExpense, toExpenseReport } from './prisma-expense-report.mapper';
+import {
+  toExpense,
+  toExpenseReport,
+  toReceipt,
+} from './prisma-expense-report.mapper';
 
 const reportInclude = {
   expenses: { orderBy: { createdAt: 'asc' } },
+  receipts: { orderBy: { createdAt: 'asc' } },
 } as const;
 
 export class PrismaExpenseReportRepository implements IExpenseReportRepository {
@@ -74,6 +81,29 @@ export class PrismaExpenseReportRepository implements IExpenseReportRepository {
       description: details.description,
       assignment: details.assignment,
     };
+  }
+
+  async insertReceipt(
+    reportId: string,
+    details: ReceiptDetails,
+  ): Promise<Receipt> {
+    const row = await this.prisma.receipt.create({
+      data: {
+        reportId,
+        expenseId: details.expenseId,
+        fileName: details.fileName,
+        mimeType: details.mimeType,
+        content: Buffer.from(details.content),
+      },
+    });
+    return toReceipt(row);
+  }
+
+  async save(report: ExpenseReport): Promise<void> {
+    await this.prisma.expenseReport.update({
+      where: { id: report.id },
+      data: { label: report.label.value, status: report.status },
+    });
   }
 
   async list(

@@ -12,6 +12,15 @@ const snapshot: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 45,
+  receipts: [
+    {
+      id: 'f1',
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+      size: 3,
+      expenseId: null,
+    },
+  ],
   expenses: [
     {
       id: 'x1',
@@ -36,5 +45,6 @@ describe('toExpenseReportResponse', () => {
 
     expect(response.expenses).not.toBe(snapshot.expenses);
     expect(response.expenses[0]).not.toBe(snapshot.expenses[0]);
+    expect(response.receipts[0]).not.toBe(snapshot.receipts[0]);
   });
 });

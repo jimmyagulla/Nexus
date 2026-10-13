@@ -26,3 +26,7 @@ export * from './use-cases/expense-report/update-expense.use-case';
 export * from './use-cases/expense-report/update-expense-from-session.use-case';
 export * from './use-cases/expense-report/remove-expense.use-case';
 export * from './use-cases/expense-report/remove-expense-from-session.use-case';
+export * from './use-cases/expense-report/attach-receipt.use-case';
+export * from './use-cases/expense-report/attach-receipt-from-session.use-case';
+export * from './use-cases/expense-report/submit-expense-report.use-case';
+export * from './use-cases/expense-report/submit-expense-report-from-session.use-case';

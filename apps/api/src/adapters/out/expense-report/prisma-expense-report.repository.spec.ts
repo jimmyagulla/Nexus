@@ -4,15 +4,19 @@ import {
   ExpenseDetails,
   ExpenseReportLabel,
   ExpenseReportStatus,
+  ReceiptDetails,
 } from '@hexagonal-monorepo-template/domain';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import { PrismaExpenseReportRepository } from './prisma-expense-report.repository';
 import type {
   PrismaExpenseReportRow,
   PrismaExpenseRow,
+  PrismaReceiptRow,
 } from './prisma-expense-report.mapper';
 
-type StoredReport = Omit<PrismaExpenseReportRow, 'expenses'>;
+type StoredReport = Omit<PrismaExpenseReportRow, 'expenses' | 'receipts'>;
+
+type ReceiptCreateData = Omit<PrismaReceiptRow, 'id'>;
 
 type ReportCreateData = {
   companyId: string;
@@ -25,12 +29,15 @@ type ExpenseCreateData = Omit<PrismaExpenseRow, 'id'>;
 function createFakePrisma() {
   const reports: StoredReport[] = [];
   const expenses: PrismaExpenseRow[] = [];
+  const receipts: PrismaReceiptRow[] = [];
+  const receiptCreates: ReceiptCreateData[] = [];
   const reportCreates: ReportCreateData[] = [];
   const expenseCreates: ExpenseCreateData[] = [];
 
   const withExpenses = (report: StoredReport): PrismaExpenseReportRow => ({
     ...report,
     expenses: expenses.filter((expense) => expense.reportId === report.id),
+    receipts: receipts.filter((receipt) => receipt.reportId === report.id),
   });
 
   const client = {
@@ -52,6 +59,15 @@ function createFakePrisma() {
         );
         return found === undefined ? null : withExpenses(found);
       },
+      update: async (args: {
+        where: { id: string };
+        data: { label: string; status: ExpenseReportStatus };
+      }) => {
+        const row = reports.find((item) => item.id === args.where.id);
+        if (row !== undefined) {
+          Object.assign(row, args.data);
+        }
+      },
       findMany: async (args: {
         where: { companyId: string; employeeId?: string };
       }) =>
@@ -63,6 +79,14 @@ function createFakePrisma() {
                 row.employeeId === args.where.employeeId),
           )
           .map(withExpenses),
+    },
+    receipt: {
+      create: async (args: { data: ReceiptCreateData }) => {
+        receiptCreates.push(args.data);
+        const row = { id: `receipt-${receipts.length + 1}`, ...args.data };
+        receipts.push(row);
+        return row;
+      },
     },
     expense: {
       create: async (args: { data: ExpenseCreateData }) => {
@@ -95,6 +119,7 @@ function createFakePrisma() {
     client: client as unknown as PrismaDb,
     reportCreates,
     expenseCreates,
+    receiptCreates,
   };
 }
 
@@ -183,6 +208,60 @@ describe('PrismaExpenseReportRepository', () => {
     expect(found?.expenses.map((item) => item.details.categoryId)).toEqual([
       'restaurant',
     ]);
+  });
+
+  it('stores a receipt with its content on the report', async () => {
+    const { client, receiptCreates } = createFakePrisma();
+    const repository = new PrismaExpenseReportRepository(client);
+    const created = await repository.insert('c1', 'e1', label);
+
+    const receipt = await repository.insertReceipt(
+      created.id,
+      ReceiptDetails.parse({
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+        content: new Uint8Array([1, 2, 3]),
+        expenseId: null,
+      }),
+    );
+    const found = await repository.findById('c1', created.id);
+
+    expect(receiptCreates).toHaveLength(1);
+    expect(receiptCreates[0]).toMatchObject({
+      reportId: 'report-1',
+      expenseId: null,
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+    });
+    expect(receipt.id).toBe('receipt-1');
+    expect(receipt.details.content).toEqual(new Uint8Array([1, 2, 3]));
+    expect(found?.receipts.map((item) => item.id)).toEqual(['receipt-1']);
+  });
+
+  it('writes the status of a submitted report', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaExpenseReportRepository(client);
+    const created = await repository.insert('c1', 'e1', label);
+    const withExpense = created.addExpense(
+      await repository.insertExpense(created.id, details),
+    );
+    const withReceipt = withExpense.attachReceipt(
+      await repository.insertReceipt(
+        created.id,
+        ReceiptDetails.parse({
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([1]),
+          expenseId: null,
+        }),
+      ),
+    );
+
+    await repository.save(withReceipt.submit());
+
+    expect((await repository.findById('c1', created.id))?.status).toBe(
+      ExpenseReportStatus.SUBMITTED,
+    );
   });
 
   it('rewrites a modified expense in place', async () => {

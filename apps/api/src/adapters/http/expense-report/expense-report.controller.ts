@@ -14,16 +14,19 @@ import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   IAddExpense,
+  IAttachReceipt,
   ICreateExpenseReport,
   IGetExpenseReport,
   IListExpenseReports,
   IRemoveExpense,
+  ISubmitExpenseReport,
   IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
 import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
 import { Roles } from '../common/guards/roles/roles.decorator';
 import { RolesGuard } from '../common/guards/roles/roles.guard';
+import { AttachReceiptRequestDto } from './dto/attach-receipt-request.dto';
 import { CreateExpenseReportRequestDto } from './dto/create-expense-report-request.dto';
 import { ExpenseReportListResponseDto } from './dto/expense-report-list-response.dto';
 import { ExpenseReportResponseDto } from './dto/expense-report-response.dto';
@@ -48,6 +51,10 @@ export class ExpenseReportController {
     private readonly updateExpense: IUpdateExpense,
     @Inject(IRemoveExpense)
     private readonly removeExpense: IRemoveExpense,
+    @Inject(IAttachReceipt)
+    private readonly attachReceipt: IAttachReceipt,
+    @Inject(ISubmitExpenseReport)
+    private readonly submitReport: ISubmitExpenseReport,
   ) {}
 
   @Post(API_ROUTES.companies.expenseReports)
@@ -130,6 +137,45 @@ export class ExpenseReportController {
       companyId,
       reportId,
       expenseId,
+    });
+    return toExpenseReportResponse(report);
+  }
+
+  @Post(API_ROUTES.companies.expenseReportReceipts)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Attach a receipt to a draft expense report' })
+  async attach(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+    @Body() body: AttachReceiptRequestDto,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.attachReceipt.execute({
+      actor,
+      companyId,
+      reportId,
+      receipt: {
+        fileName: body.fileName,
+        mimeType: body.mimeType,
+        content: new Uint8Array(Buffer.from(body.contentBase64, 'base64')),
+        expenseId: body.expenseId ?? null,
+      },
+    });
+    return toExpenseReportResponse(report);
+  }
+
+  @Post(API_ROUTES.companies.expenseReportSubmission)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Submit an expense report' })
+  async submit(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.submitReport.execute({
+      actor,
+      companyId,
+      reportId,
     });
     return toExpenseReportResponse(report);
   }

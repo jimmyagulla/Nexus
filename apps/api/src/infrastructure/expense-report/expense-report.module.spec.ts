@@ -4,11 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { InMemoryExpenseReportRepository } from '@hexagonal-monorepo-template/adapters';
 import {
   IAddExpense,
+  IAttachReceipt,
   ICreateExpenseReport,
   IExpenseReportRepository,
   IGetExpenseReport,
   IListExpenseReports,
   IRemoveExpense,
+  ISubmitExpenseReport,
   IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaExpenseReportRepository } from '../../adapters/out/expense-report/prisma-expense-report.repository';
@@ -61,6 +63,8 @@ describe('ExpenseReportModule', () => {
     expect(moduleRef.get(IListExpenseReports)).toBeDefined();
     expect(moduleRef.get(IUpdateExpense)).toBeDefined();
     expect(moduleRef.get(IRemoveExpense)).toBeDefined();
+    expect(moduleRef.get(IAttachReceipt)).toBeDefined();
+    expect(moduleRef.get(ISubmitExpenseReport)).toBeDefined();
   });
 
   it('stores reports in Postgres when the mode and the client are both set', async () => {

@@ -5,6 +5,8 @@ import { Expense } from './expense';
 import { ExpenseDetails } from './expense-details';
 import { ExpenseReport } from './expense-report';
 import { ExpenseReportStatus } from './expense-report-status';
+import { Receipt } from './receipt';
+import { ReceiptDetails } from './receipt-details';
 
 function expense(id: string, categoryId: string, amount: number): Expense {
   return new Expense(
@@ -17,6 +19,18 @@ function expense(id: string, categoryId: string, amount: number): Expense {
       paymentMethod: 'Carte',
       description: 'Dépense',
       assignment: 'Client',
+    }),
+  );
+}
+
+function receipt(id: string, expenseId: string | null): Receipt {
+  return new Receipt(
+    id,
+    ReceiptDetails.parse({
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+      content: new Uint8Array([1, 2, 3]),
+      expenseId,
     }),
   );
 }
@@ -159,6 +173,117 @@ describe('ExpenseReport', () => {
     expect(() => report.removeExpense('x1')).toThrow(
       ErrorCode.REQUEST_ALREADY_PROCESSED,
     );
+  });
+
+  it('starts without any receipt', () => {
+    expect(new ExpenseReport(draftProps()).receipts).toEqual([]);
+  });
+
+  it('keeps a receipt on the report', () => {
+    const report = new ExpenseReport(draftProps()).attachReceipt(
+      receipt('f1', null),
+    );
+
+    expect(report.receipts.map((item) => item.id)).toEqual(['f1']);
+  });
+
+  it('keeps a receipt that proves one expense', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'train', 68))
+      .attachReceipt(receipt('f1', 'x1'));
+
+    expect(report.receipts[0]?.details.expenseId).toBe('x1');
+  });
+
+  it('refuses a receipt for an expense the report does not hold', () => {
+    expect(() =>
+      new ExpenseReport(draftProps()).attachReceipt(receipt('f1', 'x9')),
+    ).toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  it('keeps a receipt on the report when the expense it proved is removed', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'train', 68))
+      .attachReceipt(receipt('f1', 'x1'))
+      .removeExpense('x1');
+
+    expect(report.receipts.map((item) => item.id)).toEqual(['f1']);
+    expect(report.receipts[0]?.details.expenseId).toBeNull();
+  });
+
+  it('keeps the receipts when an expense is removed', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'train', 68))
+      .attachReceipt(receipt('f1', null))
+      .removeExpense('x1');
+
+    expect(report.receipts.map((item) => item.id)).toEqual(['f1']);
+  });
+
+  it.each([
+    ExpenseReportStatus.SUBMITTED,
+    ExpenseReportStatus.UNDER_REVIEW,
+    ExpenseReportStatus.VALIDATED,
+    ExpenseReportStatus.REFUSED,
+    ExpenseReportStatus.REIMBURSED,
+  ])('no longer accepts a receipt once %s', (status) => {
+    const report = new ExpenseReport({ ...draftProps(), status });
+
+    expect(() => report.attachReceipt(receipt('f1', null))).toThrow(
+      ErrorCode.REQUEST_ALREADY_PROCESSED,
+    );
+  });
+
+  it('is submitted once it holds an expense and a receipt', () => {
+    const submitted = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'train', 68))
+      .attachReceipt(receipt('f1', null))
+      .submit();
+
+    expect(submitted.status).toBe(ExpenseReportStatus.SUBMITTED);
+  });
+
+  it('counts a receipt attached to an expense as a receipt of the report', () => {
+    const submitted = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'train', 68))
+      .attachReceipt(receipt('f1', 'x1'))
+      .submit();
+
+    expect(submitted.status).toBe(ExpenseReportStatus.SUBMITTED);
+  });
+
+  it('refuses to be submitted without any receipt and stays a draft', () => {
+    const report = new ExpenseReport(draftProps()).addExpense(
+      expense('x1', 'train', 68),
+    );
+
+    expect(() => report.submit()).toThrow(ErrorCode.MISSING_DOCUMENT);
+    expect(report.status).toBe(ExpenseReportStatus.DRAFT);
+  });
+
+  it('refuses to be submitted without any expense', () => {
+    const report = new ExpenseReport(draftProps()).attachReceipt(
+      receipt('f1', null),
+    );
+
+    expect(() => report.submit()).toThrow(ErrorCode.REQUIRED_INFORMATION);
+  });
+
+  it.each([
+    ExpenseReportStatus.SUBMITTED,
+    ExpenseReportStatus.UNDER_REVIEW,
+    ExpenseReportStatus.VALIDATED,
+    ExpenseReportStatus.REFUSED,
+    ExpenseReportStatus.REIMBURSED,
+  ])('cannot be submitted again once %s', (status) => {
+    const report = new ExpenseReport({
+      ...draftProps(),
+      status,
+      expenses: [expense('x1', 'train', 68)],
+      receipts: [receipt('f1', null)],
+    });
+
+    expect(() => report.submit()).toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
   });
 
   it('exposes the date of an expense as a calendar date', () => {

@@ -49,6 +49,7 @@ describe('useGetExpenseReports', () => {
             employeeId: 'e1',
             label: 'Lyon',
             status: ExpenseReportStatus.DRAFT,
+            receipts: [],
             expenses: [
               {
                 id: 'x1',

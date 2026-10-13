@@ -10,6 +10,10 @@ export const API_ROUTES = {
     expenseReports: ':companyId/expense-reports',
     expenseReport: ':companyId/expense-reports/:expenseReportId',
     expenseReportExpenses: ':companyId/expense-reports/:expenseReportId/expenses',
+    expenseReportReceipts:
+      ':companyId/expense-reports/:expenseReportId/receipts',
+    expenseReportSubmission:
+      ':companyId/expense-reports/:expenseReportId/submission',
     expenseReportExpense:
       ':companyId/expense-reports/:expenseReportId/expenses/:expenseId',
   },

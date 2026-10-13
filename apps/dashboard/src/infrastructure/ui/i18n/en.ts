@@ -24,6 +24,12 @@ export const en = {
     saveExpense: 'Save',
     removeExpense: 'Remove',
     total: 'Total',
+    receiptsTitle: 'Receipts',
+    noReceipts: 'No receipt.',
+    attachReceipt: 'Add a receipt',
+    attachReceiptTitle: 'New receipt',
+    receiptFile: 'File (PDF, JPEG or PNG)',
+    submit: 'Submit the report',
     expense: {
       date: 'Date',
       category: 'Category',
@@ -83,5 +89,8 @@ export const en = {
       'This employee is inactive. This action is no longer possible.',
     [ErrorCode.REQUEST_ALREADY_PROCESSED]:
       'This request has already been processed.',
+    [ErrorCode.MISSING_DOCUMENT]: 'Add the expected document before validating.',
+    [ErrorCode.INVALID_FILE]:
+      'This file cannot be accepted. Check its format and try again.',
   },
 } as const;

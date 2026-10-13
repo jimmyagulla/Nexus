@@ -44,3 +44,7 @@ export * from './in/expense-report/update-expense.port';
 export * from './in/expense-report/update-expense-from-session.port';
 export * from './in/expense-report/remove-expense.port';
 export * from './in/expense-report/remove-expense-from-session.port';
+export * from './in/expense-report/attach-receipt.port';
+export * from './in/expense-report/attach-receipt-from-session.port';
+export * from './in/expense-report/submit-expense-report.port';
+export * from './in/expense-report/submit-expense-report-from-session.port';

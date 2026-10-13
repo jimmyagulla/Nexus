@@ -24,6 +24,12 @@ export const fr = {
     saveExpense: 'Enregistrer',
     removeExpense: 'Retirer',
     total: 'Total',
+    receiptsTitle: 'Justificatifs',
+    noReceipts: 'Aucun justificatif.',
+    attachReceipt: 'Ajouter un justificatif',
+    attachReceiptTitle: 'Nouveau justificatif',
+    receiptFile: 'Fichier (PDF, JPEG ou PNG)',
+    submit: 'Soumettre la note',
     expense: {
       date: 'Date',
       category: 'Catégorie',
@@ -83,5 +89,8 @@ export const fr = {
     [ErrorCode.INACTIVE_EMPLOYEE]:
       "Ce salarié est inactif. Cette action n'est plus possible.",
     [ErrorCode.REQUEST_ALREADY_PROCESSED]: 'Cette demande a déjà été traitée.',
+    [ErrorCode.MISSING_DOCUMENT]: 'Ajoutez le document attendu avant de valider.',
+    [ErrorCode.INVALID_FILE]:
+      'Ce fichier ne peut pas être accepté. Vérifiez son format et réessayez.',
   },
 } as const;

@@ -20,6 +20,7 @@ const report = {
   label: 'Déplacement Lyon',
   status: 'DRAFT',
   total: 45,
+  receipts: [],
   expenses: [
     {
       id: 'x1',
@@ -226,6 +227,90 @@ describe('ExpenseReportDetailPage', () => {
     expect(http.calls.find((call) => call.method === 'patch')?.data).toMatchObject(
       { amount: 50, categoryId: 'restaurant', description: 'Déjeuner client' },
     );
+  });
+
+  it('attaches a receipt from the dialog and closes it', async () => {
+    const http = httpWithReport();
+    http.reply('post', 'companies/c1/expense-reports/r1/receipts', {
+      status: 201,
+      data: report,
+    });
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: i18n.messages.expenseReports.attachReceipt,
+      }),
+    );
+    const dialog = within(screen.getByRole('dialog'));
+    fireEvent.change(
+      dialog.getByLabelText(i18n.messages.expenseReports.receiptFile),
+      {
+        target: {
+          files: [
+            new File([new Uint8Array([72, 101, 108, 108, 111])], 'ticket.pdf', {
+              type: 'application/pdf',
+            }),
+          ],
+        },
+      },
+    );
+    fireEvent.click(
+      dialog.getByRole('button', {
+        name: i18n.messages.expenseReports.attachReceipt,
+      }),
+    );
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(http.calls.find((call) => call.method === 'post')?.data).toMatchObject(
+      {
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+        contentBase64: 'SGVsbG8=',
+      },
+    );
+  });
+
+  it('submits the report', async () => {
+    const http = httpWithReport();
+    http.reply('post', 'companies/c1/expense-reports/r1/submission', {
+      status: 201,
+      data: report,
+    });
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: i18n.messages.expenseReports.submit,
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        http.calls.some((call) => call.url.endsWith('/submission')),
+      ).toBe(true),
+    );
+  });
+
+  it('explains why the report could not be submitted and leaves it a draft', async () => {
+    const http = httpWithReport();
+    http.reject(
+      'post',
+      'companies/c1/expense-reports/r1/submission',
+      new Error(ErrorCode.MISSING_DOCUMENT),
+    );
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: i18n.messages.expenseReports.submit,
+      }),
+    );
+
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      i18n.messages.errors.MISSING_DOCUMENT,
+    );
+    expect(screen.getByText(i18n.messages.expenseReports.status.DRAFT)).toBeTruthy();
   });
 
   it('goes back to the reports', async () => {

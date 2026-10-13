@@ -4,6 +4,8 @@ import {
   ExpenseReport,
   ExpenseReportLabel,
   ExpenseReportStatus,
+  Receipt,
+  ReceiptDetails,
 } from '@hexagonal-monorepo-template/domain';
 
 export type PrismaExpenseRow = {
@@ -18,6 +20,15 @@ export type PrismaExpenseRow = {
   assignment: string;
 };
 
+export type PrismaReceiptRow = {
+  id: string;
+  reportId: string;
+  expenseId: string | null;
+  fileName: string;
+  mimeType: string;
+  content: Uint8Array;
+};
+
 export type PrismaExpenseReportRow = {
   id: string;
   companyId: string;
@@ -25,6 +36,7 @@ export type PrismaExpenseReportRow = {
   label: string;
   status: ExpenseReportStatus;
   expenses: PrismaExpenseRow[];
+  receipts: PrismaReceiptRow[];
 };
 
 export function toExpense(row: PrismaExpenseRow): Expense {
@@ -42,6 +54,18 @@ export function toExpense(row: PrismaExpenseRow): Expense {
   );
 }
 
+export function toReceipt(row: PrismaReceiptRow): Receipt {
+  return new Receipt(
+    row.id,
+    ReceiptDetails.parse({
+      fileName: row.fileName,
+      mimeType: row.mimeType,
+      content: new Uint8Array(row.content),
+      expenseId: row.expenseId,
+    }),
+  );
+}
+
 export function toExpenseReport(row: PrismaExpenseReportRow): ExpenseReport {
   return new ExpenseReport({
     id: row.id,
@@ -50,5 +74,6 @@ export function toExpenseReport(row: PrismaExpenseReportRow): ExpenseReport {
     label: ExpenseReportLabel.parse(row.label),
     status: row.status,
     expenses: row.expenses.map(toExpense),
+    receipts: row.receipts.map(toReceipt),
   });
 }

@@ -3,8 +3,10 @@ import { ExpenseReportStatus } from '@hexagonal-monorepo-template/domain';
 import {
   toExpense,
   toExpenseReport,
+  toReceipt,
   type PrismaExpenseReportRow,
   type PrismaExpenseRow,
+  type PrismaReceiptRow,
 } from './prisma-expense-report.mapper';
 
 const expenseRow: PrismaExpenseRow = {
@@ -17,6 +19,15 @@ const expenseRow: PrismaExpenseRow = {
   paymentMethod: 'Carte',
   description: 'Déjeuner',
   assignment: 'Client Dupont',
+};
+
+const receiptRow: PrismaReceiptRow = {
+  id: 'f1',
+  reportId: 'r1',
+  expenseId: 'x1',
+  fileName: 'ticket.pdf',
+  mimeType: 'application/pdf',
+  content: Buffer.from([1, 2, 3]),
 };
 
 describe('prisma expense report mapper', () => {
@@ -44,14 +55,31 @@ describe('prisma expense report mapper', () => {
     ).toBe(1005);
   });
 
-  it('rebuilds a report with its expenses', () => {
+  it('rebuilds a receipt from its row', () => {
+    const receipt = toReceipt(receiptRow);
+
+    expect(receipt.id).toBe('f1');
+    expect(receipt.details.fileName).toBe('ticket.pdf');
+    expect(receipt.details.mimeType).toBe('application/pdf');
+    expect(receipt.details.expenseId).toBe('x1');
+    expect(receipt.details.content).toEqual(new Uint8Array([1, 2, 3]));
+  });
+
+  it('rebuilds a receipt of the report as a whole', () => {
+    expect(
+      toReceipt({ ...receiptRow, expenseId: null }).details.expenseId,
+    ).toBeNull();
+  });
+
+  it('rebuilds a report with its expenses and its receipts', () => {
     const row: PrismaExpenseReportRow = {
       id: 'r1',
       companyId: 'c1',
       employeeId: 'e1',
       label: 'Déplacement Lyon',
-      status: ExpenseReportStatus.DRAFT,
+      status: ExpenseReportStatus.SUBMITTED,
       expenses: [expenseRow],
+      receipts: [receiptRow],
     };
 
     const report = toExpenseReport(row);
@@ -60,7 +88,8 @@ describe('prisma expense report mapper', () => {
     expect(report.companyId).toBe('c1');
     expect(report.employeeId).toBe('e1');
     expect(report.label.value).toBe('Déplacement Lyon');
-    expect(report.status).toBe(ExpenseReportStatus.DRAFT);
+    expect(report.status).toBe(ExpenseReportStatus.SUBMITTED);
     expect(report.expenses.map((item) => item.id)).toEqual(['x1']);
+    expect(report.receipts.map((item) => item.id)).toEqual(['f1']);
   });
 });

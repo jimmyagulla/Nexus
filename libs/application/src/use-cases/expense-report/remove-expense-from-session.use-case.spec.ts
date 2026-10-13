@@ -25,6 +25,7 @@ const updated: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 57,
+  receipts: [],
   expenses: [],
 };
 

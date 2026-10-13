@@ -4,6 +4,7 @@ import {
   ExpenseReportSnapshot,
   ExpenseReportStatus,
   ExpenseSnapshot,
+  ReceiptSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   i18n as appI18n,
@@ -33,6 +34,12 @@ export interface ExpenseViewModel {
   fields: ExpenseFieldsViewModel;
 }
 
+export interface ReceiptViewModel {
+  id: string;
+  fileName: string;
+  size: string;
+}
+
 export interface ExpenseReportViewModel {
   id: string;
   label: string;
@@ -40,6 +47,7 @@ export interface ExpenseReportViewModel {
   statusLabel: string;
   editable: boolean;
   total: string;
+  receipts: ReceiptViewModel[];
   expenses: ExpenseViewModel[];
 }
 
@@ -65,6 +73,7 @@ export class ExpenseReportPresenter {
       statusLabel: this.i18n.messages.expenseReports.status[snapshot.status],
       editable: snapshot.status === ExpenseReportStatus.DRAFT,
       total: this.euros.present(snapshot.total),
+      receipts: snapshot.receipts.map((receipt) => this.presentReceipt(receipt)),
       expenses: snapshot.expenses.map((expense) =>
         this.presentExpense(expense, categories),
       ),
@@ -96,6 +105,30 @@ export class ExpenseReportPresenter {
       assignment: expense.assignment,
       fields: this.presentFields(expense),
     };
+  }
+
+  private presentReceipt(receipt: ReceiptSnapshot): ReceiptViewModel {
+    return {
+      id: receipt.id,
+      fileName: receipt.fileName,
+      size: this.formatSize(receipt.size),
+    };
+  }
+
+  private formatSize(bytes: number): string {
+    if (bytes < 1024) {
+      return `${bytes} o`;
+    }
+    if (bytes < 1024 * 1024) {
+      return `${this.rounded(bytes / 1024)} Ko`;
+    }
+    return `${this.rounded(bytes / (1024 * 1024))} Mo`;
+  }
+
+  private rounded(value: number): string {
+    return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(
+      value,
+    );
   }
 
   private presentFields(expense: ExpenseSnapshot): ExpenseFieldsViewModel {

@@ -3,6 +3,7 @@ import { ExpenseReportLabel } from '../value-objects/expense-report-label';
 import { Money } from '../value-objects/money';
 import { Expense } from './expense';
 import { ExpenseReportStatus } from './expense-report-status';
+import { Receipt } from './receipt';
 
 export type ExpenseReportProps = {
   id: string;
@@ -11,6 +12,7 @@ export type ExpenseReportProps = {
   label: ExpenseReportLabel;
   status: ExpenseReportStatus;
   expenses: readonly Expense[];
+  receipts?: readonly Receipt[];
 };
 
 export class ExpenseReport {
@@ -20,6 +22,7 @@ export class ExpenseReport {
   readonly label: ExpenseReportLabel;
   readonly status: ExpenseReportStatus;
   readonly expenses: readonly Expense[];
+  readonly receipts: readonly Receipt[];
 
   constructor(private readonly props: ExpenseReportProps) {
     this.id = props.id;
@@ -28,6 +31,7 @@ export class ExpenseReport {
     this.label = props.label;
     this.status = props.status;
     this.expenses = props.expenses;
+    this.receipts = props.receipts ?? [];
   }
 
   static create(
@@ -43,6 +47,7 @@ export class ExpenseReport {
       label,
       status: ExpenseReportStatus.DRAFT,
       expenses: [],
+      receipts: [],
     });
   }
 
@@ -73,7 +78,31 @@ export class ExpenseReport {
     this.requireExpense(expenseId);
     return this.with({
       expenses: this.expenses.filter((current) => current.id !== expenseId),
+      receipts: this.receipts.map((receipt) =>
+        receipt.details.expenseId === expenseId
+          ? new Receipt(receipt.id, receipt.details.detachedFromExpense())
+          : receipt,
+      ),
     });
+  }
+
+  attachReceipt(receipt: Receipt): ExpenseReport {
+    this.requireDraft();
+    if (receipt.details.expenseId !== null) {
+      this.requireExpense(receipt.details.expenseId);
+    }
+    return this.with({ receipts: [...this.receipts, receipt] });
+  }
+
+  submit(): ExpenseReport {
+    this.requireDraft();
+    if (this.expenses.length === 0) {
+      throw new Error(ErrorCode.REQUIRED_INFORMATION);
+    }
+    if (this.receipts.length === 0) {
+      throw new Error(ErrorCode.MISSING_DOCUMENT);
+    }
+    return this.with({ status: ExpenseReportStatus.SUBMITTED });
   }
 
   requireDraft(): void {
@@ -82,7 +111,7 @@ export class ExpenseReport {
     }
   }
 
-  private requireExpense(expenseId: string): void {
+  requireExpense(expenseId: string): void {
     if (!this.expenses.some((current) => current.id === expenseId)) {
       throw new Error(ErrorCode.ACCESS_DENIED);
     }

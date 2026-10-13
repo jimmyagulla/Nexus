@@ -11,6 +11,14 @@ export type ExpenseSnapshot = {
   assignment: string;
 };
 
+export type ReceiptSnapshot = {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  size: number;
+  expenseId: string | null;
+};
+
 export type ExpenseReportSnapshot = {
   id: string;
   companyId: string;
@@ -18,5 +26,6 @@ export type ExpenseReportSnapshot = {
   label: string;
   status: ExpenseReportStatus;
   total: number;
+  receipts: readonly ReceiptSnapshot[];
   expenses: readonly ExpenseSnapshot[];
 };
