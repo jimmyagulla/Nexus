@@ -89,6 +89,35 @@ export class CabinetExchange {
     });
   }
 
+  consult(actorId: string, occurredAt: Date): CabinetExchange {
+    return this.open(ExchangeEventKind.CONSULTED, actorId, occurredAt);
+  }
+
+  download(actorId: string, occurredAt: Date): CabinetExchange {
+    return this.open(ExchangeEventKind.DOWNLOADED, actorId, occurredAt);
+  }
+
+  firstConsultedAt(): Date | null {
+    return (
+      this.history.find((event) => event.kind === ExchangeEventKind.CONSULTED)
+        ?.occurredAt ?? null
+    );
+  }
+
+  private open(
+    kind: ExchangeEventKind,
+    actorId: string,
+    occurredAt: Date,
+  ): CabinetExchange {
+    return this.copy({
+      status: ExchangeStatus.CONSULTED,
+      history: [
+        ...this.history,
+        { kind, actorId, occurredAt, documentCount: 1 },
+      ],
+    });
+  }
+
   private copy(
     changes: Partial<{
       category: ExchangeCategory | null;

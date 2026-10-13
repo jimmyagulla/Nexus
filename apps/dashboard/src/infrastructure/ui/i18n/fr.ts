@@ -5,6 +5,7 @@ export const fr = {
     dashboard: 'Tableau de bord',
     settings: 'Paramètres',
     cabinet: 'Cabinet comptable',
+    receivedDocuments: 'Documents reçus',
   },
   loading: 'Chargement…',
   home: {
@@ -35,6 +36,12 @@ export const fr = {
     transmit: 'Transmettre',
     noCategory: 'Sans catégorie',
     noFile: 'Aucun fichier',
+    receivedTitle: 'Documents reçus',
+    open: 'Consulter',
+    download: 'Télécharger',
+    consultedOn: 'Consulté le',
+    notConsulted: 'Pas encore consulté',
+    back: 'Retour à la liste',
     transmitted: 'Le document a été transmis au cabinet comptable.',
     statuses: {
       DRAFT: 'Brouillon',

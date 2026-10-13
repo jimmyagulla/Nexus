@@ -7,31 +7,46 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router';
+import type { NavigationEntryViewModel } from '../../../../adapters/presenters/navigation.presenter';
 import { AppRoutes } from '../../routes/app-routes';
-import { i18n } from '../../i18n/i18n';
 import { Layout } from './Layout';
 
-async function renderLayoutAt(path: string, children: ReactNode) {
+const employerEntries: NavigationEntryViewModel[] = [
+  { id: 'dashboard', to: AppRoutes.home, label: 'Tableau de bord' },
+  { id: 'settings', to: AppRoutes.settings, label: 'Paramètres' },
+  { id: 'cabinet', to: AppRoutes.cabinet, label: 'Cabinet comptable' },
+];
+
+const cabinetEntries: NavigationEntryViewModel[] = [
+  {
+    id: 'receivedDocuments',
+    to: AppRoutes.receivedDocuments,
+    label: 'Documents reçus',
+  },
+];
+
+async function renderLayoutAt(
+  path: string,
+  children: ReactNode,
+  entries: NavigationEntryViewModel[] = employerEntries,
+) {
   const rootRoute = createRootRoute({
-    component: () => <Layout>{children}</Layout>,
+    component: () => <Layout entries={entries}>{children}</Layout>,
   });
-  const routeTree = rootRoute.addChildren([
-    createRoute({
-      getParentRoute: () => rootRoute,
-      path: AppRoutes.home,
-      component: () => null,
-    }),
-    createRoute({
-      getParentRoute: () => rootRoute,
-      path: AppRoutes.settings,
-      component: () => null,
-    }),
-    createRoute({
-      getParentRoute: () => rootRoute,
-      path: AppRoutes.cabinet,
-      component: () => null,
-    }),
-  ]);
+  const routeTree = rootRoute.addChildren(
+    [
+      AppRoutes.home,
+      AppRoutes.settings,
+      AppRoutes.cabinet,
+      AppRoutes.receivedDocuments,
+    ].map((routePath) =>
+      createRoute({
+        getParentRoute: () => rootRoute,
+        path: routePath,
+        component: () => null,
+      }),
+    ),
+  );
 
   const router = createRouter({
     routeTree,
@@ -43,7 +58,7 @@ async function renderLayoutAt(path: string, children: ReactNode) {
 }
 
 describe('Layout', () => {
-  it('offers the dashboard, the settings and the accounting firm as destinations', async () => {
+  it('offers the destinations it is given, in that order', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(
@@ -53,12 +68,31 @@ describe('Layout', () => {
     ).toEqual([AppRoutes.home, AppRoutes.settings, AppRoutes.cabinet]);
   });
 
-  it('names its destinations in french', async () => {
+  it('names its destinations as given', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
-    expect(screen.getByText(i18n.messages.navigation.dashboard)).toBeTruthy();
-    expect(screen.getByText(i18n.messages.navigation.settings)).toBeTruthy();
-    expect(screen.getByText(i18n.messages.navigation.cabinet)).toBeTruthy();
+    for (const entry of employerEntries) {
+      expect(screen.getByText(entry.label)).toBeTruthy();
+    }
+  });
+
+  it('offers the cabinet only the documents it received', async () => {
+    await renderLayoutAt(AppRoutes.receivedDocuments, null, cabinetEntries);
+
+    expect(
+      within(screen.getByRole('navigation'))
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href')),
+    ).toEqual([AppRoutes.receivedDocuments]);
+    expect(screen.queryByText('Paramètres')).toBeNull();
+  });
+
+  it('offers no destination until it is given some', async () => {
+    await renderLayoutAt(AppRoutes.home, null, []);
+
+    expect(
+      within(screen.getByRole('navigation')).queryAllByRole('link'),
+    ).toEqual([]);
   });
 
   it('shows the content it wraps', async () => {

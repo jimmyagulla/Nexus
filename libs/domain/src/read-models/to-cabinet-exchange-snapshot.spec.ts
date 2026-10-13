@@ -24,6 +24,7 @@ describe('toCabinetExchangeSnapshot', () => {
       document: { fileName: 'a.pdf', mimeType: 'application/pdf', size: 2 },
       senderId: 'user-1',
       date: '2026-10-06T09:00:00.000Z',
+      consultedAt: null,
     });
   });
 
@@ -42,5 +43,18 @@ describe('toCabinetExchangeSnapshot', () => {
 
     expect(snapshot.category).toBeNull();
     expect(snapshot.document).toBeNull();
+  });
+
+  it('gives the day of the first consultation once the recipient opened it', () => {
+    const opened = ready()
+      .markToTransmit()
+      .transmit('user-1', sent)
+      .receive(sent)
+      .consult('cab-1', new Date('2026-10-08T07:00:00.000Z'))
+      .consult('cab-1', new Date('2026-10-09T07:00:00.000Z'));
+
+    expect(toCabinetExchangeSnapshot(opened).consultedAt).toBe(
+      '2026-10-08T07:00:00.000Z',
+    );
   });
 });

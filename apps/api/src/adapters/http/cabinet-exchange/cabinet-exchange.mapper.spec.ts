@@ -7,6 +7,7 @@ import {
 import {
   toCabinetExchangeResponse,
   toExchangeFileInput,
+  toExchangeFileResponse,
 } from './cabinet-exchange.mapper';
 
 const snapshot: CabinetExchangeSnapshot = {
@@ -17,6 +18,7 @@ const snapshot: CabinetExchangeSnapshot = {
   document: { fileName: 'a.pdf', mimeType: 'application/pdf', size: 2 },
   senderId: 'user-1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 describe('toCabinetExchangeResponse', () => {
@@ -49,5 +51,21 @@ describe('toExchangeFileInput', () => {
   it('gives no file when none was sent', () => {
     expect(toExchangeFileInput(undefined)).toBeNull();
     expect(toExchangeFileInput(null)).toBeNull();
+  });
+});
+
+describe('toExchangeFileResponse', () => {
+  it('encodes the content of the file as base64 text', () => {
+    expect(
+      toExchangeFileResponse({
+        fileName: 'a.pdf',
+        mimeType: 'application/pdf',
+        content: new Uint8Array([72, 105]),
+      }),
+    ).toEqual({
+      fileName: 'a.pdf',
+      mimeType: 'application/pdf',
+      contentBase64: 'SGk=',
+    });
   });
 });

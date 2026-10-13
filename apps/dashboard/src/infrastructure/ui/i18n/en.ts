@@ -5,6 +5,7 @@ export const en = {
     dashboard: 'Dashboard',
     settings: 'Settings',
     cabinet: 'Accounting firm',
+    receivedDocuments: 'Received documents',
   },
   loading: 'Loading…',
   home: {
@@ -35,6 +36,12 @@ export const en = {
     transmit: 'Transmit',
     noCategory: 'No category',
     noFile: 'No file',
+    receivedTitle: 'Received documents',
+    open: 'Open',
+    download: 'Download',
+    consultedOn: 'Viewed on',
+    notConsulted: 'Not viewed yet',
+    back: 'Back to the list',
     transmitted: 'The document was transmitted to the accounting firm.',
     statuses: {
       DRAFT: 'Draft',

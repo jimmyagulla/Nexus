@@ -25,6 +25,7 @@ const snapshot: CabinetExchangeSnapshot = {
   document: null,
   senderId: 'u1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 const employerOfAcme: ActorContext = {
@@ -55,6 +56,18 @@ function compositionFor(
   http.reply('get', 'companies/c1/cabinet-exchanges', {
     status: 200,
     data: [snapshot],
+  });
+  http.reply('post', 'companies/c1/cabinet-exchanges/ex-1/consultation', {
+    status: 201,
+    data: snapshot,
+  });
+  http.reply('get', 'companies/c1/cabinet-exchanges/ex-1/file', {
+    status: 200,
+    data: {
+      fileName: 'a.pdf',
+      mimeType: 'application/pdf',
+      contentBase64: 'SGk=',
+    },
   });
 
   return {
@@ -161,5 +174,26 @@ describe('createCabinetExchangeComposition', () => {
       ErrorCode.ACCESS_DENIED,
     );
     expect(http.calls).toEqual([]);
+  });
+
+  it('wires a controller that opens an exchange', async () => {
+    const { deps, http } = compositionFor();
+
+    await deps.controller.open('ex-1');
+
+    expect(http.calls[0]).toMatchObject({
+      method: 'post',
+      url: 'companies/c1/cabinet-exchanges/ex-1/consultation',
+    });
+  });
+
+  it('wires a controller that downloads the file of an exchange', async () => {
+    const { deps } = compositionFor();
+
+    await expect(deps.controller.download('ex-1')).resolves.toEqual({
+      fileName: 'a.pdf',
+      mimeType: 'application/pdf',
+      content: new Uint8Array([72, 105]),
+    });
   });
 });

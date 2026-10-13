@@ -15,6 +15,7 @@ const snapshot: CabinetExchangeSnapshot = {
   document: null,
   senderId: 'user-1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 const file: ExchangeFileInput = {
@@ -28,6 +29,8 @@ function controller() {
     created: [] as unknown[],
     marked: [] as unknown[],
     transmitted: [] as (readonly string[])[],
+    opened: [] as string[],
+    downloaded: [] as string[],
   };
   return {
     received,
@@ -51,6 +54,18 @@ function controller() {
         },
       },
       { execute: async () => [snapshot] },
+      {
+        execute: async (id) => {
+          received.opened.push(id);
+          return { ...snapshot, status: ExchangeStatus.CONSULTED };
+        },
+      },
+      {
+        execute: async (id) => {
+          received.downloaded.push(id);
+          return file;
+        },
+      },
     ),
   };
 }
@@ -87,5 +102,21 @@ describe('CabinetExchangeController', () => {
     const { controller: sut } = controller();
 
     await expect(sut.list()).resolves.toEqual([snapshot]);
+  });
+
+  it('opens an exchange, which consults it', async () => {
+    const { controller: sut, received } = controller();
+
+    await expect(sut.open('ex-1')).resolves.toMatchObject({
+      status: ExchangeStatus.CONSULTED,
+    });
+    expect(received.opened).toEqual(['ex-1']);
+  });
+
+  it('downloads the file of an exchange', async () => {
+    const { controller: sut, received } = controller();
+
+    await expect(sut.download('ex-1')).resolves.toEqual(file);
+    expect(received.downloaded).toEqual(['ex-1']);
   });
 });

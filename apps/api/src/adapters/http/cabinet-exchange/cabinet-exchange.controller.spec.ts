@@ -18,8 +18,10 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   ICreateCabinetExchangeDraft,
+  IDownloadCabinetExchangeFile,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
+  IOpenCabinetExchange,
   ITransmitCabinetExchanges,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
@@ -36,11 +38,21 @@ const markToTransmit = {
 };
 const transmit = { execute: vi.fn<ITransmitCabinetExchanges['execute']>() };
 const list = { execute: vi.fn<IListCabinetExchanges['execute']>() };
+const open = { execute: vi.fn<IOpenCabinetExchange['execute']>() };
+const download = {
+  execute: vi.fn<IDownloadCabinetExchangeFile['execute']>(),
+};
 
 const employer: ActorContext = {
   userId: 'user-1',
   companyId: 'company-1',
   role: UserRole.EMPLOYER,
+};
+
+const accountant: ActorContext = {
+  userId: 'cab-1',
+  companyId: 'company-1',
+  role: UserRole.ACCOUNTANT,
 };
 
 const snapshot: CabinetExchangeSnapshot = {
@@ -51,6 +63,7 @@ const snapshot: CabinetExchangeSnapshot = {
   document: { fileName: 'a.pdf', mimeType: 'application/pdf', size: 2 },
   senderId: 'user-1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 const BASE = '/companies/company-1/cabinet-exchanges';
@@ -85,6 +98,8 @@ beforeAll(async () => {
       { provide: IMarkCabinetExchangeToTransmit, useValue: markToTransmit },
       { provide: ITransmitCabinetExchanges, useValue: transmit },
       { provide: IListCabinetExchanges, useValue: list },
+      { provide: IOpenCabinetExchange, useValue: open },
+      { provide: IDownloadCabinetExchangeFile, useValue: download },
     ],
   }).compile();
 
@@ -108,13 +123,26 @@ afterAll(async () => {
 
 beforeEach(() => {
   actor = employer;
-  for (const port of [createDraft, markToTransmit, transmit, list]) {
+  for (const port of [
+    createDraft,
+    markToTransmit,
+    transmit,
+    list,
+    open,
+    download,
+  ]) {
     port.execute.mockReset();
   }
   createDraft.execute.mockResolvedValue(snapshot);
   markToTransmit.execute.mockResolvedValue(snapshot);
   transmit.execute.mockResolvedValue([snapshot]);
   list.execute.mockResolvedValue([snapshot]);
+  open.execute.mockResolvedValue(snapshot);
+  download.execute.mockResolvedValue({
+    fileName: 'a.pdf',
+    mimeType: 'application/pdf',
+    content: new Uint8Array([72, 105]),
+  });
 });
 
 describe('CabinetExchangeController', () => {
@@ -309,6 +337,94 @@ describe('CabinetExchangeController', () => {
         actor: employer,
         companyId: 'company-1',
       });
+    });
+  });
+
+  describe('as the cabinet', () => {
+    beforeEach(() => {
+      actor = accountant;
+    });
+
+    it('lists the exchanges it received', async () => {
+      await expect(send('GET', BASE)).resolves.toEqual({
+        status: 200,
+        payload: { status: 200, message: 'Success', data: [snapshot] },
+      });
+      expect(list.execute).toHaveBeenCalledWith({
+        actor: accountant,
+        companyId: 'company-1',
+      });
+    });
+
+    it('opens an exchange, which consults it', async () => {
+      await expect(
+        send('POST', `${BASE}/ex-1/consultation`),
+      ).resolves.toEqual({
+        status: 201,
+        payload: { status: 201, message: 'Success', data: snapshot },
+      });
+      expect(open.execute).toHaveBeenCalledWith({
+        actor: accountant,
+        companyId: 'company-1',
+        exchangeId: 'ex-1',
+      });
+    });
+
+    it('downloads the file of an exchange as base64 text', async () => {
+      await expect(send('GET', `${BASE}/ex-1/file`)).resolves.toEqual({
+        status: 200,
+        payload: {
+          status: 200,
+          message: 'Success',
+          data: {
+            fileName: 'a.pdf',
+            mimeType: 'application/pdf',
+            contentBase64: 'SGk=',
+          },
+        },
+      });
+      expect(download.execute).toHaveBeenCalledWith({
+        actor: accountant,
+        companyId: 'company-1',
+        exchangeId: 'ex-1',
+      });
+    });
+
+    it('answers 403 DOCUMENT_INACCESSIBLE for an exchange not meant for it', async () => {
+      open.execute.mockRejectedValue(new Error('INACCESSIBLE_DOCUMENT'));
+
+      await expect(
+        send('POST', `${BASE}/ex-1/consultation`),
+      ).resolves.toEqual({
+        status: 403,
+        payload: { status: 403, message: 'INACCESSIBLE_DOCUMENT' },
+      });
+    });
+
+    it('cannot prepare, mark or transmit an exchange', async () => {
+      for (const [method, path] of [
+        ['POST', BASE],
+        ['POST', `${BASE}/ex-1/to-transmit`],
+        ['POST', `${BASE}/transmission`],
+      ] as const) {
+        expect((await send(method, path, {})).status).toBe(403);
+      }
+    });
+  });
+
+  describe('as an employee', () => {
+    beforeEach(() => {
+      actor = { ...employer, role: UserRole.EMPLOYEE };
+    });
+
+    it('cannot list, open nor download any exchange', async () => {
+      for (const [method, path] of [
+        ['GET', BASE],
+        ['POST', `${BASE}/ex-1/consultation`],
+        ['GET', `${BASE}/ex-1/file`],
+      ] as const) {
+        expect((await send(method, path)).status).toBe(403);
+      }
     });
   });
 });

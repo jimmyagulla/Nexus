@@ -1,14 +1,30 @@
 import { ReactNode } from 'react';
-import { Briefcase, LayoutDashboard, Settings } from 'lucide-react';
-import { AppRoutes } from '../../routes/app-routes';
-import { i18n } from '../../i18n/i18n';
+import {
+  Briefcase,
+  FileDown,
+  LayoutDashboard,
+  Settings,
+  type LucideIcon,
+} from 'lucide-react';
+import type {
+  NavigationEntryId,
+  NavigationEntryViewModel,
+} from '../../../../adapters/presenters/navigation.presenter';
 import { NavigationLink } from './NavigationLink';
 
+const ICONS: Record<NavigationEntryId, LucideIcon> = {
+  dashboard: LayoutDashboard,
+  settings: Settings,
+  cabinet: Briefcase,
+  receivedDocuments: FileDown,
+};
+
 interface LayoutProps {
+  entries: NavigationEntryViewModel[];
   children: ReactNode;
 }
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ entries, children }: LayoutProps) {
   return (
     <div className="flex h-screen bg-background text-foreground font-sans">
       <aside className="hidden md:flex flex-col w-72 bg-card border-r border-border">
@@ -18,21 +34,17 @@ export function Layout({ children }: LayoutProps) {
           </h1>
         </div>
         <nav className="flex-1 px-4 space-y-1">
-          <NavigationLink
-            to={AppRoutes.home}
-            icon={<LayoutDashboard className="h-5 w-5" />}
-            label={i18n.messages.navigation.dashboard}
-          />
-          <NavigationLink
-            to={AppRoutes.settings}
-            icon={<Settings className="h-5 w-5" />}
-            label={i18n.messages.navigation.settings}
-          />
-          <NavigationLink
-            to={AppRoutes.cabinet}
-            icon={<Briefcase className="h-5 w-5" />}
-            label={i18n.messages.navigation.cabinet}
-          />
+          {entries.map((entry) => {
+            const Icon = ICONS[entry.id];
+            return (
+              <NavigationLink
+                key={entry.id}
+                to={entry.to}
+                icon={<Icon className="h-5 w-5" />}
+                label={entry.label}
+              />
+            );
+          })}
         </nav>
       </aside>
       <main className="flex-1 overflow-y-auto p-8 bg-background">

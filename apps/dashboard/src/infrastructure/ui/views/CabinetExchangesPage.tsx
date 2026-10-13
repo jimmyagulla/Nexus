@@ -10,9 +10,13 @@ import { CabinetExchanges } from './CabinetExchanges';
 
 interface CabinetExchangesPageProps {
   deps: CabinetExchangeComposition;
+  onOpen: (exchangeId: string) => void;
 }
 
-export function CabinetExchangesPage({ deps }: CabinetExchangesPageProps) {
+export function CabinetExchangesPage({
+  deps,
+  onOpen,
+}: CabinetExchangesPageProps) {
   const exchanges = useListCabinetExchanges(deps);
   const create = useCreateCabinetExchangeDraft(deps);
   const mark = useMarkCabinetExchangeToTransmit(deps);
@@ -47,6 +51,7 @@ export function CabinetExchangesPage({ deps }: CabinetExchangesPageProps) {
       }
       onMarkToTransmit={(exchangeId) => mark.mutate(exchangeId)}
       onTransmit={(exchangeId) => transmit.mutate([exchangeId])}
+      onOpen={onOpen}
     />
   );
 }

@@ -15,6 +15,7 @@ const snapshot: CabinetExchangeSnapshot = {
   document: { fileName: 'a.pdf', mimeType: 'application/pdf', size: 2 },
   senderId: 'user-1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 const authorized = { headers: { Authorization: 'Bearer token' } };
@@ -149,5 +150,49 @@ describe('ApiCabinetExchangeGateway', () => {
     await expect(
       new ApiCabinetExchangeGateway(http).transmit('c1', ['ex-1'], 'token'),
     ).rejects.toThrow('TRANSMISSION_FAILED');
+  });
+
+  it('opens an exchange, which consults it', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'companies/c1/cabinet-exchanges/ex-1/consultation', {
+      status: 201,
+      data: snapshot,
+    });
+
+    await expect(
+      new ApiCabinetExchangeGateway(http).open('c1', 'ex-1', 'token'),
+    ).resolves.toEqual(snapshot);
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'companies/c1/cabinet-exchanges/ex-1/consultation',
+        data: undefined,
+        config: authorized,
+      },
+    ]);
+  });
+
+  it('downloads the file of an exchange, decoding its base64 content', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/cabinet-exchanges/ex-1/file', {
+      status: 200,
+      data: {
+        fileName: 'a.pdf',
+        mimeType: 'application/pdf',
+        contentBase64: 'SGk=',
+      },
+    });
+
+    await expect(
+      new ApiCabinetExchangeGateway(http).download('c1', 'ex-1', 'token'),
+    ).resolves.toEqual(file);
+    expect(http.calls).toEqual([
+      {
+        method: 'get',
+        url: 'companies/c1/cabinet-exchanges/ex-1/file',
+        data: undefined,
+        config: authorized,
+      },
+    ]);
   });
 });

@@ -37,3 +37,5 @@ export * from './read-models/to-cabinet-exchange-snapshot';
 export * from './services/require-company-employer';
 export * from './services/require-visible-exchange';
 export * from './services/complete-exchange';
+export * from './services/is-recipient';
+export * from './services/require-exchange-participant';

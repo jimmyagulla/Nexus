@@ -1,4 +1,4 @@
-import { createRoute } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { cabinetExchangeComposition } from '../../di';
 import { CabinetExchangesPage } from '../views/CabinetExchangesPage';
 import { rootRoute } from './__root';
@@ -11,5 +11,14 @@ export const cabinetRoute = createRoute({
 });
 
 function CabinetRoute() {
-  return <CabinetExchangesPage deps={cabinetExchangeComposition} />;
+  const navigate = useNavigate();
+
+  return (
+    <CabinetExchangesPage
+      deps={cabinetExchangeComposition}
+      onOpen={(exchangeId) =>
+        void navigate({ to: AppRoutes.exchange, params: { exchangeId } })
+      }
+    />
+  );
 }

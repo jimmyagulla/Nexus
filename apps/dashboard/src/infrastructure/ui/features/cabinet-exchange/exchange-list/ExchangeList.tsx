@@ -3,14 +3,16 @@ import { ExchangeCard } from './ExchangeCard';
 
 interface ExchangeListProps {
   exchanges: CabinetExchangeViewModel[];
-  onMarkToTransmit: (exchangeId: string) => void;
-  onTransmit: (exchangeId: string) => void;
+  onMarkToTransmit?: (exchangeId: string) => void;
+  onTransmit?: (exchangeId: string) => void;
+  onOpen?: (exchangeId: string) => void;
 }
 
 export function ExchangeList({
   exchanges,
   onMarkToTransmit,
   onTransmit,
+  onOpen,
 }: ExchangeListProps) {
   return (
     <ul>
@@ -20,6 +22,7 @@ export function ExchangeList({
           exchange={exchange}
           onMarkToTransmit={onMarkToTransmit}
           onTransmit={onTransmit}
+          onOpen={onOpen}
         />
       ))}
     </ul>

@@ -111,4 +111,57 @@ describe('CabinetExchange', () => {
     ]);
     expect(received.history[1]?.actorId).toBeNull();
   });
+
+  describe('opened by its recipient', () => {
+    const consulted = new Date('2026-10-07T08:00:00.000Z');
+    const later = new Date('2026-10-08T08:00:00.000Z');
+
+    function received(): CabinetExchange {
+      return readyDraft().markToTransmit().transmit('user-1', sent).receive(sent);
+    }
+
+    it('becomes Consulted on its first consultation', () => {
+      const opened = received().consult('cab-1', consulted);
+
+      expect(opened.status).toBe(ExchangeStatus.CONSULTED);
+      expect(opened.history.at(-1)).toEqual({
+        kind: ExchangeEventKind.CONSULTED,
+        actorId: 'cab-1',
+        occurredAt: consulted,
+        documentCount: 1,
+      });
+    });
+
+    it('remembers every later consultation without changing the status', () => {
+      const opened = received().consult('cab-1', consulted).consult('cab-1', later);
+
+      expect(opened.status).toBe(ExchangeStatus.CONSULTED);
+      expect(
+        opened.history.filter((event) => event.kind === ExchangeEventKind.CONSULTED),
+      ).toHaveLength(2);
+    });
+
+    it('dates the consultation by the first one', () => {
+      const opened = received().consult('cab-1', consulted).consult('cab-1', later);
+
+      expect(opened.firstConsultedAt()).toEqual(consulted);
+    });
+
+    it('has no consultation date before it is opened', () => {
+      expect(received().firstConsultedAt()).toBeNull();
+    });
+
+    it('is Consulted by a download too, which is remembered as such', () => {
+      const downloaded = received().download('cab-1', consulted);
+
+      expect(downloaded.status).toBe(ExchangeStatus.CONSULTED);
+      expect(downloaded.history.at(-1)?.kind).toBe(ExchangeEventKind.DOWNLOADED);
+    });
+
+    it('keeps the first consultation date when a download comes after it', () => {
+      const opened = received().consult('cab-1', consulted).download('cab-1', later);
+
+      expect(opened.firstConsultedAt()).toEqual(consulted);
+    });
+  });
 });

@@ -12,8 +12,10 @@ import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   ICreateCabinetExchangeDraft,
+  IDownloadCabinetExchangeFile,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
+  IOpenCabinetExchange,
   ITransmitCabinetExchanges,
 } from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
@@ -23,9 +25,11 @@ import { RolesGuard } from '../common/guards/roles/roles.guard';
 import {
   toCabinetExchangeResponse,
   toExchangeFileInput,
+  toExchangeFileResponse,
 } from './cabinet-exchange.mapper';
 import { CabinetExchangeResponseDto } from './dto/cabinet-exchange-response.dto';
 import { CreateCabinetExchangeDraftRequestDto } from './dto/create-cabinet-exchange-draft-request.dto';
+import { ExchangeFileResponseDto } from './dto/exchange-file-response.dto';
 import { MarkCabinetExchangeToTransmitRequestDto } from './dto/mark-cabinet-exchange-to-transmit-request.dto';
 import { TransmitCabinetExchangesRequestDto } from './dto/transmit-cabinet-exchanges-request.dto';
 
@@ -44,6 +48,10 @@ export class CabinetExchangeController {
     private readonly transmit: ITransmitCabinetExchanges,
     @Inject(IListCabinetExchanges)
     private readonly list: IListCabinetExchanges,
+    @Inject(IOpenCabinetExchange)
+    private readonly open: IOpenCabinetExchange,
+    @Inject(IDownloadCabinetExchangeFile)
+    private readonly download: IDownloadCabinetExchangeFile,
   ) {}
 
   @Post()
@@ -96,12 +104,37 @@ export class CabinetExchangeController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List the exchanges of the company' })
+  @Roles(UserRole.EMPLOYER, UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'List the exchanges the actor may see' })
   async listAll(
     @Actor() actor: ActorContext,
     @Param('companyId') companyId: string,
   ): Promise<CabinetExchangeResponseDto[]> {
     const snapshots = await this.list.execute({ actor, companyId });
     return snapshots.map(toCabinetExchangeResponse);
+  }
+
+  @Post(API_ROUTES.cabinetExchanges.consultation)
+  @Roles(UserRole.EMPLOYER, UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'Open an exchange, which consults it' })
+  async consult(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('exchangeId') exchangeId: string,
+  ): Promise<CabinetExchangeResponseDto> {
+    const snapshot = await this.open.execute({ actor, companyId, exchangeId });
+    return toCabinetExchangeResponse(snapshot);
+  }
+
+  @Get(API_ROUTES.cabinetExchanges.file)
+  @Roles(UserRole.EMPLOYER, UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'Download the file of an exchange' })
+  async downloadFile(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('exchangeId') exchangeId: string,
+  ): Promise<ExchangeFileResponseDto> {
+    const file = await this.download.execute({ actor, companyId, exchangeId });
+    return toExchangeFileResponse(file);
   }
 }

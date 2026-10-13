@@ -13,6 +13,7 @@ export function toCabinetExchangeSnapshot(
     document: exchange.document,
     senderId: exchange.senderId,
     date: dateOf(exchange).toISOString(),
+    consultedAt: exchange.firstConsultedAt()?.toISOString() ?? null,
   };
 }
 

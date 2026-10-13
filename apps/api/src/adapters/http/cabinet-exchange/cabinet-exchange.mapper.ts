@@ -4,6 +4,7 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { CabinetExchangeResponseDto } from './dto/cabinet-exchange-response.dto';
 import { ExchangeFileRequestDto } from './dto/exchange-file-request.dto';
+import { ExchangeFileResponseDto } from './dto/exchange-file-response.dto';
 
 export function toCabinetExchangeResponse(
   snapshot: CabinetExchangeSnapshot,
@@ -16,6 +17,7 @@ export function toCabinetExchangeResponse(
     document: snapshot.document === null ? null : { ...snapshot.document },
     senderId: snapshot.senderId,
     date: snapshot.date,
+    consultedAt: snapshot.consultedAt,
   };
 }
 
@@ -29,5 +31,15 @@ export function toExchangeFileInput(
     fileName: file.fileName,
     mimeType: file.mimeType,
     content: new Uint8Array(Buffer.from(file.contentBase64, 'base64')),
+  };
+}
+
+export function toExchangeFileResponse(
+  file: ExchangeFileInput,
+): ExchangeFileResponseDto {
+  return {
+    fileName: file.fileName,
+    mimeType: file.mimeType,
+    contentBase64: Buffer.from(file.content).toString('base64'),
   };
 }

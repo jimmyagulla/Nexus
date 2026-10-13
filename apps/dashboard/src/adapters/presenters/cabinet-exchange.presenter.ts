@@ -7,6 +7,11 @@ import {
   type I18n,
 } from '../../infrastructure/ui/i18n/i18n';
 
+const OPENABLE: readonly ExchangeStatus[] = [
+  ExchangeStatus.RECEIVED,
+  ExchangeStatus.CONSULTED,
+];
+
 export interface CabinetExchangeViewModel {
   id: string;
   category: string;
@@ -14,8 +19,10 @@ export interface CabinetExchangeViewModel {
   direction: string;
   status: string;
   date: string;
+  consultedOn: string | null;
   canMarkToTransmit: boolean;
   canTransmit: boolean;
+  canOpen: boolean;
 }
 
 export class CabinetExchangePresenter {
@@ -36,8 +43,11 @@ export class CabinetExchangePresenter {
       direction: messages.directions[snapshot.direction],
       status: messages.statuses[snapshot.status],
       date: this.formatDate(snapshot.date),
+      consultedOn:
+        snapshot.consultedAt === null ? null : this.formatDate(snapshot.consultedAt),
       canMarkToTransmit: snapshot.status === ExchangeStatus.DRAFT,
       canTransmit: snapshot.status === ExchangeStatus.TO_TRANSMIT,
+      canOpen: OPENABLE.includes(snapshot.status),
     };
   }
 

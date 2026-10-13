@@ -24,6 +24,16 @@ export interface ICabinetExchangeGateway {
     companyId: string,
     token: string,
   ): Promise<readonly CabinetExchangeSnapshot[]>;
+  open(
+    companyId: string,
+    exchangeId: string,
+    token: string,
+  ): Promise<CabinetExchangeSnapshot>;
+  download(
+    companyId: string,
+    exchangeId: string,
+    token: string,
+  ): Promise<ExchangeFileInput>;
 }
 
 export const ICabinetExchangeGateway = Symbol('ICabinetExchangeGateway');

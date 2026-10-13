@@ -27,6 +27,7 @@ const listed: CabinetExchangeSnapshot = {
   document: null,
   senderId: 'user-1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 function useCaseFor(

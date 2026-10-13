@@ -26,4 +26,7 @@ export class CabinetExchangeResponseDto {
 
   @ApiProperty()
   date!: string;
+
+  @ApiProperty({ nullable: true, type: String })
+  consultedAt!: string | null;
 }

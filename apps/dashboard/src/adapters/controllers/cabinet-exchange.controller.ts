@@ -4,8 +4,10 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   ICreateCabinetExchangeDraftFromSession,
+  IDownloadCabinetExchangeFileFromSession,
   IListCabinetExchangesFromSession,
   IMarkCabinetExchangeToTransmitFromSession,
+  IOpenCabinetExchangeFromSession,
   ITransmitCabinetExchangesFromSession,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -15,6 +17,8 @@ export class CabinetExchangeController {
     private readonly markToTransmitFromSession: IMarkCabinetExchangeToTransmitFromSession,
     private readonly transmitFromSession: ITransmitCabinetExchangesFromSession,
     private readonly listFromSession: IListCabinetExchangesFromSession,
+    private readonly openFromSession: IOpenCabinetExchangeFromSession,
+    private readonly downloadFromSession: IDownloadCabinetExchangeFileFromSession,
   ) {}
 
   createDraft(input: {
@@ -36,5 +40,13 @@ export class CabinetExchangeController {
 
   list(): Promise<readonly CabinetExchangeSnapshot[]> {
     return this.listFromSession.execute();
+  }
+
+  open(exchangeId: string): Promise<CabinetExchangeSnapshot> {
+    return this.openFromSession.execute(exchangeId);
+  }
+
+  download(exchangeId: string): Promise<ExchangeFileInput> {
+    return this.downloadFromSession.execute(exchangeId);
   }
 }

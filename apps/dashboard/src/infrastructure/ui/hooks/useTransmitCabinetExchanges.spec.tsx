@@ -25,6 +25,7 @@ const ready: CabinetExchangeSnapshot = {
   document: { fileName: 'a.pdf', mimeType: 'application/pdf', size: 2 },
   senderId: 'u1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 const received = { ...ready, status: ExchangeStatus.RECEIVED };
 

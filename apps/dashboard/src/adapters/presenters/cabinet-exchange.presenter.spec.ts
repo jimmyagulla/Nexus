@@ -15,6 +15,7 @@ const draft: CabinetExchangeSnapshot = {
   document: { fileName: 'releve.pdf', mimeType: 'application/pdf', size: 2 },
   senderId: 'user-1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 const presenter = new CabinetExchangePresenter();
@@ -29,8 +30,10 @@ describe('CabinetExchangePresenter', () => {
         direction: 'Entreprise vers cabinet',
         status: 'Brouillon',
         date: '06/10/2026',
+        consultedOn: null,
         canMarkToTransmit: true,
         canTransmit: false,
+        canOpen: false,
       },
     ]);
   });
@@ -90,5 +93,29 @@ describe('CabinetExchangePresenter', () => {
     ]);
 
     expect(incoming?.direction).toBe('Cabinet vers entreprise');
+  });
+
+  it('lets the actor open an exchange once it is received or consulted', () => {
+    const [received, consulted, draftOnly] = presenter.present([
+      { ...draft, status: ExchangeStatus.RECEIVED },
+      { ...draft, status: ExchangeStatus.CONSULTED },
+      draft,
+    ]);
+
+    expect(received?.canOpen).toBe(true);
+    expect(consulted?.canOpen).toBe(true);
+    expect(draftOnly?.canOpen).toBe(false);
+  });
+
+  it('dates the first consultation', () => {
+    const [consulted] = presenter.present([
+      {
+        ...draft,
+        status: ExchangeStatus.CONSULTED,
+        consultedAt: '2026-10-08T07:00:00.000Z',
+      },
+    ]);
+
+    expect(consulted?.consultedOn).toBe('08/10/2026');
   });
 });

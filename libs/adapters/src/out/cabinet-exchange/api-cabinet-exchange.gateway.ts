@@ -4,6 +4,7 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
+  decodeBase64,
   encodeBase64,
   unwrapResponse,
 } from '@hexagonal-monorepo-template/infrastructure';
@@ -83,6 +84,44 @@ export class ApiCabinetExchangeGateway implements ICabinetExchangeGateway {
         this.authorized(token),
       ),
     );
+  }
+
+  async open(
+    companyId: string,
+    exchangeId: string,
+    token: string,
+  ): Promise<CabinetExchangeSnapshot> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<CabinetExchangeSnapshot>>(
+        cabinetExchangePath(API_ROUTES.cabinetExchanges.consultation, {
+          companyId,
+          exchangeId,
+        }),
+        undefined,
+        this.authorized(token),
+      ),
+    );
+  }
+
+  async download(
+    companyId: string,
+    exchangeId: string,
+    token: string,
+  ): Promise<ExchangeFileInput> {
+    const payload = unwrapResponse(
+      await this.httpClient.get<ApiResponse<FilePayload>>(
+        cabinetExchangePath(API_ROUTES.cabinetExchanges.file, {
+          companyId,
+          exchangeId,
+        }),
+        this.authorized(token),
+      ),
+    );
+    return {
+      fileName: payload.fileName,
+      mimeType: payload.mimeType,
+      content: decodeBase64(payload.contentBase64),
+    };
   }
 
   private toDraftPayload(input: DraftInput): {

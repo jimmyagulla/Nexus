@@ -27,6 +27,7 @@ const received: CabinetExchangeSnapshot = {
   document: { fileName: 'a.pdf', mimeType: 'application/pdf', size: 1 },
   senderId: 'user-1',
   date: '2026-10-06T10:00:00.000Z',
+  consultedAt: null,
 };
 
 function useCaseFor(

@@ -18,3 +18,8 @@ export * from './use-cases/cabinet-exchange/create-cabinet-exchange-draft-from-s
 export * from './use-cases/cabinet-exchange/mark-cabinet-exchange-to-transmit-from-session.use-case';
 export * from './use-cases/cabinet-exchange/transmit-cabinet-exchanges-from-session.use-case';
 export * from './use-cases/cabinet-exchange/list-cabinet-exchanges-from-session.use-case';
+export * from './use-cases/cabinet-exchange/open-cabinet-exchange.use-case';
+export * from './use-cases/cabinet-exchange/download-cabinet-exchange-file.use-case';
+export * from './use-cases/cabinet-exchange/open-cabinet-exchange-from-session.use-case';
+export * from './use-cases/cabinet-exchange/download-cabinet-exchange-file-from-session.use-case';
+export * from './use-cases/session/get-current-role-from-session.use-case';

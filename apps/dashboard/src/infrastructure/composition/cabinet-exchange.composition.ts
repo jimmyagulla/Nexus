@@ -1,7 +1,9 @@
 import {
   CreateCabinetExchangeDraftFromSessionUseCase,
+  DownloadCabinetExchangeFileFromSessionUseCase,
   ListCabinetExchangesFromSessionUseCase,
   MarkCabinetExchangeToTransmitFromSessionUseCase,
+  OpenCabinetExchangeFromSessionUseCase,
   TransmitCabinetExchangesFromSessionUseCase,
 } from '@hexagonal-monorepo-template/application';
 import { ApiCabinetExchangeGateway } from '@hexagonal-monorepo-template/adapters';
@@ -31,6 +33,8 @@ export function createCabinetExchangeComposition(
       new MarkCabinetExchangeToTransmitFromSessionUseCase(sessions, exchanges),
       new TransmitCabinetExchangesFromSessionUseCase(sessions, exchanges),
       new ListCabinetExchangesFromSessionUseCase(sessions, exchanges),
+      new OpenCabinetExchangeFromSessionUseCase(sessions, exchanges),
+      new DownloadCabinetExchangeFileFromSessionUseCase(sessions, exchanges),
     ),
     presenter: new CabinetExchangePresenter(),
     errorPresenter: new ErrorPresenter(),

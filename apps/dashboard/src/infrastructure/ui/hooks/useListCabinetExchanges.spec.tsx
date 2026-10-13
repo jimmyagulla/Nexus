@@ -22,6 +22,7 @@ const snapshot: CabinetExchangeSnapshot = {
   document: null,
   senderId: 'u1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 
 function render(reply: unknown) {

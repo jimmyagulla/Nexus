@@ -10,4 +10,5 @@ export type CabinetExchangeSnapshot = {
   document: ExchangeDocument | null;
   senderId: string;
   date: string;
+  consultedAt: string | null;
 };

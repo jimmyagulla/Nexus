@@ -16,6 +16,7 @@ interface CabinetExchangesProps {
   onCreate: (values: NewExchangeValues) => Promise<boolean>;
   onMarkToTransmit: (exchangeId: string) => void;
   onTransmit: (exchangeId: string) => void;
+  onOpen: (exchangeId: string) => void;
 }
 
 export function CabinetExchanges({
@@ -27,6 +28,7 @@ export function CabinetExchanges({
   onCreate,
   onMarkToTransmit,
   onTransmit,
+  onOpen,
 }: CabinetExchangesProps) {
   return (
     <div className="space-y-8">
@@ -43,6 +45,7 @@ export function CabinetExchanges({
         exchanges={exchanges}
         onMarkToTransmit={onMarkToTransmit}
         onTransmit={onTransmit}
+        onOpen={onOpen}
       />
     </div>
   );

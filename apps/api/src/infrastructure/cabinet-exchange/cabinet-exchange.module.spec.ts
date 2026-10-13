@@ -8,9 +8,11 @@ import {
 import {
   ICabinetExchangeRepository,
   ICreateCabinetExchangeDraft,
+  IDownloadCabinetExchangeFile,
   IExchangeFileStorage,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
+  IOpenCabinetExchange,
   ITransmitCabinetExchanges,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaCabinetExchangeRepository } from '../../adapters/out/cabinet-exchange/prisma-cabinet-exchange.repository';
@@ -63,6 +65,8 @@ describe('CabinetExchangeModule', () => {
     expect(moduleRef.get(IMarkCabinetExchangeToTransmit)).toBeDefined();
     expect(moduleRef.get(ITransmitCabinetExchanges)).toBeDefined();
     expect(moduleRef.get(IListCabinetExchanges)).toBeDefined();
+    expect(moduleRef.get(IOpenCabinetExchange)).toBeDefined();
+    expect(moduleRef.get(IDownloadCabinetExchangeFile)).toBeDefined();
   });
 
   it('stores exchanges and their files in Postgres when the mode and the client are both set', async () => {

@@ -11,8 +11,10 @@ function exchange(id: string): CabinetExchangeViewModel {
     direction: 'Entreprise vers cabinet',
     status: 'Brouillon',
     date: '06/10/2026',
+    consultedOn: null,
     canMarkToTransmit: true,
     canTransmit: false,
+    canOpen: false,
   };
 }
 

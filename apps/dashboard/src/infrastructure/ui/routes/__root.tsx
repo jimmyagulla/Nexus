@@ -1,13 +1,14 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { Layout } from '../common/navigation/Layout';
+import { navigationComposition } from '../../di';
+import { AppShell } from '../common/navigation/AppShell';
 import { Toaster } from '../shared/toaster';
 
 export const rootRoute = createRootRoute({
   component: () => (
     <>
-      <Layout>
+      <AppShell deps={navigationComposition}>
         <Outlet />
-      </Layout>
+      </AppShell>
       <Toaster />
     </>
   ),

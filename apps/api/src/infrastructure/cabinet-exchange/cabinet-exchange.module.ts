@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import {
   CreateCabinetExchangeDraftUseCase,
+  DownloadCabinetExchangeFileUseCase,
   ListCabinetExchangesUseCase,
   MarkCabinetExchangeToTransmitUseCase,
+  OpenCabinetExchangeUseCase,
   TransmitCabinetExchangesUseCase,
 } from '@hexagonal-monorepo-template/application';
 import {
@@ -14,9 +16,11 @@ import {
   ICabinetExchangeRepository,
   IClock,
   ICreateCabinetExchangeDraft,
+  IDownloadCabinetExchangeFile,
   IExchangeFileStorage,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
+  IOpenCabinetExchange,
   ITransmitCabinetExchanges,
 } from '@hexagonal-monorepo-template/ports';
 import { CabinetExchangeController } from '../../adapters/http/cabinet-exchange/cabinet-exchange.controller';
@@ -90,9 +94,41 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
     },
     {
       provide: IListCabinetExchanges,
-      useFactory: (exchanges: ICabinetExchangeRepository) =>
-        new ListCabinetExchangesUseCase(exchanges),
-      inject: [ICabinetExchangeRepository],
+      useFactory: (
+        exchanges: ICabinetExchangeRepository,
+        connections: ICabinetConnectionRepository,
+      ) => new ListCabinetExchangesUseCase(exchanges, connections),
+      inject: [ICabinetExchangeRepository, ICabinetConnectionRepository],
+    },
+    {
+      provide: IOpenCabinetExchange,
+      useFactory: (
+        exchanges: ICabinetExchangeRepository,
+        connections: ICabinetConnectionRepository,
+        clock: IClock,
+      ) => new OpenCabinetExchangeUseCase(exchanges, connections, clock),
+      inject: [ICabinetExchangeRepository, ICabinetConnectionRepository, IClock],
+    },
+    {
+      provide: IDownloadCabinetExchangeFile,
+      useFactory: (
+        exchanges: ICabinetExchangeRepository,
+        files: IExchangeFileStorage,
+        connections: ICabinetConnectionRepository,
+        clock: IClock,
+      ) =>
+        new DownloadCabinetExchangeFileUseCase(
+          exchanges,
+          files,
+          connections,
+          clock,
+        ),
+      inject: [
+        ICabinetExchangeRepository,
+        IExchangeFileStorage,
+        ICabinetConnectionRepository,
+        IClock,
+      ],
     },
   ],
 })

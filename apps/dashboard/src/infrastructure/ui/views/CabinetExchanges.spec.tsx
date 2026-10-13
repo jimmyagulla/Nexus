@@ -11,8 +11,10 @@ const draft: CabinetExchangeViewModel = {
   direction: 'Entreprise vers cabinet',
   status: 'Brouillon',
   date: '06/10/2026',
+  consultedOn: null,
   canMarkToTransmit: true,
   canTransmit: false,
+  canOpen: false,
 };
 
 function renderView(
@@ -24,6 +26,7 @@ function renderView(
 ) {
   const marked: string[] = [];
   const transmitted: string[] = [];
+  const opened: string[] = [];
 
   render(
     <CabinetExchanges
@@ -35,10 +38,11 @@ function renderView(
       onCreate={async () => true}
       onMarkToTransmit={(id) => marked.push(id)}
       onTransmit={(id) => transmitted.push(id)}
+      onOpen={(id) => opened.push(id)}
     />,
   );
 
-  return { marked, transmitted };
+  return { marked, transmitted, opened };
 }
 
 describe('CabinetExchanges', () => {
@@ -104,5 +108,19 @@ describe('CabinetExchanges', () => {
     expect(screen.getByRole('status').textContent).toBe(
       i18n.messages.cabinet.transmitted,
     );
+  });
+
+  it('relays the request to open a received exchange', () => {
+    const { opened } = renderView({
+      exchanges: [
+        { ...draft, canMarkToTransmit: false, status: 'Reçu', canOpen: true },
+      ],
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: i18n.messages.cabinet.open }),
+    );
+
+    expect(opened).toEqual(['ex-1']);
   });
 });

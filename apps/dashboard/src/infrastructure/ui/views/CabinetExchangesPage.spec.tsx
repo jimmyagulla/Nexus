@@ -23,13 +23,17 @@ const draft: CabinetExchangeSnapshot = {
   document: { fileName: 'releve.pdf', mimeType: 'application/pdf', size: 2 },
   senderId: 'u1',
   date: '2026-10-06T09:00:00.000Z',
+  consultedAt: null,
 };
 const ready = { ...draft, status: ExchangeStatus.TO_TRANSMIT };
 const received = { ...draft, status: ExchangeStatus.RECEIVED };
 
 const BASE = 'companies/c1/cabinet-exchanges';
 
-function setup(listed: CabinetExchangeSnapshot[] | Error) {
+function setup(
+  listed: CabinetExchangeSnapshot[] | Error,
+  opened: string[] = [],
+) {
   const http = new InMemoryHttpClient();
   if (listed instanceof Error) {
     http.reject('get', BASE, listed);
@@ -49,7 +53,7 @@ function setup(listed: CabinetExchangeSnapshot[] | Error) {
   });
   render(
     <QueryClientProvider client={client}>
-      <CabinetExchangesPage deps={deps} />
+      <CabinetExchangesPage deps={deps} onOpen={(id) => opened.push(id)} />
     </QueryClientProvider>,
   );
   return http;
@@ -202,5 +206,16 @@ describe('CabinetExchangesPage', () => {
     expect(
       within(screen.getByRole('dialog')).getByRole('alert').textContent,
     ).toBe(i18n.messages.errors.INVALID_FILE);
+  });
+
+  it('opens a received exchange', async () => {
+    const opened: string[] = [];
+    setup([received], opened);
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: i18n.messages.cabinet.open }),
+    );
+
+    expect(opened).toEqual(['ex-1']);
   });
 });

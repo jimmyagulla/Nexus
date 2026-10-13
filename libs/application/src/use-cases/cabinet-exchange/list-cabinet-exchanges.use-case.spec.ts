@@ -1,8 +1,15 @@
-import { InMemoryCabinetExchangeRepository } from '@hexagonal-monorepo-template/adapters';
+import {
+  InMemoryCabinetConnectionRepository,
+  InMemoryCabinetExchangeRepository,
+} from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
+  CabinetConnection,
+  CabinetConnectionStatus,
   CabinetExchange,
   ErrorCode,
+  ExchangeCategory,
+  ExchangeFile,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { ListCabinetExchangesUseCase } from './list-cabinet-exchanges.use-case';
@@ -14,6 +21,37 @@ const employer: ActorContext = {
 };
 
 const day = (date: string) => new Date(`${date}T09:00:00.000Z`);
+
+const accountant: ActorContext = {
+  userId: 'cab-1',
+  companyId: 'c1',
+  role: UserRole.ACCOUNTANT,
+};
+
+function readyExchange(id: string, companyId = 'c1'): CabinetExchange {
+  return CabinetExchange.draft(id, companyId, 'user-1', day('2026-10-01'))
+    .withCategory(ExchangeCategory.parse('Facture'))
+    .withDocument(ExchangeFile.of('a.pdf', 'application/pdf', new Uint8Array([1])))
+    .markToTransmit();
+}
+
+async function buildForCabinet(
+  status: CabinetConnectionStatus | null = CabinetConnectionStatus.CONNECTED,
+) {
+  const exchanges = new InMemoryCabinetExchangeRepository();
+  const connections = new InMemoryCabinetConnectionRepository();
+  if (status !== null) {
+    await connections.save(new CabinetConnection('c1', status));
+  }
+  const at = day('2026-10-02');
+  await exchanges.save(CabinetExchange.draft('draft', 'c1', 'user-1', at));
+  await exchanges.save(readyExchange('ready'));
+  await exchanges.save(readyExchange('received').transmit('user-1', at).receive(at));
+  await exchanges.save(
+    readyExchange('other-company', 'c2').transmit('user-9', at).receive(at),
+  );
+  return new ListCabinetExchangesUseCase(exchanges, connections);
+}
 
 async function build() {
   const exchanges = new InMemoryCabinetExchangeRepository();
@@ -29,7 +67,10 @@ async function build() {
   await exchanges.save(
     CabinetExchange.draft('stranger', 'c2', 'user-9', day('2026-10-03')),
   );
-  return new ListCabinetExchangesUseCase(exchanges);
+  return new ListCabinetExchangesUseCase(
+    exchanges,
+    new InMemoryCabinetConnectionRepository(),
+  );
 }
 
 describe('ListCabinetExchangesUseCase', () => {
@@ -68,6 +109,7 @@ describe('ListCabinetExchangesUseCase', () => {
   it('lists nothing for a company that exchanged nothing', async () => {
     const useCase = new ListCabinetExchangesUseCase(
       new InMemoryCabinetExchangeRepository(),
+      new InMemoryCabinetConnectionRepository(),
     );
 
     await expect(
@@ -84,5 +126,45 @@ describe('ListCabinetExchangesUseCase', () => {
         companyId: 'c1',
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  describe('for the cabinet', () => {
+    it('lists what it received, nothing that is still on the company side', async () => {
+      const useCase = await buildForCabinet();
+
+      const listed = await useCase.execute({
+        actor: accountant,
+        companyId: 'c1',
+      });
+
+      expect(listed.map((snapshot) => snapshot.id)).toEqual(['received']);
+    });
+
+    it('lists nothing when the cabinet is revoked', async () => {
+      const useCase = await buildForCabinet(CabinetConnectionStatus.REVOKED);
+
+      await expect(
+        useCase.execute({ actor: accountant, companyId: 'c1' }),
+      ).resolves.toEqual([]);
+    });
+
+    it('lists nothing when the cabinet was never connected', async () => {
+      const useCase = await buildForCabinet(null);
+
+      await expect(
+        useCase.execute({ actor: accountant, companyId: 'c1' }),
+      ).resolves.toEqual([]);
+    });
+
+    it('refuses the cabinet of another company', async () => {
+      const useCase = await buildForCabinet();
+
+      await expect(
+        useCase.execute({
+          actor: { ...accountant, companyId: 'c2' },
+          companyId: 'c1',
+        }),
+      ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
+    });
   });
 });
