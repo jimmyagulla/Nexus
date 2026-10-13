@@ -1,4 +1,9 @@
 export const API_ROUTES = {
+  accounts: {
+    base: 'accounts',
+    activation: 'activation',
+    signIn: 'sign-in',
+  },
   companies: {
     base: 'companies',
     settings: ':companyId/settings',

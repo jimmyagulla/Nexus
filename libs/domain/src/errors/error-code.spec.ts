@@ -5,6 +5,8 @@ describe('isErrorCode', () => {
     expect(isErrorCode('ACCESS_DENIED')).toBe(true);
     expect(isErrorCode('REQUIRED_INFORMATION')).toBe(true);
     expect(isErrorCode('POTENTIAL_DUPLICATE')).toBe(true);
+    expect(isErrorCode('INVITATION_INVALID')).toBe(true);
+    expect(isErrorCode('ACCOUNT_LOCKED')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {

@@ -8,6 +8,12 @@ import { ErrorPresenter } from './error.presenter';
 const presenter = new ErrorPresenter();
 
 describe('ErrorPresenter', () => {
+  it('maps ACCOUNT_LOCKED to the french phrase', () => {
+    expect(presenter.present(new Error(ErrorCode.ACCOUNT_LOCKED))).toBe(
+      i18n.messages.errors.ACCOUNT_LOCKED,
+    );
+  });
+
   it('maps ACCESS_DENIED to the french phrase', () => {
     expect(presenter.present(new Error(ErrorCode.ACCESS_DENIED))).toBe(
       i18n.messages.errors.ACCESS_DENIED,

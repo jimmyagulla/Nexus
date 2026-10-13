@@ -62,6 +62,13 @@ describe('ApiExceptionFilter', () => {
     });
   });
 
+  it('maps ACCOUNT_LOCKED domain errors to 403', () => {
+    expect(sendThrough(new Error('ACCOUNT_LOCKED'))).toEqual({
+      status: 403,
+      body: { status: 403, message: 'ACCOUNT_LOCKED' },
+    });
+  });
+
   it('maps other domain errors to 400', () => {
     expect(sendThrough(new Error('REQUIRED_INFORMATION'))).toEqual({
       status: 400,

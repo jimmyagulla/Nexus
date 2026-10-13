@@ -9,6 +9,7 @@ import { API_CONFIG, loadApiConfig, type ApiConfig } from './config/load-api-con
 import { SupabaseJwtVerifier } from '../adapters/out/auth/supabase-jwt-verifier';
 import { DenyAllJwtVerifier } from '../adapters/out/auth/deny-all-jwt-verifier';
 import { ApiConfigModule } from './config/api-config.module';
+import { AccountModule } from './account/account.module';
 import { AuditModule } from './audit/audit.module';
 import { ClockModule } from './clock/clock.module';
 import { CompanyModule } from './company/company.module';
@@ -24,6 +25,7 @@ const persistence = loadApiConfig().persistence;
     ...(persistence === 'postgres' ? [PrismaModule] : []),
     ClockModule,
     AuditModule,
+    AccountModule,
     CompanyModule,
     CompanySettingsModule,
     CompanyPublicHolidaysModule,

@@ -32,9 +32,24 @@ export const en = {
     FRIDAY: 'Friday',
     SATURDAY: 'Saturday',
   },
+  signIn: {
+    title: 'Sign in',
+    identifier: 'Identifier',
+    secret: 'Secret',
+    submit: 'Sign in',
+  },
+  activation: {
+    title: 'Activate your access',
+    secret: 'Secret',
+    submit: 'Activate',
+    opened: 'Your workspace is open.',
+  },
   errors: {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.INVITATION_INVALID]: 'This activation link is no longer usable.',
+    [ErrorCode.ACCOUNT_LOCKED]:
+      'Sign-in is locked. An employer must restore access.',
   },
 } as const;

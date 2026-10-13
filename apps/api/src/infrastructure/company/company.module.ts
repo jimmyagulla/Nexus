@@ -9,6 +9,7 @@ import {
   localDevCompany,
 } from '@hexagonal-monorepo-template/adapters';
 import {
+  IAccountRepository,
   IAuditLogRepository,
   IClock,
   ICompanyIdentityBinder,
@@ -19,12 +20,13 @@ import {
 import { CompanyController } from '../../adapters/http/company/company.controller';
 import { PrismaCompanyRepository } from '../../adapters/out/company/prisma-company.repository';
 import { SupabaseCompanyIdentityBinder } from '../../adapters/out/identity/supabase-company-identity-binder';
+import { AccountModule } from '../account/account.module';
 import { AuditModule } from '../audit/audit.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
-  imports: [AuditModule],
+  imports: [AuditModule, AccountModule],
   controllers: [CompanyController],
   providers: [
     {
@@ -64,8 +66,9 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: (
         companies: ICompanyRepository,
         identity: ICompanyIdentityBinder,
-      ) => new CreateCompanyUseCase(companies, identity),
-      inject: [ICompanyRepository, ICompanyIdentityBinder],
+        accounts: IAccountRepository,
+      ) => new CreateCompanyUseCase(companies, identity, accounts),
+      inject: [ICompanyRepository, ICompanyIdentityBinder, IAccountRepository],
     },
     {
       provide: IRenameCompany,
