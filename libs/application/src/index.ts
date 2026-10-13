@@ -1,3 +1,7 @@
+export * from './use-cases/presence/open-presence.use-case';
+export * from './use-cases/presence/list-presences.use-case';
+export * from './use-cases/presence/list-presences-from-session.use-case';
+export * from './use-cases/presence/open-presence-from-session.use-case';
 export * from './use-cases/company/create-company.use-case';
 export * from './use-cases/company/rename-company.use-case';
 export * from './use-cases/company/rename-company-from-session.use-case';

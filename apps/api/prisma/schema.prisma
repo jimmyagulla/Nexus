@@ -42,6 +42,7 @@ model Company {
   nonWorkingWeekdays   CompanyNonWorkingWeekday[]
   publicHolidays       CompanyPublicHoliday[]
   auditEvents          AuditEvent[]
+  presences            Presence[]
 }
 
 model CompanyNonWorkingWeekday {
@@ -68,6 +69,17 @@ model CompanyPublicHoliday {
   publicHoliday   PublicHoliday @relation(fields: [publicHolidayId], references: [id], onDelete: Restrict)
 
   @@id([companyId, publicHolidayId])
+}
+
+model Presence {
+  id         String  @id @default(uuid())
+  companyId  String
+  employeeId String
+  month      String
+  workedDays Int
+  company    Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, employeeId, month])
 }
 
 model AuditEvent {

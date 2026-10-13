@@ -158,6 +158,33 @@ describe('dependency injection entry point', () => {
     ]);
   });
 
+  it('exports the presence controller and presenters wired on the shared client', async () => {
+    const di = await import('./di');
+
+    expect(di.presenceController).toBe(di.presenceComposition.controller);
+    expect(di.presencePresenter).toBe(di.presenceComposition.presenter);
+    expect(di.presenceErrorPresenter).toBe(
+      di.presenceComposition.errorPresenter,
+    );
+  });
+
+  it('wires a presence controller that reaches the configured api for the session company', async () => {
+    transport.body = {
+      status: 200,
+      data: { presences: [], employees: [], canManage: true },
+    };
+    const di = await import('./di');
+
+    await di.presenceComposition.controller.list();
+
+    expect(transport.calls).toEqual([
+      {
+        url: 'https://api.nexus.test/api/companies/c1/presences',
+        authorization: 'Bearer jwt',
+      },
+    ]);
+  });
+
   it('refuses to reach the api when nobody is signed in', async () => {
     supabase.session = null;
     const deps = await companySettings();

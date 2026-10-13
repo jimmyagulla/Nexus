@@ -4,6 +4,7 @@ export const fr = {
   navigation: {
     dashboard: 'Tableau de bord',
     settings: 'Paramètres',
+    presences: 'Présences',
   },
   loading: 'Chargement…',
   home: {
@@ -22,6 +23,29 @@ export const fr = {
     removeHoliday: 'Retirer',
     date: 'Date',
     label: 'Libellé',
+  },
+  presences: {
+    title: 'Présences',
+    openMonth: 'Ouvrir un mois',
+    openMonthTitle: "Ouvrir le mois d'un salarié",
+    employee: 'Salarié',
+    month: 'Mois',
+    workedDays: 'Jours travaillés',
+    open: 'Ouvrir',
+  },
+  months: {
+    '01': 'Janvier',
+    '02': 'Février',
+    '03': 'Mars',
+    '04': 'Avril',
+    '05': 'Mai',
+    '06': 'Juin',
+    '07': 'Juillet',
+    '08': 'Août',
+    '09': 'Septembre',
+    '10': 'Octobre',
+    '11': 'Novembre',
+    '12': 'Décembre',
   },
   days: {
     SUNDAY: 'Dimanche',

@@ -5,6 +5,8 @@ import {
   ICreateCompany,
   IGetCompanySettings,
   IJwtVerifier,
+  IListPresences,
+  IOpenPresence,
   IRemoveCompanyPublicHoliday,
   IRenameCompany,
   ISetNonWorkingWeekdays,
@@ -82,6 +84,15 @@ describe('AppModule', () => {
     expect(moduleRef.get(IAddCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IUpdateCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IRemoveCompanyPublicHoliday)).toBeDefined();
+  });
+
+  it('wires the presence in ports', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    expect(moduleRef.get(IOpenPresence)).toBeDefined();
+    expect(moduleRef.get(IListPresences)).toBeDefined();
   });
 
   it('registers SuccessResponseInterceptor as APP_INTERCEPTOR', () => {

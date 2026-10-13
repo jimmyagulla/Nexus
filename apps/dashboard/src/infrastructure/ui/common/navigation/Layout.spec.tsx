@@ -23,6 +23,11 @@ async function renderLayoutAt(path: string, children: ReactNode) {
     }),
     createRoute({
       getParentRoute: () => rootRoute,
+      path: AppRoutes.presences,
+      component: () => null,
+    }),
+    createRoute({
+      getParentRoute: () => rootRoute,
       path: AppRoutes.settings,
       component: () => null,
     }),
@@ -38,21 +43,30 @@ async function renderLayoutAt(path: string, children: ReactNode) {
 }
 
 describe('Layout', () => {
-  it('offers the dashboard and the settings as destinations', async () => {
+  it('offers the dashboard, the presences and the settings as destinations', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(
       within(screen.getByRole('navigation'))
         .getAllByRole('link')
         .map((link) => link.getAttribute('href')),
-    ).toEqual([AppRoutes.home, AppRoutes.settings]);
+    ).toEqual([AppRoutes.home, AppRoutes.presences, AppRoutes.settings]);
   });
 
   it('names its destinations in french', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(screen.getByText(i18n.messages.navigation.dashboard)).toBeTruthy();
+    expect(screen.getByText(i18n.messages.navigation.presences)).toBeTruthy();
     expect(screen.getByText(i18n.messages.navigation.settings)).toBeTruthy();
+  });
+
+  it('marks the presences when the browser sits on that page', async () => {
+    await renderLayoutAt(AppRoutes.presences, null);
+
+    expect(
+      screen.getByRole('link', { current: 'page' }).getAttribute('href'),
+    ).toBe(AppRoutes.presences);
   });
 
   it('shows the content it wraps', async () => {

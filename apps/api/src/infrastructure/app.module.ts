@@ -14,6 +14,7 @@ import { ClockModule } from './clock/clock.module';
 import { CompanyModule } from './company/company.module';
 import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
 import { CompanySettingsModule } from './company-settings/company-settings.module';
+import { PresenceModule } from './presence/presence.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 const persistence = loadApiConfig().persistence;
@@ -27,6 +28,7 @@ const persistence = loadApiConfig().persistence;
     CompanyModule,
     CompanySettingsModule,
     CompanyPublicHolidaysModule,
+    PresenceModule,
   ],
   providers: [
     {
