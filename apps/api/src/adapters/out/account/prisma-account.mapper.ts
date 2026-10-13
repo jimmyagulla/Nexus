@@ -14,6 +14,7 @@ export type PrismaAccountRow = {
   invitationToken: string | null;
   secretHash: string | null;
   failedSignInCount: number;
+  employeeId: string | null;
 };
 
 export function toAccount(row: PrismaAccountRow): Account {
@@ -26,5 +27,6 @@ export function toAccount(row: PrismaAccountRow): Account {
     row.invitationToken,
     row.secretHash,
     row.failedSignInCount,
+    row.employeeId,
   );
 }

@@ -17,6 +17,7 @@ type AccountRow = {
   invitationToken: string | null;
   secretHash: string | null;
   failedSignInCount: number;
+  employeeId: string | null;
 };
 
 type AccountCreateData = AccountRow;
@@ -52,6 +53,7 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
         stored.invitationToken = args.data.invitationToken;
         stored.secretHash = args.data.secretHash;
         stored.failedSignInCount = args.data.failedSignInCount;
+        stored.employeeId = args.data.employeeId;
       },
       findMany: async (args: {
         where: { companyId: string };
@@ -64,9 +66,15 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
           (row) => row.invitationToken === args.where.invitationToken,
         ) ?? null,
       findFirst: async (args: {
-        where: { identifier: string };
+        where: { identifier?: string; employeeId?: string };
       }): Promise<AccountRow | null> =>
-        rows.find((row) => row.identifier === args.where.identifier) ?? null,
+        rows.find(
+          (row) =>
+            (args.where.identifier === undefined ||
+              row.identifier === args.where.identifier) &&
+            (args.where.employeeId === undefined ||
+              row.employeeId === args.where.employeeId),
+        ) ?? null,
     },
   };
 
@@ -113,8 +121,62 @@ describe('PrismaAccountRepository', () => {
         invitationToken: 'invite-account-1',
         secretHash: null,
         failedSignInCount: 0,
+        employeeId: null,
       },
     ]);
+  });
+
+  it('stores the employee record an invited employee account is bound to', async () => {
+    const { client, creates } = createFakePrisma();
+    const account = Account.inviteEmployee(
+      'account-2',
+      'company-1',
+      AccountIdentifier.parse('alice'),
+      'invite-2',
+      'employee-1',
+    );
+
+    await new PrismaAccountRepository(client).insert(account);
+
+    expect(creates).toEqual([
+      {
+        id: 'account-2',
+        companyId: 'company-1',
+        identifier: 'alice',
+        role: UserRole.EMPLOYEE,
+        status: AccountStatus.INVITED,
+        invitationToken: 'invite-2',
+        secretHash: null,
+        failedSignInCount: 0,
+        employeeId: 'employee-1',
+      },
+    ]);
+  });
+
+  it('reads the account of an employee record back by that record', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+    const account = Account.inviteEmployee(
+      'account-2',
+      'company-1',
+      AccountIdentifier.parse('alice'),
+      'invite-2',
+      'employee-1',
+    );
+
+    await repository.insert(invitedEmployer('account-1', 'company-1', 'founder'));
+    await repository.insert(account);
+
+    expect(await repository.findByEmployeeId('employee-1')).toEqual(account);
+  });
+
+  it('returns nothing for an employee record without account', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+
+    await repository.insert(invitedEmployer('account-1', 'company-1', 'founder'));
+
+    expect(await repository.findByEmployeeId('employee-1')).toBeNull();
   });
 
   it('lists every account of the same company', async () => {

@@ -13,6 +13,8 @@ import { AccountModule } from './account/account.module';
 import { AuditModule } from './audit/audit.module';
 import { ClockModule } from './clock/clock.module';
 import { CompanyModule } from './company/company.module';
+import { EmployeeModule } from './employee/employee.module';
+import { IdGeneratorModule } from './id-generator/id-generator.module';
 import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
 import { CompanySettingsModule } from './company-settings/company-settings.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -24,8 +26,10 @@ const persistence = loadApiConfig().persistence;
     ApiConfigModule,
     ...(persistence === 'postgres' ? [PrismaModule] : []),
     ClockModule,
+    IdGeneratorModule,
     AuditModule,
     AccountModule,
+    EmployeeModule,
     CompanyModule,
     CompanySettingsModule,
     CompanyPublicHolidaysModule,

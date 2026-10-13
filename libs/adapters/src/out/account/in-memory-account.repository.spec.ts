@@ -17,6 +17,21 @@ function invitedEmployer(
   );
 }
 
+function invitedEmployee(
+  id: string,
+  companyId: string,
+  identifier: string,
+  employeeId: string,
+): Account {
+  return Account.inviteEmployee(
+    id,
+    companyId,
+    AccountIdentifier.parse(identifier),
+    `invite-${id}`,
+    employeeId,
+  );
+}
+
 describe('InMemoryAccountRepository', () => {
   it('lists an inserted account back under its company', async () => {
     const accounts = new InMemoryAccountRepository();
@@ -115,5 +130,31 @@ describe('InMemoryAccountRepository', () => {
 
     expect(await accounts.listByCompany('c1')).toEqual([activated]);
     expect(await accounts.findByInvitationToken('invite-a1')).toBeNull();
+  });
+
+  it('reads the account of an employee record back by that record', async () => {
+    const accounts = new InMemoryAccountRepository();
+    const account = invitedEmployee('a2', 'c1', 'alice', 'e1');
+
+    await accounts.insert(invitedEmployer('a1', 'c1', 'founder'));
+    await accounts.insert(account);
+
+    expect(await accounts.findByEmployeeId('e1')).toEqual(account);
+  });
+
+  it('returns nothing for an employee record without account', async () => {
+    const accounts = new InMemoryAccountRepository();
+
+    await accounts.insert(invitedEmployee('a2', 'c1', 'alice', 'e1'));
+
+    expect(await accounts.findByEmployeeId('e2')).toBeNull();
+  });
+
+  it('does not take an employer account for the account of a record', async () => {
+    const accounts = new InMemoryAccountRepository();
+
+    await accounts.insert(invitedEmployer('a1', 'c1', 'founder'));
+
+    expect(await accounts.findByEmployeeId('a1')).toBeNull();
   });
 });

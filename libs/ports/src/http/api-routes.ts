@@ -4,6 +4,10 @@ export const API_ROUTES = {
     activation: 'activation',
     signIn: 'sign-in',
   },
+  employees: {
+    base: 'companies/:companyId/employees',
+    invitation: ':employeeId/invitation',
+  },
   companies: {
     base: 'companies',
     settings: ':companyId/settings',

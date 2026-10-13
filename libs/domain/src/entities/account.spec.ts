@@ -108,4 +108,21 @@ describe('Account', () => {
       ErrorCode.INVITATION_INVALID,
     );
   });
+
+  it('invites an employee as an invited account bound to one employee record', () => {
+    const account = Account.inviteEmployee(
+      'account-2',
+      'company-1',
+      AccountIdentifier.parse('alice'),
+      'invite-2',
+      'employee-7',
+    );
+
+    expect(account.role).toBe(UserRole.EMPLOYEE);
+    expect(account.status).toBe(AccountStatus.INVITED);
+    expect(account.companyId).toBe('company-1');
+    expect(account.employeeId).toBe('employee-7');
+    expect(account.invitationToken).toBe('invite-2');
+    expect(account.secretHash).toBeNull();
+  });
 });

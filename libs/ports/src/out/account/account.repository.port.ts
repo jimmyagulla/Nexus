@@ -6,6 +6,7 @@ export interface IAccountRepository {
   listByCompany(companyId: string): Promise<readonly Account[]>;
   findByInvitationToken(invitationToken: string): Promise<Account | null>;
   findByIdentifier(identifier: string): Promise<Account | null>;
+  findByEmployeeId(employeeId: string): Promise<Account | null>;
 }
 
 export const IAccountRepository = Symbol('IAccountRepository');

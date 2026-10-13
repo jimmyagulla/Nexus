@@ -28,6 +28,14 @@ export class InMemoryAccountRepository implements IAccountRepository {
     );
   }
 
+  async findByEmployeeId(employeeId: string): Promise<Account | null> {
+    return (
+      [...this.accounts.values()].find(
+        (account) => account.employeeId === employeeId,
+      ) ?? null
+    );
+  }
+
   async findByIdentifier(identifier: string): Promise<Account | null> {
     return (
       [...this.accounts.values()].find(

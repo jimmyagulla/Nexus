@@ -57,6 +57,23 @@ model Company {
   publicHolidays       CompanyPublicHoliday[]
   auditEvents          AuditEvent[]
   accounts             Account[]
+  employees            Employee[]
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Employee {
+  id             String         @id @default(uuid())
+  companyId      String
+  firstName      String
+  lastName       String
+  status         EmployeeStatus
+  lastActivityAt DateTime?
+  company        Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  account        Account?
 }
 
 model Account {
@@ -68,7 +85,9 @@ model Account {
   invitationToken   String?       @unique
   secretHash        String?
   failedSignInCount Int           @default(0)
+  employeeId        String?       @unique
   company           Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employee          Employee?     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@unique([companyId, identifier])
 }

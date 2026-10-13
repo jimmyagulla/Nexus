@@ -16,6 +16,7 @@ function rowOf(overrides: Partial<PrismaAccountRow> = {}): PrismaAccountRow {
     invitationToken: 'invite-1',
     secretHash: null,
     failedSignInCount: 0,
+    employeeId: null,
     ...overrides,
   };
 }
@@ -32,6 +33,18 @@ describe('toAccount', () => {
     expect(account.invitationToken).toBe('invite-1');
     expect(account.secretHash).toBeNull();
     expect(account.failedSignInCount).toBe(0);
+  });
+
+  it('keeps the employee record an employee account is bound to', () => {
+    const account = toAccount(
+      rowOf({ role: UserRole.EMPLOYEE, employeeId: 'employee-1' }),
+    );
+
+    expect(account.employeeId).toBe('employee-1');
+  });
+
+  it('leaves an employer account bound to no employee record', () => {
+    expect(toAccount(rowOf()).employeeId).toBeNull();
   });
 
   it('rejects a row whose identifier is empty', () => {

@@ -36,6 +36,13 @@ export class PrismaAccountRepository implements IAccountRepository {
     return row === null ? null : toAccount(row);
   }
 
+  async findByEmployeeId(employeeId: string): Promise<Account | null> {
+    const row = await this.prisma.account.findFirst({
+      where: { employeeId },
+    });
+    return row === null ? null : toAccount(row);
+  }
+
   async findByIdentifier(identifier: string): Promise<Account | null> {
     const row = await this.prisma.account.findFirst({
       where: { identifier },
@@ -53,6 +60,7 @@ export class PrismaAccountRepository implements IAccountRepository {
       invitationToken: account.invitationToken,
       secretHash: account.secretHash,
       failedSignInCount: account.failedSignInCount,
+      employeeId: account.employeeId,
     };
   }
 }

@@ -4,6 +4,8 @@ import {
   ActorContext,
   Company,
   CompanyName,
+  Employee,
+  EmployeeStatus,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { SessionRecord } from '@hexagonal-monorepo-template/ports';
@@ -32,6 +34,19 @@ export function localDevCompany(): Company {
   return Company.create(
     LOCAL_DEV_COMPANY_ID,
     CompanyName.parse('Entreprise locale'),
+  );
+}
+
+export const LOCAL_DEV_EMPLOYEE_ID = 'local-dev-employee';
+
+export function localDevEmployee(): Employee {
+  return new Employee(
+    LOCAL_DEV_EMPLOYEE_ID,
+    LOCAL_DEV_COMPANY_ID,
+    'Alice',
+    'Martin',
+    EmployeeStatus.ACTIVE,
+    null,
   );
 }
 

@@ -14,7 +14,8 @@ export class Account {
     readonly status: AccountStatus,
     readonly invitationToken: string | null,
     readonly secretHash: string | null,
-    readonly failedSignInCount: number = 0,
+    readonly failedSignInCount = 0,
+    readonly employeeId: string | null = null,
   ) {}
 
   static inviteEmployer(
@@ -22,6 +23,41 @@ export class Account {
     companyId: string,
     identifier: AccountIdentifier,
     invitationToken: string,
+  ): Account {
+    return Account.invite(
+      id,
+      companyId,
+      identifier,
+      UserRole.EMPLOYER,
+      invitationToken,
+      null,
+    );
+  }
+
+  static inviteEmployee(
+    id: string,
+    companyId: string,
+    identifier: AccountIdentifier,
+    invitationToken: string,
+    employeeId: string,
+  ): Account {
+    return Account.invite(
+      id,
+      companyId,
+      identifier,
+      UserRole.EMPLOYEE,
+      invitationToken,
+      employeeId,
+    );
+  }
+
+  private static invite(
+    id: string,
+    companyId: string,
+    identifier: AccountIdentifier,
+    role: UserRole,
+    invitationToken: string,
+    employeeId: string | null,
   ): Account {
     const token = invitationToken.trim();
     if (token === '') {
@@ -31,11 +67,12 @@ export class Account {
       id,
       companyId,
       identifier,
-      UserRole.EMPLOYER,
+      role,
       AccountStatus.INVITED,
       token,
       null,
       0,
+      employeeId,
     );
   }
 
@@ -66,6 +103,8 @@ export class Account {
       AccountStatus.ACTIVE,
       null,
       secretHash,
+      0,
+      this.employeeId,
     );
   }
 
@@ -79,6 +118,7 @@ export class Account {
       this.invitationToken,
       this.secretHash,
       failedSignInCount,
+      this.employeeId,
     );
   }
 }
