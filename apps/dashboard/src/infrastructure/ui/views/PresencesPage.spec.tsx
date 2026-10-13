@@ -24,6 +24,10 @@ const camille: PresenceSnapshot = {
   employeeName: 'Camille Martin',
   month: '2026-10',
   workedDays: 22,
+  leaves: [],
+  absences: [],
+  sickLeaves: [],
+  overtime: [],
 };
 
 const listWith = (
@@ -101,6 +105,35 @@ describe('PresencesPage', () => {
 
     expect(await screen.findByText('Octobre 2026')).toBeTruthy();
     expect(screen.getByText('Camille Martin')).toBeTruthy();
+  });
+
+  it('shows the leaves, the sick leaves and the overtime of each month', async () => {
+    renderPage(
+      compositionOf(async () =>
+        listWith([
+          {
+            ...camille,
+            leaves: [
+              {
+                id: 'a1',
+                type: 'Congés payés',
+                start: '2026-10-05',
+                end: '2026-10-07',
+                days: 3,
+              },
+            ],
+            sickLeaves: [{ id: 's1', date: '2026-10-14' }],
+            overtime: [{ id: 'h1', date: '2026-10-12', hours: 2 }],
+          },
+        ]),
+      ),
+    );
+
+    expect(
+      await screen.findByText('Congés payés : 05/10/2026 → 07/10/2026 (3 j)'),
+    ).toBeTruthy();
+    expect(screen.getByText('14/10/2026')).toBeTruthy();
+    expect(screen.getByText('12/10/2026 : 2 h')).toBeTruthy();
   });
 
   it('shows a readable message when the presences cannot be loaded', async () => {

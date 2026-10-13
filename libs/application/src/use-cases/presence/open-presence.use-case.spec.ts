@@ -2,7 +2,9 @@ import {
   InMemoryAbsenceFactSource,
   InMemoryCompanyRepository,
   InMemoryEmployeeDirectory,
+  InMemoryHoursFactSource,
   InMemoryPresenceRepository,
+  InMemorySickLeaveDocumentSource,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   AbsenceFact,
@@ -14,7 +16,10 @@ import {
   DayOfWeek,
   EmployeeReference,
   ErrorCode,
+  HoursFact,
+  HoursFactStatus,
   PublicHoliday,
+  SickLeaveDocument,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { OpenPresenceUseCase } from './open-presence.use-case';
@@ -54,7 +59,12 @@ function acme(): Company {
 
 function useCaseWith(
   employees: readonly EmployeeReference[] = [camille],
-  options: { company?: Company; absences?: readonly AbsenceFact[] } = {},
+  options: {
+    company?: Company;
+    absences?: readonly AbsenceFact[];
+    sickLeaves?: readonly SickLeaveDocument[];
+    hours?: readonly HoursFact[];
+  } = {},
 ) {
   const presences = new InMemoryPresenceRepository();
   const company = options.company ?? acme();
@@ -62,6 +72,8 @@ function useCaseWith(
     new InMemoryCompanyRepository(new Map([[company.id, company]])),
     new InMemoryEmployeeDirectory(employees),
     new InMemoryAbsenceFactSource(options.absences ?? []),
+    new InMemorySickLeaveDocumentSource(options.sickLeaves ?? []),
+    new InMemoryHoursFactSource(options.hours ?? []),
     presences,
   );
 
@@ -227,6 +239,62 @@ describe('OpenPresenceUseCase', () => {
     expect(presence.workedDays).toBe(19);
   });
 
+  it('shows in the opened month the leaves, the sick leaves and the overtime', async () => {
+    const { useCase } = useCaseWith([camille], {
+      absences: [absence('2026-10-05', '2026-10-07')],
+      sickLeaves: [
+        {
+          id: 's1',
+          companyId: 'c1',
+          employeeId: 'e1',
+          date: CalendarDate.parse('2026-10-14'),
+        },
+      ],
+      hours: [
+        {
+          id: 'h1',
+          companyId: 'c1',
+          employeeId: 'e1',
+          date: CalendarDate.parse('2026-10-12'),
+          hours: 2,
+          sourceDeclarationId: 'd1',
+          status: HoursFactStatus.PROCESSED,
+        },
+      ],
+    });
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect(presence.leaves.map((entry) => entry.type)).toEqual(['Congés payés']);
+    expect(presence.sickLeaves).toEqual([{ id: 's1', date: '2026-10-14' }]);
+    expect(presence.overtime).toEqual([
+      { id: 'h1', date: '2026-10-12', hours: 2 },
+    ]);
+  });
+
+  it('leaves the rubrics of an opened month empty when nothing was published', async () => {
+    const { useCase } = useCaseWith();
+
+    const presence = await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      employeeId: 'e1',
+      month: '2026-10',
+    });
+
+    expect([
+      presence.leaves,
+      presence.absences,
+      presence.sickLeaves,
+      presence.overtime,
+    ]).toEqual([[], [], [], []]);
+  });
+
   it('leaves out the absences of another employee', async () => {
     const { useCase } = useCaseWith([camille], {
       absences: [absence('2026-10-05', '2026-10-07', 'e2')],
@@ -265,6 +333,8 @@ describe('OpenPresenceUseCase', () => {
       new InMemoryCompanyRepository(),
       new InMemoryEmployeeDirectory([camille]),
       new InMemoryAbsenceFactSource(),
+      new InMemorySickLeaveDocumentSource(),
+      new InMemoryHoursFactSource(),
       presences,
     );
 

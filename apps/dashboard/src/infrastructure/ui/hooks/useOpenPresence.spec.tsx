@@ -33,6 +33,10 @@ function schedule(accepted: boolean) {
       employeeName: 'Camille Martin',
       month: input.month,
       workedDays: 22,
+      leaves: [],
+      absences: [],
+      sickLeaves: [],
+      overtime: [],
     };
     presences = [...presences, presence];
     return presence;

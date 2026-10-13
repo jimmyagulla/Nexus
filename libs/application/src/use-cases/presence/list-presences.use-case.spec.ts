@@ -1,12 +1,20 @@
 import {
+  InMemoryAbsenceFactSource,
   InMemoryEmployeeDirectory,
+  InMemoryHoursFactSource,
   InMemoryPresenceRepository,
+  InMemorySickLeaveDocumentSource,
 } from '@hexagonal-monorepo-template/adapters';
 import {
+  AbsenceFact,
   ActorContext,
+  CalendarDate,
   EmployeeReference,
   ErrorCode,
+  HoursFact,
+  HoursFactStatus,
   PresenceMonth,
+  SickLeaveDocument,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { ListPresencesUseCase } from './list-presences.use-case';
@@ -35,11 +43,47 @@ const stranger: EmployeeReference = {
 
 const october = PresenceMonth.parse('2026-10');
 
-function useCaseWith(presences = new InMemoryPresenceRepository()) {
+type Facts = {
+  absences?: AbsenceFact[];
+  sickLeaves?: SickLeaveDocument[];
+  hours?: HoursFact[];
+};
+
+function useCaseWith(
+  presences = new InMemoryPresenceRepository(),
+  facts: Facts = {},
+) {
   return new ListPresencesUseCase(
     new InMemoryEmployeeDirectory([camille, dominique, stranger]),
+    new InMemoryAbsenceFactSource(facts.absences ?? []),
+    new InMemorySickLeaveDocumentSource(facts.sickLeaves ?? []),
+    new InMemoryHoursFactSource(facts.hours ?? []),
     presences,
   );
+}
+
+function leave(employeeId: string): AbsenceFact {
+  return {
+    id: `a-${employeeId}`,
+    companyId: 'c1',
+    employeeId,
+    start: CalendarDate.parse('2026-10-05'),
+    end: CalendarDate.parse('2026-10-07'),
+    type: 'Congés payés',
+    days: 3,
+    sourceRequestId: 'r1',
+  };
+}
+
+async function octoberOf(employeeId: string) {
+  const presences = new InMemoryPresenceRepository();
+  await presences.insert({
+    companyId: 'c1',
+    employeeId,
+    month: october,
+    workedDays: 22,
+  });
+  return presences;
 }
 
 describe('ListPresencesUseCase', () => {
@@ -114,6 +158,74 @@ describe('ListPresencesUseCase', () => {
     });
 
     expect(list.presences).toEqual([]);
+  });
+
+  it('shows the leaves, the sick leaves and the overtime published for the month', async () => {
+    const [snapshot] = (
+      await useCaseWith(await octoberOf('e1'), {
+        absences: [leave('e1')],
+        sickLeaves: [
+          {
+            id: 's1',
+            companyId: 'c1',
+            employeeId: 'e1',
+            date: CalendarDate.parse('2026-10-14'),
+          },
+        ],
+        hours: [
+          {
+            id: 'h1',
+            companyId: 'c1',
+            employeeId: 'e1',
+            date: CalendarDate.parse('2026-10-12'),
+            hours: 2,
+            sourceDeclarationId: 'd1',
+            status: HoursFactStatus.PROCESSED,
+          },
+        ],
+      }).execute({ actor: employer, companyId: 'c1' })
+    ).presences;
+
+    expect(snapshot?.leaves.map((entry) => entry.id)).toEqual(['a-e1']);
+    expect(snapshot?.sickLeaves.map((entry) => entry.id)).toEqual(['s1']);
+    expect(snapshot?.overtime.map((entry) => entry.id)).toEqual(['h1']);
+  });
+
+  it('leaves the rubrics empty when nothing was published', async () => {
+    const [snapshot] = (
+      await useCaseWith(await octoberOf('e1')).execute({
+        actor: employer,
+        companyId: 'c1',
+      })
+    ).presences;
+
+    expect([
+      snapshot?.leaves,
+      snapshot?.absences,
+      snapshot?.sickLeaves,
+      snapshot?.overtime,
+    ]).toEqual([[], [], [], []]);
+  });
+
+  it('does not show the facts of another employee', async () => {
+    const [snapshot] = (
+      await useCaseWith(await octoberOf('e1'), {
+        absences: [leave('e2')],
+      }).execute({ actor: employer, companyId: 'c1' })
+    ).presences;
+
+    expect(snapshot?.leaves).toEqual([]);
+  });
+
+  it('drops an absence that was accepted and then cancelled', async () => {
+    const published = [leave('e1')];
+    const useCase = useCaseWith(await octoberOf('e1'), { absences: published });
+    const input = { actor: employer, companyId: 'c1' };
+    expect((await useCase.execute(input)).presences[0]?.leaves).toHaveLength(1);
+
+    published.splice(0, published.length);
+
+    expect((await useCase.execute(input)).presences[0]?.leaves).toEqual([]);
   });
 
   it('lets the employer manage the months it lists', async () => {

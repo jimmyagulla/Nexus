@@ -1,6 +1,9 @@
 import {
+  AbsenceEntrySnapshot,
+  OvertimeEntrySnapshot,
   PresenceListSnapshot,
   PresenceSnapshot,
+  SickLeaveEntrySnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   i18n as appI18n,
@@ -12,6 +15,10 @@ export interface PresenceRowViewModel {
   employeeName: string;
   monthLabel: string;
   workedDays: number;
+  leaves: string[];
+  absences: string[];
+  sickLeaves: string[];
+  overtime: string[];
 }
 
 export interface EmployeeOptionViewModel {
@@ -45,7 +52,38 @@ export class PresencePresenter {
       employeeName: presence.employeeName,
       monthLabel: this.formatMonth(presence.month),
       workedDays: presence.workedDays,
+      leaves: presence.leaves.map((entry) => this.presentAbsence(entry)),
+      absences: presence.absences.map((entry) => this.presentAbsence(entry)),
+      sickLeaves: presence.sickLeaves.map((entry) =>
+        this.presentSickLeave(entry),
+      ),
+      overtime: presence.overtime.map((entry) => this.presentOvertime(entry)),
     };
+  }
+
+  private presentAbsence(entry: AbsenceEntrySnapshot): string {
+    const period =
+      entry.start === entry.end
+        ? this.formatDate(entry.start)
+        : `${this.formatDate(entry.start)} → ${this.formatDate(entry.end)}`;
+    return `${entry.type} : ${period} (${entry.days} ${this.i18n.messages.presences.dayUnit})`;
+  }
+
+  private presentSickLeave(entry: SickLeaveEntrySnapshot): string {
+    return this.formatDate(entry.date);
+  }
+
+  private presentOvertime(entry: OvertimeEntrySnapshot): string {
+    const hours = String(entry.hours).replace(
+      '.',
+      this.i18n.messages.presences.decimalSeparator,
+    );
+    return `${this.formatDate(entry.date)} : ${hours} ${this.i18n.messages.presences.hourUnit}`;
+  }
+
+  private formatDate(isoDate: string): string {
+    const [year, month, day] = isoDate.split('-');
+    return `${day}/${month}/${year}`;
   }
 
   private formatMonth(month: string): string {

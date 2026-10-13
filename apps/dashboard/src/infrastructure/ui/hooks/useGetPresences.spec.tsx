@@ -50,6 +50,10 @@ describe('useGetPresences', () => {
             employeeName: 'Camille Martin',
             month: '2026-10',
             workedDays: 22,
+            leaves: [],
+            absences: [],
+            sickLeaves: [],
+            overtime: [],
           },
         ],
         employees: [],
@@ -65,6 +69,10 @@ describe('useGetPresences', () => {
         employeeName: 'Camille Martin',
         monthLabel: 'Octobre 2026',
         workedDays: 22,
+        leaves: [],
+        absences: [],
+        sickLeaves: [],
+        overtime: [],
       },
     ]);
   });

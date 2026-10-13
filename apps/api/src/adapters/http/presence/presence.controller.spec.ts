@@ -29,6 +29,18 @@ const presence: PresenceSnapshot = {
   employeeName: 'Camille Martin',
   month: '2026-10',
   workedDays: 22,
+  leaves: [
+    {
+      id: 'absence-1',
+      type: 'Congés payés',
+      start: '2026-10-05',
+      end: '2026-10-07',
+      days: 3,
+    },
+  ],
+  absences: [],
+  sickLeaves: [{ id: 'document-1', date: '2026-10-14' }],
+  overtime: [{ id: 'hours-1', date: '2026-10-12', hours: 2 }],
 };
 
 const PRESENCES_PATH = '/companies/company-1/presences';

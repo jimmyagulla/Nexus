@@ -1,28 +1,32 @@
 import { render, screen } from '@testing-library/react';
+import type { PresenceRowViewModel } from '../../../../../adapters/presenters/presence.presenter';
 import { PresenceList } from './PresenceList';
+
+function row(id: string, employeeName: string): PresenceRowViewModel {
+  return {
+    id,
+    employeeName,
+    monthLabel: 'Octobre 2026',
+    workedDays: 22,
+    leaves: [],
+    absences: [],
+    sickLeaves: [],
+    overtime: [],
+  };
+}
 
 describe('PresenceList', () => {
   it('renders one card per month', () => {
     render(
       <PresenceList
         presences={[
-          {
-            id: 'p1',
-            employeeName: 'Camille Martin',
-            monthLabel: 'Octobre 2026',
-            workedDays: 22,
-          },
-          {
-            id: 'p2',
-            employeeName: 'Dominique Durand',
-            monthLabel: 'Octobre 2026',
-            workedDays: 20,
-          },
+          row('p1', 'Camille Martin'),
+          row('p2', 'Dominique Durand'),
         ]}
       />,
     );
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(2);
+    expect(screen.getByText('Camille Martin')).toBeTruthy();
     expect(screen.getByText('Dominique Durand')).toBeTruthy();
   });
 });

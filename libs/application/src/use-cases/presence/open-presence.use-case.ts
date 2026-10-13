@@ -1,21 +1,24 @@
 import {
   ActorContext,
+  buildPresenceSnapshot,
   Company,
   EmployeeReference,
   ErrorCode,
+  PresenceFactSources,
   PresenceMonth,
   PresenceSnapshot,
   proposeWorkedDays,
   requireAccessibleCompany,
   requireEmployerOfCompany,
-  toPresenceSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAbsenceFactSource,
   ICompanyRepository,
   IEmployeeDirectory,
+  IHoursFactSource,
   IOpenPresence,
   IPresenceRepository,
+  ISickLeaveDocumentSource,
 } from '@hexagonal-monorepo-template/ports';
 
 export class OpenPresenceUseCase implements IOpenPresence {
@@ -23,6 +26,8 @@ export class OpenPresenceUseCase implements IOpenPresence {
     private readonly companies: ICompanyRepository,
     private readonly employees: IEmployeeDirectory,
     private readonly absences: IAbsenceFactSource,
+    private readonly sickLeaves: ISickLeaveDocumentSource,
+    private readonly hours: IHoursFactSource,
     private readonly presences: IPresenceRepository,
   ) {}
 
@@ -46,7 +51,7 @@ export class OpenPresenceUseCase implements IOpenPresence {
       month,
       workedDays: await this.proposeWorkedDays(company, employee, month),
     });
-    return toPresenceSnapshot(presence, employee);
+    return buildPresenceSnapshot(presence, employee, this.factSources());
   }
 
   private loadCompany(actor: ActorContext, companyId: string): Promise<Company> {
@@ -65,6 +70,17 @@ export class OpenPresenceUseCase implements IOpenPresence {
       employee.id,
     );
     return proposeWorkedDays(month, company.calendar, absences);
+  }
+
+  private factSources(): PresenceFactSources {
+    return {
+      absences: (companyId, employeeId) =>
+        this.absences.listForEmployee(companyId, employeeId),
+      sickLeaves: (companyId, employeeId) =>
+        this.sickLeaves.listForEmployee(companyId, employeeId),
+      hours: (companyId, employeeId) =>
+        this.hours.listForEmployee(companyId, employeeId),
+    };
   }
 
   private async requireEmployeeOfCompany(

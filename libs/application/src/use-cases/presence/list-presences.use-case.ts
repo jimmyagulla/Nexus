@@ -1,21 +1,28 @@
 import {
   ActorContext,
+  buildPresenceSnapshot,
   EmployeeReference,
   Presence,
+  PresenceFactSources,
   PresenceListSnapshot,
   PresenceSnapshot,
   requireEmployerOfCompany,
-  toPresenceSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
+  IAbsenceFactSource,
   IEmployeeDirectory,
+  IHoursFactSource,
   IListPresences,
   IPresenceRepository,
+  ISickLeaveDocumentSource,
 } from '@hexagonal-monorepo-template/ports';
 
 export class ListPresencesUseCase implements IListPresences {
   constructor(
     private readonly employees: IEmployeeDirectory,
+    private readonly absences: IAbsenceFactSource,
+    private readonly sickLeaves: ISickLeaveDocumentSource,
+    private readonly hours: IHoursFactSource,
     private readonly presences: IPresenceRepository,
   ) {}
 
@@ -29,25 +36,39 @@ export class ListPresencesUseCase implements IListPresences {
       companyId: input.companyId,
     });
     return {
-      presences: this.presentMostRecentFirst(presences, employees),
+      presences: await this.presentMostRecentFirst(presences, employees),
       employees,
       canManage: true,
     };
   }
 
-  private presentMostRecentFirst(
+  private async presentMostRecentFirst(
     presences: readonly Presence[],
     employees: readonly EmployeeReference[],
-  ): PresenceSnapshot[] {
+  ): Promise<PresenceSnapshot[]> {
     const known = new Map(employees.map((employee) => [employee.id, employee]));
-    return presences
-      .flatMap((presence) => {
+    const snapshots = await Promise.all(
+      presences.flatMap((presence) => {
         const employee = known.get(presence.employeeId);
         return employee === undefined
           ? []
-          : [toPresenceSnapshot(presence, employee)];
-      })
-      .sort((first, second) => this.mostRecentMonthFirst(first, second));
+          : [buildPresenceSnapshot(presence, employee, this.factSources())];
+      }),
+    );
+    return snapshots.sort((first, second) =>
+      this.mostRecentMonthFirst(first, second),
+    );
+  }
+
+  private factSources(): PresenceFactSources {
+    return {
+      absences: (companyId, employeeId) =>
+        this.absences.listForEmployee(companyId, employeeId),
+      sickLeaves: (companyId, employeeId) =>
+        this.sickLeaves.listForEmployee(companyId, employeeId),
+      hours: (companyId, employeeId) =>
+        this.hours.listForEmployee(companyId, employeeId),
+    };
   }
 
   private mostRecentMonthFirst(

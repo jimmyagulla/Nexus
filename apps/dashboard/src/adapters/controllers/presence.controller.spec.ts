@@ -16,6 +16,10 @@ const opened: PresenceSnapshot = {
   employeeName: 'Camille Martin',
   month: '2026-10',
   workedDays: 22,
+  leaves: [],
+  absences: [],
+  sickLeaves: [],
+  overtime: [],
 };
 
 describe('PresenceController', () => {

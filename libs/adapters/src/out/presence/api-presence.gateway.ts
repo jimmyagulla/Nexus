@@ -13,12 +13,24 @@ import {
   IPresenceGateway,
 } from '@hexagonal-monorepo-template/ports';
 
+type AbsenceEntryPayload = {
+  id: string;
+  type: string;
+  start: string;
+  end: string;
+  days: number;
+};
+
 type PresencePayload = {
   id: string;
   employeeId: string;
   employeeName: string;
   month: string;
   workedDays: number;
+  leaves: AbsenceEntryPayload[];
+  absences: AbsenceEntryPayload[];
+  sickLeaves: { id: string; date: string }[];
+  overtime: { id: string; date: string; hours: number }[];
 };
 
 type PresenceListPayload = {
@@ -75,6 +87,10 @@ export class ApiPresenceGateway implements IPresenceGateway {
       employeeName: payload.employeeName,
       month: payload.month,
       workedDays: payload.workedDays,
+      leaves: payload.leaves.map((entry) => ({ ...entry })),
+      absences: payload.absences.map((entry) => ({ ...entry })),
+      sickLeaves: payload.sickLeaves.map((entry) => ({ ...entry })),
+      overtime: payload.overtime.map((entry) => ({ ...entry })),
     };
   }
 }

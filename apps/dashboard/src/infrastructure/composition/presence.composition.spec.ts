@@ -20,6 +20,10 @@ const camille = {
   employeeName: 'Camille Martin',
   month: '2026-10',
   workedDays: 22,
+  leaves: [],
+  absences: [],
+  sickLeaves: [],
+  overtime: [],
 };
 
 const employerOfAcme: ActorContext = {
@@ -110,6 +114,10 @@ describe('createPresenceComposition', () => {
         employeeName: 'Camille Martin',
         monthLabel: 'Octobre 2026',
         workedDays: 22,
+        leaves: [],
+        absences: [],
+        sickLeaves: [],
+        overtime: [],
       },
     ]);
   });

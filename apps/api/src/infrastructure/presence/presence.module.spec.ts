@@ -5,7 +5,9 @@ import { InMemoryPresenceRepository } from '@hexagonal-monorepo-template/adapter
 import {
   IAbsenceFactSource,
   ICompanyRepository,
+  IHoursFactSource,
   IListPresences,
+  ISickLeaveDocumentSource,
   IOpenPresence,
   IPresenceRepository,
 } from '@hexagonal-monorepo-template/ports';
@@ -48,6 +50,13 @@ describe('PresenceModule', () => {
     const moduleRef = await compile();
 
     expect(moduleRef.get(IAbsenceFactSource)).toBeDefined();
+  });
+
+  it('reads the hours and the sick leaves through their own sources', async () => {
+    const moduleRef = await compile();
+
+    expect(moduleRef.get(IHoursFactSource)).toBeDefined();
+    expect(moduleRef.get(ISickLeaveDocumentSource)).toBeDefined();
   });
 
   it('keeps the presences in memory when the persistence is not postgres', async () => {

@@ -19,11 +19,35 @@ export class PresenceMonth {
     return new PresenceMonth(raw, year, month);
   }
 
+  contains(day: CalendarDate): boolean {
+    return day.isWithin(this.firstDay(), this.lastDay());
+  }
+
+  overlaps(start: CalendarDate, end: CalendarDate): boolean {
+    return (
+      this.firstDay().isWithin(start, end) ||
+      this.lastDay().isWithin(start, end) ||
+      start.isWithin(this.firstDay(), this.lastDay())
+    );
+  }
+
   days(): CalendarDate[] {
     const count = new Date(Date.UTC(this.year, this.month, 0)).getUTCDate();
 
-    return Array.from({ length: count }, (_, index) =>
-      CalendarDate.parse(`${this.value}-${String(index + 1).padStart(2, '0')}`),
+    return Array.from({ length: count }, (_, index) => this.day(index + 1));
+  }
+
+  private firstDay(): CalendarDate {
+    return this.day(1);
+  }
+
+  private lastDay(): CalendarDate {
+    return this.day(new Date(Date.UTC(this.year, this.month, 0)).getUTCDate());
+  }
+
+  private day(dayOfMonth: number): CalendarDate {
+    return CalendarDate.parse(
+      `${this.value}-${String(dayOfMonth).padStart(2, '0')}`,
     );
   }
 }
