@@ -1,10 +1,23 @@
-import type { LeavesComposition } from '../../../composition/leaves.composition';
+import type { LeaveRequestSentComposition } from '../../../composition/leave-request-sent.composition';
+import { PageStatus } from '../../common/feedback/PageStatus';
+import { useGetLeaveRequestSent } from '../../hooks/useGetLeaveRequestSent';
+import { i18n } from '../../i18n/i18n';
 import { LeaveRequestSent } from './LeaveRequestSent';
 
 interface LeaveRequestSentPageProps {
-  deps: LeavesComposition;
+  deps: LeaveRequestSentComposition;
 }
 
 export function LeaveRequestSentPage({ deps }: LeaveRequestSentPageProps) {
-  return <LeaveRequestSent model={deps.leaveRequestSentPresenter.present()} />;
+  const leaveRequestSent = useGetLeaveRequestSent(deps);
+
+  if (leaveRequestSent.isPending) {
+    return <PageStatus>{i18n.messages.loading}</PageStatus>;
+  }
+
+  if (leaveRequestSent.isError) {
+    return <PageStatus>{i18n.messages.common.loadingError}</PageStatus>;
+  }
+
+  return <LeaveRequestSent model={leaveRequestSent.data} />;
 }

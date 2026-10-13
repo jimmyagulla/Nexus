@@ -18,10 +18,10 @@ description: >-
 - **Consistency**: Export compositions, controllers, and presenters from `di.ts` to be used in routes or pages.
 - **Every implementation**: Choosing which implementation of a port is injected is settled here, in-memory implementations included — skill `no-test-doubles`.
 
-## One composition per domain
+## One composition per page
 
-- `<domain>.composition.ts` exports a `<Domain>Composition` type and a `create<Domain>Composition()` factory holding the domain's presenters (and later its controllers).
-- `di.ts` instantiates every composition once; routes pass the domain composition to the page as `deps`, and the page calls `deps.<screen>Presenter.present()`.
+- `<screen>.composition.ts` exports a `<Screen>Composition` type and a `create<Screen>Composition()` factory: `{ presenter }` (and later `controller`).
+- `di.ts` instantiates every composition once. The route passes it to the page as `deps`; the page hands `deps` to its query hook (`useGet<Screen>`), which calls `presenter.present(…)` and returns the view model the page gives to its view.
 
 ## Presenters are wired here, never built by the view
 

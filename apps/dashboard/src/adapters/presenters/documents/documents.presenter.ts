@@ -42,13 +42,11 @@ export interface FilterOptionModel {
 
 /**
  * Presents the documents list.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class DocumentsPresenter {
-  constructor(private readonly placeholder: DocumentsViewModel) {}
-
-  present(): DocumentsViewModel {
-    return this.placeholder;
+  present(documents: DocumentsViewModel): DocumentsViewModel {
+    return documents;
   }
 }

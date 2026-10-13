@@ -26,13 +26,11 @@ export interface ExpenseReportRowModel {
 
 /**
  * Presents the expense reports list.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class ExpenseReportsPresenter {
-  constructor(private readonly placeholder: ExpenseReportsViewModel) {}
-
-  present(): ExpenseReportsViewModel {
-    return this.placeholder;
+  present(expenseReports: ExpenseReportsViewModel): ExpenseReportsViewModel {
+    return expenseReports;
   }
 }

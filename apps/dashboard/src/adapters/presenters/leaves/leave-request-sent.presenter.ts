@@ -12,13 +12,11 @@ export interface LeaveRequestSentViewModel {
 
 /**
  * Presents the leave request confirmation.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class LeaveRequestSentPresenter {
-  constructor(private readonly placeholder: LeaveRequestSentViewModel) {}
-
-  present(): LeaveRequestSentViewModel {
-    return this.placeholder;
+  present(leaveRequestSent: LeaveRequestSentViewModel): LeaveRequestSentViewModel {
+    return leaveRequestSent;
   }
 }

@@ -18,13 +18,11 @@ export interface AttendanceMonthRowModel {
 
 /**
  * Presents the attendance of one employee.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class EmployeeAttendancePresenter {
-  constructor(private readonly placeholder: EmployeeAttendanceViewModel) {}
-
-  present(): EmployeeAttendanceViewModel {
-    return this.placeholder;
+  present(employeeAttendance: EmployeeAttendanceViewModel): EmployeeAttendanceViewModel {
+    return employeeAttendance;
   }
 }

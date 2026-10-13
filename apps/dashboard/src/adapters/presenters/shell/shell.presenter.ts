@@ -52,13 +52,11 @@ export interface ShellViewModel {
 
 /**
  * Presents the app shell (navigation, user, search) of one role.
- * Until the session and counters use cases exist, the composition root hands
- * it placeholder data, which it returns as is.
+ * Until the session and counters use cases exist, it receives placeholder
+ * data already shaped as the view model, and returns it as is.
  */
 export class ShellPresenter {
-  constructor(private readonly placeholder: ShellViewModel) {}
-
-  present(): ShellViewModel {
-    return this.placeholder;
+  present(shell: ShellViewModel): ShellViewModel {
+    return shell;
   }
 }

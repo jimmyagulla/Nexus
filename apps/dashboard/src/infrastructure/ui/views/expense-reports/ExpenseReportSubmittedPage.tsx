@@ -1,10 +1,23 @@
-import type { ExpenseReportsComposition } from '../../../composition/expense-reports.composition';
+import type { ExpenseReportSubmittedComposition } from '../../../composition/expense-report-submitted.composition';
+import { PageStatus } from '../../common/feedback/PageStatus';
+import { useGetExpenseReportSubmitted } from '../../hooks/useGetExpenseReportSubmitted';
+import { i18n } from '../../i18n/i18n';
 import { ExpenseReportSubmitted } from './ExpenseReportSubmitted';
 
 interface ExpenseReportSubmittedPageProps {
-  deps: ExpenseReportsComposition;
+  deps: ExpenseReportSubmittedComposition;
 }
 
 export function ExpenseReportSubmittedPage({ deps }: ExpenseReportSubmittedPageProps) {
-  return <ExpenseReportSubmitted model={deps.expenseReportSubmittedPresenter.present()} />;
+  const expenseReportSubmitted = useGetExpenseReportSubmitted(deps);
+
+  if (expenseReportSubmitted.isPending) {
+    return <PageStatus>{i18n.messages.loading}</PageStatus>;
+  }
+
+  if (expenseReportSubmitted.isError) {
+    return <PageStatus>{i18n.messages.common.loadingError}</PageStatus>;
+  }
+
+  return <ExpenseReportSubmitted model={expenseReportSubmitted.data} />;
 }

@@ -12,13 +12,11 @@ export interface DocumentSentViewModel {
 
 /**
  * Presents the document sent confirmation.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class DocumentSentPresenter {
-  constructor(private readonly placeholder: DocumentSentViewModel) {}
-
-  present(): DocumentSentViewModel {
-    return this.placeholder;
+  present(documentSent: DocumentSentViewModel): DocumentSentViewModel {
+    return documentSent;
   }
 }

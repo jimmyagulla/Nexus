@@ -8,13 +8,11 @@ export interface ExpenseReportSubmittedViewModel {
 
 /**
  * Presents the expense report submission confirmation.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class ExpenseReportSubmittedPresenter {
-  constructor(private readonly placeholder: ExpenseReportSubmittedViewModel) {}
-
-  present(): ExpenseReportSubmittedViewModel {
-    return this.placeholder;
+  present(expenseReportSubmitted: ExpenseReportSubmittedViewModel): ExpenseReportSubmittedViewModel {
+    return expenseReportSubmitted;
   }
 }

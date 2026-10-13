@@ -21,13 +21,11 @@ export interface EmployerInfoModel {
 
 /**
  * Presents the personal information.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class PersonalInfoPresenter {
-  constructor(private readonly placeholder: PersonalInfoViewModel) {}
-
-  present(): PersonalInfoViewModel {
-    return this.placeholder;
+  present(personalInfo: PersonalInfoViewModel): PersonalInfoViewModel {
+    return personalInfo;
   }
 }

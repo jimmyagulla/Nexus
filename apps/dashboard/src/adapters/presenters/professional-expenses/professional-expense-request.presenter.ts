@@ -26,13 +26,11 @@ export interface ProfessionalExpenseFormModel {
 
 /**
  * Presents the professional expense request form.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class ProfessionalExpenseRequestPresenter {
-  constructor(private readonly placeholder: ProfessionalExpenseRequestViewModel) {}
-
-  present(): ProfessionalExpenseRequestViewModel {
-    return this.placeholder;
+  present(professionalExpenseRequest: ProfessionalExpenseRequestViewModel): ProfessionalExpenseRequestViewModel {
+    return professionalExpenseRequest;
   }
 }

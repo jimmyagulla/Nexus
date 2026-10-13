@@ -21,4 +21,5 @@ export const common = {
   comingSoonDescription:
     'This section will be available in an upcoming release of My Docs.',
   backToDashboard: 'Back to dashboard',
+  loadingError: 'This screen cannot be displayed right now.',
 } as const;

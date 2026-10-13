@@ -31,13 +31,11 @@ export interface MobileDocumentUploadFormModel {
 
 /**
  * Presents the document upload form.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class DocumentUploadPresenter {
-  constructor(private readonly placeholder: DocumentUploadViewModel) {}
-
-  present(): DocumentUploadViewModel {
-    return this.placeholder;
+  present(documentUpload: DocumentUploadViewModel): DocumentUploadViewModel {
+    return documentUpload;
   }
 }

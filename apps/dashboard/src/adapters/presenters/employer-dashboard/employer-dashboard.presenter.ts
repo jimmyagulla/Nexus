@@ -33,13 +33,11 @@ export interface TaskItemModel {
 
 /**
  * Presents the employer dashboard.
- * Until its use case exists, the composition root hands it placeholder data,
- * which it returns as is.
+ * Until its use case exists, it receives placeholder data already shaped as
+ * the view model, and returns it as is.
  */
 export class EmployerDashboardPresenter {
-  constructor(private readonly placeholder: EmployerDashboardViewModel) {}
-
-  present(): EmployerDashboardViewModel {
-    return this.placeholder;
+  present(employerDashboard: EmployerDashboardViewModel): EmployerDashboardViewModel {
+    return employerDashboard;
   }
 }

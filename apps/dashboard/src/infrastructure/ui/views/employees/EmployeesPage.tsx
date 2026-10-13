@@ -1,4 +1,7 @@
 import type { EmployeesComposition } from '../../../composition/employees.composition';
+import { PageStatus } from '../../common/feedback/PageStatus';
+import { useGetEmployees } from '../../hooks/useGetEmployees';
+import { i18n } from '../../i18n/i18n';
 import { Employees } from './Employees';
 
 interface EmployeesPageProps {
@@ -6,5 +9,15 @@ interface EmployeesPageProps {
 }
 
 export function EmployeesPage({ deps }: EmployeesPageProps) {
-  return <Employees model={deps.employeesPresenter.present()} />;
+  const employees = useGetEmployees(deps);
+
+  if (employees.isPending) {
+    return <PageStatus>{i18n.messages.loading}</PageStatus>;
+  }
+
+  if (employees.isError) {
+    return <PageStatus>{i18n.messages.common.loadingError}</PageStatus>;
+  }
+
+  return <Employees model={employees.data} />;
 }
