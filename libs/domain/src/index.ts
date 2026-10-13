@@ -26,4 +26,5 @@ export * from './audit/audit-subject';
 export * from './audit/audit-event';
 export * from './audit/to-public-holiday-audit-snapshot';
 export * from './read-models/company-settings-snapshot';
+export * from './read-models/signed-in-session';
 export * from './read-models/to-company-settings-snapshot';

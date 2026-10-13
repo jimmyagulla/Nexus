@@ -3,11 +3,13 @@ import { activationRoute } from './activation';
 import { indexRoute } from './index';
 import { rootRoute } from './__root';
 import { settingsRoute } from './settings';
+import { signInRoute } from './sign-in';
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
   settingsRoute,
   activationRoute,
+  signInRoute,
 ]);
 
 export const router = createRouter({ routeTree });

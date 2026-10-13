@@ -6,6 +6,7 @@ import { AccountStatus, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   IAccountRepository,
   IActivateAccount,
+  ISignIn,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
@@ -76,6 +77,7 @@ describe('AccountModule', () => {
     }).compile();
 
     expect(moduleRef.get(IActivateAccount)).toBeDefined();
+    expect(moduleRef.get(ISignIn)).toBeDefined();
   });
 
   it('seeds the local invited employer when authentication is disabled', async () => {

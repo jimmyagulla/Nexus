@@ -36,6 +36,13 @@ export class PrismaAccountRepository implements IAccountRepository {
     return row === null ? null : toAccount(row);
   }
 
+  async findByIdentifier(identifier: string): Promise<Account | null> {
+    const row = await this.prisma.account.findFirst({
+      where: { identifier },
+    });
+    return row === null ? null : toAccount(row);
+  }
+
   private toRow(account: Account) {
     return {
       id: account.id,

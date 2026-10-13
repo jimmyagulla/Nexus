@@ -61,6 +61,10 @@ function createFakePrisma(seed: AccountRow[] = []): FakePrisma {
         rows.find(
           (row) => row.invitationToken === args.where.invitationToken,
         ) ?? null,
+      findFirst: async (args: {
+        where: { identifier: string };
+      }): Promise<AccountRow | null> =>
+        rows.find((row) => row.identifier === args.where.identifier) ?? null,
     },
   };
 
@@ -171,6 +175,25 @@ describe('PrismaAccountRepository', () => {
     await repository.insert(invitedEmployer('account-1', 'company-1', 'founder'));
 
     expect(await repository.findByInvitationToken('missing')).toBeNull();
+  });
+
+  it('reads the account back by its identifier', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+    const account = invitedEmployer('account-1', 'company-1', 'founder');
+
+    await repository.insert(account);
+
+    expect(await repository.findByIdentifier('founder')).toEqual(account);
+  });
+
+  it('returns nothing for an unknown identifier', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaAccountRepository(client);
+
+    await repository.insert(invitedEmployer('account-1', 'company-1', 'founder'));
+
+    expect(await repository.findByIdentifier('missing')).toBeNull();
   });
 
   it('saves the activated account over the invited one', async () => {

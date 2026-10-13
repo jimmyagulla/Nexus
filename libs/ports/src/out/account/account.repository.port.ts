@@ -5,6 +5,7 @@ export interface IAccountRepository {
   save(account: Account): Promise<void>;
   listByCompany(companyId: string): Promise<readonly Account[]>;
   findByInvitationToken(invitationToken: string): Promise<Account | null>;
+  findByIdentifier(identifier: string): Promise<Account | null>;
 }
 
 export const IAccountRepository = Symbol('IAccountRepository');

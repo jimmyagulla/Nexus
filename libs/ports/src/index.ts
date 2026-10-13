@@ -1,4 +1,5 @@
 export * from './in/account/activate-account.port';
+export * from './in/account/sign-in.port';
 export * from './in/company/create-company.port';
 export * from './in/company/rename-company.port';
 export * from './in/company/rename-company-from-session.port';
@@ -23,6 +24,7 @@ export * from './out/company-settings/company-settings.gateway.port';
 export * from './out/http/http-client.port';
 export * from './out/public-holiday/public-holiday.repository.port';
 export * from './out/session/session.gateway.port';
+export * from './out/session/sign-in-session.port';
 export * from './out/session/session-client.port';
 export * from './out/system/clock.port';
 export * from './http/api-routes';

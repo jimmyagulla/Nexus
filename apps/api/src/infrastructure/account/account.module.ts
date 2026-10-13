@@ -1,14 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ActivateAccountUseCase } from '@hexagonal-monorepo-template/application';
+import {
+  ActivateAccountUseCase,
+  SignInUseCase,
+} from '@hexagonal-monorepo-template/application';
 import {
   InMemoryAccountRepository,
   InMemorySecretHasher,
+  InMemorySignInSession,
   localDevAccount,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   IAccountRepository,
   IActivateAccount,
   ISecretHasher,
+  ISignIn,
+  ISignInSession,
 } from '@hexagonal-monorepo-template/ports';
 import { AccountController } from '../../adapters/http/account/account.controller';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
@@ -43,6 +49,19 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: (accounts: IAccountRepository, secrets: ISecretHasher) =>
         new ActivateAccountUseCase(accounts, secrets),
       inject: [IAccountRepository, ISecretHasher],
+    },
+    {
+      provide: ISignInSession,
+      useFactory: () => new InMemorySignInSession(),
+    },
+    {
+      provide: ISignIn,
+      useFactory: (
+        accounts: IAccountRepository,
+        secrets: ISecretHasher,
+        sessions: ISignInSession,
+      ) => new SignInUseCase(accounts, secrets, sessions),
+      inject: [IAccountRepository, ISecretHasher, ISignInSession],
     },
   ],
   exports: [IAccountRepository],

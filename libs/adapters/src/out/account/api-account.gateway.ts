@@ -1,4 +1,8 @@
-import { unwrapResponse } from '@hexagonal-monorepo-template/infrastructure';
+import { SignedInSession } from '@hexagonal-monorepo-template/domain';
+import {
+  ApiResponse,
+  unwrapResponse,
+} from '@hexagonal-monorepo-template/infrastructure';
 import {
   API_ROUTES,
   IAccountGateway,
@@ -15,6 +19,18 @@ export class ApiAccountGateway implements IAccountGateway {
     unwrapResponse(
       await this.httpClient.post(
         `${API_ROUTES.accounts.base}/${API_ROUTES.accounts.activation}`,
+        input,
+      ),
+    );
+  }
+
+  async signIn(input: {
+    identifier: string;
+    secret: string;
+  }): Promise<SignedInSession> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<SignedInSession>>(
+        `${API_ROUTES.accounts.base}/${API_ROUTES.accounts.signIn}`,
         input,
       ),
     );

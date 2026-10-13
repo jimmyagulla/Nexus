@@ -27,4 +27,12 @@ export class InMemoryAccountRepository implements IAccountRepository {
       ) ?? null
     );
   }
+
+  async findByIdentifier(identifier: string): Promise<Account | null> {
+    return (
+      [...this.accounts.values()].find(
+        (account) => account.identifier.value === identifier,
+      ) ?? null
+    );
+  }
 }

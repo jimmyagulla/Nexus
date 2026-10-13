@@ -1,4 +1,7 @@
-import { ActivateAccountViaGatewayUseCase } from '@hexagonal-monorepo-template/application';
+import {
+  ActivateAccountViaGatewayUseCase,
+  SignInViaGatewayUseCase,
+} from '@hexagonal-monorepo-template/application';
 import { ApiAccountGateway } from '@hexagonal-monorepo-template/adapters';
 import { IHttpClient } from '@hexagonal-monorepo-template/ports';
 import { AccountController } from '../../adapters/controllers/account.controller';
@@ -12,9 +15,11 @@ export type AccountComposition = {
 export function createAccountComposition(
   httpClient: IHttpClient,
 ): AccountComposition {
+  const accounts = new ApiAccountGateway(httpClient);
   return {
     controller: new AccountController(
-      new ActivateAccountViaGatewayUseCase(new ApiAccountGateway(httpClient)),
+      new ActivateAccountViaGatewayUseCase(accounts),
+      new SignInViaGatewayUseCase(accounts),
     ),
     errorPresenter: new ErrorPresenter(),
   };

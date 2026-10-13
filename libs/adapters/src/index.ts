@@ -13,5 +13,6 @@ export * from './out/identity/in-memory-company-identity-binder';
 export * from './out/public-holiday/in-memory-public-holiday.repository';
 export * from './out/session/client-session.gateway';
 export * from './out/session/in-memory-session.client';
+export * from './out/session/in-memory-sign-in-session';
 export * from './out/session/in-memory-session.gateway';
 export * from './out/session/local-dev-session';

@@ -22,4 +22,25 @@ describe('ApiAccountGateway', () => {
       },
     ]);
   });
+
+  it('posts the identifier and the secret to sign in', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'accounts/sign-in', {
+      status: 201,
+      data: {
+        accessToken: 'session:founder',
+        companyId: 'company-1',
+        role: 'EMPLOYER',
+      },
+    });
+    const gateway = new ApiAccountGateway(http);
+
+    await expect(
+      gateway.signIn({ identifier: 'founder', secret: 's3cret' }),
+    ).resolves.toEqual({
+      accessToken: 'session:founder',
+      companyId: 'company-1',
+      role: 'EMPLOYER',
+    });
+  });
 });

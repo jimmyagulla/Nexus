@@ -32,6 +32,12 @@ export const en = {
     FRIDAY: 'Friday',
     SATURDAY: 'Saturday',
   },
+  signIn: {
+    title: 'Sign in',
+    identifier: 'Identifier',
+    secret: 'Secret',
+    submit: 'Sign in',
+  },
   activation: {
     title: 'Activate your access',
     secret: 'Secret',
