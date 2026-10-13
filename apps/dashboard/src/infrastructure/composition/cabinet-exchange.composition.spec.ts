@@ -57,6 +57,10 @@ function compositionFor(
     status: 200,
     data: [snapshot],
   });
+  http.reply('post', 'companies/c1/cabinet-exchanges/deposit', {
+    status: 201,
+    data: snapshot,
+  });
   http.reply('post', 'companies/c1/cabinet-exchanges/ex-1/consultation', {
     status: 201,
     data: snapshot,
@@ -195,5 +199,20 @@ describe('createCabinetExchangeComposition', () => {
       mimeType: 'application/pdf',
       content: new Uint8Array([72, 105]),
     });
+  });
+
+  it('wires a controller that deposits a document', async () => {
+    const { deps, http } = compositionFor();
+
+    await deps.controller.deposit({ category: 'Bilan', file: null });
+
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'companies/c1/cabinet-exchanges/deposit',
+        data: { category: 'Bilan', file: null },
+        config: authorized,
+      },
+    ]);
   });
 });

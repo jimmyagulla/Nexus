@@ -1,5 +1,6 @@
 import { CabinetConnection } from '../entities/cabinet-connection';
 import { CabinetExchange } from '../entities/cabinet-exchange';
+import { ExchangeDirection } from '../entities/exchange-direction';
 import { ExchangeStatus } from '../entities/exchange-status';
 import { ActorContext } from '../identity/actor-context';
 import { UserRole } from '../identity/user-role';
@@ -18,16 +19,34 @@ export function isVisibleTo(
     return false;
   }
   if (actor.role === UserRole.EMPLOYER) {
-    return (
-      exchange.status !== ExchangeStatus.DRAFT ||
-      exchange.senderId === actor.userId
-    );
+    return isVisibleToEmployer(exchange, actor);
   }
   if (actor.role === UserRole.ACCOUNTANT) {
-    return (
-      connection?.isConnected() === true &&
-      STATUSES_SEEN_BY_RECIPIENT.includes(exchange.status)
-    );
+    return isVisibleToCabinet(exchange, connection);
   }
   return false;
+}
+
+function isVisibleToEmployer(
+  exchange: CabinetExchange,
+  actor: ActorContext,
+): boolean {
+  if (exchange.direction === ExchangeDirection.CABINET_TO_COMPANY) {
+    return STATUSES_SEEN_BY_RECIPIENT.includes(exchange.status);
+  }
+  return (
+    exchange.status !== ExchangeStatus.DRAFT ||
+    exchange.senderId === actor.userId
+  );
+}
+
+function isVisibleToCabinet(
+  exchange: CabinetExchange,
+  connection: CabinetConnection | null,
+): boolean {
+  return (
+    exchange.direction === ExchangeDirection.COMPANY_TO_CABINET &&
+    connection?.isConnected() === true &&
+    STATUSES_SEEN_BY_RECIPIENT.includes(exchange.status)
+  );
 }

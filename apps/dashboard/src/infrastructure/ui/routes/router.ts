@@ -2,6 +2,7 @@ import { createRouter } from '@tanstack/react-router';
 import { indexRoute } from './index';
 import { rootRoute } from './__root';
 import { cabinetRoute } from './cabinet';
+import { depositDocumentRoute } from './deposit-document';
 import { exchangeRoute } from './exchange';
 import { receivedDocumentsRoute } from './received-documents';
 import { settingsRoute } from './settings';
@@ -11,6 +12,7 @@ const routeTree = rootRoute.addChildren([
   settingsRoute,
   cabinetRoute,
   receivedDocumentsRoute,
+  depositDocumentRoute,
   exchangeRoute,
 ]);
 

@@ -12,6 +12,7 @@ import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   API_ROUTES,
   ICreateCabinetExchangeDraft,
+  IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
@@ -29,6 +30,7 @@ import {
 } from './cabinet-exchange.mapper';
 import { CabinetExchangeResponseDto } from './dto/cabinet-exchange-response.dto';
 import { CreateCabinetExchangeDraftRequestDto } from './dto/create-cabinet-exchange-draft-request.dto';
+import { DepositCabinetExchangeRequestDto } from './dto/deposit-cabinet-exchange-request.dto';
 import { ExchangeFileResponseDto } from './dto/exchange-file-response.dto';
 import { MarkCabinetExchangeToTransmitRequestDto } from './dto/mark-cabinet-exchange-to-transmit-request.dto';
 import { TransmitCabinetExchangesRequestDto } from './dto/transmit-cabinet-exchanges-request.dto';
@@ -52,6 +54,8 @@ export class CabinetExchangeController {
     private readonly open: IOpenCabinetExchange,
     @Inject(IDownloadCabinetExchangeFile)
     private readonly download: IDownloadCabinetExchangeFile,
+    @Inject(IDepositCabinetExchange)
+    private readonly deposit: IDepositCabinetExchange,
   ) {}
 
   @Post()
@@ -112,6 +116,23 @@ export class CabinetExchangeController {
   ): Promise<CabinetExchangeResponseDto[]> {
     const snapshots = await this.list.execute({ actor, companyId });
     return snapshots.map(toCabinetExchangeResponse);
+  }
+
+  @Post(API_ROUTES.cabinetExchanges.deposit)
+  @Roles(UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'Deposit a document from the cabinet to the company' })
+  async depositDocument(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Body() body: DepositCabinetExchangeRequestDto,
+  ): Promise<CabinetExchangeResponseDto> {
+    const snapshot = await this.deposit.execute({
+      actor,
+      companyId,
+      category: body.category,
+      file: toExchangeFileInput(body.file),
+    });
+    return toCabinetExchangeResponse(snapshot);
   }
 
   @Post(API_ROUTES.cabinetExchanges.consultation)

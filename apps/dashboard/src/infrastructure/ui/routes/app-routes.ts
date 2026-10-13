@@ -3,5 +3,6 @@ export const AppRoutes = {
   settings: '/settings',
   cabinet: '/cabinet',
   receivedDocuments: '/documents-recus',
+  depositDocument: '/deposer-un-document',
   exchange: '/echanges/$exchangeId',
 } as const;

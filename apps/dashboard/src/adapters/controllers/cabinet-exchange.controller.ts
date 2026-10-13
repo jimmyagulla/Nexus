@@ -4,6 +4,7 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   ICreateCabinetExchangeDraftFromSession,
+  IDepositCabinetExchangeFromSession,
   IDownloadCabinetExchangeFileFromSession,
   IListCabinetExchangesFromSession,
   IMarkCabinetExchangeToTransmitFromSession,
@@ -19,6 +20,7 @@ export class CabinetExchangeController {
     private readonly listFromSession: IListCabinetExchangesFromSession,
     private readonly openFromSession: IOpenCabinetExchangeFromSession,
     private readonly downloadFromSession: IDownloadCabinetExchangeFileFromSession,
+    private readonly depositFromSession: IDepositCabinetExchangeFromSession,
   ) {}
 
   createDraft(input: {
@@ -48,5 +50,12 @@ export class CabinetExchangeController {
 
   download(exchangeId: string): Promise<ExchangeFileInput> {
     return this.downloadFromSession.execute(exchangeId);
+  }
+
+  deposit(input: {
+    category: string;
+    file: ExchangeFileInput | null;
+  }): Promise<CabinetExchangeSnapshot> {
+    return this.depositFromSession.execute(input);
   }
 }

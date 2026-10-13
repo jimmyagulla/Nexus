@@ -18,6 +18,7 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import {
   ICreateCabinetExchangeDraft,
+  IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
@@ -42,6 +43,7 @@ const open = { execute: vi.fn<IOpenCabinetExchange['execute']>() };
 const download = {
   execute: vi.fn<IDownloadCabinetExchangeFile['execute']>(),
 };
+const deposit = { execute: vi.fn<IDepositCabinetExchange['execute']>() };
 
 const employer: ActorContext = {
   userId: 'user-1',
@@ -100,6 +102,7 @@ beforeAll(async () => {
       { provide: IListCabinetExchanges, useValue: list },
       { provide: IOpenCabinetExchange, useValue: open },
       { provide: IDownloadCabinetExchangeFile, useValue: download },
+      { provide: IDepositCabinetExchange, useValue: deposit },
     ],
   }).compile();
 
@@ -130,6 +133,7 @@ beforeEach(() => {
     list,
     open,
     download,
+    deposit,
   ]) {
     port.execute.mockReset();
   }
@@ -138,6 +142,7 @@ beforeEach(() => {
   transmit.execute.mockResolvedValue([snapshot]);
   list.execute.mockResolvedValue([snapshot]);
   open.execute.mockResolvedValue(snapshot);
+  deposit.execute.mockResolvedValue(snapshot);
   download.execute.mockResolvedValue({
     fileName: 'a.pdf',
     mimeType: 'application/pdf',
@@ -425,6 +430,83 @@ describe('CabinetExchangeController', () => {
       ] as const) {
         expect((await send(method, path)).status).toBe(403);
       }
+    });
+  });
+
+  describe('POST /companies/:companyId/cabinet-exchanges/deposit', () => {
+    const body = {
+      category: 'Bilan',
+      file: {
+        fileName: 'bilan.pdf',
+        mimeType: 'application/pdf',
+        contentBase64: 'SGk=',
+      },
+    };
+
+    it('lets the cabinet deposit a document for the company', async () => {
+      actor = accountant;
+
+      await expect(send('POST', `${BASE}/deposit`, body)).resolves.toEqual({
+        status: 201,
+        payload: { status: 201, message: 'Success', data: snapshot },
+      });
+    });
+
+    it('hands the category and the decoded file to the use case', async () => {
+      actor = accountant;
+
+      await send('POST', `${BASE}/deposit`, body);
+
+      expect(deposit.execute).toHaveBeenCalledWith({
+        actor: accountant,
+        companyId: 'company-1',
+        category: 'Bilan',
+        file: {
+          fileName: 'bilan.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([72, 105]),
+        },
+      });
+    });
+
+    it('lets the use case ask for the missing document', async () => {
+      actor = accountant;
+      deposit.execute.mockRejectedValue(new Error('MISSING_DOCUMENT'));
+
+      await expect(
+        send('POST', `${BASE}/deposit`, { category: 'Bilan' }),
+      ).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: 'MISSING_DOCUMENT' },
+      });
+      expect(deposit.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ file: null }),
+      );
+    });
+
+    it('answers 400 without any category', async () => {
+      actor = accountant;
+
+      const { status } = await send('POST', `${BASE}/deposit`, {});
+
+      expect(status).toBe(400);
+      expect(deposit.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the employer tries to deposit as the cabinet', async () => {
+      const { status } = await send('POST', `${BASE}/deposit`, body);
+
+      expect(status).toBe(403);
+      expect(deposit.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when a revoked cabinet is refused', async () => {
+      actor = accountant;
+      deposit.execute.mockRejectedValue(new Error('ACCESS_DENIED'));
+
+      const { status } = await send('POST', `${BASE}/deposit`, body);
+
+      expect(status).toBe(403);
     });
   });
 });

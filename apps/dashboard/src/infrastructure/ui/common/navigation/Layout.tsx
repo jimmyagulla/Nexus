@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import {
   Briefcase,
   FileDown,
+  FileUp,
   LayoutDashboard,
   Settings,
   type LucideIcon,
@@ -17,6 +18,7 @@ const ICONS: Record<NavigationEntryId, LucideIcon> = {
   settings: Settings,
   cabinet: Briefcase,
   receivedDocuments: FileDown,
+  depositDocument: FileUp,
 };
 
 interface LayoutProps {

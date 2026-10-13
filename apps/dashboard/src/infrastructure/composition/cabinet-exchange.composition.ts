@@ -1,5 +1,6 @@
 import {
   CreateCabinetExchangeDraftFromSessionUseCase,
+  DepositCabinetExchangeFromSessionUseCase,
   DownloadCabinetExchangeFileFromSessionUseCase,
   ListCabinetExchangesFromSessionUseCase,
   MarkCabinetExchangeToTransmitFromSessionUseCase,
@@ -35,6 +36,7 @@ export function createCabinetExchangeComposition(
       new ListCabinetExchangesFromSessionUseCase(sessions, exchanges),
       new OpenCabinetExchangeFromSessionUseCase(sessions, exchanges),
       new DownloadCabinetExchangeFileFromSessionUseCase(sessions, exchanges),
+      new DepositCabinetExchangeFromSessionUseCase(sessions, exchanges),
     ),
     presenter: new CabinetExchangePresenter(),
     errorPresenter: new ErrorPresenter(),

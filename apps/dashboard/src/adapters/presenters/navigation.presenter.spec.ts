@@ -21,6 +21,11 @@ describe('NavigationPresenter', () => {
         to: AppRoutes.receivedDocuments,
         label: 'Documents reçus',
       },
+      {
+        id: 'depositDocument',
+        to: AppRoutes.depositDocument,
+        label: 'Déposer un document',
+      },
     ]);
   });
 

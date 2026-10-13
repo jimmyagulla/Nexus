@@ -29,6 +29,7 @@ describe('useNavigationEntries', () => {
     await waitFor(() =>
       expect(result.current.map((entry) => entry.id)).toEqual([
         'receivedDocuments',
+        'depositDocument',
       ]),
     );
   });

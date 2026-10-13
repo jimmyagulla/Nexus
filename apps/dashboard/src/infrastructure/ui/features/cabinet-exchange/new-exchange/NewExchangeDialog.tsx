@@ -37,6 +37,7 @@ export function NewExchangeDialog({
         <NewExchangeForm
           errorPresenter={errorPresenter}
           submissionError={submissionError}
+          submitLabel={i18n.messages.cabinet.saveDraft}
           onSubmit={async (values) => {
             const accepted = await onSubmit(values);
             if (accepted) {

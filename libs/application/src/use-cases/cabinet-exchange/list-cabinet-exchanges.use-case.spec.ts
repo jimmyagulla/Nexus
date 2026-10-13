@@ -167,4 +167,30 @@ describe('ListCabinetExchangesUseCase', () => {
       ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
     });
   });
+
+  it('shows the employer what the cabinet deposited, in the cabinet to company direction', async () => {
+    const exchanges = new InMemoryCabinetExchangeRepository();
+    await exchanges.save(
+      CabinetExchange.deposit(
+        'deposit',
+        'c1',
+        'cab-1',
+        ExchangeCategory.parse('Bilan'),
+        ExchangeFile.of('bilan.pdf', 'application/pdf', new Uint8Array([1])),
+        day('2026-10-08'),
+      ).receive(day('2026-10-08')),
+    );
+    const useCase = new ListCabinetExchangesUseCase(
+      exchanges,
+      new InMemoryCabinetConnectionRepository(),
+    );
+
+    const [listed] = await useCase.execute({ actor: employer, companyId: 'c1' });
+
+    expect(listed).toMatchObject({
+      id: 'deposit',
+      direction: 'CABINET_TO_COMPANY',
+      status: 'RECEIVED',
+    });
+  });
 });

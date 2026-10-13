@@ -6,6 +6,7 @@ export const en = {
     settings: 'Settings',
     cabinet: 'Accounting firm',
     receivedDocuments: 'Received documents',
+    depositDocument: 'Deposit a document',
   },
   loading: 'Loading…',
   home: {
@@ -42,6 +43,9 @@ export const en = {
     consultedOn: 'Viewed on',
     notConsulted: 'Not viewed yet',
     back: 'Back to the list',
+    depositTitle: 'Deposit a document',
+    deposit: 'Deposit',
+    deposited: 'The document was transmitted.',
     transmitted: 'The document was transmitted to the accounting firm.',
     statuses: {
       DRAFT: 'Draft',

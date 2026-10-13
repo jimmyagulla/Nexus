@@ -37,6 +37,34 @@ export class CabinetExchange {
     );
   }
 
+  static deposit(
+    id: string,
+    companyId: string,
+    cabinetUserId: string,
+    category: ExchangeCategory,
+    file: ExchangeFile,
+    occurredAt: Date,
+  ): CabinetExchange {
+    return new CabinetExchange(
+      id,
+      companyId,
+      ExchangeDirection.CABINET_TO_COMPANY,
+      cabinetUserId,
+      occurredAt,
+      category,
+      file.describe(),
+      ExchangeStatus.TRANSMITTED,
+      [
+        {
+          kind: ExchangeEventKind.TRANSMITTED,
+          actorId: cabinetUserId,
+          occurredAt,
+          documentCount: 1,
+        },
+      ],
+    );
+  }
+
   withCategory(category: ExchangeCategory): CabinetExchange {
     return this.copy({ category });
   }

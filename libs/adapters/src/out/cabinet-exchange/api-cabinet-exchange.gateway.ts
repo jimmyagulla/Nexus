@@ -86,6 +86,20 @@ export class ApiCabinetExchangeGateway implements ICabinetExchangeGateway {
     );
   }
 
+  async deposit(
+    companyId: string,
+    input: { category: string; file: ExchangeFileInput | null },
+    token: string,
+  ): Promise<CabinetExchangeSnapshot> {
+    return unwrapResponse(
+      await this.httpClient.post<ApiResponse<CabinetExchangeSnapshot>>(
+        cabinetExchangePath(API_ROUTES.cabinetExchanges.deposit, { companyId }),
+        this.toDraftPayload(input),
+        this.authorized(token),
+      ),
+    );
+  }
+
   async open(
     companyId: string,
     exchangeId: string,

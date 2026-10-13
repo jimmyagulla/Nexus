@@ -87,4 +87,43 @@ describe('isVisibleTo', () => {
       isVisibleTo(draft().markToTransmit(), otherEmployer, connected),
     ).toBe(true);
   });
+
+  describe('what the cabinet deposited', () => {
+    const deposit = () =>
+      CabinetExchange.deposit(
+        'ex-2',
+        'c1',
+        'cab-1',
+        ExchangeCategory.parse('Bilan'),
+        ExchangeFile.of('a.pdf', 'application/pdf', new Uint8Array([1])),
+        at,
+      );
+
+    it('stays out of sight of the company until it is Received', () => {
+      expect(isVisibleTo(deposit(), employer, connected)).toBe(false);
+      expect(isVisibleTo(deposit().receive(at), employer, connected)).toBe(true);
+    });
+
+    it('is shown to every employer of the company once Received', () => {
+      expect(isVisibleTo(deposit().receive(at), otherEmployer, connected)).toBe(
+        true,
+      );
+    });
+
+    it('is not shown to an employer of another company', () => {
+      expect(
+        isVisibleTo(
+          deposit().receive(at),
+          { ...employer, companyId: 'c2' },
+          connected,
+        ),
+      ).toBe(false);
+    });
+
+    it('is not listed among the documents the cabinet received', () => {
+      expect(isVisibleTo(deposit().receive(at), accountant, connected)).toBe(
+        false,
+      );
+    });
+  });
 });

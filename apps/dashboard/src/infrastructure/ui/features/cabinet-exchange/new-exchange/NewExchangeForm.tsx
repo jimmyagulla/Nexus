@@ -15,12 +15,14 @@ import {
 interface NewExchangeFormProps {
   errorPresenter: ErrorPresenter;
   submissionError: string | null;
+  submitLabel: string;
   onSubmit: (values: NewExchangeValues) => Promise<boolean>;
 }
 
 export function NewExchangeForm({
   errorPresenter,
   submissionError,
+  submitLabel,
   onSubmit,
 }: NewExchangeFormProps) {
   const form = useForm<NewExchangeFormValues>({
@@ -62,7 +64,7 @@ export function NewExchangeForm({
         {fileError ? <p>{errorPresenter.present(fileError.message)}</p> : null}
       </div>
       <SubmissionError message={submissionError} />
-      <Button type="submit">{i18n.messages.cabinet.saveDraft}</Button>
+      <Button type="submit">{submitLabel}</Button>
     </form>
   );
 }

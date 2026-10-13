@@ -31,6 +31,7 @@ function controller() {
     transmitted: [] as (readonly string[])[],
     opened: [] as string[],
     downloaded: [] as string[],
+    deposited: [] as unknown[],
   };
   return {
     received,
@@ -64,6 +65,12 @@ function controller() {
         execute: async (id) => {
           received.downloaded.push(id);
           return file;
+        },
+      },
+      {
+        execute: async (input) => {
+          received.deposited.push(input);
+          return { ...snapshot, status: ExchangeStatus.RECEIVED };
         },
       },
     ),
@@ -118,5 +125,14 @@ describe('CabinetExchangeController', () => {
 
     await expect(sut.download('ex-1')).resolves.toEqual(file);
     expect(received.downloaded).toEqual(['ex-1']);
+  });
+
+  it('deposits a document for the company', async () => {
+    const { controller: sut, received } = controller();
+
+    await expect(
+      sut.deposit({ category: 'Bilan', file }),
+    ).resolves.toMatchObject({ status: ExchangeStatus.RECEIVED });
+    expect(received.deposited).toEqual([{ category: 'Bilan', file }]);
   });
 });

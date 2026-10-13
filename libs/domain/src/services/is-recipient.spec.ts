@@ -1,5 +1,7 @@
 import { CabinetExchange } from '../entities/cabinet-exchange';
 import { ActorContext } from '../identity/actor-context';
+import { ExchangeCategory } from '../value-objects/exchange-category';
+import { ExchangeFile } from '../value-objects/exchange-file';
 import { UserRole } from '../identity/user-role';
 import { isRecipient } from './is-recipient';
 
@@ -24,5 +26,19 @@ describe('isRecipient', () => {
   it('never makes an employee or an unknown actor a recipient', () => {
     expect(isRecipient(exchange, actor(UserRole.EMPLOYEE))).toBe(false);
     expect(isRecipient(exchange, actor(null))).toBe(false);
+  });
+
+  it('makes the employer the recipient of what the cabinet deposits', () => {
+    const deposit = CabinetExchange.deposit(
+      'ex-2',
+      'c1',
+      'cab-1',
+      ExchangeCategory.parse('Bilan'),
+      ExchangeFile.of('a.pdf', 'application/pdf', new Uint8Array([1])),
+      at,
+    );
+
+    expect(isRecipient(deposit, actor(UserRole.EMPLOYER))).toBe(true);
+    expect(isRecipient(deposit, actor(UserRole.ACCOUNTANT))).toBe(false);
   });
 });

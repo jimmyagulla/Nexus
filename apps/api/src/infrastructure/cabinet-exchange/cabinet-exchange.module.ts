@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
   CreateCabinetExchangeDraftUseCase,
+  DepositCabinetExchangeUseCase,
   DownloadCabinetExchangeFileUseCase,
   ListCabinetExchangesUseCase,
   MarkCabinetExchangeToTransmitUseCase,
@@ -16,6 +17,7 @@ import {
   ICabinetExchangeRepository,
   IClock,
   ICreateCabinetExchangeDraft,
+  IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
   IExchangeFileStorage,
   IListCabinetExchanges,
@@ -108,6 +110,22 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         clock: IClock,
       ) => new OpenCabinetExchangeUseCase(exchanges, connections, clock),
       inject: [ICabinetExchangeRepository, ICabinetConnectionRepository, IClock],
+    },
+    {
+      provide: IDepositCabinetExchange,
+      useFactory: (
+        exchanges: ICabinetExchangeRepository,
+        files: IExchangeFileStorage,
+        connections: ICabinetConnectionRepository,
+        clock: IClock,
+      ) =>
+        new DepositCabinetExchangeUseCase(exchanges, files, connections, clock),
+      inject: [
+        ICabinetExchangeRepository,
+        IExchangeFileStorage,
+        ICabinetConnectionRepository,
+        IClock,
+      ],
     },
     {
       provide: IDownloadCabinetExchangeFile,

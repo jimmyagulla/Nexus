@@ -6,6 +6,7 @@ export const fr = {
     settings: 'Paramètres',
     cabinet: 'Cabinet comptable',
     receivedDocuments: 'Documents reçus',
+    depositDocument: 'Déposer un document',
   },
   loading: 'Chargement…',
   home: {
@@ -42,6 +43,9 @@ export const fr = {
     consultedOn: 'Consulté le',
     notConsulted: 'Pas encore consulté',
     back: 'Retour à la liste',
+    depositTitle: 'Déposer un document',
+    deposit: 'Déposer',
+    deposited: 'Le document a été transmis.',
     transmitted: 'Le document a été transmis au cabinet comptable.',
     statuses: {
       DRAFT: 'Brouillon',

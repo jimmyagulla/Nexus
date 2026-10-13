@@ -195,4 +195,35 @@ describe('ApiCabinetExchangeGateway', () => {
       },
     ]);
   });
+
+  it('deposits a document for the company, sending the file as base64 text', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'companies/c1/cabinet-exchanges/deposit', {
+      status: 201,
+      data: snapshot,
+    });
+
+    await expect(
+      new ApiCabinetExchangeGateway(http).deposit(
+        'c1',
+        { category: 'Bilan', file },
+        'token',
+      ),
+    ).resolves.toEqual(snapshot);
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'companies/c1/cabinet-exchanges/deposit',
+        data: {
+          category: 'Bilan',
+          file: {
+            fileName: 'a.pdf',
+            mimeType: 'application/pdf',
+            contentBase64: 'SGk=',
+          },
+        },
+        config: authorized,
+      },
+    ]);
+  });
 });

@@ -164,4 +164,44 @@ describe('CabinetExchange', () => {
       expect(opened.firstConsultedAt()).toEqual(consulted);
     });
   });
+
+  describe('deposited by the cabinet', () => {
+    const deposited = () =>
+      CabinetExchange.deposit(
+        'ex-9',
+        'c1',
+        'cab-1',
+        ExchangeCategory.parse('Bilan'),
+        ExchangeFile.of('bilan.pdf', 'application/pdf', new Uint8Array([1, 2])),
+        sent,
+      );
+
+    it('is born Transmitted, going from the cabinet to the company', () => {
+      expect(deposited()).toMatchObject({
+        id: 'ex-9',
+        companyId: 'c1',
+        senderId: 'cab-1',
+        direction: ExchangeDirection.CABINET_TO_COMPANY,
+        status: ExchangeStatus.TRANSMITTED,
+        createdAt: sent,
+        category: { value: 'Bilan' },
+        document: { fileName: 'bilan.pdf', mimeType: 'application/pdf', size: 2 },
+      });
+    });
+
+    it('remembers the deposit as a transmission by the cabinet', () => {
+      expect(deposited().history).toEqual([
+        {
+          kind: ExchangeEventKind.TRANSMITTED,
+          actorId: 'cab-1',
+          occurredAt: sent,
+          documentCount: 1,
+        },
+      ]);
+    });
+
+    it('becomes Received once the company can see it', () => {
+      expect(deposited().receive(sent).status).toBe(ExchangeStatus.RECEIVED);
+    });
+  });
 });

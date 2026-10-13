@@ -11,6 +11,7 @@ export const API_ROUTES = {
     base: 'companies/:companyId/cabinet-exchanges',
     toTransmit: ':exchangeId/to-transmit',
     transmission: 'transmission',
+    deposit: 'deposit',
     consultation: ':exchangeId/consultation',
     file: ':exchangeId/file',
   },

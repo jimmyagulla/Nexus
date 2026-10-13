@@ -15,6 +15,7 @@ function renderForm(
     <NewExchangeForm
       errorPresenter={new ErrorPresenter()}
       submissionError={options.submissionError ?? null}
+      submitLabel={i18n.messages.cabinet.saveDraft}
       onSubmit={async (values) => {
         submitted.push(values);
         return options.accepted ?? true;

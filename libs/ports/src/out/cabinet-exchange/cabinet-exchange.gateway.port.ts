@@ -24,6 +24,11 @@ export interface ICabinetExchangeGateway {
     companyId: string,
     token: string,
   ): Promise<readonly CabinetExchangeSnapshot[]>;
+  deposit(
+    companyId: string,
+    input: { category: string; file: ExchangeFileInput | null },
+    token: string,
+  ): Promise<CabinetExchangeSnapshot>;
   open(
     companyId: string,
     exchangeId: string,
