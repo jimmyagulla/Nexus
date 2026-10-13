@@ -37,6 +37,7 @@ describe('toExpenseReportSnapshot', () => {
       employeeId: 'e1',
       label: 'Déplacement Lyon',
       status: 'DRAFT',
+      total: 45,
       expenses: [
         {
           id: 'x1',
@@ -50,6 +51,39 @@ describe('toExpenseReportSnapshot', () => {
         },
       ],
     });
+  });
+
+  it('exposes the total of the amounts', () => {
+    const report = reportWith(null);
+    const bigger = report.addExpense(
+      new Expense(
+        'x2',
+        ExpenseDetails.parse({
+          date: '2026-10-06',
+          categoryId: 'train',
+          amount: 68,
+          vat: null,
+          paymentMethod: 'Carte',
+          description: 'Billet',
+          assignment: 'Projet X',
+        }),
+      ),
+    );
+
+    expect(toExpenseReportSnapshot(bigger).total).toBe(113);
+  });
+
+  it('exposes a total of zero for an empty report', () => {
+    const empty = new ExpenseReport({
+      id: 'r2',
+      companyId: 'c1',
+      employeeId: 'e1',
+      label: ExpenseReportLabel.parse('Vide'),
+      status: ExpenseReportStatus.DRAFT,
+      expenses: [],
+    });
+
+    expect(toExpenseReportSnapshot(empty).total).toBe(0);
   });
 
   it('exposes a missing VAT as null', () => {

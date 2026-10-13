@@ -22,6 +22,7 @@ const draft = {
   status: 'DRAFT' as const,
   statusLabel: 'Brouillon',
   editable: true,
+  total: '0 €',
   expenses: [],
 };
 

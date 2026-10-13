@@ -14,6 +14,7 @@ export function toExpenseReportSnapshot(
     employeeId: report.employeeId,
     label: report.label.value,
     status: report.status,
+    total: report.total().euros,
     expenses: report.expenses.map(toExpenseSnapshot),
   };
 }

@@ -4,6 +4,8 @@ import {
   CreateExpenseReportUseCase,
   GetExpenseReportUseCase,
   ListExpenseReportsUseCase,
+  RemoveExpenseUseCase,
+  UpdateExpenseUseCase,
 } from '@hexagonal-monorepo-template/application';
 import { InMemoryExpenseReportRepository } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -14,6 +16,8 @@ import {
   IExpenseReportRepository,
   IGetExpenseReport,
   IListExpenseReports,
+  IRemoveExpense,
+  IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { ExpenseReportController } from '../../adapters/http/expense-report/expense-report.controller';
 import { PrismaExpenseReportRepository } from '../../adapters/out/expense-report/prisma-expense-report.repository';
@@ -56,6 +60,27 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         IExpenseReportRepository,
         IExpenseCategoryRepository,
       ],
+    },
+    {
+      provide: IUpdateExpense,
+      useFactory: (
+        employees: IEmployeeRepository,
+        reports: IExpenseReportRepository,
+        categories: IExpenseCategoryRepository,
+      ) => new UpdateExpenseUseCase(employees, reports, categories),
+      inject: [
+        IEmployeeRepository,
+        IExpenseReportRepository,
+        IExpenseCategoryRepository,
+      ],
+    },
+    {
+      provide: IRemoveExpense,
+      useFactory: (
+        employees: IEmployeeRepository,
+        reports: IExpenseReportRepository,
+      ) => new RemoveExpenseUseCase(employees, reports),
+      inject: [IEmployeeRepository, IExpenseReportRepository],
     },
     {
       provide: IGetExpenseReport,

@@ -17,6 +17,8 @@ export interface IExpenseReportRepository {
   ): Promise<ExpenseReport>;
   findById(companyId: string, reportId: string): Promise<ExpenseReport | null>;
   insertExpense(reportId: string, details: ExpenseDetails): Promise<Expense>;
+  saveExpense(reportId: string, expense: Expense): Promise<void>;
+  deleteExpense(reportId: string, expenseId: string): Promise<void>;
   list(
     companyId: string,
     criteria: ExpenseReportCriteria,

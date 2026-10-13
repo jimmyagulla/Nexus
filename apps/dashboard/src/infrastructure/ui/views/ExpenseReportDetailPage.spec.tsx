@@ -19,6 +19,7 @@ const report = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: 'DRAFT',
+  total: 45,
   expenses: [
     {
       id: 'x1',
@@ -148,6 +149,82 @@ describe('ExpenseReportDetailPage', () => {
 
     expect((await dialog.findByRole('alert')).textContent).toBe(
       i18n.messages.errors.INVALID_VAT,
+    );
+  });
+
+  it('shows the total of the report', async () => {
+    renderPage(httpWithReport());
+
+    expect(
+      await screen.findByText(`${i18n.messages.expenseReports.total} : 45 €`),
+    ).toBeTruthy();
+  });
+
+  it('removes an expense on demand', async () => {
+    const http = httpWithReport();
+    http.reply('delete', 'companies/c1/expense-reports/r1/expenses/x1', {
+      status: 200,
+      data: report,
+    });
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: i18n.messages.expenseReports.removeExpense,
+      }),
+    );
+
+    await waitFor(() =>
+      expect(http.calls.some((call) => call.method === 'delete')).toBe(true),
+    );
+  });
+
+  it('explains why an expense could not be removed', async () => {
+    const http = httpWithReport();
+    http.reject(
+      'delete',
+      'companies/c1/expense-reports/r1/expenses/x1',
+      new Error(ErrorCode.REQUEST_ALREADY_PROCESSED),
+    );
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: i18n.messages.expenseReports.removeExpense,
+      }),
+    );
+
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      i18n.messages.errors.REQUEST_ALREADY_PROCESSED,
+    );
+  });
+
+  it('modifies an expense from the dialog and closes it', async () => {
+    const http = httpWithReport();
+    http.reply('patch', 'companies/c1/expense-reports/r1/expenses/x1', {
+      status: 200,
+      data: report,
+    });
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: i18n.messages.expenseReports.editExpense,
+      }),
+    );
+    const dialog = within(screen.getByRole('dialog'));
+    fireEvent.change(dialog.getByLabelText(labels.amount), {
+      target: { value: '50' },
+    });
+    fireEvent.click(
+      dialog.getByRole('button', {
+        name: i18n.messages.expenseReports.saveExpense,
+      }),
+    );
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(http.calls.find((call) => call.method === 'patch')?.data).toMatchObject(
+      { amount: 50, categoryId: 'restaurant', description: 'Déjeuner client' },
     );
   });
 

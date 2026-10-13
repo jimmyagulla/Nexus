@@ -1,5 +1,6 @@
 import { ErrorCode } from '../errors/error-code';
 import { ExpenseReportLabel } from '../value-objects/expense-report-label';
+import { Money } from '../value-objects/money';
 import { Expense } from './expense';
 import { ExpenseReportStatus } from './expense-report-status';
 
@@ -45,14 +46,45 @@ export class ExpenseReport {
     });
   }
 
+  total(): Money {
+    return this.expenses.reduce(
+      (sum, expense) => sum.plus(expense.details.amount),
+      Money.zero(),
+    );
+  }
+
   addExpense(expense: Expense): ExpenseReport {
     this.requireDraft();
     return this.with({ expenses: [...this.expenses, expense] });
   }
 
+  updateExpense(expense: Expense): ExpenseReport {
+    this.requireDraft();
+    this.requireExpense(expense.id);
+    return this.with({
+      expenses: this.expenses.map((current) =>
+        current.id === expense.id ? expense : current,
+      ),
+    });
+  }
+
+  removeExpense(expenseId: string): ExpenseReport {
+    this.requireDraft();
+    this.requireExpense(expenseId);
+    return this.with({
+      expenses: this.expenses.filter((current) => current.id !== expenseId),
+    });
+  }
+
   requireDraft(): void {
     if (this.status !== ExpenseReportStatus.DRAFT) {
       throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    }
+  }
+
+  private requireExpense(expenseId: string): void {
+    if (!this.expenses.some((current) => current.id === expenseId)) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
     }
   }
 

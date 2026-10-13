@@ -86,6 +86,81 @@ describe('ExpenseReport', () => {
     );
   });
 
+  it('totals the amounts of its expenses', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'restaurant', 45))
+      .addExpense(expense('x2', 'parking', 12))
+      .addExpense(expense('x3', 'train', 68));
+
+    expect(report.total().euros).toBe(125);
+  });
+
+  it('totals nothing for a report without expense', () => {
+    expect(new ExpenseReport(draftProps()).total().euros).toBe(0);
+  });
+
+  it('keeps the cents of the total exact', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'restaurant', 0.1))
+      .addExpense(expense('x2', 'parking', 0.2));
+
+    expect(report.total().cents).toBe(30);
+  });
+
+  it('lowers the total when an expense is removed', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'restaurant', 45))
+      .addExpense(expense('x2', 'parking', 12))
+      .addExpense(expense('x3', 'train', 68))
+      .removeExpense('x3');
+
+    expect(report.total().euros).toBe(57);
+    expect(report.expenses.map((item) => item.id)).toEqual(['x1', 'x2']);
+  });
+
+  it('recomputes the total when an expense is modified', () => {
+    const report = new ExpenseReport(draftProps())
+      .addExpense(expense('x1', 'restaurant', 45))
+      .addExpense(expense('x2', 'parking', 12))
+      .updateExpense(expense('x2', 'parking', 20));
+
+    expect(report.total().euros).toBe(65);
+    expect(report.expenses.map((item) => item.id)).toEqual(['x1', 'x2']);
+  });
+
+  it('refuses to modify an expense it does not hold', () => {
+    expect(() =>
+      new ExpenseReport(draftProps()).updateExpense(expense('x9', 'train', 1)),
+    ).toThrow(ErrorCode.ACCESS_DENIED);
+  });
+
+  it('refuses to remove an expense it does not hold', () => {
+    expect(() => new ExpenseReport(draftProps()).removeExpense('x9')).toThrow(
+      ErrorCode.ACCESS_DENIED,
+    );
+  });
+
+  it.each([
+    ExpenseReportStatus.SUBMITTED,
+    ExpenseReportStatus.UNDER_REVIEW,
+    ExpenseReportStatus.VALIDATED,
+    ExpenseReportStatus.REFUSED,
+    ExpenseReportStatus.REIMBURSED,
+  ])('no longer lets the employee modify or remove an expense once %s', (status) => {
+    const report = new ExpenseReport({
+      ...draftProps(),
+      status,
+      expenses: [expense('x1', 'train', 68)],
+    });
+
+    expect(() => report.updateExpense(expense('x1', 'train', 70))).toThrow(
+      ErrorCode.REQUEST_ALREADY_PROCESSED,
+    );
+    expect(() => report.removeExpense('x1')).toThrow(
+      ErrorCode.REQUEST_ALREADY_PROCESSED,
+    );
+  });
+
   it('exposes the date of an expense as a calendar date', () => {
     expect(expense('x1', 'train', 68).details.date).toEqual(
       CalendarDate.parse('2026-10-05'),

@@ -22,6 +22,19 @@ export interface IExpenseReportGateway {
     expense: ExpenseDetailsInput,
     token: string,
   ): Promise<ExpenseReportSnapshot>;
+  updateExpense(
+    companyId: string,
+    reportId: string,
+    expenseId: string,
+    expense: ExpenseDetailsInput,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
+  removeExpense(
+    companyId: string,
+    reportId: string,
+    expenseId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
 }
 
 export const IExpenseReportGateway = Symbol('IExpenseReportGateway');

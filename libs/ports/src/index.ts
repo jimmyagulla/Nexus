@@ -40,3 +40,7 @@ export * from './out/expense-category/expense-category.repository.port';
 export * from './out/expense-category/expense-category.gateway.port';
 export * from './out/expense-report/expense-report.repository.port';
 export * from './out/expense-report/expense-report.gateway.port';
+export * from './in/expense-report/update-expense.port';
+export * from './in/expense-report/update-expense-from-session.port';
+export * from './in/expense-report/remove-expense.port';
+export * from './in/expense-report/remove-expense-from-session.port';

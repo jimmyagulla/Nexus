@@ -22,3 +22,7 @@ export * from './use-cases/expense-report/get-expense-report-from-session.use-ca
 export * from './use-cases/expense-report/list-expense-reports-from-session.use-case';
 export * from './use-cases/expense-category/list-expense-categories-from-session.use-case';
 export * from './use-cases/expense-category/add-expense-category-from-session.use-case';
+export * from './use-cases/expense-report/update-expense.use-case';
+export * from './use-cases/expense-report/update-expense-from-session.use-case';
+export * from './use-cases/expense-report/remove-expense.use-case';
+export * from './use-cases/expense-report/remove-expense-from-session.use-case';

@@ -10,6 +10,7 @@ export function toExpenseReportResponse(
     employeeId: snapshot.employeeId,
     label: snapshot.label,
     status: snapshot.status,
+    total: snapshot.total,
     expenses: snapshot.expenses.map((expense) => ({ ...expense })),
   };
 }

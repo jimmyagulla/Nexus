@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +17,8 @@ import {
   ICreateExpenseReport,
   IGetExpenseReport,
   IListExpenseReports,
+  IRemoveExpense,
+  IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { Actor } from '../common/guards/auth/actor.decorator';
 import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
@@ -40,6 +44,10 @@ export class ExpenseReportController {
     private readonly getReport: IGetExpenseReport,
     @Inject(IListExpenseReports)
     private readonly listReports: IListExpenseReports,
+    @Inject(IUpdateExpense)
+    private readonly updateExpense: IUpdateExpense,
+    @Inject(IRemoveExpense)
+    private readonly removeExpense: IRemoveExpense,
   ) {}
 
   @Post(API_ROUTES.companies.expenseReports)
@@ -84,6 +92,44 @@ export class ExpenseReportController {
       actor,
       companyId,
       reportId,
+    });
+    return toExpenseReportResponse(report);
+  }
+
+  @Patch(API_ROUTES.companies.expenseReportExpense)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Modify an expense of a draft expense report' })
+  async modify(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+    @Param('expenseId') expenseId: string,
+    @Body() body: ExpenseRequestDto,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.updateExpense.execute({
+      actor,
+      companyId,
+      reportId,
+      expenseId,
+      expense: { ...body, vat: body.vat ?? null },
+    });
+    return toExpenseReportResponse(report);
+  }
+
+  @Delete(API_ROUTES.companies.expenseReportExpense)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Remove an expense from a draft expense report' })
+  async remove(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+    @Param('expenseId') expenseId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.removeExpense.execute({
+      actor,
+      companyId,
+      reportId,
+      expenseId,
     });
     return toExpenseReportResponse(report);
   }

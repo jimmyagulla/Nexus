@@ -11,6 +11,16 @@ import {
 } from '../../infrastructure/ui/i18n/i18n';
 import { EuroPresenter } from './euro.presenter';
 
+export interface ExpenseFieldsViewModel {
+  date: string;
+  categoryId: string;
+  amount: string;
+  vat: string;
+  paymentMethod: string;
+  description: string;
+  assignment: string;
+}
+
 export interface ExpenseViewModel {
   id: string;
   date: string;
@@ -20,6 +30,7 @@ export interface ExpenseViewModel {
   paymentMethod: string;
   description: string;
   assignment: string;
+  fields: ExpenseFieldsViewModel;
 }
 
 export interface ExpenseReportViewModel {
@@ -28,6 +39,7 @@ export interface ExpenseReportViewModel {
   status: ExpenseReportStatus;
   statusLabel: string;
   editable: boolean;
+  total: string;
   expenses: ExpenseViewModel[];
 }
 
@@ -52,6 +64,7 @@ export class ExpenseReportPresenter {
       status: snapshot.status,
       statusLabel: this.i18n.messages.expenseReports.status[snapshot.status],
       editable: snapshot.status === ExpenseReportStatus.DRAFT,
+      total: this.euros.present(snapshot.total),
       expenses: snapshot.expenses.map((expense) =>
         this.presentExpense(expense, categories),
       ),
@@ -78,6 +91,19 @@ export class ExpenseReportPresenter {
       category: this.categoryLabel(expense.categoryId, categories),
       amount: this.euros.present(expense.amount),
       vat: expense.vat === null ? null : this.euros.present(expense.vat),
+      paymentMethod: expense.paymentMethod,
+      description: expense.description,
+      assignment: expense.assignment,
+      fields: this.presentFields(expense),
+    };
+  }
+
+  private presentFields(expense: ExpenseSnapshot): ExpenseFieldsViewModel {
+    return {
+      date: expense.date,
+      categoryId: expense.categoryId,
+      amount: String(expense.amount),
+      vat: expense.vat === null ? '' : String(expense.vat),
       paymentMethod: expense.paymentMethod,
       description: expense.description,
       assignment: expense.assignment,

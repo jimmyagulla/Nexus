@@ -11,6 +11,7 @@ const snapshot: ExpenseReportSnapshot = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
+  total: 45,
   expenses: [
     {
       id: 'x1',

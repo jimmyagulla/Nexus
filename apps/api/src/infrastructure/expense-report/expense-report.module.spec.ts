@@ -8,6 +8,8 @@ import {
   IExpenseReportRepository,
   IGetExpenseReport,
   IListExpenseReports,
+  IRemoveExpense,
+  IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaExpenseReportRepository } from '../../adapters/out/expense-report/prisma-expense-report.repository';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
@@ -57,6 +59,8 @@ describe('ExpenseReportModule', () => {
     expect(moduleRef.get(IAddExpense)).toBeDefined();
     expect(moduleRef.get(IGetExpenseReport)).toBeDefined();
     expect(moduleRef.get(IListExpenseReports)).toBeDefined();
+    expect(moduleRef.get(IUpdateExpense)).toBeDefined();
+    expect(moduleRef.get(IRemoveExpense)).toBeDefined();
   });
 
   it('stores reports in Postgres when the mode and the client are both set', async () => {

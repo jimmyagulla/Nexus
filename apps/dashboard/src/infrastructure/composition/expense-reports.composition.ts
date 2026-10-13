@@ -3,6 +3,8 @@ import {
   CreateExpenseReportFromSessionUseCase,
   GetExpenseReportFromSessionUseCase,
   ListExpenseReportsFromSessionUseCase,
+  RemoveExpenseFromSessionUseCase,
+  UpdateExpenseFromSessionUseCase,
 } from '@hexagonal-monorepo-template/application';
 import { ApiExpenseReportGateway } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -32,6 +34,8 @@ export function createExpenseReportsComposition(
       new AddExpenseFromSessionUseCase(sessions, reports),
       new GetExpenseReportFromSessionUseCase(sessions, reports),
       new ListExpenseReportsFromSessionUseCase(sessions, reports),
+      new UpdateExpenseFromSessionUseCase(sessions, reports),
+      new RemoveExpenseFromSessionUseCase(sessions, reports),
     ),
     presenter: new ExpenseReportPresenter(),
     errorPresenter: new ErrorPresenter(),

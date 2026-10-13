@@ -3,6 +3,8 @@ import { ExpenseReportsScreenComposition } from '../../composition/expense-repor
 import { useAddExpense } from '../hooks/useAddExpense';
 import { useGetExpenseCategories } from '../hooks/useGetExpenseCategories';
 import { useGetExpenseReport } from '../hooks/useGetExpenseReport';
+import { useRemoveExpense } from '../hooks/useRemoveExpense';
+import { useUpdateExpense } from '../hooks/useUpdateExpense';
 import { i18n } from '../i18n/i18n';
 import { ExpenseReportDetail } from './ExpenseReportDetail';
 
@@ -20,6 +22,8 @@ export function ExpenseReportDetailPage({
   const report = useGetExpenseReport(reportId, deps);
   const categories = useGetExpenseCategories(deps.categories);
   const addExpense = useAddExpense(reportId, deps.reports);
+  const updateExpense = useUpdateExpense(reportId, deps.reports);
+  const removeExpense = useRemoveExpense(reportId, deps.reports);
 
   if (report.isPending || categories.isPending) {
     return <p>{i18n.messages.loading}</p>;
@@ -39,7 +43,13 @@ export function ExpenseReportDetailPage({
       categories={categories.data}
       errorPresenter={deps.reports.errorPresenter}
       addExpenseError={refusalOf(deps.reports.errorPresenter, addExpense)}
+      editExpenseError={refusalOf(deps.reports.errorPresenter, updateExpense)}
+      removeExpenseError={refusalOf(deps.reports.errorPresenter, removeExpense)}
       onAddExpense={(values) => accepted(addExpense.mutateAsync(values))}
+      onEditExpense={(expenseId, values) =>
+        accepted(updateExpense.mutateAsync({ expenseId, expense: values }))
+      }
+      onRemoveExpense={(expenseId) => removeExpense.mutate(expenseId)}
       onBack={onBack}
     />
   );

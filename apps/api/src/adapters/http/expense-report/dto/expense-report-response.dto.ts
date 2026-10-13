@@ -18,6 +18,9 @@ export class ExpenseReportResponseDto {
   @ApiProperty({ enum: ExpenseReportStatus })
   status!: ExpenseReportStatus;
 
+  @ApiProperty({ description: 'Sum of the expense amounts, in euros' })
+  total!: number;
+
   @ApiProperty({ type: [ExpenseResponseDto] })
   expenses!: ExpenseResponseDto[];
 }

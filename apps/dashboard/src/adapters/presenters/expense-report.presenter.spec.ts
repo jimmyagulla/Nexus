@@ -21,6 +21,7 @@ const report: ExpenseReportSnapshot = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
+  total: 57,
   expenses: [
     {
       id: 'x1',
@@ -110,6 +111,35 @@ describe('ExpenseReportPresenter', () => {
     expect([first?.paymentMethod, first?.description, first?.assignment]).toEqual(
       ['Carte', 'Déjeuner', 'Client Dupont'],
     );
+  });
+
+  it('writes the total of the report in euros', () => {
+    const presenter = new ExpenseReportPresenter();
+
+    expect(
+      plain(presenter.present({ ...report, total: 125 }, categories).total),
+    ).toBe('125 €');
+    expect(
+      plain(presenter.present({ ...report, total: 57 }, categories).total),
+    ).toBe('57 €');
+  });
+
+  it('keeps the raw fields of an expense so that it can be edited', () => {
+    const [first, second] = new ExpenseReportPresenter().present(
+      report,
+      categories,
+    ).expenses;
+
+    expect(first?.fields).toEqual({
+      date: '2026-10-05',
+      categoryId: 'restaurant',
+      amount: '45',
+      vat: '7.5',
+      paymentMethod: 'Carte',
+      description: 'Déjeuner',
+      assignment: 'Client Dupont',
+    });
+    expect(second?.fields.vat).toBe('');
   });
 
   it('presents every report of a list and whether a report can be created', () => {

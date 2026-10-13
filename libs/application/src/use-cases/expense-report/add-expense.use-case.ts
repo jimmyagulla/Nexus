@@ -1,17 +1,13 @@
 import {
   ActorContext,
-  assertSameCompany,
-  ErrorCode,
   ExpenseDetails,
-  expenseCategoriesOf,
+  ExpenseDetailsInput,
   ExpenseReport,
   ExpenseReportSnapshot,
-  requireActiveEmployee,
-  requireActorRole,
+  requireActiveEmployeeActor,
+  requireOfferedExpenseCategory,
   requireOwnExpenseReport,
   toExpenseReportSnapshot,
-  UserRole,
-  ExpenseDetailsInput,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAddExpense,
@@ -33,21 +29,20 @@ export class AddExpenseUseCase implements IAddExpense {
     reportId: string;
     expense: ExpenseDetailsInput;
   }): Promise<ExpenseReportSnapshot> {
-    await this.requireActiveEmployeeOfCompany(input.actor, input.companyId);
+    requireActiveEmployeeActor(
+      input.actor,
+      input.companyId,
+      await this.employees.findById(input.companyId, input.actor.userId),
+    );
     const report = await this.loadDraftReport(input);
     const details = ExpenseDetails.parse(input.expense);
-    await this.requireCategoryOfCompany(input.companyId, details.categoryId);
+    requireOfferedExpenseCategory(
+      input.companyId,
+      await this.categories.listByCompany(input.companyId),
+      details.categoryId,
+    );
     const expense = await this.reports.insertExpense(report.id, details);
     return toExpenseReportSnapshot(report.addExpense(expense));
-  }
-
-  private async requireActiveEmployeeOfCompany(
-    actor: ActorContext,
-    companyId: string,
-  ): Promise<void> {
-    requireActorRole(actor, UserRole.EMPLOYEE);
-    assertSameCompany(companyId, actor.companyId);
-    requireActiveEmployee(await this.employees.findById(companyId, actor.userId));
   }
 
   private async loadDraftReport(input: {
@@ -61,18 +56,5 @@ export class AddExpenseUseCase implements IAddExpense {
     );
     report.requireDraft();
     return report;
-  }
-
-  private async requireCategoryOfCompany(
-    companyId: string,
-    categoryId: string,
-  ): Promise<void> {
-    const offered = expenseCategoriesOf(
-      companyId,
-      await this.categories.listByCompany(companyId),
-    );
-    if (!offered.some((category) => category.id === categoryId)) {
-      throw new Error(ErrorCode.REQUIRED_INFORMATION);
-    }
   }
 }

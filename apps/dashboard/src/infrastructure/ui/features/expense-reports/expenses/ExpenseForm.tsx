@@ -17,6 +17,8 @@ interface ExpenseFormProps {
   errorPresenter: ErrorPresenter;
   submissionError: string | null;
   onSubmit: (values: ExpenseValues) => Promise<boolean>;
+  initialValues?: ExpenseFormValues;
+  submitLabel?: string;
 }
 
 const EMPTY: ExpenseFormValues = {
@@ -34,10 +36,12 @@ export function ExpenseForm({
   errorPresenter,
   submissionError,
   onSubmit,
+  initialValues = EMPTY,
+  submitLabel = i18n.messages.expenseReports.addExpense,
 }: ExpenseFormProps) {
   const form = useForm<ExpenseFormValues, unknown, ExpenseValues>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: EMPTY,
+    defaultValues: initialValues,
   });
   const { errors } = form.formState;
   const labels = i18n.messages.expenseReports.expense;
@@ -47,7 +51,7 @@ export function ExpenseForm({
       className="grid gap-4"
       onSubmit={form.handleSubmit(async (values) => {
         if (await onSubmit(values)) {
-          form.reset();
+          form.reset(initialValues);
         }
       })}
     >
@@ -125,7 +129,7 @@ export function ExpenseForm({
         ) : null}
       </div>
       <SubmissionError message={submissionError} />
-      <Button type="submit">{i18n.messages.expenseReports.addExpense}</Button>
+      <Button type="submit">{submitLabel}</Button>
     </form>
   );
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  Expense,
   ExpenseDetails,
   ExpenseReportLabel,
   ExpenseReportStatus,
@@ -69,6 +70,23 @@ function createFakePrisma() {
         const row = { id: `expense-${expenses.length + 1}`, ...args.data };
         expenses.push(row);
         return row;
+      },
+      updateMany: async (args: {
+        where: { id: string; reportId: string };
+        data: Omit<ExpenseCreateData, 'reportId'>;
+      }) => {
+        for (const row of expenses) {
+          if (row.id === args.where.id && row.reportId === args.where.reportId) {
+            Object.assign(row, args.data);
+          }
+        }
+      },
+      deleteMany: async (args: { where: { id: string; reportId: string } }) => {
+        const kept = expenses.filter(
+          (row) =>
+            !(row.id === args.where.id && row.reportId === args.where.reportId),
+        );
+        expenses.splice(0, expenses.length, ...kept);
       },
     },
   };
@@ -165,6 +183,51 @@ describe('PrismaExpenseReportRepository', () => {
     expect(found?.expenses.map((item) => item.details.categoryId)).toEqual([
       'restaurant',
     ]);
+  });
+
+  it('rewrites a modified expense in place', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaExpenseReportRepository(client);
+    const created = await repository.insert('c1', 'e1', label);
+    const expense = await repository.insertExpense(created.id, details);
+
+    await repository.saveExpense(
+      created.id,
+      new Expense(
+        expense.id,
+        ExpenseDetails.parse({
+          date: '2026-10-06',
+          categoryId: 'train',
+          amount: 70,
+          vat: null,
+          paymentMethod: 'Espèces',
+          description: 'Billet',
+          assignment: 'Projet X',
+        }),
+      ),
+    );
+    const found = await repository.findById('c1', created.id);
+
+    expect(found?.expenses).toHaveLength(1);
+    expect(found?.expenses[0]?.details.amount.euros).toBe(70);
+    expect(found?.expenses[0]?.details.categoryId).toBe('train');
+    expect(found?.expenses[0]?.details.vat).toBeNull();
+  });
+
+  it('removes a deleted expense from its report only', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaExpenseReportRepository(client);
+    const first = await repository.insert('c1', 'e1', label);
+    const second = await repository.insert('c1', 'e1', label);
+    const kept = await repository.insertExpense(first.id, details);
+    const removed = await repository.insertExpense(second.id, details);
+
+    await repository.deleteExpense(second.id, removed.id);
+
+    expect(
+      (await repository.findById('c1', first.id))?.expenses.map((item) => item.id),
+    ).toEqual([kept.id]);
+    expect((await repository.findById('c1', second.id))?.expenses).toEqual([]);
   });
 
   it('does not find a report of another company', async () => {

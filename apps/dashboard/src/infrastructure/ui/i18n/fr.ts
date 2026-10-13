@@ -19,6 +19,11 @@ export const fr = {
     noExpenses: 'Aucune dépense dans cette note.',
     addExpense: 'Ajouter une dépense',
     addExpenseTitle: 'Nouvelle dépense',
+    editExpense: 'Modifier',
+    editExpenseTitle: 'Modifier la dépense',
+    saveExpense: 'Enregistrer',
+    removeExpense: 'Retirer',
+    total: 'Total',
     expense: {
       date: 'Date',
       category: 'Catégorie',

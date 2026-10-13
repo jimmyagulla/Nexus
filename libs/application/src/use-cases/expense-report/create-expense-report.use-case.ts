@@ -1,12 +1,9 @@
 import {
   ActorContext,
-  assertSameCompany,
   ExpenseReportLabel,
   ExpenseReportSnapshot,
-  requireActiveEmployee,
-  requireActorRole,
+  requireActiveEmployeeActor,
   toExpenseReportSnapshot,
-  UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ICreateExpenseReport,
@@ -25,7 +22,11 @@ export class CreateExpenseReportUseCase implements ICreateExpenseReport {
     companyId: string;
     label: string;
   }): Promise<ExpenseReportSnapshot> {
-    await this.requireActiveEmployeeOfCompany(input.actor, input.companyId);
+    requireActiveEmployeeActor(
+      input.actor,
+      input.companyId,
+      await this.employees.findById(input.companyId, input.actor.userId),
+    );
     const label = ExpenseReportLabel.parse(input.label);
     const report = await this.reports.insert(
       input.companyId,
@@ -33,14 +34,5 @@ export class CreateExpenseReportUseCase implements ICreateExpenseReport {
       label,
     );
     return toExpenseReportSnapshot(report);
-  }
-
-  private async requireActiveEmployeeOfCompany(
-    actor: ActorContext,
-    companyId: string,
-  ): Promise<void> {
-    requireActorRole(actor, UserRole.EMPLOYEE);
-    assertSameCompany(companyId, actor.companyId);
-    requireActiveEmployee(await this.employees.findById(companyId, actor.userId));
   }
 }

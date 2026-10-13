@@ -21,6 +21,8 @@ import {
   ICreateExpenseReport,
   IGetExpenseReport,
   IListExpenseReports,
+  IRemoveExpense,
+  IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
 import { AuthenticatedRequest } from '../common/guards/authenticated-request';
@@ -32,6 +34,8 @@ const createReport = { execute: vi.fn<ICreateExpenseReport['execute']>() };
 const addExpense = { execute: vi.fn<IAddExpense['execute']>() };
 const getReport = { execute: vi.fn<IGetExpenseReport['execute']>() };
 const listReports = { execute: vi.fn<IListExpenseReports['execute']>() };
+const updateExpense = { execute: vi.fn<IUpdateExpense['execute']>() };
+const removeExpense = { execute: vi.fn<IRemoveExpense['execute']>() };
 
 const employee: ActorContext = {
   userId: 'e1',
@@ -45,12 +49,14 @@ const report: ExpenseReportSnapshot = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
+  total: 0,
   expenses: [],
 };
 
 const REPORTS_PATH = '/companies/company-1/expense-reports';
 const REPORT_PATH = `${REPORTS_PATH}/r1`;
 const EXPENSES_PATH = `${REPORT_PATH}/expenses`;
+const EXPENSE_PATH = `${EXPENSES_PATH}/x1`;
 
 const expenseBody = {
   date: '2026-10-05',
@@ -90,6 +96,8 @@ beforeAll(async () => {
       { provide: IAddExpense, useValue: addExpense },
       { provide: IGetExpenseReport, useValue: getReport },
       { provide: IListExpenseReports, useValue: listReports },
+      { provide: IUpdateExpense, useValue: updateExpense },
+      { provide: IRemoveExpense, useValue: removeExpense },
     ],
   }).compile();
 
@@ -113,7 +121,13 @@ afterAll(async () => {
 
 beforeEach(() => {
   actor = employee;
-  for (const useCase of [createReport, addExpense, getReport]) {
+  for (const useCase of [
+    createReport,
+    addExpense,
+    getReport,
+    updateExpense,
+    removeExpense,
+  ]) {
     useCase.execute.mockReset();
     useCase.execute.mockResolvedValue(report);
   }
@@ -294,6 +308,87 @@ describe('ExpenseReportController', () => {
 
       expect((await send('POST', EXPENSES_PATH, expenseBody)).status).toBe(403);
       expect(addExpense.execute).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('PATCH /companies/:companyId/expense-reports/:expenseReportId/expenses/:expenseId', () => {
+    it('answers 200 with the updated report', async () => {
+      await expect(send('PATCH', EXPENSE_PATH, expenseBody)).resolves.toEqual({
+        status: 200,
+        payload: { status: 200, message: 'Success', data: report },
+      });
+    });
+
+    it('hands the expense of the path and the submitted fields to the use case', async () => {
+      await send('PATCH', EXPENSE_PATH, { ...expenseBody, vat: 5 });
+
+      expect(updateExpense.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+        reportId: 'r1',
+        expenseId: 'x1',
+        expense: { ...expenseBody, vat: 5 },
+      });
+    });
+
+    it('answers 400 when the date is malformed', async () => {
+      const { status } = await send('PATCH', EXPENSE_PATH, {
+        ...expenseBody,
+        date: 'demain',
+      });
+
+      expect(status).toBe(400);
+      expect(updateExpense.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 400 with the code when the report is no longer a draft', async () => {
+      updateExpense.execute.mockRejectedValue(
+        new Error(ErrorCode.REQUEST_ALREADY_PROCESSED),
+      );
+
+      await expect(send('PATCH', EXPENSE_PATH, expenseBody)).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.REQUEST_ALREADY_PROCESSED },
+      });
+    });
+
+    it('answers 403 when the actor is an employer', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('PATCH', EXPENSE_PATH, expenseBody)).status).toBe(403);
+    });
+  });
+
+  describe('DELETE /companies/:companyId/expense-reports/:expenseReportId/expenses/:expenseId', () => {
+    it('answers 200 with the updated report', async () => {
+      await expect(send('DELETE', EXPENSE_PATH)).resolves.toEqual({
+        status: 200,
+        payload: { status: 200, message: 'Success', data: report },
+      });
+    });
+
+    it('hands the expense of the path to the use case', async () => {
+      await send('DELETE', EXPENSE_PATH);
+
+      expect(removeExpense.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+        reportId: 'r1',
+        expenseId: 'x1',
+      });
+    });
+
+    it('answers 403 when the use case denies access', async () => {
+      removeExpense.execute.mockRejectedValue(new Error(ErrorCode.ACCESS_DENIED));
+
+      expect((await send('DELETE', EXPENSE_PATH)).status).toBe(403);
+    });
+
+    it('answers 403 when the actor is an employer', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('DELETE', EXPENSE_PATH)).status).toBe(403);
+      expect(removeExpense.execute).not.toHaveBeenCalled();
     });
   });
 });

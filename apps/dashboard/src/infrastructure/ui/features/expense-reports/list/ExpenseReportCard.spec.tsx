@@ -9,6 +9,7 @@ const report: ExpenseReportViewModel = {
   status: 'DRAFT',
   statusLabel: 'Brouillon',
   editable: true,
+  total: '0 €',
   expenses: [],
 };
 
@@ -22,6 +23,19 @@ describe('ExpenseReportCard', () => {
 
     expect(screen.getByText('Déplacement Lyon')).toBeTruthy();
     expect(screen.getByText('Brouillon')).toBeTruthy();
+  });
+
+  it('shows the total of the report', () => {
+    render(
+      <ul>
+        <ExpenseReportCard
+          report={{ ...report, total: '125 €' }}
+          onOpen={() => undefined}
+        />
+      </ul>,
+    );
+
+    expect(screen.getByText('125 €')).toBeTruthy();
   });
 
   it('opens the report on demand', () => {

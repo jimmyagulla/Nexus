@@ -57,6 +57,7 @@ describe('useCreateExpenseReport', () => {
         employeeId: 'e1',
         label: 'Lyon',
         status: 'DRAFT',
+        total: 0,
         expenses: [],
       },
     });

@@ -13,6 +13,7 @@ const report: ExpenseReportSnapshot = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
+  total: 0,
   expenses: [
     {
       id: 'x1',
@@ -95,6 +96,52 @@ describe('ApiExpenseReportGateway', () => {
     await expect(
       new ApiExpenseReportGateway(http).list('c1', 'token'),
     ).resolves.toEqual(list);
+  });
+
+  it('modifies an expense of a report', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('patch', 'companies/c1/expense-reports/r1/expenses/x1', {
+      status: 200,
+      data: report,
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http).updateExpense(
+        'c1',
+        'r1',
+        'x1',
+        expense,
+        'token',
+      ),
+    ).resolves.toEqual(report);
+    expect(http.calls).toEqual([
+      {
+        method: 'patch',
+        url: 'companies/c1/expense-reports/r1/expenses/x1',
+        data: expense,
+        config: authorized,
+      },
+    ]);
+  });
+
+  it('removes an expense from a report', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('delete', 'companies/c1/expense-reports/r1/expenses/x1', {
+      status: 200,
+      data: report,
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http).removeExpense('c1', 'r1', 'x1', 'token'),
+    ).resolves.toEqual(report);
+    expect(http.calls).toEqual([
+      {
+        method: 'delete',
+        url: 'companies/c1/expense-reports/r1/expenses/x1',
+        data: undefined,
+        config: authorized,
+      },
+    ]);
   });
 
   it('adds an expense to a report', async () => {

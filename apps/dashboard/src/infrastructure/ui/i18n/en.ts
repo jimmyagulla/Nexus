@@ -19,6 +19,11 @@ export const en = {
     noExpenses: 'No expense in this report.',
     addExpense: 'Add an expense',
     addExpenseTitle: 'New expense',
+    editExpense: 'Edit',
+    editExpenseTitle: 'Edit the expense',
+    saveExpense: 'Save',
+    removeExpense: 'Remove',
+    total: 'Total',
     expense: {
       date: 'Date',
       category: 'Category',

@@ -89,6 +89,7 @@ describe('AddExpenseUseCase', () => {
     const stored = await reports.findById('c1', report.id);
 
     expect(final.expenses.map((item) => item.amount)).toEqual([45, 12, 68]);
+    expect(final.total).toBe(125);
     expect(stored?.expenses.map((item) => item.details.categoryId)).toEqual([
       'restaurant',
       'parking',

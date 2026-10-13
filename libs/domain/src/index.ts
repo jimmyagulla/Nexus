@@ -39,3 +39,5 @@ export * from './read-models/expense-category-snapshot';
 export * from './read-models/to-expense-category-snapshots';
 export * from './services/require-own-expense-report';
 export * from './read-models/expense-report-list-snapshot';
+export * from './services/require-active-employee-actor';
+export * from './services/require-offered-expense-category';

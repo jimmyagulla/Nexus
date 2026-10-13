@@ -13,6 +13,7 @@ const report: ExpenseReportSnapshot = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
+  total: 0,
   expenses: [],
 };
 
@@ -32,10 +33,18 @@ function controller() {
   const created: string[] = [];
   const added: { reportId: string; expense: ExpenseDetailsInput }[] = [];
   const read: string[] = [];
+  const updated: {
+    reportId: string;
+    expenseId: string;
+    expense: ExpenseDetailsInput;
+  }[] = [];
+  const removed: { reportId: string; expenseId: string }[] = [];
   return {
     created,
     added,
     read,
+    updated,
+    removed,
     controller: new ExpenseReportsController(
       {
         execute: async (label) => {
@@ -56,6 +65,18 @@ function controller() {
         },
       },
       { execute: async () => list },
+      {
+        execute: async (input) => {
+          updated.push(input);
+          return report;
+        },
+      },
+      {
+        execute: async (input) => {
+          removed.push(input);
+          return report;
+        },
+      },
     ),
   };
 }
@@ -75,6 +96,22 @@ describe('ExpenseReportsController', () => {
 
     await expect(subject.addExpense('r1', expense)).resolves.toEqual(report);
     expect(added).toEqual([{ reportId: 'r1', expense }]);
+  });
+
+  it('modifies an expense of a report', async () => {
+    const { controller: subject, updated } = controller();
+
+    await expect(subject.updateExpense('r1', 'x1', expense)).resolves.toEqual(
+      report,
+    );
+    expect(updated).toEqual([{ reportId: 'r1', expenseId: 'x1', expense }]);
+  });
+
+  it('removes an expense from a report', async () => {
+    const { controller: subject, removed } = controller();
+
+    await expect(subject.removeExpense('r1', 'x1')).resolves.toEqual(report);
+    expect(removed).toEqual([{ reportId: 'r1', expenseId: 'x1' }]);
   });
 
   it('reads a report', async () => {

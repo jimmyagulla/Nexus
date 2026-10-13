@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  Expense,
   ExpenseDetails,
   ExpenseReportLabel,
   ExpenseReportStatus,
@@ -61,6 +62,43 @@ describe('InMemoryExpenseReportRepository', () => {
 
     expect(expense.id).toMatch(ASSIGNED_ID);
     expect(found?.expenses.map((item) => item.id)).toEqual([expense.id]);
+  });
+
+  it('replaces a stored expense by its modified version', async () => {
+    const repository = new InMemoryExpenseReportRepository();
+    const created = await repository.insert('c1', 'e1', label);
+    const expense = await repository.insertExpense(created.id, details);
+
+    await repository.saveExpense(
+      created.id,
+      new Expense(
+        expense.id,
+        ExpenseDetails.parse({
+          date: '2026-10-05',
+          categoryId: 'restaurant',
+          amount: 50,
+          vat: null,
+          paymentMethod: 'Carte',
+          description: 'Déjeuner',
+          assignment: 'Client Dupont',
+        }),
+      ),
+    );
+    const found = await repository.findById('c1', created.id);
+
+    expect(found?.expenses.map((item) => item.details.amount.euros)).toEqual([
+      50,
+    ]);
+  });
+
+  it('drops a deleted expense from its report', async () => {
+    const repository = new InMemoryExpenseReportRepository();
+    const created = await repository.insert('c1', 'e1', label);
+    const expense = await repository.insertExpense(created.id, details);
+
+    await repository.deleteExpense(created.id, expense.id);
+
+    expect((await repository.findById('c1', created.id))?.expenses).toEqual([]);
   });
 
   it('lists the reports of the company', async () => {

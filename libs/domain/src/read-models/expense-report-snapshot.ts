@@ -17,5 +17,6 @@ export type ExpenseReportSnapshot = {
   employeeId: string;
   label: string;
   status: ExpenseReportStatus;
+  total: number;
   expenses: readonly ExpenseSnapshot[];
 };

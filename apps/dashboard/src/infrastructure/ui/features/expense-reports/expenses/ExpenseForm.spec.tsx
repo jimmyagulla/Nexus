@@ -150,6 +150,39 @@ describe('ExpenseForm', () => {
     expect(submitted).toEqual([]);
   });
 
+  it('starts on the values it is given and labels its button as asked', () => {
+    render(
+      <ExpenseForm
+        categories={categories}
+        errorPresenter={new ErrorPresenter()}
+        submissionError={null}
+        initialValues={{
+          date: '2026-10-05',
+          categoryId: 'parking',
+          amount: '12.5',
+          vat: '',
+          paymentMethod: 'Carte',
+          description: 'Stationnement',
+          assignment: 'Projet X',
+        }}
+        submitLabel={i18n.messages.expenseReports.saveExpense}
+        onSubmit={async () => true}
+      />,
+    );
+
+    expect(
+      screen.getByLabelText<HTMLInputElement>(labels.amount).value,
+    ).toBe('12.5');
+    expect(
+      screen.getByLabelText<HTMLSelectElement>(labels.category).value,
+    ).toBe('parking');
+    expect(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.saveExpense,
+      }),
+    ).toBeTruthy();
+  });
+
   it('shows the refusal its caller reports', () => {
     renderForm({ submissionError: i18n.messages.errors.INACTIVE_EMPLOYEE });
 

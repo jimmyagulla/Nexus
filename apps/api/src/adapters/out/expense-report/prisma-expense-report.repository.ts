@@ -46,18 +46,34 @@ export class PrismaExpenseReportRepository implements IExpenseReportRepository {
     details: ExpenseDetails,
   ): Promise<Expense> {
     const row = await this.prisma.expense.create({
-      data: {
-        reportId,
-        date: details.date.value,
-        categoryId: details.categoryId,
-        amountCents: details.amount.cents,
-        vatCents: details.vat === null ? null : details.vat.cents,
-        paymentMethod: details.paymentMethod,
-        description: details.description,
-        assignment: details.assignment,
-      },
+      data: { reportId, ...this.toRecord(details) },
     });
     return toExpense(row);
+  }
+
+  async saveExpense(reportId: string, expense: Expense): Promise<void> {
+    await this.prisma.expense.updateMany({
+      where: { id: expense.id, reportId },
+      data: this.toRecord(expense.details),
+    });
+  }
+
+  async deleteExpense(reportId: string, expenseId: string): Promise<void> {
+    await this.prisma.expense.deleteMany({
+      where: { id: expenseId, reportId },
+    });
+  }
+
+  private toRecord(details: ExpenseDetails) {
+    return {
+      date: details.date.value,
+      categoryId: details.categoryId,
+      amountCents: details.amount.cents,
+      vatCents: details.vat === null ? null : details.vat.cents,
+      paymentMethod: details.paymentMethod,
+      description: details.description,
+      assignment: details.assignment,
+    };
   }
 
   async list(

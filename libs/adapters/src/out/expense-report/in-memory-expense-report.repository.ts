@@ -48,6 +48,16 @@ export class InMemoryExpenseReportRepository
     return expense;
   }
 
+  async saveExpense(reportId: string, expense: Expense): Promise<void> {
+    const report = this.requireReport(reportId);
+    this.reports.set(reportId, report.updateExpense(expense));
+  }
+
+  async deleteExpense(reportId: string, expenseId: string): Promise<void> {
+    const report = this.requireReport(reportId);
+    this.reports.set(reportId, report.removeExpense(expenseId));
+  }
+
   async list(
     companyId: string,
     criteria: ExpenseReportCriteria,

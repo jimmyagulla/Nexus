@@ -25,6 +25,7 @@ const report: ExpenseReportSnapshot = {
   employeeId: 'e1',
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
+  total: 0,
   expenses: [],
 };
 
