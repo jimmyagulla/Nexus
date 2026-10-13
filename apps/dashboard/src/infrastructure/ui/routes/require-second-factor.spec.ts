@@ -1,10 +1,16 @@
 import { isRedirect } from '@tanstack/react-router';
 import { describe, expect, it } from 'vitest';
 import {
+  InMemoryHttpClient,
+  InMemorySessionGateway,
+} from '@hexagonal-monorepo-template/adapters';
+import {
   ErrorCode,
   SecondFactorStatus,
   SecondFactorStep,
+  UserRole,
 } from '@hexagonal-monorepo-template/domain';
+import { createSecondFactorComposition } from '../../composition/second-factor.composition';
 import { SecondFactorController } from '../../../adapters/controllers/second-factor.controller';
 import { SecondFactorStepPresenter } from '../../../adapters/presenters/second-factor-step.presenter';
 import { AppRoutes } from './app-routes';
@@ -42,6 +48,32 @@ async function redirectionOf(
     throw error;
   }
 }
+
+describe('requireSecondFactor for who owes no second factor', () => {
+  it.each([UserRole.EMPLOYER, UserRole.ACCOUNTANT])(
+    'lets a %s into their space, with no code asked',
+    async (role) => {
+      const http = new InMemoryHttpClient();
+      http.reply('get', 'second-factor/status', {
+        status: 200,
+        data: { step: SecondFactorStep.NONE },
+      });
+      const deps = createSecondFactorComposition(
+        http,
+        new InMemorySessionGateway('jwt', {
+          userId: 'u1',
+          companyId: 'c1',
+          role,
+        }),
+      );
+
+      await expect(requireSecondFactor(deps)).resolves.toBeUndefined();
+      expect(http.calls.map((call) => call.url)).toEqual([
+        'second-factor/status',
+      ]);
+    },
+  );
+});
 
 describe('requireSecondFactor', () => {
   it('leads an employee who is not enrolled to the enrollment instead of the page', async () => {
