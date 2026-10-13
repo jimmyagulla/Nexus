@@ -1,4 +1,7 @@
+import { useState } from 'react';
+import { PresenceListFilter } from '@hexagonal-monorepo-template/domain';
 import { PresenceComposition } from '../../composition/presence.composition';
+import { toPresenceListFilter } from '../features/presences/presence-filters/presence-filters.schema';
 import { useAdjustPresenceWorkedDays } from '../hooks/useAdjustPresenceWorkedDays';
 import { useGetPresences } from '../hooks/useGetPresences';
 import { useOpenPresence } from '../hooks/useOpenPresence';
@@ -10,7 +13,8 @@ interface PresencesPageProps {
 }
 
 export function PresencesPage({ deps }: PresencesPageProps) {
-  const presences = useGetPresences(deps);
+  const [filter, setFilter] = useState<PresenceListFilter>({});
+  const presences = useGetPresences(deps, filter);
   const open = useOpenPresence(deps);
   const adjust = useAdjustPresenceWorkedDays(deps);
 
@@ -36,6 +40,7 @@ export function PresencesPage({ deps }: PresencesPageProps) {
           () => false,
         )
       }
+      onFilter={(values) => setFilter(toPresenceListFilter(values))}
       onAdjust={(presenceId, values) =>
         adjust.mutateAsync({ presenceId, workedDays: values.workedDays }).then(
           () => true,

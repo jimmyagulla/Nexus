@@ -84,6 +84,14 @@ export class PrismaPresenceRepository implements IPresenceRepository {
         ...(filter.employeeId === undefined
           ? {}
           : { employeeId: filter.employeeId }),
+        ...(filter.from === undefined && filter.to === undefined
+          ? {}
+          : {
+              month: {
+                ...(filter.from === undefined ? {} : { gte: filter.from.value }),
+                ...(filter.to === undefined ? {} : { lte: filter.to.value }),
+              },
+            }),
       },
       include: presenceInclude,
     });

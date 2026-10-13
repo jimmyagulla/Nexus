@@ -62,6 +62,34 @@ describe('ListPresencesFromSessionUseCase', () => {
     await expect(useCase.execute()).resolves.toEqual(list);
   });
 
+  it('hands the filters to the api', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply(
+      'get',
+      'companies/c1/presences?employeeId=e1&from=2026-08&to=2026-10',
+      {
+        status: 200,
+        data: {
+          presences: [],
+          employees: [],
+          canManage: true,
+        },
+      },
+    );
+    const useCase = new ListPresencesFromSessionUseCase(
+      new InMemorySessionGateway('token', actor),
+      new ApiPresenceGateway(http),
+    );
+
+    await useCase.execute({ employeeId: 'e1', from: '2026-08', to: '2026-10' });
+
+    expect(http.calls).toMatchObject([
+      {
+        url: 'companies/c1/presences?employeeId=e1&from=2026-08&to=2026-10',
+      },
+    ]);
+  });
+
   it('refuses when the session carries no company', async () => {
     const useCase = useCaseFor(
       new InMemorySessionGateway('token', { ...actor, companyId: null }),

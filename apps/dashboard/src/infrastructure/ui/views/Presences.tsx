@@ -3,6 +3,8 @@ import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import type { AdjustWorkedDaysValues } from '../features/presences/adjust-worked-days/adjust-worked-days.schema';
 import { OpenPresenceDialog } from '../features/presences/open-presence/OpenPresenceDialog';
 import type { OpenPresenceValues } from '../features/presences/open-presence/open-presence.schema';
+import { PresenceFiltersForm } from '../features/presences/presence-filters/PresenceFiltersForm';
+import type { PresenceFiltersValues } from '../features/presences/presence-filters/presence-filters.schema';
 import { PresenceList } from '../features/presences/presence-list/PresenceList';
 import { i18n } from '../i18n/i18n';
 
@@ -16,6 +18,7 @@ interface PresencesProps {
     presenceId: string,
     values: AdjustWorkedDaysValues,
   ) => Promise<boolean>;
+  onFilter: (values: PresenceFiltersValues) => void;
 }
 
 export function Presences({
@@ -25,6 +28,7 @@ export function Presences({
   adjustError,
   onOpen,
   onAdjust,
+  onFilter,
 }: PresencesProps) {
   return (
     <div className="space-y-8">
@@ -40,6 +44,14 @@ export function Presences({
           errorPresenter={errorPresenter}
           submissionError={openError}
           onSubmit={onOpen}
+        />
+      ) : null}
+
+      {model.canManage ? (
+        <PresenceFiltersForm
+          employees={model.employees}
+          errorPresenter={errorPresenter}
+          onFilter={onFilter}
         />
       ) : null}
 

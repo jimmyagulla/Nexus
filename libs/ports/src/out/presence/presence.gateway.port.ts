@@ -1,10 +1,15 @@
 import {
+  PresenceListFilter,
   PresenceListSnapshot,
   PresenceSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 
 export interface IPresenceGateway {
-  list(companyId: string, token: string): Promise<PresenceListSnapshot>;
+  list(
+    companyId: string,
+    filter: PresenceListFilter,
+    token: string,
+  ): Promise<PresenceListSnapshot>;
   open(
     companyId: string,
     employeeId: string,

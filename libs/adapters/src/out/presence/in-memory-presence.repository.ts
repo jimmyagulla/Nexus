@@ -52,7 +52,10 @@ export class InMemoryPresenceRepository implements IPresenceRepository {
       (presence) =>
         presence.companyId === filter.companyId &&
         (filter.employeeId === undefined ||
-          presence.employeeId === filter.employeeId),
+          presence.employeeId === filter.employeeId) &&
+        (filter.from === undefined ||
+          presence.month.value >= filter.from.value) &&
+        (filter.to === undefined || presence.month.value <= filter.to.value),
     );
   }
 }

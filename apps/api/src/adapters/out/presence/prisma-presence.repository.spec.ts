@@ -134,14 +134,22 @@ function createFakePrisma(
           ),
         ),
       findMany: async (args: {
-        where: { companyId: string; employeeId?: string };
+        where: {
+          companyId: string;
+          employeeId?: string;
+          month?: { gte?: string; lte?: string };
+        };
       }) =>
         store.presences
           .filter(
             (item) =>
               item.companyId === args.where.companyId &&
               (args.where.employeeId === undefined ||
-                item.employeeId === args.where.employeeId),
+                item.employeeId === args.where.employeeId) &&
+              (args.where.month?.gte === undefined ||
+                item.month >= args.where.month.gte) &&
+              (args.where.month?.lte === undefined ||
+                item.month <= args.where.month.lte),
           )
           .map((item) => readPresence(store, item)),
       create: async (args: { data: PresenceCreateData }) => {
@@ -317,6 +325,58 @@ describe('PrismaPresenceRepository', () => {
     const presences = await new PrismaPresenceRepository(client).list({
       companyId: 'c1',
       employeeId: 'e2',
+    });
+
+    expect(presences.map((presence) => presence.id)).toEqual(['p2']);
+  });
+
+  it('lists the months from the start month on', async () => {
+    const { client } = createFakePrisma({
+      presences: [
+        row({ id: 'p1', month: '2026-08' }),
+        row({ id: 'p2', month: '2026-09' }),
+        row({ id: 'p3', month: '2026-10' }),
+      ],
+    });
+
+    const presences = await new PrismaPresenceRepository(client).list({
+      companyId: 'c1',
+      from: PresenceMonth.parse('2026-09'),
+    });
+
+    expect(presences.map((presence) => presence.id).sort()).toEqual(['p2', 'p3']);
+  });
+
+  it('lists the months up to the end month', async () => {
+    const { client } = createFakePrisma({
+      presences: [
+        row({ id: 'p1', month: '2026-08' }),
+        row({ id: 'p2', month: '2026-09' }),
+        row({ id: 'p3', month: '2026-10' }),
+      ],
+    });
+
+    const presences = await new PrismaPresenceRepository(client).list({
+      companyId: 'c1',
+      to: PresenceMonth.parse('2026-09'),
+    });
+
+    expect(presences.map((presence) => presence.id).sort()).toEqual(['p1', 'p2']);
+  });
+
+  it('lists only the months between both bounds', async () => {
+    const { client } = createFakePrisma({
+      presences: [
+        row({ id: 'p1', month: '2026-08' }),
+        row({ id: 'p2', month: '2026-09' }),
+        row({ id: 'p3', month: '2026-10' }),
+      ],
+    });
+
+    const presences = await new PrismaPresenceRepository(client).list({
+      companyId: 'c1',
+      from: PresenceMonth.parse('2026-09'),
+      to: PresenceMonth.parse('2026-09'),
     });
 
     expect(presences.map((presence) => presence.id)).toEqual(['p2']);

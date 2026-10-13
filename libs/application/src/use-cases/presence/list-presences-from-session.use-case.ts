@@ -1,5 +1,6 @@
 import {
   CompanyScopedSession,
+  PresenceListFilter,
   PresenceListSnapshot,
   requireCompanyScopedSession,
 } from '@hexagonal-monorepo-template/domain';
@@ -17,9 +18,9 @@ export class ListPresencesFromSessionUseCase
     private readonly presences: IPresenceGateway,
   ) {}
 
-  async execute(): Promise<PresenceListSnapshot> {
+  async execute(filter: PresenceListFilter = {}): Promise<PresenceListSnapshot> {
     const session = await this.currentCompanySession();
-    return this.presences.list(session.companyId, session.token);
+    return this.presences.list(session.companyId, filter, session.token);
   }
 
   private async currentCompanySession(): Promise<CompanyScopedSession> {

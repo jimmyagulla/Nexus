@@ -7,6 +7,9 @@ export interface IListPresences {
   execute(input: {
     actor: ActorContext;
     companyId: string;
+    employeeId?: string;
+    from?: string;
+    to?: string;
   }): Promise<PresenceListSnapshot>;
 }
 

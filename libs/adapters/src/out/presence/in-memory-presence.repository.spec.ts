@@ -170,6 +170,86 @@ describe('InMemoryPresenceRepository', () => {
     ).toEqual([mine]);
   });
 
+  describe('filtered by period', () => {
+    async function threeMonths() {
+      const presences = new InMemoryPresenceRepository();
+      const inserted = [];
+      for (const month of ['2026-08', '2026-09', '2026-10']) {
+        inserted.push(
+          await presences.insert({
+            companyId: 'c1',
+            employeeId: 'e1',
+            month: PresenceMonth.parse(month),
+            workedDays: 20,
+          }),
+        );
+      }
+      return { presences, inserted };
+    }
+
+    const months = (list: readonly { month: PresenceMonth }[]) =>
+      list.map((presence) => presence.month.value).sort();
+
+    it('keeps the months from the start month on', async () => {
+      const { presences } = await threeMonths();
+
+      expect(
+        months(
+          await presences.list({
+            companyId: 'c1',
+            from: PresenceMonth.parse('2026-09'),
+          }),
+        ),
+      ).toEqual(['2026-09', '2026-10']);
+    });
+
+    it('keeps the months up to the end month', async () => {
+      const { presences } = await threeMonths();
+
+      expect(
+        months(
+          await presences.list({
+            companyId: 'c1',
+            to: PresenceMonth.parse('2026-09'),
+          }),
+        ),
+      ).toEqual(['2026-08', '2026-09']);
+    });
+
+    it('keeps only the months between both bounds, bounds included', async () => {
+      const { presences } = await threeMonths();
+
+      expect(
+        months(
+          await presences.list({
+            companyId: 'c1',
+            from: PresenceMonth.parse('2026-09'),
+            to: PresenceMonth.parse('2026-09'),
+          }),
+        ),
+      ).toEqual(['2026-09']);
+    });
+
+    it('compares months across years', async () => {
+      const { presences } = await threeMonths();
+      await presences.insert({
+        companyId: 'c1',
+        employeeId: 'e1',
+        month: PresenceMonth.parse('2025-12'),
+        workedDays: 20,
+      });
+
+      expect(
+        months(
+          await presences.list({
+            companyId: 'c1',
+            from: PresenceMonth.parse('2026-01'),
+          }),
+        ),
+      ).toEqual(['2026-08', '2026-09', '2026-10']);
+    });
+  });
+
   it('lists nothing for a company without presences', async () => {
     const presences = new InMemoryPresenceRepository();
 

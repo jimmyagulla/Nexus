@@ -1,4 +1,5 @@
 import {
+  PresenceListFilter,
   PresenceListSnapshot,
   PresenceSnapshot,
 } from '@hexagonal-monorepo-template/domain';
@@ -28,6 +29,7 @@ const corrected: PresenceSnapshot = { ...opened, workedDays: 20 };
 
 function controllerWith(
   overrides: {
+    list?: (filter?: PresenceListFilter) => Promise<PresenceListSnapshot>;
     open?: (input: { employeeId: string; month: string }) => Promise<PresenceSnapshot>;
     adjust?: (input: {
       presenceId: string;
@@ -36,7 +38,7 @@ function controllerWith(
   } = {},
 ) {
   return new PresenceController(
-    { execute: async () => list },
+    { execute: overrides.list ?? (async () => list) },
     { execute: overrides.open ?? (async () => opened) },
     { execute: overrides.adjust ?? (async () => corrected) },
   );
@@ -45,6 +47,36 @@ function controllerWith(
 describe('PresenceController', () => {
   it('lists the presences through the session use case', async () => {
     await expect(controllerWith().list()).resolves.toBe(list);
+  });
+
+  it('hands the filters to the session use case', async () => {
+    const received: (PresenceListFilter | undefined)[] = [];
+    const controller = controllerWith({
+      list: async (filter) => {
+        received.push(filter);
+        return list;
+      },
+    });
+
+    await controller.list({ employeeId: 'e1', from: '2026-08', to: '2026-10' });
+
+    expect(received).toEqual([
+      { employeeId: 'e1', from: '2026-08', to: '2026-10' },
+    ]);
+  });
+
+  it('lists without filter when none is given', async () => {
+    const received: (PresenceListFilter | undefined)[] = [];
+    const controller = controllerWith({
+      list: async (filter) => {
+        received.push(filter);
+        return list;
+      },
+    });
+
+    await controller.list();
+
+    expect(received).toEqual([{}]);
   });
 
   it('opens a month through the session use case', async () => {

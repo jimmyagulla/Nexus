@@ -10,6 +10,8 @@ export type NewPresence = {
 export type PresenceFilter = {
   companyId: string;
   employeeId?: string;
+  from?: PresenceMonth;
+  to?: PresenceMonth;
 };
 
 export interface IPresenceRepository {

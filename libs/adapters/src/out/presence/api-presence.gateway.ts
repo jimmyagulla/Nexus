@@ -1,9 +1,11 @@
 import {
+  PresenceListFilter,
   PresenceListSnapshot,
   PresenceSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
+  buildUrl,
   unwrapResponse,
 } from '@hexagonal-monorepo-template/infrastructure';
 import {
@@ -49,10 +51,18 @@ type PresenceListPayload = {
 export class ApiPresenceGateway implements IPresenceGateway {
   constructor(private readonly httpClient: IHttpClient) {}
 
-  async list(companyId: string, token: string): Promise<PresenceListSnapshot> {
+  async list(
+    companyId: string,
+    filter: PresenceListFilter,
+    token: string,
+  ): Promise<PresenceListSnapshot> {
     const payload = unwrapResponse(
       await this.httpClient.get<ApiResponse<PresenceListPayload>>(
-        companyPath(API_ROUTES.companies.presences, { companyId }),
+        buildUrl(companyPath(API_ROUTES.companies.presences, { companyId }), {
+          employeeId: filter.employeeId,
+          from: filter.from,
+          to: filter.to,
+        }),
         this.authorized(token),
       ),
     );

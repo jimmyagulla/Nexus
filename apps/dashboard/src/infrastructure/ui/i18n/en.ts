@@ -33,6 +33,11 @@ export const en = {
     month: 'Month',
     workedDays: 'Worked days',
     open: 'Open',
+    allEmployees: 'All employees',
+    fromMonth: 'From month',
+    toMonth: 'To month',
+    filter: 'Filter',
+    resetFilters: 'Reset',
     adjust: 'Adjust',
     adjustTitle: 'Adjust the worked days',
     save: 'Save',
@@ -74,5 +79,7 @@ export const en = {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.INVALID_PERIOD]:
+      'The end date must be on or after the start date.',
   },
 } as const;

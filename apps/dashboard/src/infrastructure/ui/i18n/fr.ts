@@ -33,6 +33,11 @@ export const fr = {
     month: 'Mois',
     workedDays: 'Jours travaillés',
     open: 'Ouvrir',
+    allEmployees: 'Tous les salariés',
+    fromMonth: 'Du mois',
+    toMonth: 'Au mois',
+    filter: 'Filtrer',
+    resetFilters: 'Réinitialiser',
     adjust: 'Ajuster',
     adjustTitle: 'Ajuster les jours travaillés',
     save: 'Enregistrer',
@@ -75,5 +80,7 @@ export const fr = {
     [ErrorCode.REQUIRED_INFORMATION]:
       'Renseignez les informations obligatoires.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'Un élément semblable existe déjà.',
+    [ErrorCode.INVALID_PERIOD]:
+      'La date de fin doit être postérieure ou égale à la date de début.',
   },
 } as const;

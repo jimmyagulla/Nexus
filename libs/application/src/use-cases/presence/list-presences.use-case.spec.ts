@@ -280,6 +280,168 @@ describe('ListPresencesUseCase', () => {
     expect(list.presences).toEqual([]);
   });
 
+  describe('filtered by the employer', () => {
+    async function schedule() {
+      const presences = new InMemoryPresenceRepository();
+      for (const [employeeId, month] of [
+        ['e1', '2026-08'],
+        ['e1', '2026-09'],
+        ['e1', '2026-10'],
+        ['e2', '2026-09'],
+        ['e9', '2026-09'],
+      ] as const) {
+        await presences.insert({
+          companyId: employeeId === 'e9' ? 'c2' : 'c1',
+          employeeId,
+          month: PresenceMonth.parse(month),
+          workedDays: 20,
+        });
+      }
+      return useCaseWith(presences);
+    }
+
+    const labels = (list: { presences: readonly { month: string; employeeId: string }[] }) =>
+      list.presences.map((presence) => `${presence.employeeId} ${presence.month}`);
+
+    it('shows the months of the chosen employee only', async () => {
+      const list = await (
+        await schedule()
+      ).execute({ actor: employer, companyId: 'c1', employeeId: 'e2' });
+
+      expect(labels(list)).toEqual(['e2 2026-09']);
+    });
+
+    it('does not show the other months of the filtered period', async () => {
+      const list = await (
+        await schedule()
+      ).execute({
+        actor: employer,
+        companyId: 'c1',
+        employeeId: 'e1',
+        from: '2026-09',
+        to: '2026-09',
+      });
+
+      expect(labels(list)).toEqual(['e1 2026-09']);
+    });
+
+    it('keeps the months from the start month on', async () => {
+      const list = await (
+        await schedule()
+      ).execute({
+        actor: employer,
+        companyId: 'c1',
+        employeeId: 'e1',
+        from: '2026-09',
+      });
+
+      expect(labels(list)).toEqual(['e1 2026-10', 'e1 2026-09']);
+    });
+
+    it('keeps the months up to the end month', async () => {
+      const list = await (
+        await schedule()
+      ).execute({
+        actor: employer,
+        companyId: 'c1',
+        employeeId: 'e1',
+        to: '2026-09',
+      });
+
+      expect(labels(list)).toEqual(['e1 2026-09', 'e1 2026-08']);
+    });
+
+    it('shows nothing for an employee of another company', async () => {
+      const list = await (
+        await schedule()
+      ).execute({ actor: employer, companyId: 'c1', employeeId: 'e9' });
+
+      expect(list.presences).toEqual([]);
+    });
+
+    it('shows nothing when no month falls in the period', async () => {
+      const list = await (
+        await schedule()
+      ).execute({
+        actor: employer,
+        companyId: 'c1',
+        from: '2027-01',
+        to: '2027-03',
+      });
+
+      expect(list.presences).toEqual([]);
+    });
+
+    it('refuses a period whose end precedes its start', async () => {
+      await expect(
+        (
+          await schedule()
+        ).execute({
+          actor: employer,
+          companyId: 'c1',
+          from: '2026-10',
+          to: '2026-09',
+        }),
+      ).rejects.toThrow(ErrorCode.INVALID_PERIOD);
+    });
+
+    it('accepts a period that starts and ends the same month', async () => {
+      const list = await (
+        await schedule()
+      ).execute({
+        actor: employer,
+        companyId: 'c1',
+        from: '2026-09',
+        to: '2026-09',
+      });
+
+      expect(labels(list)).toEqual(['e1 2026-09', 'e2 2026-09']);
+    });
+
+    it('refuses a bound that is not a calendar month', async () => {
+      await expect(
+        (
+          await schedule()
+        ).execute({ actor: employer, companyId: 'c1', from: '2026-13' }),
+      ).rejects.toThrow(ErrorCode.REQUIRED_INFORMATION);
+    });
+
+    it('still offers every employee of the company to filter on', async () => {
+      const list = await (
+        await schedule()
+      ).execute({ actor: employer, companyId: 'c1', employeeId: 'e2' });
+
+      expect(list.employees.map((employee) => employee.id)).toEqual(['e1', 'e2']);
+    });
+  });
+
+  it('applies the period to the months of an employee and ignores another employee', async () => {
+    const presences = new InMemoryPresenceRepository();
+    for (const [employeeId, month] of [
+      ['e1', '2026-08'],
+      ['e1', '2026-09'],
+      ['e2', '2026-09'],
+    ] as const) {
+      await presences.insert({
+        companyId: 'c1',
+        employeeId,
+        month: PresenceMonth.parse(month),
+        workedDays: 20,
+      });
+    }
+
+    const list = await useCaseWith(presences).execute({
+      actor: employeeCamille,
+      companyId: 'c1',
+      employeeId: 'e2',
+      from: '2026-09',
+    });
+
+    expect(
+      list.presences.map((presence) => `${presence.employeeId} ${presence.month}`),
+    ).toEqual(['e1 2026-09']);
+  });
+
   it('refuses an accountant', async () => {
     await expect(
       useCaseWith().execute({

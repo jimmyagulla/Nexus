@@ -32,6 +32,7 @@ function renderView(overrides: Partial<PresenceListViewModel> = {}) {
       adjustError={null}
       onOpen={async () => true}
       onAdjust={async () => true}
+      onFilter={() => undefined}
     />,
   );
 }
@@ -59,7 +60,7 @@ describe('Presences', () => {
   it('lists the months that were opened', () => {
     renderView();
 
-    expect(screen.getByText('Camille Martin')).toBeTruthy();
+    expect(screen.getAllByText('Camille Martin').length).toBeGreaterThan(0);
     expect(screen.getByText('Octobre 2026')).toBeTruthy();
   });
 
@@ -77,6 +78,24 @@ describe('Presences', () => {
     expect(
       screen.getByRole('button', { name: i18n.messages.presences.adjust }),
     ).toBeTruthy();
+  });
+
+  it('lets the employer filter by employee and by period', () => {
+    renderView();
+
+    expect(
+      screen.getByRole('combobox', { name: i18n.messages.presences.employee }),
+    ).toBeTruthy();
+    expect(screen.getByLabelText(i18n.messages.presences.fromMonth)).toBeTruthy();
+    expect(screen.getByLabelText(i18n.messages.presences.toMonth)).toBeTruthy();
+  });
+
+  it('does not offer the filters to an actor who cannot manage', () => {
+    renderView({ canManage: false });
+
+    expect(
+      screen.queryByRole('button', { name: i18n.messages.presences.filter }),
+    ).toBeNull();
   });
 
   it('does not let an actor who cannot manage open a month', () => {

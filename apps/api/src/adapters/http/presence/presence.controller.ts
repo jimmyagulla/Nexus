@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -22,6 +23,7 @@ import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.
 import { Roles } from '../common/guards/roles/roles.decorator';
 import { RolesGuard } from '../common/guards/roles/roles.guard';
 import { AdjustWorkedDaysRequestDto } from './dto/adjust-worked-days-request.dto';
+import { ListPresencesQueryDto } from './dto/list-presences-query.dto';
 import { OpenPresenceRequestDto } from './dto/open-presence-request.dto';
 import { PresenceListResponseDto } from './dto/presence-list-response.dto';
 import { PresenceResponseDto } from './dto/presence-response.dto';
@@ -62,8 +64,15 @@ export class PresenceController {
   async list(
     @Actor() actor: ActorContext,
     @Param('companyId') companyId: string,
+    @Query() query: ListPresencesQueryDto,
   ): Promise<PresenceListResponseDto> {
-    const list = await this.listPresences.execute({ actor, companyId });
+    const list = await this.listPresences.execute({
+      actor,
+      companyId,
+      employeeId: query.employeeId,
+      from: query.from,
+      to: query.to,
+    });
     return toPresenceListResponse(list);
   }
 

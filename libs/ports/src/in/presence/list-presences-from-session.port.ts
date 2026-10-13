@@ -1,7 +1,10 @@
-import { PresenceListSnapshot } from '@hexagonal-monorepo-template/domain';
+import {
+  PresenceListFilter,
+  PresenceListSnapshot,
+} from '@hexagonal-monorepo-template/domain';
 
 export interface IListPresencesFromSession {
-  execute(): Promise<PresenceListSnapshot>;
+  execute(filter?: PresenceListFilter): Promise<PresenceListSnapshot>;
 }
 
 export const IListPresencesFromSession = Symbol('IListPresencesFromSession');

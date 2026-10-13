@@ -1,4 +1,5 @@
 import {
+  PresenceListFilter,
   PresenceListSnapshot,
   PresenceSnapshot,
 } from '@hexagonal-monorepo-template/domain';
@@ -15,8 +16,8 @@ export class PresenceController {
     private readonly adjustFromSession: IAdjustPresenceWorkedDaysFromSession,
   ) {}
 
-  list(): Promise<PresenceListSnapshot> {
-    return this.listFromSession.execute();
+  list(filter: PresenceListFilter = {}): Promise<PresenceListSnapshot> {
+    return this.listFromSession.execute(filter);
   }
 
   open(input: { employeeId: string; month: string }): Promise<PresenceSnapshot> {

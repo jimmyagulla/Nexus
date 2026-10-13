@@ -179,7 +179,70 @@ describe('PresencesPage', () => {
     renderPage(compositionOf(async () => listWith([camille])));
 
     expect(await screen.findByText('Octobre 2026')).toBeTruthy();
-    expect(screen.getByText('Camille Martin')).toBeTruthy();
+    expect(screen.getAllByText('Camille Martin').length).toBeGreaterThan(0);
+  });
+
+  it('asks again for the months with the filters the employer chose', async () => {
+    const asked: unknown[] = [];
+    const deps = compositionOf(async () => listWith([camille]));
+    const controller = new PresenceController(
+      {
+        execute: async (filter) => {
+          asked.push(filter);
+          return listWith([camille]);
+        },
+      },
+      { execute: async () => camille },
+      { execute: async () => camille },
+    );
+    renderPage({ ...deps, controller });
+
+    fireEvent.change(await screen.findByLabelText(i18n.messages.presences.fromMonth), {
+      target: { value: '2026-09' },
+    });
+    fireEvent.change(screen.getByLabelText(i18n.messages.presences.toMonth), {
+      target: { value: '2026-10' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: i18n.messages.presences.filter }),
+    );
+
+    await waitFor(() =>
+      expect(asked).toEqual([{}, { from: '2026-09', to: '2026-10' }]),
+    );
+  });
+
+  it('keeps the filters on screen while the filtered months load', async () => {
+    const deps = compositionOf(async () => listWith([camille]));
+    let calls = 0;
+    const controller = new PresenceController(
+      {
+        execute: async () => {
+          calls += 1;
+          if (calls > 1) {
+            return new Promise<PresenceListSnapshot>(() => undefined);
+          }
+          return listWith([camille]);
+        },
+      },
+      { execute: async () => camille },
+      { execute: async () => camille },
+    );
+    renderPage({ ...deps, controller });
+    const from = await screen.findByLabelText<HTMLInputElement>(
+      i18n.messages.presences.fromMonth,
+    );
+
+    fireEvent.change(from, { target: { value: '2026-09' } });
+    fireEvent.click(
+      screen.getByRole('button', { name: i18n.messages.presences.filter }),
+    );
+
+    await waitFor(() => expect(calls).toBe(2));
+    expect(
+      screen.getByLabelText<HTMLInputElement>(i18n.messages.presences.fromMonth)
+        .value,
+    ).toBe('2026-09');
   });
 
   it('shows the leaves, the sick leaves and the overtime of each month', async () => {

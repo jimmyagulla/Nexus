@@ -203,6 +203,41 @@ describe('PresenceController', () => {
       });
     });
 
+    it('hands the employee and the period of the query to the use case', async () => {
+      await send(
+        'GET',
+        `${PRESENCES_PATH}?employeeId=employee-1&from=2026-08&to=2026-10`,
+      );
+
+      expect(listPresences.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+        employeeId: 'employee-1',
+        from: '2026-08',
+        to: '2026-10',
+      });
+    });
+
+    it('answers 400 when a bound of the period is malformed', async () => {
+      const { status } = await send('GET', `${PRESENCES_PATH}?from=2026-13`);
+
+      expect(status).toBe(400);
+      expect(listPresences.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 400 when the use case refuses the period', async () => {
+      listPresences.execute.mockRejectedValue(
+        new Error(ErrorCode.INVALID_PERIOD),
+      );
+
+      await expect(
+        send('GET', `${PRESENCES_PATH}?from=2026-10&to=2026-09`),
+      ).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.INVALID_PERIOD },
+      });
+    });
+
     it('answers 403 when the actor is an accountant', async () => {
       actor = { ...employer, role: UserRole.ACCOUNTANT };
 

@@ -7,6 +7,7 @@ import {
   Presence,
   PresenceFactSources,
   PresenceListSnapshot,
+  parsePresencePeriod,
   PresenceSnapshot,
   requireEmployerOfCompany,
   UserRole,
@@ -40,9 +41,17 @@ export class ListPresencesUseCase implements IListPresences {
   async execute(input: {
     actor: ActorContext;
     companyId: string;
+    employeeId?: string;
+    from?: string;
+    to?: string;
   }): Promise<PresenceListSnapshot> {
-    const scope = await this.scopeOf(input.actor, input.companyId);
-    const presences = await this.presences.list(scope.filter);
+    const period = parsePresencePeriod(input.from, input.to);
+    const scope = await this.scopeOf(
+      input.actor,
+      input.companyId,
+      input.employeeId,
+    );
+    const presences = await this.presences.list({ ...scope.filter, ...period });
     return {
       presences: await this.presentMostRecentFirst(presences, scope.known),
       employees: scope.offered,
@@ -53,9 +62,10 @@ export class ListPresencesUseCase implements IListPresences {
   private async scopeOf(
     actor: ActorContext,
     companyId: string,
+    employeeId: string | undefined,
   ): Promise<PresenceScope> {
     if (actor.role === UserRole.EMPLOYER) {
-      return this.employerScope(actor, companyId);
+      return this.employerScope(actor, companyId, employeeId);
     }
     if (actor.role === UserRole.EMPLOYEE) {
       return this.employeeScope(actor, companyId);
@@ -66,12 +76,13 @@ export class ListPresencesUseCase implements IListPresences {
   private async employerScope(
     actor: ActorContext,
     companyId: string,
+    employeeId: string | undefined,
   ): Promise<PresenceScope> {
     requireEmployerOfCompany(actor, companyId);
     const employees = await this.employees.listInCompany(companyId);
     return {
       canManage: true,
-      filter: { companyId },
+      filter: { companyId, employeeId },
       known: employees,
       offered: employees,
     };

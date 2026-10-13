@@ -51,7 +51,7 @@ describe('ApiPresenceGateway', () => {
     http.reply('get', 'companies/c1/presences', { status: 200, data: list });
 
     await expect(
-      new ApiPresenceGateway(http).list('c1', 'token'),
+      new ApiPresenceGateway(http).list('c1', {}, 'token'),
     ).resolves.toEqual({
       presences: [camille],
       employees: [{ id: 'e1', companyId: 'c1', fullName: 'Camille Martin' }],
@@ -64,6 +64,46 @@ describe('ApiPresenceGateway', () => {
         data: undefined,
         config: { headers: { Authorization: 'Bearer token' } },
       },
+    ]);
+  });
+
+  it('lists the presences of an employee over a period', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply(
+      'get',
+      'companies/c1/presences?employeeId=e1&from=2026-08&to=2026-10',
+      { status: 200, data: list },
+    );
+
+    await new ApiPresenceGateway(http).list(
+      'c1',
+      { employeeId: 'e1', from: '2026-08', to: '2026-10' },
+      'token',
+    );
+
+    expect(http.calls).toMatchObject([
+      {
+        method: 'get',
+        url: 'companies/c1/presences?employeeId=e1&from=2026-08&to=2026-10',
+      },
+    ]);
+  });
+
+  it('leaves out the filters nobody chose', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/presences?from=2026-08', {
+      status: 200,
+      data: list,
+    });
+
+    await new ApiPresenceGateway(http).list(
+      'c1',
+      { from: '2026-08' },
+      'token',
+    );
+
+    expect(http.calls).toMatchObject([
+      { url: 'companies/c1/presences?from=2026-08' },
     ]);
   });
 
