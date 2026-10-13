@@ -27,3 +27,4 @@ export * from './use-cases/cabinet-exchange/deposit-cabinet-exchange.use-case';
 export * from './use-cases/cabinet-exchange/deposit-cabinet-exchange-from-session.use-case';
 export * from './use-cases/cabinet-exchange/list-cabinet-exchange-history.use-case';
 export * from './use-cases/cabinet-exchange/list-cabinet-exchange-history-from-session.use-case';
+export * from './use-cases/cabinet-exchange/get-cabinet-indicators.use-case';

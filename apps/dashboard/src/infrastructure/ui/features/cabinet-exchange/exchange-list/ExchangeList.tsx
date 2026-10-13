@@ -1,4 +1,5 @@
 import type { CabinetExchangeViewModel } from '../../../../../adapters/presenters/cabinet-exchange.presenter';
+import { i18n } from '../../../i18n/i18n';
 import { ExchangeCard } from './ExchangeCard';
 
 interface ExchangeListProps {
@@ -14,6 +15,14 @@ export function ExchangeList({
   onTransmit,
   onOpen,
 }: ExchangeListProps) {
+  if (exchanges.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {i18n.messages.cabinet.noMatch}
+      </p>
+    );
+  }
+
   return (
     <ul>
       {exchanges.map((exchange) => (

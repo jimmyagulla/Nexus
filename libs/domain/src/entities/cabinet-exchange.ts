@@ -131,6 +131,14 @@ export class CabinetExchange {
     return this.open(ExchangeEventKind.DOWNLOADED, actorId, occurredAt);
   }
 
+  /** The day an exchange is dated by: its transmission, else its creation. */
+  date(): Date {
+    return (
+      this.history.find((event) => event.kind === ExchangeEventKind.TRANSMITTED)
+        ?.occurredAt ?? this.createdAt
+    );
+  }
+
   firstConsultedAt(): Date | null {
     return (
       this.history.find((event) => event.kind === ExchangeEventKind.CONSULTED)

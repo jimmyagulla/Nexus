@@ -1,6 +1,7 @@
 import {
   CabinetExchangeSnapshot,
   ExchangeFileInput,
+  ExchangeFilters,
   ExchangeHistoryEntry,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -43,8 +44,10 @@ export class CabinetExchangeController {
     return this.transmitFromSession.execute(exchangeIds);
   }
 
-  list(): Promise<readonly CabinetExchangeSnapshot[]> {
-    return this.listFromSession.execute();
+  list(
+    filters: ExchangeFilters = {},
+  ): Promise<readonly CabinetExchangeSnapshot[]> {
+    return this.listFromSession.execute(filters);
   }
 
   open(exchangeId: string): Promise<CabinetExchangeSnapshot> {

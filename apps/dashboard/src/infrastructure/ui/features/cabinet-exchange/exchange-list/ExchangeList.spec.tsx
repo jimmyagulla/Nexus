@@ -54,4 +54,11 @@ describe('ExchangeList', () => {
 
     expect(marked).toEqual(['b']);
   });
+
+  it('says that no exchange matches when there is none to list', () => {
+    render(<ExchangeList exchanges={[]} />);
+
+    expect(screen.getByText(i18n.messages.cabinet.noMatch)).toBeTruthy();
+    expect(screen.queryAllByRole('listitem')).toEqual([]);
+  });
 });

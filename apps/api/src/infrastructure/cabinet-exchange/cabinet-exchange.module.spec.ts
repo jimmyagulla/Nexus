@@ -11,6 +11,7 @@ import {
   IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
   IExchangeFileStorage,
+  IGetCabinetIndicators,
   IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
@@ -71,6 +72,7 @@ describe('CabinetExchangeModule', () => {
     expect(moduleRef.get(IDownloadCabinetExchangeFile)).toBeDefined();
     expect(moduleRef.get(IDepositCabinetExchange)).toBeDefined();
     expect(moduleRef.get(IListCabinetExchangeHistory)).toBeDefined();
+    expect(moduleRef.get(IGetCabinetIndicators)).toBeDefined();
   });
 
   it('stores exchanges and their files in Postgres when the mode and the client are both set', async () => {

@@ -1,7 +1,9 @@
+import type { ExchangeFilters } from '@hexagonal-monorepo-template/domain';
 import type { CabinetExchangeViewModel } from '../../../adapters/presenters/cabinet-exchange.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { Confirmation } from '../common/feedback/Confirmation';
 import { SubmissionError } from '../common/errors/SubmissionError';
+import { ExchangeFiltersForm } from '../features/cabinet-exchange/exchange-filters/ExchangeFiltersForm';
 import { ExchangeList } from '../features/cabinet-exchange/exchange-list/ExchangeList';
 import { NewExchangeDialog } from '../features/cabinet-exchange/new-exchange/NewExchangeDialog';
 import type { NewExchangeValues } from '../features/cabinet-exchange/new-exchange/new-exchange.schema';
@@ -17,6 +19,8 @@ interface CabinetExchangesProps {
   onMarkToTransmit: (exchangeId: string) => void;
   onTransmit: (exchangeId: string) => void;
   onOpen: (exchangeId: string) => void;
+  onFilter: (filters: ExchangeFilters) => void;
+  onReset: () => void;
 }
 
 export function CabinetExchanges({
@@ -29,6 +33,8 @@ export function CabinetExchanges({
   onMarkToTransmit,
   onTransmit,
   onOpen,
+  onFilter,
+  onReset,
 }: CabinetExchangesProps) {
   return (
     <div className="space-y-8">
@@ -38,6 +44,12 @@ export function CabinetExchanges({
         errorPresenter={errorPresenter}
         submissionError={createError}
         onSubmit={onCreate}
+      />
+      <ExchangeFiltersForm
+        errorPresenter={errorPresenter}
+        withDirection
+        onFilter={onFilter}
+        onReset={onReset}
       />
       <SubmissionError message={actionError} />
       <Confirmation message={confirmation} />

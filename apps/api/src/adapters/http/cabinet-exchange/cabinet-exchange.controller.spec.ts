@@ -20,6 +20,7 @@ import {
   ICreateCabinetExchangeDraft,
   IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
+  IGetCabinetIndicators,
   IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
@@ -48,6 +49,7 @@ const deposit = { execute: vi.fn<IDepositCabinetExchange['execute']>() };
 const history = {
   execute: vi.fn<IListCabinetExchangeHistory['execute']>(),
 };
+const indicators = { execute: vi.fn<IGetCabinetIndicators['execute']>() };
 
 const employer: ActorContext = {
   userId: 'user-1',
@@ -118,6 +120,7 @@ beforeAll(async () => {
       { provide: IDownloadCabinetExchangeFile, useValue: download },
       { provide: IDepositCabinetExchange, useValue: deposit },
       { provide: IListCabinetExchangeHistory, useValue: history },
+      { provide: IGetCabinetIndicators, useValue: indicators },
     ],
   }).compile();
 
@@ -150,6 +153,7 @@ beforeEach(() => {
     download,
     deposit,
     history,
+    indicators,
   ]) {
     port.execute.mockReset();
   }
@@ -160,6 +164,11 @@ beforeEach(() => {
   open.execute.mockResolvedValue(snapshot);
   deposit.execute.mockResolvedValue(snapshot);
   history.execute.mockResolvedValue([entry]);
+  indicators.execute.mockResolvedValue({
+    toTransmit: 1,
+    received: 2,
+    notConsulted: 1,
+  });
   download.execute.mockResolvedValue({
     fileName: 'a.pdf',
     mimeType: 'application/pdf',
@@ -358,6 +367,7 @@ describe('CabinetExchangeController', () => {
       expect(list.execute).toHaveBeenCalledWith({
         actor: employer,
         companyId: 'company-1',
+        filters: {},
       });
     });
   });
@@ -375,6 +385,7 @@ describe('CabinetExchangeController', () => {
       expect(list.execute).toHaveBeenCalledWith({
         actor: accountant,
         companyId: 'company-1',
+        filters: {},
       });
     });
 
@@ -565,6 +576,87 @@ describe('CabinetExchangeController', () => {
       actor = { ...employer, role: UserRole.EMPLOYEE };
 
       expect((await send('GET', `${BASE}/history`)).status).toBe(403);
+    });
+  });
+
+  describe('GET list filters', () => {
+    it('hands the filters of the query to the use case', async () => {
+      await send(
+        'GET',
+        `${BASE}?category=Facture&from=2026-10-01&to=2026-10-31&direction=CABINET_TO_COMPANY&status=RECEIVED`,
+      );
+
+      expect(list.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+        filters: {
+          category: 'Facture',
+          from: '2026-10-01',
+          to: '2026-10-31',
+          direction: 'CABINET_TO_COMPANY',
+          status: 'RECEIVED',
+        },
+      });
+    });
+
+    it('hands no filter when the query has none', async () => {
+      await send('GET', BASE);
+
+      expect(list.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+        filters: {},
+      });
+    });
+
+    it('answers 400 for a status the exchanges do not know', async () => {
+      const { status } = await send('GET', `${BASE}?status=ARCHIVED`);
+
+      expect(status).toBe(400);
+      expect(list.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 400 for a status of the expenses', async () => {
+      const { status } = await send('GET', `${BASE}?status=REIMBURSED`);
+
+      expect(status).toBe(400);
+    });
+
+    it('answers 400 for a direction that does not exist', async () => {
+      const { status } = await send('GET', `${BASE}?direction=SIDEWAYS`);
+
+      expect(status).toBe(400);
+    });
+
+    it('answers 400 for a date that is not a calendar date', async () => {
+      const { status } = await send('GET', `${BASE}?from=06/10/2026`);
+
+      expect(status).toBe(400);
+    });
+  });
+
+  describe('GET indicators', () => {
+    it('publishes the indicators of the cabinet exchanges to the employer', async () => {
+      await expect(send('GET', `${BASE}/indicators`)).resolves.toEqual({
+        status: 200,
+        payload: {
+          status: 200,
+          message: 'Success',
+          data: { toTransmit: 1, received: 2, notConsulted: 1 },
+        },
+      });
+      expect(indicators.execute).toHaveBeenCalledWith({
+        actor: employer,
+        companyId: 'company-1',
+      });
+    });
+
+    it('answers 403 to the cabinet and to an employee', async () => {
+      for (const role of [UserRole.ACCOUNTANT, UserRole.EMPLOYEE]) {
+        actor = { ...employer, role };
+
+        expect((await send('GET', `${BASE}/indicators`)).status).toBe(403);
+      }
     });
   });
 });

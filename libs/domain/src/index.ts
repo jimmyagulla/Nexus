@@ -44,3 +44,7 @@ export * from './entities/exchange-status-transitions';
 export * from './read-models/exchange-history-entry';
 export * from './read-models/to-exchange-history-entries';
 export * from './services/is-in-history-of';
+export * from './services/exchange-filters';
+export * from './services/filter-exchanges';
+export * from './read-models/cabinet-indicators';
+export * from './read-models/compute-cabinet-indicators';

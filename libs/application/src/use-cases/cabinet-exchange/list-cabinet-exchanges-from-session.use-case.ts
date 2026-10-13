@@ -1,6 +1,7 @@
 import {
   CabinetExchangeSnapshot,
   CompanyScopedSession,
+  ExchangeFilters,
   requireCompanyScopedSession,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -17,9 +18,11 @@ export class ListCabinetExchangesFromSessionUseCase
     private readonly exchanges: ICabinetExchangeGateway,
   ) {}
 
-  async execute(): Promise<readonly CabinetExchangeSnapshot[]> {
+  async execute(
+    filters: ExchangeFilters = {},
+  ): Promise<readonly CabinetExchangeSnapshot[]> {
     const session = await this.currentCompanySession();
-    return this.exchanges.list(session.companyId, session.token);
+    return this.exchanges.list(session.companyId, filters, session.token);
   }
 
   private async currentCompanySession(): Promise<CompanyScopedSession> {

@@ -64,4 +64,20 @@ describe('ListCabinetExchangesFromSessionUseCase', () => {
 
     await expect(useCase.execute()).rejects.toThrow(ErrorCode.ACCESS_DENIED);
   });
+
+  it('passes the filters on, as asked', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/cabinet-exchanges?status=DRAFT', {
+      status: 200,
+      data: [listed],
+    });
+    const useCase = new ListCabinetExchangesFromSessionUseCase(
+      new InMemorySessionGateway('token', actor),
+      new ApiCabinetExchangeGateway(http),
+    );
+
+    await expect(useCase.execute({ status: 'DRAFT' })).resolves.toEqual([
+      listed,
+    ]);
+  });
 });

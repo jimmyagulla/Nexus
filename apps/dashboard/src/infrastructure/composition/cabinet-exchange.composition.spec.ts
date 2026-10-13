@@ -255,4 +255,17 @@ describe('createCabinetExchangeComposition', () => {
       { phrase: 'Le document a été reçu par le cabinet comptable.' },
     ]);
   });
+
+  it('wires a controller that asks for the filtered exchanges', async () => {
+    const { deps, http } = compositionFor();
+    http.reply(
+      'get',
+      'companies/c1/cabinet-exchanges?category=Facture&status=RECEIVED',
+      { status: 200, data: [snapshot] },
+    );
+
+    await expect(
+      deps.controller.list({ category: 'Facture', status: 'RECEIVED' }),
+    ).resolves.toEqual([snapshot]);
+  });
 });

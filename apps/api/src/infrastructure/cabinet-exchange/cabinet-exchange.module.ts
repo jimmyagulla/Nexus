@@ -3,6 +3,7 @@ import {
   CreateCabinetExchangeDraftUseCase,
   DepositCabinetExchangeUseCase,
   DownloadCabinetExchangeFileUseCase,
+  GetCabinetIndicatorsUseCase,
   ListCabinetExchangeHistoryUseCase,
   ListCabinetExchangesUseCase,
   MarkCabinetExchangeToTransmitUseCase,
@@ -21,6 +22,7 @@ import {
   IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
   IExchangeFileStorage,
+  IGetCabinetIndicators,
   IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
@@ -103,6 +105,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         connections: ICabinetConnectionRepository,
       ) => new ListCabinetExchangesUseCase(exchanges, connections),
       inject: [ICabinetExchangeRepository, ICabinetConnectionRepository],
+    },
+    {
+      provide: IGetCabinetIndicators,
+      useFactory: (exchanges: ICabinetExchangeRepository) =>
+        new GetCabinetIndicatorsUseCase(exchanges),
+      inject: [ICabinetExchangeRepository],
     },
     {
       provide: IListCabinetExchangeHistory,

@@ -1,9 +1,10 @@
 import {
   CabinetExchangeSnapshot,
+  ExchangeFilters,
 } from '@hexagonal-monorepo-template/domain';
 
 export interface IListCabinetExchangesFromSession {
-  execute(): Promise<readonly CabinetExchangeSnapshot[]>;
+  execute(filters?: ExchangeFilters): Promise<readonly CabinetExchangeSnapshot[]>;
 }
 
 export const IListCabinetExchangesFromSession = Symbol('IListCabinetExchangesFromSession');

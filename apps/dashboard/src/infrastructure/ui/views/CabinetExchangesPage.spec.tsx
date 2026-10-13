@@ -218,4 +218,63 @@ describe('CabinetExchangesPage', () => {
 
     expect(opened).toEqual(['ex-1']);
   });
+
+  it('says that nothing was exchanged yet, and offers a new document', async () => {
+    setup([]);
+
+    expect(
+      await screen.findByText(i18n.messages.cabinet.emptyList),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: i18n.messages.cabinet.newDocument }),
+    ).toBeTruthy();
+  });
+
+  it('asks the api for the filtered exchanges and keeps the filters when nothing matches', async () => {
+    const http = setup([draft]);
+    http.reply('get', `${BASE}?category=Paie`, { status: 200, data: [] });
+    await screen.findByText('releve.pdf');
+
+    fireEvent.change(
+      screen.getByLabelText(i18n.messages.cabinet.filters.category),
+      { target: { value: 'Paie' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.filters.apply,
+      }),
+    );
+
+    expect(
+      await screen.findByText(i18n.messages.cabinet.noMatch),
+    ).toBeTruthy();
+    expect(http.calls.map((call) => call.url)).toContain(`${BASE}?category=Paie`);
+    expect(
+      screen.getByLabelText(i18n.messages.cabinet.filters.category),
+    ).toBeTruthy();
+  });
+
+  it('shows everything again once the filters are lifted', async () => {
+    const http = setup([draft]);
+    http.reply('get', `${BASE}?status=CONSULTED`, { status: 200, data: [] });
+    await screen.findByText('releve.pdf');
+    fireEvent.change(
+      screen.getByLabelText(i18n.messages.cabinet.filters.status),
+      { target: { value: 'CONSULTED' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.filters.apply,
+      }),
+    );
+    await screen.findByText(i18n.messages.cabinet.noMatch);
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.filters.reset,
+      }),
+    );
+
+    expect(await screen.findByText('releve.pdf')).toBeTruthy();
+  });
 });

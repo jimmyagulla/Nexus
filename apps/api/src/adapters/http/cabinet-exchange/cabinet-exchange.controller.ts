@@ -5,6 +5,7 @@ import {
   Inject,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -14,6 +15,7 @@ import {
   ICreateCabinetExchangeDraft,
   IDepositCabinetExchange,
   IDownloadCabinetExchangeFile,
+  IGetCabinetIndicators,
   IListCabinetExchangeHistory,
   IListCabinetExchanges,
   IMarkCabinetExchangeToTransmit,
@@ -29,11 +31,13 @@ import {
   toExchangeFileInput,
   toExchangeFileResponse,
 } from './cabinet-exchange.mapper';
+import { CabinetIndicatorsResponseDto } from './dto/cabinet-indicators-response.dto';
 import { CabinetExchangeResponseDto } from './dto/cabinet-exchange-response.dto';
 import { CreateCabinetExchangeDraftRequestDto } from './dto/create-cabinet-exchange-draft-request.dto';
 import { DepositCabinetExchangeRequestDto } from './dto/deposit-cabinet-exchange-request.dto';
 import { ExchangeFileResponseDto } from './dto/exchange-file-response.dto';
 import { ExchangeHistoryEntryResponseDto } from './dto/exchange-history-entry-response.dto';
+import { ListCabinetExchangesQueryDto } from './dto/list-cabinet-exchanges-query.dto';
 import { MarkCabinetExchangeToTransmitRequestDto } from './dto/mark-cabinet-exchange-to-transmit-request.dto';
 import { TransmitCabinetExchangesRequestDto } from './dto/transmit-cabinet-exchanges-request.dto';
 
@@ -60,6 +64,8 @@ export class CabinetExchangeController {
     private readonly deposit: IDepositCabinetExchange,
     @Inject(IListCabinetExchangeHistory)
     private readonly history: IListCabinetExchangeHistory,
+    @Inject(IGetCabinetIndicators)
+    private readonly indicators: IGetCabinetIndicators,
   ) {}
 
   @Post()
@@ -117,9 +123,23 @@ export class CabinetExchangeController {
   async listAll(
     @Actor() actor: ActorContext,
     @Param('companyId') companyId: string,
+    @Query() query: ListCabinetExchangesQueryDto,
   ): Promise<CabinetExchangeResponseDto[]> {
-    const snapshots = await this.list.execute({ actor, companyId });
+    const snapshots = await this.list.execute({
+      actor,
+      companyId,
+      filters: { ...query },
+    });
     return snapshots.map(toCabinetExchangeResponse);
+  }
+
+  @Get(API_ROUTES.cabinetExchanges.indicators)
+  @ApiOperation({ summary: 'Publish the indicators of the cabinet exchanges' })
+  async publishIndicators(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+  ): Promise<CabinetIndicatorsResponseDto> {
+    return this.indicators.execute({ actor, companyId });
   }
 
   @Get(API_ROUTES.cabinetExchanges.history)

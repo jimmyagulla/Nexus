@@ -3,6 +3,8 @@ import {
   CabinetConnection,
   CabinetExchange,
   CabinetExchangeSnapshot,
+  ExchangeFilters,
+  filterExchanges,
   isVisibleTo,
   requireExchangeParticipant,
   toCabinetExchangeSnapshot,
@@ -22,21 +24,24 @@ export class ListCabinetExchangesUseCase implements IListCabinetExchanges {
   async execute(input: {
     actor: ActorContext;
     companyId: string;
+    filters?: ExchangeFilters;
   }): Promise<readonly CabinetExchangeSnapshot[]> {
     requireExchangeParticipant(input.actor, input.companyId);
     const connection = await this.connections.findByCompanyId(input.companyId);
-    const all = await this.exchanges.listByCompany(input.companyId);
+    const visible = await this.visibleTo(input, connection);
     return this.mostRecentFirst(
-      all.filter((exchange) => this.canSee(exchange, input.actor, connection)),
+      filterExchanges(visible, input.filters ?? {}),
     ).map(toCabinetExchangeSnapshot);
   }
 
-  private canSee(
-    exchange: CabinetExchange,
-    actor: ActorContext,
+  private async visibleTo(
+    input: { actor: ActorContext; companyId: string },
     connection: CabinetConnection | null,
-  ): boolean {
-    return isVisibleTo(exchange, actor, connection);
+  ): Promise<CabinetExchange[]> {
+    const all = await this.exchanges.listByCompany(input.companyId);
+    return all.filter((exchange) =>
+      isVisibleTo(exchange, input.actor, connection),
+    );
   }
 
   private mostRecentFirst(

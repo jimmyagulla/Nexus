@@ -1,6 +1,7 @@
 import {
   CabinetExchangeSnapshot,
   ExchangeFileInput,
+  ExchangeFilters,
   ExchangeHistoryEntry,
 } from '@hexagonal-monorepo-template/domain';
 
@@ -23,6 +24,7 @@ export interface ICabinetExchangeGateway {
   ): Promise<readonly CabinetExchangeSnapshot[]>;
   list(
     companyId: string,
+    filters: ExchangeFilters,
     token: string,
   ): Promise<readonly CabinetExchangeSnapshot[]>;
   deposit(

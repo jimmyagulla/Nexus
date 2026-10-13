@@ -1,10 +1,12 @@
 import {
   CabinetExchangeSnapshot,
   ExchangeFileInput,
+  ExchangeFilters,
   ExchangeHistoryEntry,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
+  buildUrl,
   decodeBase64,
   encodeBase64,
   unwrapResponse,
@@ -77,11 +79,18 @@ export class ApiCabinetExchangeGateway implements ICabinetExchangeGateway {
 
   async list(
     companyId: string,
+    filters: ExchangeFilters,
     token: string,
   ): Promise<readonly CabinetExchangeSnapshot[]> {
     return unwrapResponse(
       await this.httpClient.get<ApiResponse<CabinetExchangeSnapshot[]>>(
-        cabinetExchangePath('', { companyId }),
+        buildUrl(cabinetExchangePath('', { companyId }), {
+          category: this.nonEmpty(filters.category),
+          from: this.nonEmpty(filters.from),
+          to: this.nonEmpty(filters.to),
+          direction: filters.direction,
+          status: filters.status,
+        }),
         this.authorized(token),
       ),
     );
@@ -157,6 +166,12 @@ export class ApiCabinetExchangeGateway implements ICabinetExchangeGateway {
       mimeType: payload.mimeType,
       content: decodeBase64(payload.contentBase64),
     };
+  }
+
+  private nonEmpty(value: string | null | undefined): string | undefined {
+    return value === undefined || value === null || value === ''
+      ? undefined
+      : value;
   }
 
   private toDraftPayload(input: DraftInput): {

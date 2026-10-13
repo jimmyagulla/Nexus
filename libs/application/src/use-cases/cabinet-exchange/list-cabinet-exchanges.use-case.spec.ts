@@ -193,4 +193,119 @@ describe('ListCabinetExchangesUseCase', () => {
       status: 'RECEIVED',
     });
   });
+
+  describe('filtered', () => {
+    async function exchangesOfSeveralKinds() {
+      const repository = new InMemoryCabinetExchangeRepository();
+      const make = (id: string, category: string, date: string) =>
+        CabinetExchange.draft(id, 'c1', 'user-1', day(date))
+          .withCategory(ExchangeCategory.parse(category))
+          .withDocument(
+            ExchangeFile.of('a.pdf', 'application/pdf', new Uint8Array([1])),
+          )
+          .markToTransmit()
+          .transmit('user-1', day(date))
+          .receive(day(date));
+      await repository.save(make('invoice', 'Facture', '2026-10-01'));
+      await repository.save(make('payroll', 'Paie', '2026-10-15'));
+      await repository.save(
+        CabinetExchange.deposit(
+          'balance',
+          'c1',
+          'cab-1',
+          ExchangeCategory.parse('Bilan'),
+          ExchangeFile.of('b.pdf', 'application/pdf', new Uint8Array([1])),
+          day('2026-10-20'),
+        ).receive(day('2026-10-20')),
+      );
+      return new ListCabinetExchangesUseCase(
+        repository,
+        new InMemoryCabinetConnectionRepository(),
+      );
+    }
+
+    it('keeps the exchanges of the chosen type of document', async () => {
+      const useCase = await exchangesOfSeveralKinds();
+
+      const listed = await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        filters: { category: 'Paie' },
+      });
+
+      expect(listed.map((snapshot) => snapshot.id)).toEqual(['payroll']);
+    });
+
+    it('keeps the exchanges of a period', async () => {
+      const useCase = await exchangesOfSeveralKinds();
+
+      const listed = await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        filters: { from: '2026-10-10', to: '2026-10-31' },
+      });
+
+      expect(listed.map((snapshot) => snapshot.id)).toEqual([
+        'balance',
+        'payroll',
+      ]);
+    });
+
+    it('does not mix the two directions when one is chosen', async () => {
+      const useCase = await exchangesOfSeveralKinds();
+
+      const toCompany = await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        filters: { direction: 'CABINET_TO_COMPANY' },
+      });
+      const toCabinet = await useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        filters: { direction: 'COMPANY_TO_CABINET' },
+      });
+
+      expect(toCompany.map((snapshot) => snapshot.id)).toEqual(['balance']);
+      expect(toCabinet.map((snapshot) => snapshot.id)).toEqual([
+        'payroll',
+        'invoice',
+      ]);
+    });
+
+    it('keeps the exchanges of the chosen status', async () => {
+      const useCase = await exchangesOfSeveralKinds();
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          companyId: 'c1',
+          filters: { status: 'CONSULTED' },
+        }),
+      ).resolves.toEqual([]);
+    });
+
+    it('never widens what the actor may see', async () => {
+      const useCase = await buildForCabinet();
+
+      const listed = await useCase.execute({
+        actor: accountant,
+        companyId: 'c1',
+        filters: { status: 'DRAFT' },
+      });
+
+      expect(listed).toEqual([]);
+    });
+
+    it('refuses a date that is not a calendar date', async () => {
+      const useCase = await exchangesOfSeveralKinds();
+
+      await expect(
+        useCase.execute({
+          actor: employer,
+          companyId: 'c1',
+          filters: { from: '10/10/2026' },
+        }),
+      ).rejects.toThrow(ErrorCode.REQUIRED_INFORMATION);
+    });
+  });
 });

@@ -137,7 +137,7 @@ describe('ApiCabinetExchangeGateway', () => {
     });
 
     await expect(
-      new ApiCabinetExchangeGateway(http).list('c1', 'token'),
+      new ApiCabinetExchangeGateway(http).list('c1', {}, 'token'),
     ).resolves.toEqual([snapshot]);
     expect(http.calls).toEqual([
       {
@@ -267,5 +267,39 @@ describe('ApiCabinetExchangeGateway', () => {
     await expect(
       new ApiCabinetExchangeGateway(http).history('c1', 'ex-1', 'token'),
     ).resolves.toEqual([historyEntry]);
+  });
+
+  it('asks for the filtered exchanges, without sending the empty filters', async () => {
+    const http = new InMemoryHttpClient();
+    const url =
+      'companies/c1/cabinet-exchanges?category=Facture&from=2026-10-01&to=2026-10-31&direction=COMPANY_TO_CABINET&status=RECEIVED';
+    http.reply('get', url, { status: 200, data: [snapshot] });
+    http.reply('get', 'companies/c1/cabinet-exchanges?status=DRAFT', {
+      status: 200,
+      data: [],
+    });
+    const gateway = new ApiCabinetExchangeGateway(http);
+
+    await gateway.list(
+      'c1',
+      {
+        category: 'Facture',
+        from: '2026-10-01',
+        to: '2026-10-31',
+        direction: 'COMPANY_TO_CABINET',
+        status: 'RECEIVED',
+      },
+      'token',
+    );
+    await gateway.list(
+      'c1',
+      { category: '', from: null, to: undefined, status: 'DRAFT' },
+      'token',
+    );
+
+    expect(http.calls.map((call) => call.url)).toEqual([
+      url,
+      'companies/c1/cabinet-exchanges?status=DRAFT',
+    ]);
   });
 });

@@ -13,6 +13,7 @@ export const API_ROUTES = {
     transmission: 'transmission',
     deposit: 'deposit',
     history: 'history',
+    indicators: 'indicators',
     exchangeHistory: ':exchangeId/history',
     consultation: ':exchangeId/consultation',
     file: ':exchangeId/file',

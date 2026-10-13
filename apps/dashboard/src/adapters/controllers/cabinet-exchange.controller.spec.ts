@@ -33,6 +33,7 @@ function controller() {
     downloaded: [] as string[],
     deposited: [] as unknown[],
     histories: [] as (string | null | undefined)[],
+    listed: [] as unknown[],
   };
   return {
     received,
@@ -55,7 +56,12 @@ function controller() {
           return [{ ...snapshot, status: ExchangeStatus.RECEIVED }];
         },
       },
-      { execute: async () => [snapshot] },
+      {
+        execute: async (filters) => {
+          received.listed.push(filters);
+          return [snapshot];
+        },
+      },
       {
         execute: async (id) => {
           received.opened.push(id);
@@ -156,5 +162,23 @@ describe('CabinetExchangeController', () => {
     await sut.history('ex-1');
 
     expect(received.histories).toEqual(['ex-1']);
+  });
+
+  it('lists the exchanges matching the filters', async () => {
+    const { controller: sut, received } = controller();
+
+    await sut.list({ category: 'Facture', status: 'RECEIVED' });
+
+    expect(received.listed).toEqual([
+      { category: 'Facture', status: 'RECEIVED' },
+    ]);
+  });
+
+  it('lists everything when no filter is given', async () => {
+    const { controller: sut, received } = controller();
+
+    await sut.list();
+
+    expect(received.listed).toEqual([{}]);
   });
 });

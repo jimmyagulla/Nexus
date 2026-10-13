@@ -95,7 +95,7 @@ describe('useOpenCabinetExchange', () => {
 
     await waitFor(() =>
       expect(
-        (client.getQueryData(listCabinetExchangesQueryKey()) as { status: string }[])[0]
+        (client.getQueryData(listCabinetExchangesQueryKey({})) as { status: string }[])[0]
           ?.status,
       ).toBe('Consulté'),
     );

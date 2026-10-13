@@ -26,7 +26,7 @@ const received: CabinetExchangeSnapshot = {
   consultedAt: null,
 };
 
-function setup(listed: CabinetExchangeSnapshot[] | Error) {
+function setup(listed: CabinetExchangeSnapshot[] | Error, deposits: number[] = []) {
   const http = new InMemoryHttpClient();
   if (listed instanceof Error) {
     http.reject('get', 'companies/c1/cabinet-exchanges', listed);
@@ -49,10 +49,14 @@ function setup(listed: CabinetExchangeSnapshot[] | Error) {
     <QueryClientProvider
       client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
     >
-      <ReceivedDocumentsPage deps={deps} onOpen={(id) => opened.push(id)} />
+      <ReceivedDocumentsPage
+        deps={deps}
+        onOpen={(id) => opened.push(id)}
+        onDeposit={() => deposits.push(1)}
+      />
     </QueryClientProvider>,
   );
-  return opened;
+  return { opened, http };
 }
 
 describe('ReceivedDocumentsPage', () => {
@@ -77,12 +81,51 @@ describe('ReceivedDocumentsPage', () => {
   });
 
   it('opens a document', async () => {
-    const opened = setup([received]);
+    const { opened } = setup([received]);
 
     fireEvent.click(
       await screen.findByRole('button', { name: i18n.messages.cabinet.open }),
     );
 
     expect(opened).toEqual(['ex-1']);
+  });
+
+  it('says that nothing was exchanged yet, and offers to deposit a document', async () => {
+    const deposits: number[] = [];
+    setup([], deposits);
+
+    expect(
+      await screen.findByText(i18n.messages.cabinet.emptyList),
+    ).toBeTruthy();
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.depositAction,
+      }),
+    );
+
+    expect(deposits).toEqual([1]);
+  });
+
+  it('asks the api for the filtered documents', async () => {
+    const { http } = setup([received]);
+    http.reply('get', 'companies/c1/cabinet-exchanges?status=CONSULTED', {
+      status: 200,
+      data: [],
+    });
+    await screen.findByText('releve.pdf');
+
+    fireEvent.change(
+      screen.getByLabelText(i18n.messages.cabinet.filters.status),
+      { target: { value: 'CONSULTED' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.filters.apply,
+      }),
+    );
+
+    expect(
+      await screen.findByText(i18n.messages.cabinet.noMatch),
+    ).toBeTruthy();
   });
 });

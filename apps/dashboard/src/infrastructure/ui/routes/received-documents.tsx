@@ -19,6 +19,7 @@ function ReceivedDocumentsRoute() {
       onOpen={(exchangeId) =>
         void navigate({ to: AppRoutes.exchange, params: { exchangeId } })
       }
+      onDeposit={() => void navigate({ to: AppRoutes.depositDocument })}
     />
   );
 }

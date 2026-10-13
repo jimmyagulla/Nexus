@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import type { ExchangeFilters } from '@hexagonal-monorepo-template/domain';
 import type { CabinetExchangeViewModel } from '../../../adapters/presenters/cabinet-exchange.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { i18n } from '../i18n/i18n';
@@ -27,6 +28,8 @@ function renderView(
   const marked: string[] = [];
   const transmitted: string[] = [];
   const opened: string[] = [];
+  const filtered: ExchangeFilters[] = [];
+  const state = { resets: 0 };
 
   render(
     <CabinetExchanges
@@ -39,10 +42,12 @@ function renderView(
       onMarkToTransmit={(id) => marked.push(id)}
       onTransmit={(id) => transmitted.push(id)}
       onOpen={(id) => opened.push(id)}
+      onFilter={(filters) => filtered.push(filters)}
+      onReset={() => (state.resets += 1)}
     />,
   );
 
-  return { marked, transmitted, opened };
+  return { marked, transmitted, opened, filtered, state };
 }
 
 describe('CabinetExchanges', () => {
@@ -122,5 +127,49 @@ describe('CabinetExchanges', () => {
     );
 
     expect(opened).toEqual(['ex-1']);
+  });
+
+  it('filters by type, date, direction and status', async () => {
+    const { filtered } = renderView();
+
+    fireEvent.change(
+      screen.getByLabelText(i18n.messages.cabinet.filters.direction),
+      { target: { value: 'CABINET_TO_COMPANY' } },
+    );
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.filters.apply,
+      }),
+    );
+
+    await waitFor(() =>
+      expect(filtered).toEqual([
+        {
+          category: null,
+          from: null,
+          to: null,
+          direction: 'CABINET_TO_COMPANY',
+          status: null,
+        },
+      ]),
+    );
+  });
+
+  it('lifts the filters on request', () => {
+    const { state } = renderView();
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.cabinet.filters.reset,
+      }),
+    );
+
+    expect(state.resets).toBe(1);
+  });
+
+  it('says that no exchange matches the filters', () => {
+    renderView({ exchanges: [] });
+
+    expect(screen.getByText(i18n.messages.cabinet.noMatch)).toBeTruthy();
   });
 });
