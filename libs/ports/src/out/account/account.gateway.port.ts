@@ -5,6 +5,10 @@ export interface IAccountGateway {
     invitationToken: string;
     secret: string;
   }): Promise<void>;
+  activateEmployee(input: {
+    invitationToken: string;
+    secret: string;
+  }): Promise<void>;
   signIn(input: {
     identifier: string;
     secret: string;

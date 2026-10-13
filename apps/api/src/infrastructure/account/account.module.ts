@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
   ActivateAccountUseCase,
+  ActivateEmployeeAccountUseCase,
   SignInUseCase,
 } from '@hexagonal-monorepo-template/application';
 import {
@@ -12,6 +13,7 @@ import {
 import {
   IAccountRepository,
   IActivateAccount,
+  IActivateEmployeeAccount,
   IAuditLogRepository,
   IClock,
   ISecretHasher,
@@ -52,6 +54,12 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       provide: IActivateAccount,
       useFactory: (accounts: IAccountRepository, secrets: ISecretHasher) =>
         new ActivateAccountUseCase(accounts, secrets),
+      inject: [IAccountRepository, ISecretHasher],
+    },
+    {
+      provide: IActivateEmployeeAccount,
+      useFactory: (accounts: IAccountRepository, secrets: ISecretHasher) =>
+        new ActivateEmployeeAccountUseCase(accounts, secrets),
       inject: [IAccountRepository, ISecretHasher],
     },
     {

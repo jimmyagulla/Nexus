@@ -2,7 +2,11 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorCode, UserRole } from '@hexagonal-monorepo-template/domain';
-import { IActivateAccount, ISignIn } from '@hexagonal-monorepo-template/ports';
+import {
+  IActivateAccount,
+  IActivateEmployeeAccount,
+  ISignIn,
+} from '@hexagonal-monorepo-template/ports';
 import { ApiExceptionFilter } from '../common/filters/api-exception.filter';
 import { SuccessResponseInterceptor } from '../common/interceptors/success-response.interceptor';
 import { createValidationPipe } from '../common/pipes/create-validation.pipe';
@@ -10,9 +14,23 @@ import { AccountController } from './account.controller';
 
 const activateAccount = { execute: vi.fn<IActivateAccount['execute']>() };
 const signIn = { execute: vi.fn<ISignIn['execute']>() };
+const activateEmployeeAccount = {
+  execute: vi.fn<IActivateEmployeeAccount['execute']>(),
+};
 
 let app: INestApplication;
 let baseUrl: string;
+
+async function sendEmployeeActivation(
+  body?: unknown,
+): Promise<{ status: number; payload: unknown }> {
+  const response = await fetch(`${baseUrl}/accounts/employee-activation`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body ?? {}),
+  });
+  return { status: response.status, payload: await response.json() };
+}
 
 async function send(
   body?: unknown,
@@ -31,6 +49,7 @@ beforeAll(async () => {
     providers: [
       { provide: IActivateAccount, useValue: activateAccount },
       { provide: ISignIn, useValue: signIn },
+      { provide: IActivateEmployeeAccount, useValue: activateEmployeeAccount },
     ],
   }).compile();
 
@@ -49,6 +68,8 @@ afterAll(async () => {
 beforeEach(() => {
   activateAccount.execute.mockReset();
   signIn.execute.mockReset();
+  activateEmployeeAccount.execute.mockReset();
+  activateEmployeeAccount.execute.mockResolvedValue(undefined);
   activateAccount.execute.mockResolvedValue(undefined);
   signIn.execute.mockResolvedValue({
     accessToken: 'session:founder',
@@ -58,6 +79,44 @@ beforeEach(() => {
 });
 
 describe('AccountController', () => {
+  describe('POST /accounts/employee-activation', () => {
+    it('activates the invited employee account with the chosen secret', async () => {
+      const { status } = await sendEmployeeActivation({
+        invitationToken: 'invite-1',
+        secret: 's3cret',
+      });
+
+      expect(status).toBe(201);
+      expect(activateEmployeeAccount.execute).toHaveBeenCalledWith({
+        invitationToken: 'invite-1',
+        secret: 's3cret',
+      });
+      expect(activateAccount.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 400 when the invitation is already used', async () => {
+      activateEmployeeAccount.execute.mockRejectedValue(
+        new Error(ErrorCode.INVITATION_INVALID),
+      );
+
+      await expect(
+        sendEmployeeActivation({ invitationToken: 'invite-1', secret: 's3cret' }),
+      ).resolves.toEqual({
+        status: 400,
+        payload: { status: 400, message: ErrorCode.INVITATION_INVALID },
+      });
+    });
+
+    it('answers 400 when the body carries no secret', async () => {
+      const { status } = await sendEmployeeActivation({
+        invitationToken: 'invite-1',
+      });
+
+      expect(status).toBe(400);
+      expect(activateEmployeeAccount.execute).not.toHaveBeenCalled();
+    });
+  });
+
   it('activates the invited account with the chosen secret', async () => {
     const { status } = await send({
       invitationToken: 'invite-1',

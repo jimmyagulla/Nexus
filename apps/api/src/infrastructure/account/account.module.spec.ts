@@ -1,11 +1,13 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { describe, expect, it } from 'vitest';
+import { ActivateEmployeeAccountUseCase } from '@hexagonal-monorepo-template/application';
 import { InMemoryAccountRepository } from '@hexagonal-monorepo-template/adapters';
 import { AccountStatus, UserRole } from '@hexagonal-monorepo-template/domain';
 import {
   IAccountRepository,
   IActivateAccount,
+  IActivateEmployeeAccount,
   ISignIn,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
@@ -79,6 +81,16 @@ describe('AccountModule', () => {
 
     expect(moduleRef.get(IActivateAccount)).toBeDefined();
     expect(moduleRef.get(ISignIn)).toBeDefined();
+  });
+
+  it('wires the employee activation use case', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [testGlobals({}), ClockModule, AccountModule],
+    }).compile();
+
+    expect(moduleRef.get(IActivateEmployeeAccount)).toBeInstanceOf(
+      ActivateEmployeeAccountUseCase,
+    );
   });
 
   it('seeds the local invited employer when authentication is disabled', async () => {

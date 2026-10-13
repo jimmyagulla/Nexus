@@ -1,5 +1,6 @@
 import {
   ActivateAccountViaGatewayUseCase,
+  ActivateEmployeeAccountViaGatewayUseCase,
   SignInViaGatewayUseCase,
 } from '@hexagonal-monorepo-template/application';
 import { ApiAccountGateway } from '@hexagonal-monorepo-template/adapters';
@@ -19,6 +20,7 @@ export function createAccountComposition(
   return {
     controller: new AccountController(
       new ActivateAccountViaGatewayUseCase(accounts),
+      new ActivateEmployeeAccountViaGatewayUseCase(accounts),
       new SignInViaGatewayUseCase(accounts),
     ),
     errorPresenter: new ErrorPresenter(),

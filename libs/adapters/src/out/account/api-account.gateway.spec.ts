@@ -23,6 +23,29 @@ describe('ApiAccountGateway', () => {
     ]);
   });
 
+  it('posts the employee invitation and the chosen secret to the employee route', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('post', 'accounts/employee-activation', {
+      status: 201,
+      data: null,
+    });
+    const gateway = new ApiAccountGateway(http);
+
+    await gateway.activateEmployee({
+      invitationToken: 'invite-1',
+      secret: 's3cret',
+    });
+
+    expect(http.calls).toEqual([
+      {
+        method: 'post',
+        url: 'accounts/employee-activation',
+        data: { invitationToken: 'invite-1', secret: 's3cret' },
+        config: undefined,
+      },
+    ]);
+  });
+
   it('posts the identifier and the secret to sign in', async () => {
     const http = new InMemoryHttpClient();
     http.reply('post', 'accounts/sign-in', {

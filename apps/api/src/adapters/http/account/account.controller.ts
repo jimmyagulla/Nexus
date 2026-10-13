@@ -3,6 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   API_ROUTES,
   IActivateAccount,
+  IActivateEmployeeAccount,
   ISignIn,
 } from '@hexagonal-monorepo-template/ports';
 import { Public } from '../common/guards/auth/public.decorator';
@@ -16,9 +17,23 @@ export class AccountController {
   constructor(
     @Inject(IActivateAccount)
     private readonly activateAccount: IActivateAccount,
+    @Inject(IActivateEmployeeAccount)
+    private readonly activateEmployeeAccount: IActivateEmployeeAccount,
     @Inject(ISignIn)
     private readonly signIn: ISignIn,
   ) {}
+
+  @Post(API_ROUTES.accounts.employeeActivation)
+  @Public()
+  @ApiOperation({ summary: 'Activate an invited employee account' })
+  async activateEmployee(
+    @Body() body: ActivateAccountRequestDto,
+  ): Promise<void> {
+    await this.activateEmployeeAccount.execute({
+      invitationToken: body.invitationToken,
+      secret: body.secret,
+    });
+  }
 
   @Post(API_ROUTES.accounts.activation)
   @Public()

@@ -2,6 +2,7 @@ export const API_ROUTES = {
   accounts: {
     base: 'accounts',
     activation: 'activation',
+    employeeActivation: 'employee-activation',
     signIn: 'sign-in',
   },
   employees: {

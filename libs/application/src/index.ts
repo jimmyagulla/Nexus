@@ -3,6 +3,8 @@ export * from './use-cases/account/sign-in.use-case';
 export * from './use-cases/account/sign-in-via-gateway.use-case';
 export * from './use-cases/account/activate-account-via-gateway.use-case';
 export * from './use-cases/employee/invite-employee.use-case';
+export * from './use-cases/employee/activate-employee-account.use-case';
+export * from './use-cases/employee/activate-employee-account-via-gateway.use-case';
 export * from './use-cases/company/create-company.use-case';
 export * from './use-cases/company/rename-company.use-case';
 export * from './use-cases/company/rename-company-from-session.use-case';

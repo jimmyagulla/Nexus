@@ -24,6 +24,18 @@ export class ApiAccountGateway implements IAccountGateway {
     );
   }
 
+  async activateEmployee(input: {
+    invitationToken: string;
+    secret: string;
+  }): Promise<void> {
+    unwrapResponse(
+      await this.httpClient.post(
+        `${API_ROUTES.accounts.base}/${API_ROUTES.accounts.employeeActivation}`,
+        input,
+      ),
+    );
+  }
+
   async signIn(input: {
     identifier: string;
     secret: string;
