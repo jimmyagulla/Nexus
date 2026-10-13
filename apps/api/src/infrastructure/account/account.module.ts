@@ -12,16 +12,20 @@ import {
 import {
   IAccountRepository,
   IActivateAccount,
+  IAuditLogRepository,
+  IClock,
   ISecretHasher,
   ISignIn,
   ISignInSession,
 } from '@hexagonal-monorepo-template/ports';
 import { AccountController } from '../../adapters/http/account/account.controller';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
+import { AuditModule } from '../audit/audit.module';
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
+  imports: [AuditModule],
   controllers: [AccountController],
   providers: [
     {
@@ -60,8 +64,16 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         accounts: IAccountRepository,
         secrets: ISecretHasher,
         sessions: ISignInSession,
-      ) => new SignInUseCase(accounts, secrets, sessions),
-      inject: [IAccountRepository, ISecretHasher, ISignInSession],
+        audits: IAuditLogRepository,
+        clock: IClock,
+      ) => new SignInUseCase(accounts, secrets, sessions, audits, clock),
+      inject: [
+        IAccountRepository,
+        ISecretHasher,
+        ISignInSession,
+        IAuditLogRepository,
+        IClock,
+      ],
     },
   ],
   exports: [IAccountRepository],

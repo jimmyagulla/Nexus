@@ -9,6 +9,7 @@ import {
   ISignIn,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaAccountRepository } from '../../adapters/out/account/prisma-account.repository';
+import { ClockModule } from '../clock/clock.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { AccountModule } from './account.module';
@@ -44,7 +45,7 @@ async function accountRepository(
   prisma?: PrismaDb,
 ): Promise<IAccountRepository> {
   const moduleRef = await Test.createTestingModule({
-    imports: [testGlobals(env, prisma), AccountModule],
+    imports: [testGlobals(env, prisma), ClockModule, AccountModule],
   }).compile();
 
   return moduleRef.get<IAccountRepository>(IAccountRepository);
@@ -73,7 +74,7 @@ describe('AccountModule', () => {
 
   it('wires the activation use case', async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [testGlobals({}), AccountModule],
+      imports: [testGlobals({}), ClockModule, AccountModule],
     }).compile();
 
     expect(moduleRef.get(IActivateAccount)).toBeDefined();

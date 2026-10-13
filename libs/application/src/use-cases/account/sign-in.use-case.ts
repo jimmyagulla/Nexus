@@ -3,11 +3,15 @@ import {
   AccountIdentifier,
   AccountSecret,
   AccountStatus,
+  AuditAction,
+  AuditSubject,
   ErrorCode,
   SignedInSession,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAccountRepository,
+  IAuditLogRepository,
+  IClock,
   ISecretHasher,
   ISignIn,
   ISignInSession,
@@ -18,6 +22,8 @@ export class SignInUseCase implements ISignIn {
     private readonly accounts: IAccountRepository,
     private readonly secrets: ISecretHasher,
     private readonly sessions: ISignInSession,
+    private readonly audits: IAuditLogRepository,
+    private readonly clock: IClock,
   ) {}
 
   async execute(input: {
@@ -30,6 +36,7 @@ export class SignInUseCase implements ISignIn {
     this.refuseIfLocked(account);
     await this.authenticate(account, secret.value);
     await this.resetFailedSignIns(account);
+    await this.recordConnection(account);
     return this.sessions.open({
       userId: account.identifier.value,
       companyId: account.companyId,
@@ -72,5 +79,17 @@ export class SignInUseCase implements ISignIn {
 
   private resetFailedSignIns(account: Account): Promise<void> {
     return this.accounts.save(account.clearFailedSignIns());
+  }
+
+  private recordConnection(account: Account): Promise<void> {
+    return this.audits.append({
+      companyId: account.companyId,
+      actorId: account.identifier.value,
+      occurredAt: this.clock.now(),
+      action: AuditAction.CONNECTION,
+      subject: AuditSubject.ACCOUNT,
+      before: null,
+      after: null,
+    });
   }
 }
