@@ -102,7 +102,12 @@ export class PrismaExpenseReportRepository implements IExpenseReportRepository {
   async save(report: ExpenseReport): Promise<void> {
     await this.prisma.expenseReport.update({
       where: { id: report.id },
-      data: { label: report.label.value, status: report.status },
+      data: {
+        label: report.label.value,
+        status: report.status,
+        reimbursedCents:
+          report.reimbursedAmount === null ? null : report.reimbursedAmount.cents,
+      },
     });
   }
 

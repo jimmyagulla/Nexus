@@ -22,6 +22,8 @@ export const API_ROUTES = {
     expenseReportValidation:
       ':companyId/expense-reports/:expenseReportId/validation',
     expenseReportRefusal: ':companyId/expense-reports/:expenseReportId/refusal',
+    expenseReportReimbursement:
+      ':companyId/expense-reports/:expenseReportId/reimbursement',
     expenseReportExpense:
       ':companyId/expense-reports/:expenseReportId/expenses/:expenseId',
   },

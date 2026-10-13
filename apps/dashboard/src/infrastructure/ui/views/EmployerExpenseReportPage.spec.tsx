@@ -21,6 +21,7 @@ function snapshot(status: string) {
     label: 'Déplacement Lyon',
     status,
     total: 68,
+    reimbursedAmount: null,
     receipts: [
       {
         id: 'f1',
@@ -134,6 +135,33 @@ describe('EmployerExpenseReportPage', () => {
         true,
       ),
     );
+  });
+
+  it('records the reimbursement of a validated report and confirms it', async () => {
+    const http = httpOpening('VALIDATED');
+    http.reply('post', 'companies/c1/expense-reports/r1/reimbursement', {
+      status: 201,
+      data: snapshot('REIMBURSED'),
+    });
+    renderPage(http);
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: names.reimburse }),
+    );
+
+    expect((await screen.findByRole('status')).textContent).toBe(
+      'La note de frais a été marquée comme remboursée.',
+    );
+    expect(
+      http.calls.some((call) => call.url.endsWith('/reimbursement')),
+    ).toBe(true);
+  });
+
+  it('does not offer the reimbursement before the report is validated', async () => {
+    renderPage(httpOpening('UNDER_REVIEW'));
+
+    await screen.findByRole('button', { name: names.validate });
+    expect(screen.queryByRole('button', { name: names.reimburse })).toBeNull();
   });
 
   it('explains why a decision was refused', async () => {

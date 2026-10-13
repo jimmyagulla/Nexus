@@ -12,6 +12,7 @@ import {
   IListExpenseReports,
   IOpenExpenseReport,
   IRefuseExpenseReport,
+  IReimburseExpenseReport,
   IRequestExpenseReportInformation,
   IValidateExpenseReport,
   IRemoveExpense,
@@ -76,6 +77,7 @@ describe('ExpenseReportModule', () => {
     expect(moduleRef.get(IRequestExpenseReportInformation)).toBeDefined();
     expect(moduleRef.get(IValidateExpenseReport)).toBeDefined();
     expect(moduleRef.get(IRefuseExpenseReport)).toBeDefined();
+    expect(moduleRef.get(IReimburseExpenseReport)).toBeDefined();
   });
 
   it('stores reports in Postgres when the mode and the client are both set', async () => {

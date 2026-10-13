@@ -12,6 +12,7 @@ const snapshot: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 45,
+  reimbursedAmount: null,
   receipts: [
     {
       id: 'f1',

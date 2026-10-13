@@ -71,6 +71,36 @@ describe('prisma expense report mapper', () => {
     ).toBeNull();
   });
 
+  it('rebuilds the amount a reimbursed report has paid back', () => {
+    const report = toExpenseReport({
+      id: 'r1',
+      companyId: 'c1',
+      employeeId: 'e1',
+      label: 'Lyon',
+      status: ExpenseReportStatus.REIMBURSED,
+      reimbursedCents: 12500,
+      expenses: [],
+      receipts: [],
+    });
+
+    expect(report.reimbursedAmount?.euros).toBe(125);
+  });
+
+  it('rebuilds a report that has not been reimbursed', () => {
+    const report = toExpenseReport({
+      id: 'r1',
+      companyId: 'c1',
+      employeeId: 'e1',
+      label: 'Lyon',
+      status: ExpenseReportStatus.VALIDATED,
+      reimbursedCents: null,
+      expenses: [],
+      receipts: [],
+    });
+
+    expect(report.reimbursedAmount).toBeNull();
+  });
+
   it('rebuilds a report with its expenses and its receipts', () => {
     const row: PrismaExpenseReportRow = {
       id: 'r1',
@@ -78,6 +108,7 @@ describe('prisma expense report mapper', () => {
       employeeId: 'e1',
       label: 'Déplacement Lyon',
       status: ExpenseReportStatus.SUBMITTED,
+      reimbursedCents: null,
       expenses: [expenseRow],
       receipts: [receiptRow],
     };

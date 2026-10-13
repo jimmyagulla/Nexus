@@ -12,6 +12,8 @@ const report: ExpenseReportViewModel = {
   editable: true,
   requestable: false,
   decidable: false,
+  reimbursable: false,
+  reimbursed: null,
   total: '125 €',
   receipts: [{ id: 'f1', fileName: 'ticket.pdf', size: '2 Ko' }],
   expenses: [

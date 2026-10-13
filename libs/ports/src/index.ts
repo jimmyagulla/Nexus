@@ -59,3 +59,5 @@ export * from './in/expense-report/validate-expense-report.port';
 export * from './in/expense-report/validate-expense-report-from-session.port';
 export * from './in/expense-report/refuse-expense-report.port';
 export * from './in/expense-report/refuse-expense-report-from-session.port';
+export * from './in/expense-report/reimburse-expense-report.port';
+export * from './in/expense-report/reimburse-expense-report-from-session.port';

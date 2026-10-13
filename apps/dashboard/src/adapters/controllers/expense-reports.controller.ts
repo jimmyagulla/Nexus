@@ -14,6 +14,7 @@ import {
   IListExpenseReportsFromSession,
   IOpenExpenseReportFromSession,
   IRefuseExpenseReportFromSession,
+  IReimburseExpenseReportFromSession,
   IRequestExpenseReportInformationFromSession,
   IRemoveExpenseFromSession,
   ISubmitExpenseReportFromSession,
@@ -36,6 +37,7 @@ export class ExpenseReportsController {
     private readonly requestInformationFromSession: IRequestExpenseReportInformationFromSession,
     private readonly validateFromSession: IValidateExpenseReportFromSession,
     private readonly refuseFromSession: IRefuseExpenseReportFromSession,
+    private readonly reimburseFromSession: IReimburseExpenseReportFromSession,
   ) {}
 
   createReport(label: string): Promise<ExpenseReportSnapshot> {
@@ -100,6 +102,10 @@ export class ExpenseReportsController {
 
   refuseReport(reportId: string): Promise<ExpenseReportSnapshot> {
     return this.refuseFromSession.execute(reportId);
+  }
+
+  reimburseReport(reportId: string): Promise<ExpenseReportSnapshot> {
+    return this.reimburseFromSession.execute(reportId);
   }
 
   getReport(reportId: string): Promise<ExpenseReportSnapshot> {

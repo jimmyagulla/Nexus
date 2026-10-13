@@ -25,6 +25,9 @@ export class ExpenseReportResponseDto {
   @ApiProperty({ type: [ReceiptResponseDto] })
   receipts!: ReceiptResponseDto[];
 
+  @ApiProperty({ nullable: true, type: Number })
+  reimbursedAmount!: number | null;
+
   @ApiProperty({ type: [ExpenseResponseDto] })
   expenses!: ExpenseResponseDto[];
 }

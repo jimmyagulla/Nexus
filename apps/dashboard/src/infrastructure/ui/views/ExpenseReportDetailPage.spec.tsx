@@ -21,6 +21,7 @@ const report = {
   status: 'DRAFT',
   total: 45,
   receipts: [],
+  reimbursedAmount: null,
   expenses: [
     {
       id: 'x1',

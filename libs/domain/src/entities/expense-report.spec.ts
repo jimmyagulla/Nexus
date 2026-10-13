@@ -365,6 +365,37 @@ describe('ExpenseReport', () => {
       );
     });
 
+    it('is reimbursed in full from validated', () => {
+      const reimbursed = new ExpenseReport({
+        ...draftProps(),
+        status: ExpenseReportStatus.VALIDATED,
+        expenses: [
+          expense('x1', 'restaurant', 45),
+          expense('x2', 'parking', 12),
+          expense('x3', 'train', 68),
+        ],
+      }).reimburse();
+
+      expect(reimbursed.status).toBe(ExpenseReportStatus.REIMBURSED);
+      expect(reimbursed.reimbursedAmount?.euros).toBe(125);
+    });
+
+    it('has reimbursed nothing before it is reimbursed', () => {
+      expect(inStatus(ExpenseReportStatus.VALIDATED).reimbursedAmount).toBeNull();
+    });
+
+    it.each([
+      ExpenseReportStatus.DRAFT,
+      ExpenseReportStatus.SUBMITTED,
+      ExpenseReportStatus.UNDER_REVIEW,
+      ExpenseReportStatus.REFUSED,
+      ExpenseReportStatus.REIMBURSED,
+    ])('cannot be reimbursed when %s', (status) => {
+      expect(() => inStatus(status).reimburse()).toThrow(
+        ErrorCode.REQUEST_ALREADY_PROCESSED,
+      );
+    });
+
     it.each([
       ExpenseReportStatus.SUBMITTED,
       ExpenseReportStatus.UNDER_REVIEW,

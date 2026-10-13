@@ -9,10 +9,12 @@ import { i18n } from '../i18n/i18n';
 interface EmployerExpenseReportProps {
   report: ExpenseReportViewModel;
   actionError: string | null;
+  confirmation: string | null;
   openReceiptError: string | null;
   onRequestInformation: () => void;
   onValidate: () => void;
   onRefuse: () => void;
+  onReimburse: () => void;
   onOpenReceipt: (receiptId: string) => void;
   onBack: () => void;
 }
@@ -20,10 +22,12 @@ interface EmployerExpenseReportProps {
 export function EmployerExpenseReport({
   report,
   actionError,
+  confirmation,
   openReceiptError,
   onRequestInformation,
   onValidate,
   onRefuse,
+  onReimburse,
   onOpenReceipt,
   onBack,
 }: EmployerExpenseReportProps) {
@@ -33,9 +37,20 @@ export function EmployerExpenseReport({
         {i18n.messages.expenseReports.back}
       </Button>
 
+      {confirmation === null ? null : (
+        <p role="status" className="text-sm font-medium text-primary">
+          {confirmation}
+        </p>
+      )}
+
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold">{report.label}</h1>
         <p className="text-muted-foreground">{report.statusLabel}</p>
+        {report.reimbursed === null ? null : (
+          <p>
+            {i18n.messages.expenseReports.reimbursedAmount} : {report.reimbursed}
+          </p>
+        )}
       </header>
 
       <section className="space-y-4">
@@ -61,9 +76,11 @@ export function EmployerExpenseReport({
         <ReviewActions
           requestable={report.requestable}
           decidable={report.decidable}
+          reimbursable={report.reimbursable}
           onRequestInformation={onRequestInformation}
           onValidate={onValidate}
           onRefuse={onRefuse}
+          onReimburse={onReimburse}
         />
       </section>
     </div>

@@ -19,6 +19,7 @@ const lyon = {
   label: 'Déplacement Lyon',
   status: 'DRAFT',
   receipts: [],
+  reimbursedAmount: null,
   expenses: [],
 };
 

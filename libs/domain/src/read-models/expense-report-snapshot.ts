@@ -27,5 +27,6 @@ export type ExpenseReportSnapshot = {
   status: ExpenseReportStatus;
   total: number;
   receipts: readonly ReceiptSnapshot[];
+  reimbursedAmount: number | null;
   expenses: readonly ExpenseSnapshot[];
 };

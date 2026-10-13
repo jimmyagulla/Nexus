@@ -26,6 +26,7 @@ const submitted: ExpenseReportSnapshot = {
   status: ExpenseReportStatus.SUBMITTED,
   total: 68,
   receipts: [],
+  reimbursedAmount: null,
   expenses: [],
 };
 

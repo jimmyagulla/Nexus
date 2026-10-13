@@ -21,6 +21,7 @@ import {
   IListExpenseReports,
   IOpenExpenseReport,
   IRefuseExpenseReport,
+  IReimburseExpenseReport,
   IRequestExpenseReportInformation,
   IRemoveExpense,
   ISubmitExpenseReport,
@@ -69,6 +70,8 @@ export class ExpenseReportController {
     private readonly validateReport: IValidateExpenseReport,
     @Inject(IRefuseExpenseReport)
     private readonly refuseReport: IRefuseExpenseReport,
+    @Inject(IReimburseExpenseReport)
+    private readonly reimburseReport: IReimburseExpenseReport,
     @Inject(ISubmitExpenseReport)
     private readonly submitReport: ISubmitExpenseReport,
   ) {}
@@ -256,6 +259,19 @@ export class ExpenseReportController {
   ): Promise<ExpenseReportResponseDto> {
     return toExpenseReportResponse(
       await this.refuseReport.execute({ actor, companyId, reportId }),
+    );
+  }
+
+  @Post(API_ROUTES.companies.expenseReportReimbursement)
+  @Roles(UserRole.EMPLOYER)
+  @ApiOperation({ summary: 'Record the full reimbursement of a validated report' })
+  async reimburse(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    return toExpenseReportResponse(
+      await this.reimburseReport.execute({ actor, companyId, reportId }),
     );
   }
 

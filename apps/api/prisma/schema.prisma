@@ -144,6 +144,7 @@ model ExpenseReport {
   employeeId String
   label      String
   status     ExpenseReportStatus @default(DRAFT)
+  reimbursedCents Int?
   createdAt  DateTime      @default(now())
   company    Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   employee   Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)

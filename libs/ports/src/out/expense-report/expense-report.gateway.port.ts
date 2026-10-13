@@ -69,6 +69,11 @@ export interface IExpenseReportGateway {
     reportId: string,
     token: string,
   ): Promise<ExpenseReportSnapshot>;
+  reimburse(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot>;
   submit(
     companyId: string,
     reportId: string,

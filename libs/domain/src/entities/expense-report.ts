@@ -13,6 +13,7 @@ export type ExpenseReportProps = {
   status: ExpenseReportStatus;
   expenses: readonly Expense[];
   receipts?: readonly Receipt[];
+  reimbursedAmount?: Money | null;
 };
 
 export class ExpenseReport {
@@ -23,6 +24,7 @@ export class ExpenseReport {
   readonly status: ExpenseReportStatus;
   readonly expenses: readonly Expense[];
   readonly receipts: readonly Receipt[];
+  readonly reimbursedAmount: Money | null;
 
   constructor(private readonly props: ExpenseReportProps) {
     this.id = props.id;
@@ -32,6 +34,7 @@ export class ExpenseReport {
     this.status = props.status;
     this.expenses = props.expenses;
     this.receipts = props.receipts ?? [];
+    this.reimbursedAmount = props.reimbursedAmount ?? null;
   }
 
   static create(
@@ -130,6 +133,14 @@ export class ExpenseReport {
   refuse(): ExpenseReport {
     this.requireStatus(ExpenseReportStatus.UNDER_REVIEW);
     return this.with({ status: ExpenseReportStatus.REFUSED });
+  }
+
+  reimburse(): ExpenseReport {
+    this.requireStatus(ExpenseReportStatus.VALIDATED);
+    return this.with({
+      status: ExpenseReportStatus.REIMBURSED,
+      reimbursedAmount: this.total(),
+    });
   }
 
   requireReceipt(receiptId: string): Receipt {

@@ -214,6 +214,19 @@ export class ApiExpenseReportGateway implements IExpenseReportGateway {
     );
   }
 
+  reimburse(
+    companyId: string,
+    reportId: string,
+    token: string,
+  ): Promise<ExpenseReportSnapshot> {
+    return this.decide(
+      API_ROUTES.companies.expenseReportReimbursement,
+      companyId,
+      reportId,
+      token,
+    );
+  }
+
   private async decide(
     template: string,
     companyId: string,

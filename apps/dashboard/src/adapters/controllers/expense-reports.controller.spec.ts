@@ -16,6 +16,7 @@ const report: ExpenseReportSnapshot = {
   status: ExpenseReportStatus.DRAFT,
   total: 0,
   receipts: [],
+  reimbursedAmount: null,
   expenses: [],
 };
 
@@ -136,6 +137,12 @@ function controller() {
           return report;
         },
       },
+      {
+        execute: async (reportId) => {
+          processed.push(`reimburse:${reportId}`);
+          return report;
+        },
+      },
     ),
   };
 }
@@ -200,12 +207,14 @@ describe('ExpenseReportsController', () => {
     await subject.requestInformation('r1');
     await subject.validateReport('r1');
     await subject.refuseReport('r1');
+    await subject.reimburseReport('r1');
 
     expect(processed).toEqual([
       'open:r1',
       'information:r1',
       'validate:r1',
       'refuse:r1',
+      'reimburse:r1',
     ]);
   });
 

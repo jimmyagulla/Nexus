@@ -59,6 +59,7 @@ describe('useCreateExpenseReport', () => {
         status: 'DRAFT',
         total: 0,
         receipts: [],
+        reimbursedAmount: null,
         expenses: [],
       },
     });

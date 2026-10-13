@@ -22,6 +22,7 @@ const report: ExpenseReportSnapshot = {
   label: 'Déplacement Lyon',
   status: ExpenseReportStatus.DRAFT,
   total: 57,
+  reimbursedAmount: null,
   receipts: [
     {
       id: 'f1',
@@ -96,6 +97,46 @@ describe('ExpenseReportPresenter', () => {
       ]);
     },
   );
+
+  it('lets the employer reimburse a validated report only', () => {
+    const presenter = new ExpenseReportPresenter();
+
+    expect(
+      presenter.present(
+        { ...report, status: ExpenseReportStatus.VALIDATED },
+        categories,
+      ).reimbursable,
+    ).toBe(true);
+    for (const status of [
+      ExpenseReportStatus.DRAFT,
+      ExpenseReportStatus.SUBMITTED,
+      ExpenseReportStatus.UNDER_REVIEW,
+      ExpenseReportStatus.REFUSED,
+      ExpenseReportStatus.REIMBURSED,
+    ]) {
+      expect(
+        presenter.present({ ...report, status }, categories).reimbursable,
+      ).toBe(false);
+    }
+  });
+
+  it('writes the amount reimbursed in euros once the report is reimbursed', () => {
+    const presenter = new ExpenseReportPresenter();
+
+    expect(presenter.present(report, categories).reimbursed).toBeNull();
+    expect(
+      plain(
+        presenter.present(
+          {
+            ...report,
+            status: ExpenseReportStatus.REIMBURSED,
+            reimbursedAmount: 125,
+          },
+          categories,
+        ).reimbursed,
+      ),
+    ).toBe('125 €');
+  });
 
   it('keeps the identity and the label of the report', () => {
     const model = new ExpenseReportPresenter().present(report, categories);

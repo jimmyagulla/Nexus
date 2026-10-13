@@ -4,6 +4,7 @@ import {
   ExpenseReport,
   ExpenseReportLabel,
   ExpenseReportStatus,
+  Money,
   Receipt,
   ReceiptDetails,
 } from '@hexagonal-monorepo-template/domain';
@@ -35,6 +36,7 @@ export type PrismaExpenseReportRow = {
   employeeId: string;
   label: string;
   status: ExpenseReportStatus;
+  reimbursedCents: number | null;
   expenses: PrismaExpenseRow[];
   receipts: PrismaReceiptRow[];
 };
@@ -75,5 +77,7 @@ export function toExpenseReport(row: PrismaExpenseReportRow): ExpenseReport {
     status: row.status,
     expenses: row.expenses.map(toExpense),
     receipts: row.receipts.map(toReceipt),
+    reimbursedAmount:
+      row.reimbursedCents === null ? null : Money.ofCents(row.reimbursedCents),
   });
 }

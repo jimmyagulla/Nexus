@@ -12,6 +12,8 @@ function report(id: string, label: string): ExpenseReportViewModel {
     editable: true,
     requestable: false,
     decidable: false,
+    reimbursable: false,
+    reimbursed: null,
     total: '0 €',
     receipts: [],
     expenses: [],

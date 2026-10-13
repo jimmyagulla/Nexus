@@ -3,6 +3,7 @@ import { ExpenseReportsScreenComposition } from '../../composition/expense-repor
 import { useOpenExpenseReport } from '../hooks/useOpenExpenseReport';
 import { useOpenReceipt } from '../hooks/useOpenReceipt';
 import { useRefuseExpenseReport } from '../hooks/useRefuseExpenseReport';
+import { useReimburseExpenseReport } from '../hooks/useReimburseExpenseReport';
 import { useRequestExpenseReportInformation } from '../hooks/useRequestExpenseReportInformation';
 import { useValidateExpenseReport } from '../hooks/useValidateExpenseReport';
 import { i18n } from '../i18n/i18n';
@@ -26,6 +27,7 @@ export function EmployerExpenseReportPage({
   );
   const validate = useValidateExpenseReport(reportId, deps.reports);
   const refuse = useRefuseExpenseReport(reportId, deps.reports);
+  const reimburse = useReimburseExpenseReport(reportId, deps.reports);
   const openReceipt = useOpenReceipt(reportId, deps.reports);
 
   if (report.isPending) {
@@ -44,12 +46,17 @@ export function EmployerExpenseReportPage({
       actionError={
         refusalOf(presenter, requestInformation) ??
         refusalOf(presenter, validate) ??
-        refusalOf(presenter, refuse)
+        refusalOf(presenter, refuse) ??
+        refusalOf(presenter, reimburse)
+      }
+      confirmation={
+        reimburse.isSuccess ? i18n.messages.expenseReports.reimbursed : null
       }
       openReceiptError={refusalOf(presenter, openReceipt)}
       onRequestInformation={() => requestInformation.mutate()}
       onValidate={() => validate.mutate()}
       onRefuse={() => refuse.mutate()}
+      onReimburse={() => reimburse.mutate()}
       onOpenReceipt={(receiptId) => openReceipt.mutate(receiptId)}
       onBack={onBack}
     />

@@ -44,6 +44,7 @@ describe('useGetExpenseReport', () => {
         label: 'Lyon',
         status: ExpenseReportStatus.DRAFT,
         receipts: [],
+        reimbursedAmount: null,
         expenses: [],
       },
     });

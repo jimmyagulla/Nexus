@@ -37,6 +37,9 @@ export const en = {
     requestInformation: 'Request more information',
     validate: 'Validate',
     refuse: 'Refuse',
+    reimburse: 'Record the reimbursement',
+    reimbursed: 'The expense report has been marked as reimbursed.',
+    reimbursedAmount: 'Amount reimbursed',
     expense: {
       date: 'Date',
       category: 'Category',

@@ -13,6 +13,8 @@ const report: ExpenseReportViewModel = {
   editable: false,
   requestable: true,
   decidable: true,
+  reimbursable: false,
+  reimbursed: null,
   total: '125 €',
   receipts: [{ id: 'f1', fileName: 'ticket.pdf', size: '2 Ko' }],
   expenses: [
@@ -43,6 +45,7 @@ function renderView(
   options: {
     calls?: string[];
     actionError?: string | null;
+    confirmation?: string | null;
     openReceiptError?: string | null;
   } = {},
 ) {
@@ -51,10 +54,12 @@ function renderView(
     <EmployerExpenseReport
       report={model}
       actionError={options.actionError ?? null}
+      confirmation={options.confirmation ?? null}
       openReceiptError={options.openReceiptError ?? null}
       onRequestInformation={() => calls.push('information')}
       onValidate={() => calls.push('validate')}
       onRefuse={() => calls.push('refuse')}
+      onReimburse={() => calls.push('reimburse')}
       onOpenReceipt={(id) => calls.push(`receipt:${id}`)}
       onBack={() => calls.push('back')}
     />,
@@ -117,6 +122,51 @@ describe('EmployerExpenseReport', () => {
 
     expect(screen.queryByRole('button', { name: names.validate })).toBeNull();
     expect(screen.queryByRole('button', { name: names.refuse })).toBeNull();
+  });
+
+  it('offers the reimbursement of a validated report', () => {
+    const calls: string[] = [];
+    renderView(
+      {
+        ...report,
+        status: 'VALIDATED',
+        statusLabel: 'Validée',
+        requestable: false,
+        decidable: false,
+        reimbursable: true,
+      },
+      { calls },
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: names.reimburse }));
+
+    expect(calls).toEqual(['reimburse']);
+    expect(screen.queryByRole('button', { name: names.validate })).toBeNull();
+  });
+
+  it('shows the amount reimbursed, which is the whole total', () => {
+    renderView({
+      ...report,
+      status: 'REIMBURSED',
+      statusLabel: 'Remboursée',
+      requestable: false,
+      decidable: false,
+      reimbursable: false,
+      reimbursed: '125 €',
+    });
+
+    expect(
+      screen.getByText(`${names.reimbursedAmount} : 125 €`),
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: names.reimburse })).toBeNull();
+  });
+
+  it('confirms the reimbursement with the expected phrase', () => {
+    renderView(report, { confirmation: names.reimbursed });
+
+    expect(screen.getByRole('status').textContent).toBe(
+      'La note de frais a été marquée comme remboursée.',
+    );
   });
 
   it('explains why an action was refused', () => {

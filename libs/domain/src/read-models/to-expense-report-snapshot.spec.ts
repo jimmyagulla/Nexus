@@ -41,6 +41,7 @@ describe('toExpenseReportSnapshot', () => {
       status: 'DRAFT',
       total: 45,
       receipts: [],
+      reimbursedAmount: null,
       expenses: [
         {
           id: 'x1',
@@ -102,6 +103,22 @@ describe('toExpenseReportSnapshot', () => {
 
   it('exposes no receipt for a report without any', () => {
     expect(toExpenseReportSnapshot(reportWith(null)).receipts).toEqual([]);
+  });
+
+  it('exposes the amount reimbursed once the report is reimbursed', () => {
+    const validated = new ExpenseReport({
+      id: 'r1',
+      companyId: 'c1',
+      employeeId: 'e1',
+      label: ExpenseReportLabel.parse('Lyon'),
+      status: ExpenseReportStatus.VALIDATED,
+      expenses: reportWith(null).expenses,
+    });
+
+    const snapshot = toExpenseReportSnapshot(validated.reimburse());
+
+    expect(snapshot.status).toBe('REIMBURSED');
+    expect(snapshot.reimbursedAmount).toBe(45);
   });
 
   it('exposes a total of zero for an empty report', () => {

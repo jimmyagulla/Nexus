@@ -25,6 +25,7 @@ import {
   IListExpenseReports,
   IOpenExpenseReport,
   IRefuseExpenseReport,
+  IReimburseExpenseReport,
   IRequestExpenseReportInformation,
   IRemoveExpense,
   ISubmitExpenseReport,
@@ -52,6 +53,9 @@ const requestInformation = {
 };
 const validateReport = { execute: vi.fn<IValidateExpenseReport['execute']>() };
 const refuseReport = { execute: vi.fn<IRefuseExpenseReport['execute']>() };
+const reimburseReport = {
+  execute: vi.fn<IReimburseExpenseReport['execute']>(),
+};
 
 const employee: ActorContext = {
   userId: 'e1',
@@ -67,6 +71,7 @@ const report: ExpenseReportSnapshot = {
   status: ExpenseReportStatus.DRAFT,
   total: 0,
   receipts: [],
+  reimbursedAmount: null,
   expenses: [],
 };
 
@@ -128,6 +133,7 @@ beforeAll(async () => {
       },
       { provide: IValidateExpenseReport, useValue: validateReport },
       { provide: IRefuseExpenseReport, useValue: refuseReport },
+      { provide: IReimburseExpenseReport, useValue: reimburseReport },
     ],
   }).compile();
 
@@ -163,6 +169,7 @@ beforeEach(() => {
     requestInformation,
     validateReport,
     refuseReport,
+    reimburseReport,
   ]) {
     useCase.execute.mockReset();
     useCase.execute.mockResolvedValue(report);
@@ -501,6 +508,7 @@ describe('ExpenseReportController', () => {
     ['information-request', requestInformation],
     ['validation', validateReport],
     ['refusal', refuseReport],
+    ['reimbursement', reimburseReport],
   ] as const)(
     'POST /companies/:companyId/expense-reports/:expenseReportId/%s',
     (path, useCase) => {

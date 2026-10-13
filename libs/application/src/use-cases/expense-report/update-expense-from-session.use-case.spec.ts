@@ -37,6 +37,7 @@ const updated: ExpenseReportSnapshot = {
   status: ExpenseReportStatus.DRAFT,
   total: 50,
   receipts: [],
+  reimbursedAmount: null,
   expenses: [{ id: 'x1', ...expense }],
 };
 

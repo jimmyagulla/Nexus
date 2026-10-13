@@ -47,6 +47,7 @@ function createFakePrisma() {
         const row: StoredReport = {
           id: `report-${reports.length + 1}`,
           status: ExpenseReportStatus.DRAFT,
+          reimbursedCents: null,
           ...args.data,
         };
         reports.push(row);
@@ -61,7 +62,11 @@ function createFakePrisma() {
       },
       update: async (args: {
         where: { id: string };
-        data: { label: string; status: ExpenseReportStatus };
+        data: {
+          label: string;
+          status: ExpenseReportStatus;
+          reimbursedCents: number | null;
+        };
       }) => {
         const row = reports.find((item) => item.id === args.where.id);
         if (row !== undefined) {
@@ -262,6 +267,34 @@ describe('PrismaExpenseReportRepository', () => {
     expect((await repository.findById('c1', created.id))?.status).toBe(
       ExpenseReportStatus.SUBMITTED,
     );
+  });
+
+  it('writes the amount of a reimbursed report', async () => {
+    const { client } = createFakePrisma();
+    const repository = new PrismaExpenseReportRepository(client);
+    const created = await repository.insert('c1', 'e1', label);
+    const withExpense = created.addExpense(
+      await repository.insertExpense(created.id, details),
+    );
+    const withReceipt = withExpense.attachReceipt(
+      await repository.insertReceipt(
+        created.id,
+        ReceiptDetails.parse({
+          fileName: 'ticket.pdf',
+          mimeType: 'application/pdf',
+          content: new Uint8Array([1]),
+          expenseId: null,
+        }),
+      ),
+    );
+
+    await repository.save(
+      withReceipt.submit().startReview().validate().reimburse(),
+    );
+    const found = await repository.findById('c1', created.id);
+
+    expect(found?.status).toBe(ExpenseReportStatus.REIMBURSED);
+    expect(found?.reimbursedAmount?.cents).toBe(4550);
   });
 
   it('rewrites a modified expense in place', async () => {

@@ -18,6 +18,8 @@ export function toExpenseReportSnapshot(
     status: report.status,
     total: report.total().euros,
     receipts: report.receipts.map(toReceiptSnapshot),
+    reimbursedAmount:
+      report.reimbursedAmount === null ? null : report.reimbursedAmount.euros,
     expenses: report.expenses.map(toExpenseSnapshot),
   };
 }

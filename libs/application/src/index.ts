@@ -40,3 +40,5 @@ export * from './use-cases/expense-report/open-expense-report.use-case';
 export * from './use-cases/expense-report/request-expense-report-information.use-case';
 export * from './use-cases/expense-report/validate-expense-report.use-case';
 export * from './use-cases/expense-report/refuse-expense-report.use-case';
+export * from './use-cases/expense-report/reimburse-expense-report.use-case';
+export * from './use-cases/expense-report/reimburse-expense-report-from-session.use-case';

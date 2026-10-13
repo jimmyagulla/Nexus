@@ -37,6 +37,9 @@ export const fr = {
     requestInformation: 'Demander un complément',
     validate: 'Valider',
     refuse: 'Refuser',
+    reimburse: 'Enregistrer le remboursement',
+    reimbursed: 'La note de frais a été marquée comme remboursée.',
+    reimbursedAmount: 'Montant remboursé',
     expense: {
       date: 'Date',
       category: 'Catégorie',

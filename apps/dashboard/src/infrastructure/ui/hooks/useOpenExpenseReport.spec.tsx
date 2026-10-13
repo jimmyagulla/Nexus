@@ -41,6 +41,7 @@ describe('useOpenExpenseReport', () => {
         status: 'UNDER_REVIEW',
         total: 68,
         receipts: [],
+        reimbursedAmount: null,
         expenses: [],
       },
     });

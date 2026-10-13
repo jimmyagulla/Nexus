@@ -15,6 +15,7 @@ const report: ExpenseReportSnapshot = {
   status: ExpenseReportStatus.DRAFT,
   total: 0,
   receipts: [],
+  reimbursedAmount: null,
   expenses: [
     {
       id: 'x1',
@@ -215,6 +216,7 @@ describe('ApiExpenseReportGateway', () => {
     ['requestInformation', 'information-request'],
     ['validate', 'validation'],
     ['refuse', 'refusal'],
+    ['reimburse', 'reimbursement'],
   ] as const)('asks the api to %s a report', async (method, path) => {
     const http = new InMemoryHttpClient();
     http.reply('post', `companies/c1/expense-reports/r1/${path}`, {

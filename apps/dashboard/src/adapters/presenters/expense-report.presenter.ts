@@ -48,6 +48,8 @@ export interface ExpenseReportViewModel {
   editable: boolean;
   requestable: boolean;
   decidable: boolean;
+  reimbursable: boolean;
+  reimbursed: string | null;
   total: string;
   receipts: ReceiptViewModel[];
   expenses: ExpenseViewModel[];
@@ -76,6 +78,11 @@ export class ExpenseReportPresenter {
       editable: snapshot.status === ExpenseReportStatus.DRAFT,
       requestable: this.isRequestable(snapshot.status),
       decidable: snapshot.status === ExpenseReportStatus.UNDER_REVIEW,
+      reimbursable: snapshot.status === ExpenseReportStatus.VALIDATED,
+      reimbursed:
+        snapshot.reimbursedAmount === null
+          ? null
+          : this.euros.present(snapshot.reimbursedAmount),
       total: this.euros.present(snapshot.total),
       receipts: snapshot.receipts.map((receipt) => this.presentReceipt(receipt)),
       expenses: snapshot.expenses.map((expense) =>

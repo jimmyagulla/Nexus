@@ -8,6 +8,7 @@ import {
   ListExpenseReportsUseCase,
   OpenExpenseReportUseCase,
   RefuseExpenseReportUseCase,
+  ReimburseExpenseReportUseCase,
   RequestExpenseReportInformationUseCase,
   ValidateExpenseReportUseCase,
   RemoveExpenseUseCase,
@@ -29,6 +30,7 @@ import {
   IListExpenseReports,
   IOpenExpenseReport,
   IRefuseExpenseReport,
+  IReimburseExpenseReport,
   IRequestExpenseReportInformation,
   IValidateExpenseReport,
   IRemoveExpense,
@@ -159,6 +161,15 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         notifications: INotificationRepository,
         clock: IClock,
       ) => new RefuseExpenseReportUseCase(reports, notifications, clock),
+      inject: [IExpenseReportRepository, INotificationRepository, IClock],
+    },
+    {
+      provide: IReimburseExpenseReport,
+      useFactory: (
+        reports: IExpenseReportRepository,
+        notifications: INotificationRepository,
+        clock: IClock,
+      ) => new ReimburseExpenseReportUseCase(reports, notifications, clock),
       inject: [IExpenseReportRepository, INotificationRepository, IClock],
     },
     {
