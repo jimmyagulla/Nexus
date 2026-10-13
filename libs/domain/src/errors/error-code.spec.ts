@@ -9,6 +9,7 @@ describe('isErrorCode', () => {
     expect(isErrorCode('MISSING_DOCUMENT')).toBe(true);
     expect(isErrorCode('TRANSMISSION_FAILED')).toBe(true);
     expect(isErrorCode('INACCESSIBLE_DOCUMENT')).toBe(true);
+    expect(isErrorCode('REQUEST_ALREADY_PROCESSED')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {

@@ -40,3 +40,4 @@ export * from './services/complete-exchange';
 export * from './services/is-recipient';
 export * from './services/require-exchange-participant';
 export * from './services/require-connected-cabinet';
+export * from './entities/exchange-status-transitions';

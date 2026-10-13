@@ -155,4 +155,39 @@ describe('MarkCabinetExchangeToTransmitUseCase', () => {
       }),
     ).rejects.toThrow(ErrorCode.ACCESS_DENIED);
   });
+
+  it('does not mark an exchange that is already past the draft', async () => {
+    const { exchanges, useCase } = await build(complete);
+    await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      exchangeId: 'ex-1',
+    });
+
+    await expect(
+      useCase.execute({ actor: employer, companyId: 'c1', exchangeId: 'ex-1' }),
+    ).rejects.toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    expect((await exchanges.findById('ex-1'))?.status).toBe(
+      ExchangeStatus.TO_TRANSMIT,
+    );
+  });
+
+  it('does not let the document change once the exchange is ready', async () => {
+    const { files, useCase } = await build(complete);
+    await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      exchangeId: 'ex-1',
+    });
+
+    await expect(
+      useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        exchangeId: 'ex-1',
+        file: pdf,
+      }),
+    ).rejects.toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    expect(await files.find('ex-1')).toBeNull();
+  });
 });

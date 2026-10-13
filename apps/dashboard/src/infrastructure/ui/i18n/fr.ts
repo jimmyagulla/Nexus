@@ -80,5 +80,6 @@ export const fr = {
     [ErrorCode.TRANSMISSION_FAILED]:
       "La transmission n'a pas abouti. Vous pouvez réessayer.",
     [ErrorCode.INACCESSIBLE_DOCUMENT]: "Ce document n'est pas accessible.",
+    [ErrorCode.REQUEST_ALREADY_PROCESSED]: 'Cette demande a déjà été traitée.',
   },
 } as const;

@@ -228,4 +228,44 @@ describe('TransmitCabinetExchangesUseCase', () => {
       useCase.execute({ actor: employer, companyId: 'c1', exchangeIds: [] }),
     ).rejects.toThrow(ErrorCode.REQUIRED_INFORMATION);
   });
+
+  it('does not transmit a draft that was not marked To transmit', async () => {
+    const { exchanges, files, useCase } = await build();
+    await exchanges.save(
+      CabinetExchange.draft('ex-draft', 'c1', 'user-1', created)
+        .withCategory(ExchangeCategory.parse('Facture'))
+        .withDocument(file),
+    );
+    await files.save('ex-draft', file);
+
+    await expect(
+      useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        exchangeIds: ['ex-draft'],
+      }),
+    ).rejects.toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    expect((await exchanges.findById('ex-draft'))?.status).toBe(
+      ExchangeStatus.DRAFT,
+    );
+  });
+
+  it('transmits an exchange once: a second sending creates nothing new', async () => {
+    const { exchanges, useCase } = await build();
+    await useCase.execute({
+      actor: employer,
+      companyId: 'c1',
+      exchangeIds: ['ex-1'],
+    });
+
+    await expect(
+      useCase.execute({
+        actor: employer,
+        companyId: 'c1',
+        exchangeIds: ['ex-1'],
+      }),
+    ).rejects.toThrow(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    expect((await exchanges.findById('ex-1'))?.history).toHaveLength(2);
+    await expect(exchanges.listByCompany('c1')).resolves.toHaveLength(1);
+  });
 });

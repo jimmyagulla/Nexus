@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { CabinetExchange } from '@hexagonal-monorepo-template/domain';
+import {
+  CabinetExchange,
+  ExchangeCategory,
+} from '@hexagonal-monorepo-template/domain';
 import { InMemoryCabinetExchangeRepository } from './in-memory-cabinet-exchange.repository';
 
 const at = new Date('2026-10-06T09:00:00.000Z');
@@ -29,10 +32,10 @@ describe('InMemoryCabinetExchangeRepository', () => {
     const repository = new InMemoryCabinetExchangeRepository();
     const draft = CabinetExchange.draft('ex-1', 'c1', 'user-1', at);
     await repository.save(draft);
-    const sent = draft.transmit('user-1', at);
-    await repository.save(sent);
+    const edited = draft.withCategory(ExchangeCategory.parse('Facture'));
+    await repository.save(edited);
 
-    await expect(repository.findById('ex-1')).resolves.toEqual(sent);
+    await expect(repository.findById('ex-1')).resolves.toEqual(edited);
   });
 
   it('lists only the exchanges of one company', async () => {

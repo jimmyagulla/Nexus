@@ -4,6 +4,7 @@ import { ExchangeDocument, ExchangeFile } from '../value-objects/exchange-file';
 import { ExchangeDirection } from './exchange-direction';
 import { ExchangeEvent, ExchangeEventKind } from './exchange-event';
 import { ExchangeStatus } from './exchange-status';
+import { canTransition } from './exchange-status-transitions';
 
 export class CabinetExchange {
   constructor(
@@ -66,14 +67,17 @@ export class CabinetExchange {
   }
 
   withCategory(category: ExchangeCategory): CabinetExchange {
+    this.requireDraft();
     return this.copy({ category });
   }
 
   withDocument(file: ExchangeFile): CabinetExchange {
+    this.requireDraft();
     return this.copy({ document: file.describe() });
   }
 
   markToTransmit(): CabinetExchange {
+    this.requireTransitionTo(ExchangeStatus.TO_TRANSMIT);
     if (this.document === null) {
       throw new Error(ErrorCode.MISSING_DOCUMENT);
     }
@@ -88,6 +92,7 @@ export class CabinetExchange {
     occurredAt: Date,
     documentCount = 1,
   ): CabinetExchange {
+    this.requireTransitionTo(ExchangeStatus.TRANSMITTED);
     return this.copy({
       status: ExchangeStatus.TRANSMITTED,
       history: [
@@ -103,6 +108,7 @@ export class CabinetExchange {
   }
 
   receive(occurredAt: Date): CabinetExchange {
+    this.requireTransitionTo(ExchangeStatus.RECEIVED);
     return this.copy({
       status: ExchangeStatus.RECEIVED,
       history: [
@@ -137,6 +143,7 @@ export class CabinetExchange {
     actorId: string,
     occurredAt: Date,
   ): CabinetExchange {
+    this.requireOpenable();
     return this.copy({
       status: ExchangeStatus.CONSULTED,
       history: [
@@ -144,6 +151,28 @@ export class CabinetExchange {
         { kind, actorId, occurredAt, documentCount: 1 },
       ],
     });
+  }
+
+  private requireDraft(): void {
+    if (this.status !== ExchangeStatus.DRAFT) {
+      throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    }
+  }
+
+  private requireTransitionTo(target: ExchangeStatus): void {
+    if (!canTransition(this.status, target)) {
+      throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    }
+  }
+
+  /** A later opening leaves the exchange Consulted, it is not a transition. */
+  private requireOpenable(): void {
+    if (
+      this.status !== ExchangeStatus.CONSULTED &&
+      !canTransition(this.status, ExchangeStatus.CONSULTED)
+    ) {
+      throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);
+    }
   }
 
   private copy(

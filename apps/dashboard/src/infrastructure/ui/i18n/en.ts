@@ -78,5 +78,7 @@ export const en = {
     [ErrorCode.TRANSMISSION_FAILED]:
       'The transmission did not go through. You can try again.',
     [ErrorCode.INACCESSIBLE_DOCUMENT]: 'This document is not accessible.',
+    [ErrorCode.REQUEST_ALREADY_PROCESSED]:
+      'This request has already been processed.',
   },
 } as const;

@@ -118,4 +118,35 @@ describe('CabinetExchangePresenter', () => {
 
     expect(consulted?.consultedOn).toBe('08/10/2026');
   });
+
+  it('words the statuses of an exchange, and never one of the vault or of the expenses', () => {
+    const labels = Object.values(ExchangeStatus).map(
+      (status) => presenter.present([{ ...draft, status }])[0]?.status,
+    );
+
+    expect(labels).toEqual([
+      'Brouillon',
+      'À transmettre',
+      'Transmis',
+      'Reçu',
+      'Consulté',
+    ]);
+    expect(labels).not.toContain('Archivé');
+    expect(labels).not.toContain('Remboursée');
+  });
+
+  it('only offers the next step the reference allows', () => {
+    const offered = Object.values(ExchangeStatus).map((status) => {
+      const [exchange] = presenter.present([{ ...draft, status }]);
+      return [status, exchange?.canMarkToTransmit, exchange?.canTransmit];
+    });
+
+    expect(offered).toEqual([
+      [ExchangeStatus.DRAFT, true, false],
+      [ExchangeStatus.TO_TRANSMIT, false, true],
+      [ExchangeStatus.TRANSMITTED, false, false],
+      [ExchangeStatus.RECEIVED, false, false],
+      [ExchangeStatus.CONSULTED, false, false],
+    ]);
+  });
 });

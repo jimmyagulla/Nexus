@@ -64,6 +64,9 @@ describe('I18n', () => {
     expect(fr.errors.INACCESSIBLE_DOCUMENT).toBe(
       "Ce document n'est pas accessible.",
     );
+    expect(fr.errors.REQUEST_ALREADY_PROCESSED).toBe(
+      'Cette demande a déjà été traitée.',
+    );
   });
 
   it('confirms a transmission as the product reference does', () => {

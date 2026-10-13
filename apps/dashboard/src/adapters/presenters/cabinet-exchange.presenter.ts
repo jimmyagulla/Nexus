@@ -1,5 +1,6 @@
 import {
   CabinetExchangeSnapshot,
+  canTransition,
   ExchangeStatus,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -45,8 +46,11 @@ export class CabinetExchangePresenter {
       date: this.formatDate(snapshot.date),
       consultedOn:
         snapshot.consultedAt === null ? null : this.formatDate(snapshot.consultedAt),
-      canMarkToTransmit: snapshot.status === ExchangeStatus.DRAFT,
-      canTransmit: snapshot.status === ExchangeStatus.TO_TRANSMIT,
+      canMarkToTransmit: canTransition(
+        snapshot.status,
+        ExchangeStatus.TO_TRANSMIT,
+      ),
+      canTransmit: canTransition(snapshot.status, ExchangeStatus.TRANSMITTED),
       canOpen: OPENABLE.includes(snapshot.status),
     };
   }
