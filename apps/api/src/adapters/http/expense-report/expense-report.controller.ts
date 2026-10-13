@@ -1,0 +1,108 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ActorContext, UserRole } from '@hexagonal-monorepo-template/domain';
+import {
+  API_ROUTES,
+  IAddExpense,
+  ICreateExpenseReport,
+  IGetExpenseReport,
+  IListExpenseReports,
+} from '@hexagonal-monorepo-template/ports';
+import { Actor } from '../common/guards/auth/actor.decorator';
+import { CompanyScopeGuard } from '../common/guards/company-scope/company-scope.guard';
+import { Roles } from '../common/guards/roles/roles.decorator';
+import { RolesGuard } from '../common/guards/roles/roles.guard';
+import { CreateExpenseReportRequestDto } from './dto/create-expense-report-request.dto';
+import { ExpenseReportListResponseDto } from './dto/expense-report-list-response.dto';
+import { ExpenseReportResponseDto } from './dto/expense-report-response.dto';
+import { ExpenseRequestDto } from './dto/expense-request.dto';
+import { toExpenseReportResponse } from './expense-report.mapper';
+
+@ApiTags('expense-reports')
+@ApiBearerAuth()
+@Controller(API_ROUTES.companies.base)
+@UseGuards(RolesGuard, CompanyScopeGuard)
+export class ExpenseReportController {
+  constructor(
+    @Inject(ICreateExpenseReport)
+    private readonly createReport: ICreateExpenseReport,
+    @Inject(IAddExpense)
+    private readonly addExpense: IAddExpense,
+    @Inject(IGetExpenseReport)
+    private readonly getReport: IGetExpenseReport,
+    @Inject(IListExpenseReports)
+    private readonly listReports: IListExpenseReports,
+  ) {}
+
+  @Post(API_ROUTES.companies.expenseReports)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Open a draft expense report' })
+  async create(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Body() body: CreateExpenseReportRequestDto,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.createReport.execute({
+      actor,
+      companyId,
+      label: body.label,
+    });
+    return toExpenseReportResponse(report);
+  }
+
+  @Get(API_ROUTES.companies.expenseReports)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'List the expense reports of the employee' })
+  async list(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+  ): Promise<ExpenseReportListResponseDto> {
+    const list = await this.listReports.execute({ actor, companyId });
+    return {
+      canCreate: list.canCreate,
+      reports: list.reports.map(toExpenseReportResponse),
+    };
+  }
+
+  @Get(API_ROUTES.companies.expenseReport)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Get an expense report' })
+  async get(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.getReport.execute({
+      actor,
+      companyId,
+      reportId,
+    });
+    return toExpenseReportResponse(report);
+  }
+
+  @Post(API_ROUTES.companies.expenseReportExpenses)
+  @Roles(UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Add an expense to a draft expense report' })
+  async add(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+    @Body() body: ExpenseRequestDto,
+  ): Promise<ExpenseReportResponseDto> {
+    const report = await this.addExpense.execute({
+      actor,
+      companyId,
+      reportId,
+      expense: { ...body, vat: body.vat ?? null },
+    });
+    return toExpenseReportResponse(report);
+  }
+}

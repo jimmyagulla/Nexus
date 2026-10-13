@@ -10,3 +10,15 @@ export * from './use-cases/company-public-holidays/add-company-public-holiday-fr
 export * from './use-cases/company-public-holidays/update-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday-from-session.use-case';
+export * from './use-cases/expense-report/create-expense-report.use-case';
+export * from './use-cases/expense-report/add-expense.use-case';
+export * from './use-cases/expense-report/get-expense-report.use-case';
+export * from './use-cases/expense-report/list-expense-reports.use-case';
+export * from './use-cases/expense-category/list-expense-categories.use-case';
+export * from './use-cases/expense-category/add-expense-category.use-case';
+export * from './use-cases/expense-report/create-expense-report-from-session.use-case';
+export * from './use-cases/expense-report/add-expense-from-session.use-case';
+export * from './use-cases/expense-report/get-expense-report-from-session.use-case';
+export * from './use-cases/expense-report/list-expense-reports-from-session.use-case';
+export * from './use-cases/expense-category/list-expense-categories-from-session.use-case';
+export * from './use-cases/expense-category/add-expense-category-from-session.use-case';

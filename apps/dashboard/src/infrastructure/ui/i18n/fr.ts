@@ -4,8 +4,44 @@ export const fr = {
   navigation: {
     dashboard: 'Tableau de bord',
     settings: 'Paramètres',
+    myExpenseReports: 'Mes notes de frais',
   },
   loading: 'Chargement…',
+  expenseReports: {
+    title: 'Mes notes de frais',
+    empty: "Vous n'avez encore soumis aucune note de frais.",
+    create: 'Créer une note de frais',
+    createTitle: 'Nouvelle note de frais',
+    label: 'Libellé',
+    open: 'Ouvrir',
+    back: 'Retour aux notes de frais',
+    expensesTitle: 'Dépenses',
+    noExpenses: 'Aucune dépense dans cette note.',
+    addExpense: 'Ajouter une dépense',
+    addExpenseTitle: 'Nouvelle dépense',
+    expense: {
+      date: 'Date',
+      category: 'Catégorie',
+      amount: 'Montant (€)',
+      vat: 'TVA (€)',
+      paymentMethod: 'Moyen de paiement',
+      description: 'Description',
+      assignment: 'Client, projet ou service',
+    },
+    status: {
+      DRAFT: 'Brouillon',
+      SUBMITTED: 'Soumise',
+      UNDER_REVIEW: 'En cours de validation',
+      VALIDATED: 'Validée',
+      REFUSED: 'Refusée',
+      REIMBURSED: 'Remboursée',
+    },
+  },
+  expenseCategories: {
+    title: 'Catégories de dépenses',
+    label: 'Libellé',
+    add: 'Ajouter une catégorie',
+  },
   home: {
     title: 'Dashboard',
   },
@@ -37,5 +73,10 @@ export const fr = {
     [ErrorCode.REQUIRED_INFORMATION]:
       'Renseignez les informations obligatoires.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'Un élément semblable existe déjà.',
+    [ErrorCode.INVALID_AMOUNT]: 'Indiquez un montant supérieur à zéro.',
+    [ErrorCode.INVALID_VAT]: 'La TVA ne peut pas dépasser le montant.',
+    [ErrorCode.INACTIVE_EMPLOYEE]:
+      "Ce salarié est inactif. Cette action n'est plus possible.",
+    [ErrorCode.REQUEST_ALREADY_PROCESSED]: 'Cette demande a déjà été traitée.',
   },
 } as const;

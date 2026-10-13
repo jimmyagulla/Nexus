@@ -4,8 +4,44 @@ export const en = {
   navigation: {
     dashboard: 'Dashboard',
     settings: 'Settings',
+    myExpenseReports: 'My expense reports',
   },
   loading: 'Loading…',
+  expenseReports: {
+    title: 'My expense reports',
+    empty: 'You have not submitted any expense report yet.',
+    create: 'Create an expense report',
+    createTitle: 'New expense report',
+    label: 'Label',
+    open: 'Open',
+    back: 'Back to expense reports',
+    expensesTitle: 'Expenses',
+    noExpenses: 'No expense in this report.',
+    addExpense: 'Add an expense',
+    addExpenseTitle: 'New expense',
+    expense: {
+      date: 'Date',
+      category: 'Category',
+      amount: 'Amount (€)',
+      vat: 'VAT (€)',
+      paymentMethod: 'Payment method',
+      description: 'Description',
+      assignment: 'Client, project or department',
+    },
+    status: {
+      DRAFT: 'Draft',
+      SUBMITTED: 'Submitted',
+      UNDER_REVIEW: 'Under review',
+      VALIDATED: 'Validated',
+      REFUSED: 'Refused',
+      REIMBURSED: 'Reimbursed',
+    },
+  },
+  expenseCategories: {
+    title: 'Expense categories',
+    label: 'Label',
+    add: 'Add a category',
+  },
   home: {
     title: 'Dashboard',
   },
@@ -36,5 +72,11 @@ export const en = {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.INVALID_AMOUNT]: 'Enter an amount greater than zero.',
+    [ErrorCode.INVALID_VAT]: 'The VAT cannot exceed the amount.',
+    [ErrorCode.INACTIVE_EMPLOYEE]:
+      'This employee is inactive. This action is no longer possible.',
+    [ErrorCode.REQUEST_ALREADY_PROCESSED]:
+      'This request has already been processed.',
   },
 } as const;

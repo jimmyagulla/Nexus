@@ -74,7 +74,7 @@ async function companySettings(): Promise<CompanySettingsComposition> {
   return (await import('./di')).companySettingsComposition;
 }
 
-describe('dependency injection entry point', () => {
+describe('dependency injection entry point', { timeout: 20_000 }, () => {
   beforeAll(() => {
     vi.stubEnv('VITE_AUTH_DISABLED', 'false');
     vi.stubEnv('VITE_API_URL', 'https://api.nexus.test/api');

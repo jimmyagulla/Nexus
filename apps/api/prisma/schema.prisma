@@ -42,6 +42,9 @@ model Company {
   nonWorkingWeekdays   CompanyNonWorkingWeekday[]
   publicHolidays       CompanyPublicHoliday[]
   auditEvents          AuditEvent[]
+  employees            Employee[]
+  expenseCategories    ExpenseCategory[]
+  expenseReports       ExpenseReport[]
 }
 
 model CompanyNonWorkingWeekday {
@@ -101,4 +104,61 @@ model AuditSnapshotDayOfWeek {
   snapshot   AuditSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
 
   @@id([snapshotId, dayOfWeek])
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ExpenseReportStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  VALIDATED
+  REFUSED
+  REIMBURSED
+}
+
+model Employee {
+  id             String          @id
+  companyId      String
+  status         EmployeeStatus
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  expenseReports ExpenseReport[]
+}
+
+model ExpenseCategory {
+  id        String  @id @default(uuid())
+  companyId String
+  label     String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, label])
+}
+
+model ExpenseReport {
+  id         String        @id @default(uuid())
+  companyId  String
+  employeeId String
+  label      String
+  status     ExpenseReportStatus @default(DRAFT)
+  createdAt  DateTime      @default(now())
+  company    Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employee   Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  expenses   Expense[]
+}
+
+model Expense {
+  id            String        @id @default(uuid())
+  reportId      String
+  date          String
+  categoryId    String
+  amountCents   Int
+  vatCents      Int?
+  paymentMethod String
+  description   String
+  assignment    String
+  createdAt     DateTime      @default(now())
+  report        ExpenseReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }

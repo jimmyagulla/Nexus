@@ -5,6 +5,10 @@ describe('isErrorCode', () => {
     expect(isErrorCode('ACCESS_DENIED')).toBe(true);
     expect(isErrorCode('REQUIRED_INFORMATION')).toBe(true);
     expect(isErrorCode('POTENTIAL_DUPLICATE')).toBe(true);
+    expect(isErrorCode('INVALID_AMOUNT')).toBe(true);
+    expect(isErrorCode('INVALID_VAT')).toBe(true);
+    expect(isErrorCode('INACTIVE_EMPLOYEE')).toBe(true);
+    expect(isErrorCode('REQUEST_ALREADY_PROCESSED')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {

@@ -26,6 +26,11 @@ async function renderLayoutAt(path: string, children: ReactNode) {
       path: AppRoutes.settings,
       component: () => null,
     }),
+    createRoute({
+      getParentRoute: () => rootRoute,
+      path: AppRoutes.myExpenseReports,
+      component: () => null,
+    }),
   ]);
 
   const router = createRouter({
@@ -38,20 +43,27 @@ async function renderLayoutAt(path: string, children: ReactNode) {
 }
 
 describe('Layout', () => {
-  it('offers the dashboard and the settings as destinations', async () => {
+  it('offers the dashboard, the expense reports and the settings as destinations', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(
       within(screen.getByRole('navigation'))
         .getAllByRole('link')
         .map((link) => link.getAttribute('href')),
-    ).toEqual([AppRoutes.home, AppRoutes.settings]);
+    ).toEqual([
+      AppRoutes.home,
+      AppRoutes.myExpenseReports,
+      AppRoutes.settings,
+    ]);
   });
 
   it('names its destinations in french', async () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(screen.getByText(i18n.messages.navigation.dashboard)).toBeTruthy();
+    expect(
+      screen.getByText(i18n.messages.navigation.myExpenseReports),
+    ).toBeTruthy();
     expect(screen.getByText(i18n.messages.navigation.settings)).toBeTruthy();
   });
 

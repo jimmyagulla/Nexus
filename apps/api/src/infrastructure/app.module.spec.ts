@@ -2,8 +2,14 @@ import { Test } from '@nestjs/testing';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER, ModulesContainer } from '@nestjs/core';
 import {
   IAddCompanyPublicHoliday,
+  IAddExpense,
+  IAddExpenseCategory,
   ICreateCompany,
+  ICreateExpenseReport,
   IGetCompanySettings,
+  IGetExpenseReport,
+  IListExpenseCategories,
+  IListExpenseReports,
   IJwtVerifier,
   IRemoveCompanyPublicHoliday,
   IRenameCompany,
@@ -82,6 +88,19 @@ describe('AppModule', () => {
     expect(moduleRef.get(IAddCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IUpdateCompanyPublicHoliday)).toBeDefined();
     expect(moduleRef.get(IRemoveCompanyPublicHoliday)).toBeDefined();
+  });
+
+  it('wires the expense report in ports across the feature modules', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    expect(moduleRef.get(ICreateExpenseReport)).toBeDefined();
+    expect(moduleRef.get(IAddExpense)).toBeDefined();
+    expect(moduleRef.get(IGetExpenseReport)).toBeDefined();
+    expect(moduleRef.get(IListExpenseReports)).toBeDefined();
+    expect(moduleRef.get(IListExpenseCategories)).toBeDefined();
+    expect(moduleRef.get(IAddExpenseCategory)).toBeDefined();
   });
 
   it('registers SuccessResponseInterceptor as APP_INTERCEPTOR', () => {

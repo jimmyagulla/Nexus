@@ -1,5 +1,6 @@
 import { createRoute } from '@tanstack/react-router';
-import { companySettingsComposition } from '../../di';
+import { companySettingsComposition, expenseCategoriesComposition } from '../../di';
+import { ExpenseCategoriesPage } from '../views/ExpenseCategoriesPage';
 import { SettingsPage } from '../views/SettingsPage';
 import { rootRoute } from './__root';
 import { AppRoutes } from './app-routes';
@@ -11,5 +12,10 @@ export const settingsRoute = createRoute({
 });
 
 function SettingsRoute() {
-  return <SettingsPage deps={companySettingsComposition} />;
+  return (
+    <div className="space-y-8">
+      <SettingsPage deps={companySettingsComposition} />
+      <ExpenseCategoriesPage deps={expenseCategoriesComposition} />
+    </div>
+  );
 }
