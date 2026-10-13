@@ -1,6 +1,8 @@
 import {
   InMemoryEmployeeRepository,
+  FixedClock,
   InMemoryExpenseReportRepository,
+  InMemoryNotificationRepository,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -10,6 +12,7 @@ import {
   ExpenseDetails,
   ExpenseReportLabel,
   ExpenseReportStatus,
+  NotificationType,
   ReceiptDetails,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
@@ -29,12 +32,15 @@ async function setup(
   } = {},
 ) {
   const reports = new InMemoryExpenseReportRepository();
+  const notifications = new InMemoryNotificationRepository();
   const useCase = new SubmitExpenseReportUseCase(
     new InMemoryEmployeeRepository([
       new Employee('e1', 'c1', options.status ?? EmployeeStatus.ACTIVE),
       new Employee('e2', 'c1', EmployeeStatus.ACTIVE),
     ]),
     reports,
+    notifications,
+    new FixedClock(new Date('2026-10-06T10:00:00.000Z')),
   );
   const report = await reports.insert(
     'c1',
@@ -66,7 +72,7 @@ async function setup(
       }),
     );
   }
-  return { reports, useCase, report };
+  return { reports, notifications, useCase, report };
 }
 
 describe('SubmitExpenseReportUseCase', () => {
@@ -108,8 +114,44 @@ describe('SubmitExpenseReportUseCase', () => {
     expect(submitted.receipts).toHaveLength(1);
   });
 
-  it('answers a missing document and keeps the report a draft without receipt', async () => {
-    const { useCase, reports, report } = await setup({ withReceipt: false });
+  it('tells the employers that a report was submitted', async () => {
+    const { useCase, notifications, report } = await setup();
+
+    await useCase.execute({
+      actor: employee,
+      companyId: 'c1',
+      reportId: report.id,
+    });
+
+    expect(await notifications.listByCompany('c1')).toEqual([
+      expect.objectContaining({
+        type: NotificationType.EXPENSE_REPORT_SUBMITTED,
+        recipient: { kind: 'EMPLOYERS' },
+        companyId: 'c1',
+        target: { kind: 'EXPENSE_REPORT', id: report.id },
+        createdAt: new Date('2026-10-06T10:00:00.000Z'),
+        read: false,
+      }),
+    ]);
+  });
+
+  it('does not create a second report nor a second notification on a second submission', async () => {
+    const { useCase, reports, notifications, report } = await setup();
+    const input = { actor: employee, companyId: 'c1', reportId: report.id };
+
+    const first = await useCase.execute(input);
+    const second = await useCase.execute(input);
+
+    expect(second).toEqual(first);
+    expect(second.status).toBe(ExpenseReportStatus.SUBMITTED);
+    expect(await reports.list('c1', {})).toHaveLength(1);
+    expect(await notifications.listByCompany('c1')).toHaveLength(1);
+  });
+
+  it('answers a missing document, keeps the report a draft and notifies nobody', async () => {
+    const { useCase, reports, notifications, report } = await setup({
+      withReceipt: false,
+    });
 
     await expect(
       useCase.execute({ actor: employee, companyId: 'c1', reportId: report.id }),
@@ -117,6 +159,7 @@ describe('SubmitExpenseReportUseCase', () => {
     expect((await reports.findById('c1', report.id))?.status).toBe(
       ExpenseReportStatus.DRAFT,
     );
+    expect(await notifications.listByCompany('c1')).toEqual([]);
   });
 
   it('refuses a report without any expense', async () => {

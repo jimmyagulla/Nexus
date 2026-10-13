@@ -42,6 +42,9 @@ function renderView(
     onRemove?: (id: string) => void;
     removeError?: string | null;
     submitError?: string | null;
+    confirmation?: string | null;
+    onOpenReceipt?: (id: string) => void;
+    openReceiptError?: string | null;
     onSubmit?: () => void;
   } = {},
 ) {
@@ -55,6 +58,9 @@ function renderView(
       removeExpenseError={options.removeError ?? null}
       attachReceiptError={null}
       submitError={options.submitError ?? null}
+      openReceiptError={options.openReceiptError ?? null}
+      confirmation={options.confirmation ?? null}
+      onOpenReceipt={options.onOpenReceipt ?? (() => undefined)}
       onAttachReceipt={async () => true}
       onSubmit={options.onSubmit ?? (() => undefined)}
       onAddExpense={async () => true}
@@ -201,6 +207,46 @@ describe('ExpenseReportDetail', () => {
 
     expect(screen.getByRole('alert').textContent).toBe(
       i18n.messages.errors.MISSING_DOCUMENT,
+    );
+  });
+
+  it('confirms the submission with the expected phrase', () => {
+    renderView(
+      { ...report, status: 'SUBMITTED', editable: false },
+      { confirmation: i18n.messages.expenseReports.submitted },
+    );
+
+    expect(screen.getByRole('status').textContent).toBe(
+      'Votre note de frais a été soumise.',
+    );
+  });
+
+  it('confirms nothing until something happened', () => {
+    renderView(report);
+
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('opens a receipt on demand', () => {
+    const opened: string[] = [];
+    renderView(report, { onOpenReceipt: (id) => opened.push(id) });
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: i18n.messages.expenseReports.openReceipt,
+      }),
+    );
+
+    expect(opened).toEqual(['f1']);
+  });
+
+  it('explains why a receipt could not be opened', () => {
+    renderView(report, {
+      openReceiptError: i18n.messages.errors.ACCESS_DENIED,
+    });
+
+    expect(screen.getByRole('alert').textContent).toBe(
+      i18n.messages.errors.ACCESS_DENIED,
     );
   });
 

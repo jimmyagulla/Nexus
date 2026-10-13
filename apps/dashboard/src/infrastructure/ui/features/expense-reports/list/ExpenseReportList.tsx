@@ -1,18 +1,20 @@
 import type { ExpenseReportViewModel } from '../../../../../adapters/presenters/expense-report.presenter';
-import { i18n } from '../../../i18n/i18n';
 import { ExpenseReportCard } from './ExpenseReportCard';
 
 interface ExpenseReportListProps {
   reports: ExpenseReportViewModel[];
+  emptyMessage: string | null;
   onOpen: (reportId: string) => void;
 }
 
-export function ExpenseReportList({ reports, onOpen }: ExpenseReportListProps) {
+export function ExpenseReportList({
+  reports,
+  emptyMessage,
+  onOpen,
+}: ExpenseReportListProps) {
   if (reports.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        {i18n.messages.expenseReports.empty}
-      </p>
+    return emptyMessage === null ? null : (
+      <p className="text-sm text-muted-foreground">{emptyMessage}</p>
     );
   }
 

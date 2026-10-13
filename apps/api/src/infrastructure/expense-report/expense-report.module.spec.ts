@@ -8,12 +8,14 @@ import {
   ICreateExpenseReport,
   IExpenseReportRepository,
   IGetExpenseReport,
+  IGetReceipt,
   IListExpenseReports,
   IRemoveExpense,
   ISubmitExpenseReport,
   IUpdateExpense,
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaExpenseReportRepository } from '../../adapters/out/expense-report/prisma-expense-report.repository';
+import { ClockModule } from '../clock/clock.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { ExpenseReportModule } from './expense-report.module';
@@ -49,7 +51,7 @@ function compile(
   prisma?: PrismaDb,
 ): Promise<TestingModule> {
   return Test.createTestingModule({
-    imports: [testGlobals(env, prisma), ExpenseReportModule],
+    imports: [testGlobals(env, prisma), ClockModule, ExpenseReportModule],
   }).compile();
 }
 
@@ -65,6 +67,7 @@ describe('ExpenseReportModule', () => {
     expect(moduleRef.get(IRemoveExpense)).toBeDefined();
     expect(moduleRef.get(IAttachReceipt)).toBeDefined();
     expect(moduleRef.get(ISubmitExpenseReport)).toBeDefined();
+    expect(moduleRef.get(IGetReceipt)).toBeDefined();
   });
 
   it('stores reports in Postgres when the mode and the client are both set', async () => {

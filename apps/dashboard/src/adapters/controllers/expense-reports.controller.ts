@@ -3,12 +3,14 @@ import {
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ReceiptDetailsInput,
+  ReceiptFileSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IAddExpenseFromSession,
   IAttachReceiptFromSession,
   ICreateExpenseReportFromSession,
   IGetExpenseReportFromSession,
+  IGetReceiptFromSession,
   IListExpenseReportsFromSession,
   IRemoveExpenseFromSession,
   ISubmitExpenseReportFromSession,
@@ -25,6 +27,7 @@ export class ExpenseReportsController {
     private readonly removeExpenseFromSession: IRemoveExpenseFromSession,
     private readonly attachReceiptFromSession: IAttachReceiptFromSession,
     private readonly submitFromSession: ISubmitExpenseReportFromSession,
+    private readonly getReceiptFromSession: IGetReceiptFromSession,
   ) {}
 
   createReport(label: string): Promise<ExpenseReportSnapshot> {
@@ -62,6 +65,13 @@ export class ExpenseReportsController {
     receipt: ReceiptDetailsInput,
   ): Promise<ExpenseReportSnapshot> {
     return this.attachReceiptFromSession.execute({ reportId, receipt });
+  }
+
+  getReceipt(
+    reportId: string,
+    receiptId: string,
+  ): Promise<ReceiptFileSnapshot> {
+    return this.getReceiptFromSession.execute({ reportId, receiptId });
   }
 
   submitReport(reportId: string): Promise<ExpenseReportSnapshot> {

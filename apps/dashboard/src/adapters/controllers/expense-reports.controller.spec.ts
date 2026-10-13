@@ -31,6 +31,13 @@ const expense: ExpenseDetailsInput = {
   assignment: 'Client Dupont',
 };
 
+const file = {
+  id: 'f1',
+  fileName: 'ticket.pdf',
+  mimeType: 'application/pdf',
+  content: new Uint8Array([1, 2, 3]),
+};
+
 function controller() {
   const created: string[] = [];
   const added: { reportId: string; expense: ExpenseDetailsInput }[] = [];
@@ -43,7 +50,9 @@ function controller() {
   const removed: { reportId: string; expenseId: string }[] = [];
   const attached: { reportId: string; receipt: ReceiptDetailsInput }[] = [];
   const submitted: string[] = [];
+  const opened: { reportId: string; receiptId: string }[] = [];
   return {
+    opened,
     created,
     added,
     read,
@@ -95,6 +104,12 @@ function controller() {
           return report;
         },
       },
+      {
+        execute: async (input) => {
+          opened.push(input);
+          return file;
+        },
+      },
     ),
   };
 }
@@ -143,6 +158,13 @@ describe('ExpenseReportsController', () => {
 
     await expect(subject.attachReceipt('r1', receipt)).resolves.toEqual(report);
     expect(attached).toEqual([{ reportId: 'r1', receipt }]);
+  });
+
+  it('reads the file of a receipt', async () => {
+    const { controller: subject, opened } = controller();
+
+    await expect(subject.getReceipt('r1', 'f1')).resolves.toEqual(file);
+    expect(opened).toEqual([{ reportId: 'r1', receiptId: 'f1' }]);
   });
 
   it('submits a report', async () => {

@@ -7,6 +7,8 @@ import { ExpenseReports } from './ExpenseReports';
 function renderView(model: ExpenseReportListViewModel, opened: string[] = []) {
   render(
     <ExpenseReports
+      title={i18n.messages.expenseReports.title}
+      emptyMessage={i18n.messages.expenseReports.empty}
       model={model}
       errorPresenter={new ErrorPresenter()}
       createError={null}

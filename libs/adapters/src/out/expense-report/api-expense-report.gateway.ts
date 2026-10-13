@@ -3,9 +3,11 @@ import {
   ExpenseReportListSnapshot,
   ExpenseReportSnapshot,
   ReceiptDetailsInput,
+  ReceiptFileSnapshot,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ApiResponse,
+  decodeBase64,
   encodeBase64,
   unwrapResponse,
 } from '@hexagonal-monorepo-template/infrastructure';
@@ -15,6 +17,13 @@ import {
   IExpenseReportGateway,
   IHttpClient,
 } from '@hexagonal-monorepo-template/ports';
+
+type ReceiptFilePayload = {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  contentBase64: string;
+};
 
 export class ApiExpenseReportGateway implements IExpenseReportGateway {
   constructor(private readonly httpClient: IHttpClient) {}
@@ -127,6 +136,30 @@ export class ApiExpenseReportGateway implements IExpenseReportGateway {
         this.authorized(token),
       ),
     );
+  }
+
+  async getReceipt(
+    companyId: string,
+    reportId: string,
+    receiptId: string,
+    token: string,
+  ): Promise<ReceiptFileSnapshot> {
+    const payload = unwrapResponse(
+      await this.httpClient.get<ApiResponse<ReceiptFilePayload>>(
+        companyPath(API_ROUTES.companies.expenseReportReceipt, {
+          companyId,
+          expenseReportId: reportId,
+          receiptId,
+        }),
+        this.authorized(token),
+      ),
+    );
+    return {
+      id: payload.id,
+      fileName: payload.fileName,
+      mimeType: payload.mimeType,
+      content: decodeBase64(payload.contentBase64),
+    };
   }
 
   async submit(

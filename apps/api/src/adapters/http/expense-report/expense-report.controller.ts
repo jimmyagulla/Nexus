@@ -17,6 +17,7 @@ import {
   IAttachReceipt,
   ICreateExpenseReport,
   IGetExpenseReport,
+  IGetReceipt,
   IListExpenseReports,
   IRemoveExpense,
   ISubmitExpenseReport,
@@ -31,6 +32,7 @@ import { CreateExpenseReportRequestDto } from './dto/create-expense-report-reque
 import { ExpenseReportListResponseDto } from './dto/expense-report-list-response.dto';
 import { ExpenseReportResponseDto } from './dto/expense-report-response.dto';
 import { ExpenseRequestDto } from './dto/expense-request.dto';
+import { ReceiptFileResponseDto } from './dto/receipt-file-response.dto';
 import { toExpenseReportResponse } from './expense-report.mapper';
 
 @ApiTags('expense-reports')
@@ -53,6 +55,8 @@ export class ExpenseReportController {
     private readonly removeExpense: IRemoveExpense,
     @Inject(IAttachReceipt)
     private readonly attachReceipt: IAttachReceipt,
+    @Inject(IGetReceipt)
+    private readonly getReceipt: IGetReceipt,
     @Inject(ISubmitExpenseReport)
     private readonly submitReport: ISubmitExpenseReport,
   ) {}
@@ -74,8 +78,8 @@ export class ExpenseReportController {
   }
 
   @Get(API_ROUTES.companies.expenseReports)
-  @Roles(UserRole.EMPLOYEE)
-  @ApiOperation({ summary: 'List the expense reports of the employee' })
+  @Roles(UserRole.EMPLOYER, UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'List the expense reports the actor can see' })
   async list(
     @Actor() actor: ActorContext,
     @Param('companyId') companyId: string,
@@ -88,7 +92,7 @@ export class ExpenseReportController {
   }
 
   @Get(API_ROUTES.companies.expenseReport)
-  @Roles(UserRole.EMPLOYEE)
+  @Roles(UserRole.EMPLOYER, UserRole.EMPLOYEE)
   @ApiOperation({ summary: 'Get an expense report' })
   async get(
     @Actor() actor: ActorContext,
@@ -139,6 +143,29 @@ export class ExpenseReportController {
       expenseId,
     });
     return toExpenseReportResponse(report);
+  }
+
+  @Get(API_ROUTES.companies.expenseReportReceipt)
+  @Roles(UserRole.EMPLOYER, UserRole.EMPLOYEE)
+  @ApiOperation({ summary: 'Download a receipt of an expense report' })
+  async downloadReceipt(
+    @Actor() actor: ActorContext,
+    @Param('companyId') companyId: string,
+    @Param('expenseReportId') reportId: string,
+    @Param('receiptId') receiptId: string,
+  ): Promise<ReceiptFileResponseDto> {
+    const file = await this.getReceipt.execute({
+      actor,
+      companyId,
+      reportId,
+      receiptId,
+    });
+    return {
+      id: file.id,
+      fileName: file.fileName,
+      mimeType: file.mimeType,
+      contentBase64: Buffer.from(file.content).toString('base64'),
+    };
   }
 
   @Post(API_ROUTES.companies.expenseReportReceipts)

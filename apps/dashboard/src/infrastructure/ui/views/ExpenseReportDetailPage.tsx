@@ -5,6 +5,7 @@ import { useAddExpense } from '../hooks/useAddExpense';
 import { useAttachReceipt } from '../hooks/useAttachReceipt';
 import { useGetExpenseCategories } from '../hooks/useGetExpenseCategories';
 import { useGetExpenseReport } from '../hooks/useGetExpenseReport';
+import { useOpenReceipt } from '../hooks/useOpenReceipt';
 import { useRemoveExpense } from '../hooks/useRemoveExpense';
 import { useSubmitExpenseReport } from '../hooks/useSubmitExpenseReport';
 import { useUpdateExpense } from '../hooks/useUpdateExpense';
@@ -29,6 +30,7 @@ export function ExpenseReportDetailPage({
   const removeExpense = useRemoveExpense(reportId, deps.reports);
   const attachReceipt = useAttachReceipt(reportId, deps.reports);
   const submit = useSubmitExpenseReport(reportId, deps.reports);
+  const openReceipt = useOpenReceipt(reportId, deps.reports);
 
   if (report.isPending || categories.isPending) {
     return <p>{i18n.messages.loading}</p>;
@@ -52,6 +54,8 @@ export function ExpenseReportDetailPage({
       removeExpenseError={refusalOf(deps.reports.errorPresenter, removeExpense)}
       attachReceiptError={refusalOf(deps.reports.errorPresenter, attachReceipt)}
       submitError={refusalOf(deps.reports.errorPresenter, submit)}
+      openReceiptError={refusalOf(deps.reports.errorPresenter, openReceipt)}
+      confirmation={submit.isSuccess ? i18n.messages.expenseReports.submitted : null}
       onAddExpense={(values) => accepted(addExpense.mutateAsync(values))}
       onEditExpense={(expenseId, values) =>
         accepted(updateExpense.mutateAsync({ expenseId, expense: values }))
@@ -65,6 +69,7 @@ export function ExpenseReportDetailPage({
         )
       }
       onSubmit={() => submit.mutate()}
+      onOpenReceipt={(receiptId) => openReceipt.mutate(receiptId)}
       onBack={onBack}
     />
   );

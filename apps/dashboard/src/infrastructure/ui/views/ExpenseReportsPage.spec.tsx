@@ -30,6 +30,8 @@ function renderPage(http: InMemoryHttpClient, opened: string[] = []) {
   return render(
     <QueryClientProvider client={client}>
       <ExpenseReportsPage
+        title={i18n.messages.expenseReports.title}
+        emptyMessage={i18n.messages.expenseReports.empty}
         deps={{
           reports: createExpenseReportsComposition(http, sessions),
           categories: createExpenseCategoriesComposition(http, sessions),
@@ -73,6 +75,45 @@ describe('ExpenseReportsPage', () => {
     expect(
       screen.getByRole('button', { name: i18n.messages.expenseReports.create }),
     ).toBeTruthy();
+  });
+
+  it('shows the employer the submitted reports under the title she is given', async () => {
+    const http = httpWith({
+      canCreate: false,
+      reports: [{ ...lyon, status: 'SUBMITTED' }],
+    });
+    const sessions = new InMemorySessionGateway('token', {
+      userId: 'u1',
+      companyId: 'c1',
+      role: UserRole.EMPLOYER,
+    });
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    render(
+      <QueryClientProvider client={client}>
+        <ExpenseReportsPage
+          title={i18n.messages.expenseReports.employerTitle}
+          emptyMessage={null}
+          deps={{
+            reports: createExpenseReportsComposition(http, sessions),
+            categories: createExpenseCategoriesComposition(http, sessions),
+          }}
+          onOpen={() => undefined}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(await screen.findByText('Déplacement Lyon')).toBeTruthy();
+    expect(
+      screen.getByRole('heading', {
+        name: i18n.messages.expenseReports.employerTitle,
+      }),
+    ).toBeTruthy();
+    expect(screen.getByText(i18n.messages.expenseReports.status.SUBMITTED)).toBeTruthy();
+    expect(
+      screen.queryByRole('button', { name: i18n.messages.expenseReports.create }),
+    ).toBeNull();
   });
 
   it('shows a readable message when the reports cannot be loaded', async () => {

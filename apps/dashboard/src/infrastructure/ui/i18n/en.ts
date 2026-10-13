@@ -5,6 +5,7 @@ export const en = {
     dashboard: 'Dashboard',
     settings: 'Settings',
     myExpenseReports: 'My expense reports',
+    expenseReports: 'Expense reports',
   },
   loading: 'Loading…',
   expenseReports: {
@@ -30,6 +31,9 @@ export const en = {
     attachReceiptTitle: 'New receipt',
     receiptFile: 'File (PDF, JPEG or PNG)',
     submit: 'Submit the report',
+    submitted: 'Your expense report has been submitted.',
+    employerTitle: 'Expense reports',
+    openReceipt: 'Open',
     expense: {
       date: 'Date',
       category: 'Category',

@@ -4,6 +4,7 @@ import {
   AttachReceiptUseCase,
   CreateExpenseReportUseCase,
   GetExpenseReportUseCase,
+  GetReceiptUseCase,
   ListExpenseReportsUseCase,
   RemoveExpenseUseCase,
   SubmitExpenseReportUseCase,
@@ -17,7 +18,10 @@ import {
   IEmployeeRepository,
   IExpenseCategoryRepository,
   IExpenseReportRepository,
+  IClock,
+  INotificationRepository,
   IGetExpenseReport,
+  IGetReceipt,
   IListExpenseReports,
   IRemoveExpense,
   ISubmitExpenseReport,
@@ -28,10 +32,11 @@ import { PrismaExpenseReportRepository } from '../../adapters/out/expense-report
 import { API_CONFIG, type ApiConfig } from '../config/load-api-config';
 import { EmployeeModule } from '../employee/employee.module';
 import { ExpenseCategoryModule } from '../expense-category/expense-category.module';
+import { NotificationModule } from '../notification/notification.module';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 
 @Module({
-  imports: [EmployeeModule, ExpenseCategoryModule],
+  imports: [EmployeeModule, ExpenseCategoryModule, NotificationModule],
   controllers: [ExpenseReportController],
   providers: [
     {
@@ -99,8 +104,22 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
       useFactory: (
         employees: IEmployeeRepository,
         reports: IExpenseReportRepository,
-      ) => new SubmitExpenseReportUseCase(employees, reports),
-      inject: [IEmployeeRepository, IExpenseReportRepository],
+        notifications: INotificationRepository,
+        clock: IClock,
+      ) =>
+        new SubmitExpenseReportUseCase(employees, reports, notifications, clock),
+      inject: [
+        IEmployeeRepository,
+        IExpenseReportRepository,
+        INotificationRepository,
+        IClock,
+      ],
+    },
+    {
+      provide: IGetReceipt,
+      useFactory: (reports: IExpenseReportRepository) =>
+        new GetReceiptUseCase(reports),
+      inject: [IExpenseReportRepository],
     },
     {
       provide: IGetExpenseReport,

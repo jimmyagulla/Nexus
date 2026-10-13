@@ -6,11 +6,18 @@ import { i18n } from '../i18n/i18n';
 import { ExpenseReports } from './ExpenseReports';
 
 interface ExpenseReportsPageProps {
+  title: string;
+  emptyMessage: string | null;
   deps: ExpenseReportsScreenComposition;
   onOpen: (reportId: string) => void;
 }
 
-export function ExpenseReportsPage({ deps, onOpen }: ExpenseReportsPageProps) {
+export function ExpenseReportsPage({
+  title,
+  emptyMessage,
+  deps,
+  onOpen,
+}: ExpenseReportsPageProps) {
   const reports = useGetExpenseReports(deps);
   const create = useCreateExpenseReport(deps.reports);
 
@@ -24,6 +31,8 @@ export function ExpenseReportsPage({ deps, onOpen }: ExpenseReportsPageProps) {
 
   return (
     <ExpenseReports
+      title={title}
+      emptyMessage={emptyMessage}
       model={reports.data}
       errorPresenter={deps.reports.errorPresenter}
       createError={refusalOf(deps.reports.errorPresenter, create)}

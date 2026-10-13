@@ -234,6 +234,20 @@ describe('ExpenseReport', () => {
     );
   });
 
+  it('finds one of its receipts', () => {
+    const report = new ExpenseReport(draftProps()).attachReceipt(
+      receipt('f1', null),
+    );
+
+    expect(report.requireReceipt('f1').id).toBe('f1');
+  });
+
+  it('refuses a receipt it does not hold', () => {
+    expect(() => new ExpenseReport(draftProps()).requireReceipt('f9')).toThrow(
+      ErrorCode.ACCESS_DENIED,
+    );
+  });
+
   it('is submitted once it holds an expense and a receipt', () => {
     const submitted = new ExpenseReport(draftProps())
       .addExpense(expense('x1', 'train', 68))

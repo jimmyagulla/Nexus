@@ -20,11 +20,14 @@ interface ExpenseReportDetailProps {
   removeExpenseError: string | null;
   attachReceiptError: string | null;
   submitError: string | null;
+  openReceiptError: string | null;
+  confirmation: string | null;
   onAddExpense: (values: ExpenseValues) => Promise<boolean>;
   onEditExpense: (expenseId: string, values: ExpenseValues) => Promise<boolean>;
   onRemoveExpense: (expenseId: string) => void;
   onAttachReceipt: (values: ReceiptValues) => Promise<boolean>;
   onSubmit: () => void;
+  onOpenReceipt: (receiptId: string) => void;
   onBack: () => void;
 }
 
@@ -37,11 +40,14 @@ export function ExpenseReportDetail({
   removeExpenseError,
   attachReceiptError,
   submitError,
+  openReceiptError,
+  confirmation,
   onAddExpense,
   onEditExpense,
   onRemoveExpense,
   onAttachReceipt,
   onSubmit,
+  onOpenReceipt,
   onBack,
 }: ExpenseReportDetailProps) {
   return (
@@ -49,6 +55,12 @@ export function ExpenseReportDetail({
       <Button type="button" variant="outline" onClick={onBack}>
         {i18n.messages.expenseReports.back}
       </Button>
+
+      {confirmation === null ? null : (
+        <p role="status" className="text-sm font-medium text-primary">
+          {confirmation}
+        </p>
+      )}
 
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold">{report.label}</h1>
@@ -86,7 +98,8 @@ export function ExpenseReportDetail({
         <h2 className="text-xl font-semibold">
           {i18n.messages.expenseReports.receiptsTitle}
         </h2>
-        <ReceiptList receipts={report.receipts} />
+        <ReceiptList receipts={report.receipts} onOpen={onOpenReceipt} />
+        <SubmissionError message={openReceiptError} />
         {report.editable ? (
           <AttachReceiptDialog
             errorPresenter={errorPresenter}

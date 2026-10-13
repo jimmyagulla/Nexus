@@ -31,6 +31,11 @@ async function renderLayoutAt(path: string, children: ReactNode) {
       path: AppRoutes.myExpenseReports,
       component: () => null,
     }),
+    createRoute({
+      getParentRoute: () => rootRoute,
+      path: AppRoutes.expenseReports,
+      component: () => null,
+    }),
   ]);
 
   const router = createRouter({
@@ -52,6 +57,7 @@ describe('Layout', () => {
         .map((link) => link.getAttribute('href')),
     ).toEqual([
       AppRoutes.home,
+      AppRoutes.expenseReports,
       AppRoutes.myExpenseReports,
       AppRoutes.settings,
     ]);
@@ -61,6 +67,9 @@ describe('Layout', () => {
     await renderLayoutAt(AppRoutes.home, null);
 
     expect(screen.getByText(i18n.messages.navigation.dashboard)).toBeTruthy();
+    expect(
+      screen.getByText(i18n.messages.navigation.expenseReports),
+    ).toBeTruthy();
     expect(
       screen.getByText(i18n.messages.navigation.myExpenseReports),
     ).toBeTruthy();

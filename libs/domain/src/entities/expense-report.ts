@@ -105,6 +105,14 @@ export class ExpenseReport {
     return this.with({ status: ExpenseReportStatus.SUBMITTED });
   }
 
+  requireReceipt(receiptId: string): Receipt {
+    const receipt = this.receipts.find((current) => current.id === receiptId);
+    if (receipt === undefined) {
+      throw new Error(ErrorCode.ACCESS_DENIED);
+    }
+    return receipt;
+  }
+
   requireDraft(): void {
     if (this.status !== ExpenseReportStatus.DRAFT) {
       throw new Error(ErrorCode.REQUEST_ALREADY_PROCESSED);

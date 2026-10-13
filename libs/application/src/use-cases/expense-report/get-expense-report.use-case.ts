@@ -2,10 +2,8 @@ import {
   ActorContext,
   assertSameCompany,
   ExpenseReportSnapshot,
-  requireActorRole,
-  requireOwnExpenseReport,
+  requireVisibleExpenseReport,
   toExpenseReportSnapshot,
-  UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IExpenseReportRepository,
@@ -20,9 +18,8 @@ export class GetExpenseReportUseCase implements IGetExpenseReport {
     companyId: string;
     reportId: string;
   }): Promise<ExpenseReportSnapshot> {
-    requireActorRole(input.actor, UserRole.EMPLOYEE);
     assertSameCompany(input.companyId, input.actor.companyId);
-    const report = requireOwnExpenseReport(
+    const report = requireVisibleExpenseReport(
       await this.reports.findById(input.companyId, input.reportId),
       input.actor,
     );

@@ -21,6 +21,7 @@ import {
   IAttachReceipt,
   ICreateExpenseReport,
   IGetExpenseReport,
+  IGetReceipt,
   IListExpenseReports,
   IRemoveExpense,
   ISubmitExpenseReport,
@@ -40,6 +41,7 @@ const updateExpense = { execute: vi.fn<IUpdateExpense['execute']>() };
 const removeExpense = { execute: vi.fn<IRemoveExpense['execute']>() };
 const attachReceipt = { execute: vi.fn<IAttachReceipt['execute']>() };
 const submitReport = { execute: vi.fn<ISubmitExpenseReport['execute']>() };
+const getReceipt = { execute: vi.fn<IGetReceipt['execute']>() };
 
 const employee: ActorContext = {
   userId: 'e1',
@@ -63,6 +65,7 @@ const REPORT_PATH = `${REPORTS_PATH}/r1`;
 const EXPENSES_PATH = `${REPORT_PATH}/expenses`;
 const EXPENSE_PATH = `${EXPENSES_PATH}/x1`;
 const RECEIPTS_PATH = `${REPORT_PATH}/receipts`;
+const RECEIPT_PATH = `${RECEIPTS_PATH}/f1`;
 const SUBMISSION_PATH = `${REPORT_PATH}/submission`;
 
 const expenseBody = {
@@ -107,6 +110,7 @@ beforeAll(async () => {
       { provide: IRemoveExpense, useValue: removeExpense },
       { provide: IAttachReceipt, useValue: attachReceipt },
       { provide: ISubmitExpenseReport, useValue: submitReport },
+      { provide: IGetReceipt, useValue: getReceipt },
     ],
   }).compile();
 
@@ -214,6 +218,19 @@ describe('ExpenseReportController', () => {
 
       expect((await send('GET', REPORTS_PATH)).status).toBe(403);
     });
+
+    it('lets the employer list the reports', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('GET', REPORTS_PATH)).status).toBe(200);
+    });
+
+    it('answers 403 for the accounting firm', async () => {
+      actor = { ...employee, role: UserRole.ACCOUNTANT };
+
+      expect((await send('GET', REPORTS_PATH)).status).toBe(403);
+      expect(listReports.execute).not.toHaveBeenCalled();
+    });
   });
 
   describe('GET /companies/:companyId/expense-reports/:expenseReportId', () => {
@@ -240,6 +257,17 @@ describe('ExpenseReportController', () => {
       await expect(send('GET', REPORT_PATH)).resolves.toEqual({
         status: 403,
         payload: { status: 403, message: ErrorCode.ACCESS_DENIED },
+      });
+    });
+
+    it('lets the employer read a report', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('GET', REPORT_PATH)).status).toBe(200);
+      expect(getReport.execute).toHaveBeenCalledWith({
+        actor: { ...employee, role: UserRole.EMPLOYER },
+        companyId: 'company-1',
+        reportId: 'r1',
       });
     });
   });
@@ -386,6 +414,64 @@ describe('ExpenseReportController', () => {
 
       expect((await send('POST', RECEIPTS_PATH, receiptBody)).status).toBe(403);
       expect(attachReceipt.execute).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('GET /companies/:companyId/expense-reports/:expenseReportId/receipts/:receiptId', () => {
+    beforeEach(() => {
+      getReceipt.execute.mockReset();
+      getReceipt.execute.mockResolvedValue({
+        id: 'f1',
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+        content: new Uint8Array([72, 101, 108, 108, 111]),
+      });
+    });
+
+    it('answers 200 with the file encoded in base64', async () => {
+      await expect(send('GET', RECEIPT_PATH)).resolves.toEqual({
+        status: 200,
+        payload: {
+          status: 200,
+          message: 'Success',
+          data: {
+            id: 'f1',
+            fileName: 'ticket.pdf',
+            mimeType: 'application/pdf',
+            contentBase64: 'SGVsbG8=',
+          },
+        },
+      });
+    });
+
+    it('hands the receipt of the path to the use case', async () => {
+      await send('GET', RECEIPT_PATH);
+
+      expect(getReceipt.execute).toHaveBeenCalledWith({
+        actor: employee,
+        companyId: 'company-1',
+        reportId: 'r1',
+        receiptId: 'f1',
+      });
+    });
+
+    it('lets the employer download a receipt', async () => {
+      actor = { ...employee, role: UserRole.EMPLOYER };
+
+      expect((await send('GET', RECEIPT_PATH)).status).toBe(200);
+    });
+
+    it('answers 403 for the accounting firm', async () => {
+      actor = { ...employee, role: UserRole.ACCOUNTANT };
+
+      expect((await send('GET', RECEIPT_PATH)).status).toBe(403);
+      expect(getReceipt.execute).not.toHaveBeenCalled();
+    });
+
+    it('answers 403 when the use case denies access', async () => {
+      getReceipt.execute.mockRejectedValue(new Error(ErrorCode.ACCESS_DENIED));
+
+      expect((await send('GET', RECEIPT_PATH)).status).toBe(403);
     });
   });
 

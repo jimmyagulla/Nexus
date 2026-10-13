@@ -17,3 +17,4 @@ export * from './out/expense-category/in-memory-expense-category.repository';
 export * from './out/expense-report/in-memory-expense-report.repository';
 export * from './out/expense-category/api-expense-category.gateway';
 export * from './out/expense-report/api-expense-report.gateway';
+export * from './out/notification/in-memory-notification.repository';

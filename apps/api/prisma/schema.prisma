@@ -45,6 +45,7 @@ model Company {
   employees            Employee[]
   expenseCategories    ExpenseCategory[]
   expenseReports       ExpenseReport[]
+  notifications        Notification[]
 }
 
 model CompanyNonWorkingWeekday {
@@ -175,4 +176,17 @@ model Receipt {
   createdAt DateTime      @default(now())
   report    ExpenseReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
   expense   Expense?      @relation(fields: [expenseId], references: [id], onDelete: SetNull)
+}
+
+model Notification {
+  id                 String   @id @default(uuid())
+  companyId          String
+  type               String
+  recipientUserId    String?
+  recipientEmployers Boolean  @default(false)
+  targetKind         String
+  targetId           String
+  createdAt          DateTime
+  read               Boolean  @default(false)
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }

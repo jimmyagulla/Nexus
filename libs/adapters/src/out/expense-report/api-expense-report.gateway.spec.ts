@@ -180,6 +180,36 @@ describe('ApiExpenseReportGateway', () => {
     ]);
   });
 
+  it('reads a receipt and decodes its content', async () => {
+    const http = new InMemoryHttpClient();
+    http.reply('get', 'companies/c1/expense-reports/r1/receipts/f1', {
+      status: 200,
+      data: {
+        id: 'f1',
+        fileName: 'ticket.pdf',
+        mimeType: 'application/pdf',
+        contentBase64: 'SGVsbG8=',
+      },
+    });
+
+    await expect(
+      new ApiExpenseReportGateway(http).getReceipt('c1', 'r1', 'f1', 'token'),
+    ).resolves.toEqual({
+      id: 'f1',
+      fileName: 'ticket.pdf',
+      mimeType: 'application/pdf',
+      content: new Uint8Array([72, 101, 108, 108, 111]),
+    });
+    expect(http.calls).toEqual([
+      {
+        method: 'get',
+        url: 'companies/c1/expense-reports/r1/receipts/f1',
+        data: undefined,
+        config: authorized,
+      },
+    ]);
+  });
+
   it('submits a report', async () => {
     const http = new InMemoryHttpClient();
     http.reply('post', 'companies/c1/expense-reports/r1/submission', {

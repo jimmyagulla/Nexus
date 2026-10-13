@@ -271,7 +271,7 @@ describe('ExpenseReportDetailPage', () => {
     );
   });
 
-  it('submits the report', async () => {
+  it('submits the report and confirms it with the expected phrase', async () => {
     const http = httpWithReport();
     http.reply('post', 'companies/c1/expense-reports/r1/submission', {
       status: 201,
@@ -285,10 +285,11 @@ describe('ExpenseReportDetailPage', () => {
       }),
     );
 
-    await waitFor(() =>
-      expect(
-        http.calls.some((call) => call.url.endsWith('/submission')),
-      ).toBe(true),
+    expect((await screen.findByRole('status')).textContent).toBe(
+      'Votre note de frais a été soumise.',
+    );
+    expect(http.calls.some((call) => call.url.endsWith('/submission'))).toBe(
+      true,
     );
   });
 

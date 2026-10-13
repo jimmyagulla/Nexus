@@ -5,6 +5,7 @@ export const fr = {
     dashboard: 'Tableau de bord',
     settings: 'Paramètres',
     myExpenseReports: 'Mes notes de frais',
+    expenseReports: 'Notes de frais',
   },
   loading: 'Chargement…',
   expenseReports: {
@@ -30,6 +31,9 @@ export const fr = {
     attachReceiptTitle: 'Nouveau justificatif',
     receiptFile: 'Fichier (PDF, JPEG ou PNG)',
     submit: 'Soumettre la note',
+    submitted: 'Votre note de frais a été soumise.',
+    employerTitle: 'Notes de frais',
+    openReceipt: 'Ouvrir',
     expense: {
       date: 'Date',
       category: 'Catégorie',

@@ -21,6 +21,7 @@ describe('ExpenseReportList', () => {
     render(
       <ExpenseReportList
         reports={[report('r1', 'Lyon'), report('r2', 'Paris')]}
+        emptyMessage={i18n.messages.expenseReports.empty}
         onOpen={() => undefined}
       />,
     );
@@ -29,11 +30,24 @@ describe('ExpenseReportList', () => {
   });
 
   it('tells the employee she has not submitted any report yet', () => {
-    render(<ExpenseReportList reports={[]} onOpen={() => undefined} />);
+    render(
+      <ExpenseReportList
+        reports={[]}
+        emptyMessage={i18n.messages.expenseReports.empty}
+        onOpen={() => undefined}
+      />,
+    );
 
-    expect(screen.getByText(i18n.messages.expenseReports.empty)).toBeTruthy();
     expect(screen.getByText(i18n.messages.expenseReports.empty).textContent).toBe(
       "Vous n'avez encore soumis aucune note de frais.",
     );
+  });
+
+  it('says nothing when no message is asked for', () => {
+    const { container } = render(
+      <ExpenseReportList reports={[]} emptyMessage={null} onOpen={() => undefined} />,
+    );
+
+    expect(container.textContent).toBe('');
   });
 });

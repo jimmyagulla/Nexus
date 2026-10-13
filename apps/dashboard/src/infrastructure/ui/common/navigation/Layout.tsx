@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { LayoutDashboard, Receipt, Settings } from 'lucide-react';
+import { ClipboardList, LayoutDashboard, Receipt, Settings } from 'lucide-react';
 import { AppRoutes } from '../../routes/app-routes';
 import { i18n } from '../../i18n/i18n';
 import { NavigationLink } from './NavigationLink';
@@ -22,6 +22,11 @@ export function Layout({ children }: LayoutProps) {
             to={AppRoutes.home}
             icon={<LayoutDashboard className="h-5 w-5" />}
             label={i18n.messages.navigation.dashboard}
+          />
+          <NavigationLink
+            to={AppRoutes.expenseReports}
+            icon={<ClipboardList className="h-5 w-5" />}
+            label={i18n.messages.navigation.expenseReports}
           />
           <NavigationLink
             to={AppRoutes.myExpenseReports}

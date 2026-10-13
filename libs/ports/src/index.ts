@@ -48,3 +48,6 @@ export * from './in/expense-report/attach-receipt.port';
 export * from './in/expense-report/attach-receipt-from-session.port';
 export * from './in/expense-report/submit-expense-report.port';
 export * from './in/expense-report/submit-expense-report-from-session.port';
+export * from './in/expense-report/get-receipt.port';
+export * from './in/expense-report/get-receipt-from-session.port';
+export * from './out/notification/notification.repository.port';
