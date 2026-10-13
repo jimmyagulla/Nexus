@@ -1,13 +1,13 @@
 # E05-US01 — Publier et consulter les bulletins
 
-| Champ                   | Valeur                                                            |
-| :---------------------- | :---------------------------------------------------------------- |
-| Epic                    | E05                                                               |
-| Priorité de réalisation | 1                                                                 |
-| Besoin métier           | Critique                                                          |
-| Dépend de               | E04-US01                                                          |
-| Parallèle avec          | les stories de priorité 2 déjà débloquées, jamais avant le coffre |
-| Parcours                | C                                                                 |
+| Champ                   | Valeur                                                     |
+| :---------------------- | :--------------------------------------------------------- |
+| Epic                    | E05                                                        |
+| Priorité de réalisation | 1                                                          |
+| Besoin métier           | Critique                                                   |
+| Dépend de               | E04-US01                                                   |
+| Parallèle avec          | E02-US03, E04-US02, E12-US01, E14-US01, E16-US01, E16-US02 |
+| Parcours                | C                                                          |
 
 En tant qu'employeur, je veux mettre un bulletin à disposition d'un salarié pour un mois donné, afin qu'il le retrouve par année et sache s'il l'a consulté.
 

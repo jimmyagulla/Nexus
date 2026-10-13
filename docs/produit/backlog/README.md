@@ -2,7 +2,7 @@
 
 Les epics regroupent les user stories. La user story est l'unité qu'un agent réalise entière. Les sous-tâches se font dans cette story, dans l'ordre, sans devenir une story séparée.
 
-Priorité de réalisation : **1 en premier, 5 en dernier**. Le chiffre mesure le besoin métier. Il ne remplace pas la dépendance.
+Priorité de réalisation : de **1** (besoin le plus fort) à **5**. Le chiffre mesure le besoin métier. Il ne choisit pas la story à démarrer.
 
 | Valeur | Nom            | Besoin                                                         |
 | :----- | :------------- | :------------------------------------------------------------- |
@@ -12,9 +12,9 @@ Priorité de réalisation : **1 en premier, 5 en dernier**. Le chiffre mesure le
 | 4      | Complémentaire | Couvrir les frais et le registre une fois le coffre en place   |
 | 5      | Périphérique   | Relier le cabinet comptable                                    |
 
-Règle de prise : parmi les stories dont les dépendances sont faites, prendre d'abord la plus petite priorité. À priorité égale, les stories qui ne se citent pas entre elles sont parallèles.
+Les stories d'un même lot dans [suivi.md](suivi.md) se lancent ensemble. Le lot et la colonne `Dépend de` décrivent l'intégration. Ils ne bloquent pas une story nommée.
 
-Le statut en temps réel est dans [suivi.md](suivi.md) : à faire, en cours, terminée. Seul le skill `next-task` le modifie, pour que plusieurs agents prennent des unités différentes. Ne pas éditer ce statut à la main.
+L'agent met le statut à jour dans `suivi.md`, dans le clone principal, avant de créer le worktree. Une story `en cours` ou `terminée` ne se reprend pas.
 
 ## Liste des user stories
 
@@ -26,7 +26,7 @@ Le statut en temps réel est dans [suivi.md](suivi.md) : à faire, en cours, ter
 | [E03-US01](us/E03-US01-fiche-salarie.md)             | Salariés                  | 1        | Critique       | E02-US01           | E02-US02                               |
 | [E03-US02](us/E03-US02-activation-espace.md)         | Salariés                  | 1        | Critique       | E02-US02, E03-US01 | E04-US01                               |
 | [E04-US01](us/E04-US01-coffre-employeur.md)          | Coffre                    | 1        | Critique       | E03-US01           | E03-US02                               |
-| [E05-US01](us/E05-US01-bulletins.md)                 | Bulletins                 | 1        | Critique       | E04-US01           | stories de priorité 2 déjà débloquées  |
+| [E05-US01](us/E05-US01-bulletins.md)                 | Bulletins                 | 1        | Critique       | E04-US01           | lot 6                                  |
 | [E02-US03](us/E02-US03-gestion-des-acces.md)         | Accès                     | 2        | Fort           | E02-US01           | E14-US01, E16-US01, E16-US02           |
 | [E04-US02](us/E04-US02-depot-salarie.md)             | Coffre                    | 2        | Fort           | E04-US01           | E14-US01, E16-US02                     |
 | [E14-US01](us/E14-US01-notifications.md)             | Notifications             | 2        | Fort           | E02-US01           | E02-US03, E16-US01, E16-US02           |
@@ -108,6 +108,6 @@ Les sous-tâches héritent de la priorité de leur story.
 ## Prendre une story
 
 1. Lire la story, son epic et les référentiels qu'elle cite.
-2. Réaliser toutes ses sous-tâches.
-3. Ne pas réaliser une story de priorité plus faible s'il reste une story de meilleure priorité déjà débloquée.
+2. Réaliser toutes ses sous-tâches, dans l'ordre du fichier.
+3. La story nommée démarre même si une autre story, ou un lot précédent, n'est pas terminé.
 4. Ne pas étendre le périmètre. Un cas absent des référentiels est hors story.

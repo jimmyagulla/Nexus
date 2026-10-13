@@ -7,9 +7,7 @@ Documentation métier du produit. Elle sert de source unique aux agents qui impl
 1. [Cahier des charges](cahier-des-charges/README.md) — intention, acteurs, domaines, parcours.
 2. [Règles retenues](referentiels/regles-retenues.md) — choix qui ferment les points laissés ouverts par le cahier des charges.
 3. Référentiels — contrats, statuts, permissions, navigation, notifications, indicateurs, messages.
-4. [Backlog](backlog/README.md) — epics, user stories priorisées, sous-tâches, [suivi](backlog/suivi.md).
-
-Le skill projet `next-task` prend la prochaine epic réalisable, la réserve dans le suivi, et la réalise. `/next-task story` prend une seule user story.
+4. [Backlog](backlog/README.md) — epics, user stories, sous-tâches. Le [suivi](backlog/suivi.md) montre les lots parallèles et le statut de chaque story.
 
 ## Rôle de chaque niveau
 
@@ -53,7 +51,7 @@ Le cahier des charges regroupe le produit en quatre grands niveaux. Le découpag
 
 ## Priorité de réalisation des user stories
 
-Chaque user story a une priorité de **1 à 5**. **1 est réalisé en premier.** Le chiffre exprime le besoin métier, pas la dépendance technique : une story de priorité 1 peut attendre qu'une autre story de priorité 1 existe.
+Chaque user story a une priorité de **1 à 5**. Le chiffre exprime le besoin métier. Il ne décide pas quelle story un agent démarre : la story nommée part tout de suite.
 
 | Valeur | Nom            | Besoin métier                                                                                           |
 | :----- | :------------- | :------------------------------------------------------------------------------------------------------ |
