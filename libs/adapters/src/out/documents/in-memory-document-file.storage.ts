@@ -1,10 +1,12 @@
-import { DocumentFileLink } from '@hexagonal-monorepo-template/domain';
 import {
   IDocumentFileStorage,
   StoredFile,
 } from '@hexagonal-monorepo-template/ports';
 
-/** Keeps files in the process. Links point nowhere real: `memory://<key>`. */
+/**
+ * Keeps files in the process. A link is a `data:` URL carrying the file
+ * itself, so that it can be opened or downloaded without any server.
+ */
 export class InMemoryDocumentFileStorage implements IDocumentFileStorage {
   readonly files = new Map<string, StoredFile>();
 
@@ -18,14 +20,19 @@ export class InMemoryDocumentFileStorage implements IDocumentFileStorage {
     this.files.delete(key);
   }
 
-  async linkTo(
-    key: string,
-    options: { downloadAs: string | null },
-  ): Promise<DocumentFileLink> {
-    const query =
-      options.downloadAs === null
-        ? ''
-        : `?download=${encodeURIComponent(options.downloadAs)}`;
-    return { url: `memory://${key}${query}` };
+  async linkTo(key: string): Promise<string> {
+    const file = this.files.get(key);
+    if (file === undefined) {
+      throw new Error(`No file is kept under ${key}`);
+    }
+    return `data:${file.contentType};base64,${this.base64(file.content)}`;
+  }
+
+  private base64(content: Uint8Array): string {
+    let binary = '';
+    for (const byte of content) {
+      binary += String.fromCharCode(byte);
+    }
+    return btoa(binary);
   }
 }

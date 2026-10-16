@@ -2,6 +2,7 @@ import {
   ActorContext,
   Document,
   DocumentFileLink,
+  documentFileFormatSpec,
   requireOwnedDocument,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -25,7 +26,11 @@ export class ViewDocumentUseCase implements IViewDocument {
       input.actor,
     );
     await this.markAsSeen(document);
-    return this.files.linkTo(document.storageKey, { downloadAs: null });
+    return {
+      url: await this.files.linkTo(document.storageKey, { downloadAs: null }),
+      fileName: document.downloadName,
+      contentType: documentFileFormatSpec(document.format).mimeType,
+    };
   }
 
   private async markAsSeen(document: Document): Promise<void> {

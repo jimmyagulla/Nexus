@@ -20,6 +20,11 @@ ALTER TABLE "Document"
   ADD CONSTRAINT "Document_comment_check"
   CHECK ("comment" IS NULL OR char_length("comment") <= 250);
 
+-- Supabase exposes the public schema through its REST API with the public
+-- anon key: Row Level Security without any policy closes that door. The API
+-- connects as the table owner through Prisma and is not affected.
+ALTER TABLE "Document" ENABLE ROW LEVEL SECURITY;
+
 -- Private bucket holding the files. Supabase Storage itself refuses a file
 -- above 10 MB or of a media type outside the accepted formats.
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)

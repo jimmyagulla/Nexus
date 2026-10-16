@@ -16,6 +16,7 @@ export const common = {
   back: 'Retour',
   close: 'Fermer',
   reset: 'Réinitialiser',
+  clearDate: 'Effacer la date',
   saveDraft: 'Enregistrer en brouillon',
   comingSoonTitle: 'Écran en préparation',
   comingSoonDescription:

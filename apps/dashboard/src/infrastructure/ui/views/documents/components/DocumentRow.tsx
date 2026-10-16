@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
 import { DocumentActionsMenu } from './DocumentActionsMenu';
+import { DocumentContextMenu } from './DocumentContextMenu';
 import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentRowProps {
@@ -10,23 +11,29 @@ interface DocumentRowProps {
   onDownload: (documentId: string) => void;
 }
 
-/** A document of the list. A right click opens the same actions as "…". */
+/** A document of the list. Its name opens it; a right click opens its actions under the cursor. */
 export function DocumentRow({ model, onView, onDownload }: DocumentRowProps) {
-  const [actionsOpen, setActionsOpen] = useState(false);
+  const [contextPoint, setContextPoint] = useState<{ x: number; y: number } | null>(null);
+  const view = () => onView(model.id);
+  const download = () => onDownload(model.id);
 
   return (
     <TableRow
       className="last:border-b"
       onContextMenu={(event) => {
         event.preventDefault();
-        setActionsOpen(true);
+        setContextPoint({ x: event.clientX, y: event.clientY });
       }}
     >
       <TableCell className="flex items-center gap-2.5">
         <i aria-hidden className={`${model.icon} shrink-0 text-20 text-primary`} />
-        <span className="font-semibold text-foreground">
+        <button
+          type="button"
+          onClick={view}
+          className="min-w-0 truncate text-left font-semibold text-foreground hover:text-link hover:underline focus-visible:outline-none focus-visible:shadow-focus"
+        >
           <span>{model.name}</span>
-        </span>
+        </button>
       </TableCell>
       <TableCell className="text-muted-foreground">
         <span>{model.category}</span>
@@ -47,11 +54,12 @@ export function DocumentRow({ model, onView, onDownload }: DocumentRowProps) {
         </Badge>
       </TableCell>
       <TableCell className="flex justify-end gap-0.5 text-18 text-primary">
-        <DocumentActionsMenu
-          open={actionsOpen}
-          onOpenChange={setActionsOpen}
-          onView={() => onView(model.id)}
-          onDownload={() => onDownload(model.id)}
+        <DocumentActionsMenu onView={view} onDownload={download} />
+        <DocumentContextMenu
+          point={contextPoint}
+          onClose={() => setContextPoint(null)}
+          onView={view}
+          onDownload={download}
         />
       </TableCell>
     </TableRow>

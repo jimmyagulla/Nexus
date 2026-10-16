@@ -19,7 +19,7 @@ import {
 import { DocumentsController, DocumentsListState } from './documents.controller';
 
 const nothing: DocumentsListState = {
-  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE,
+  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 function controllerWith(http = new InMemoryHttpClient()): DocumentsController {
@@ -41,7 +41,7 @@ describe('DocumentsController', () => {
   it('asks for every document when nothing is chosen', () => {
     expect(controllerWith().criteriaFor(nothing)).toEqual({
       search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-      from: null, to: null, sort: DocumentSort.DATE,
+      from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
     });
   });
 
@@ -66,8 +66,15 @@ describe('DocumentsController', () => {
   it('applies a period only once its days are real', () => {
     const controller = controllerWith();
 
-    expect(controller.criteriaFor({ ...nothing, from: '01/10/2026', to: '31/10/2026' })).toMatchObject({ from: '2026-10-01', to: '2026-10-31' });
-    expect(controller.criteriaFor({ ...nothing, from: '01/10', to: '31/02/2026' })).toMatchObject({ from: null, to: null });
+    expect(controller.criteriaFor({ ...nothing, from: '2026-10-01', to: '2026-10-31' })).toMatchObject({ from: '2026-10-01', to: '2026-10-31' });
+    expect(controller.criteriaFor({ ...nothing, from: '', to: '2026-02-31' })).toMatchObject({ from: null, to: null });
+  });
+
+  it('keeps the most recent first while no column is sorted, and follows a sorted column otherwise', () => {
+    const controller = controllerWith();
+
+    expect(controller.criteriaFor({ ...nothing, sort: null, direction: 'ASC' })).toMatchObject({ sort: DocumentSort.DATE, direction: 'DESC' });
+    expect(controller.criteriaFor({ ...nothing, sort: DocumentSort.NAME, direction: 'ASC' })).toMatchObject({ sort: DocumentSort.NAME, direction: 'ASC' });
   });
 
   it('keeps one emitter when one is chosen', () => {
@@ -93,11 +100,12 @@ describe('DocumentsController', () => {
 
   it('hands back the link of a viewed or downloaded document', async () => {
     const http = new InMemoryHttpClient();
-    http.reply('post', 'companies/c1/documents/d1/view', { status: 201, data: { url: 'https://v' } });
-    http.reply('get', 'companies/c1/documents/d1/download', { status: 200, data: { url: 'https://d' } });
+    const link = { url: 'https://v', fileName: 'Arrêt.pdf', contentType: 'application/pdf' };
+    http.reply('post', 'companies/c1/documents/d1/view', { status: 201, data: link });
+    http.reply('get', 'companies/c1/documents/d1/download', { status: 200, data: { ...link, url: 'https://d' } });
     const controller = controllerWith(http);
 
-    await expect(controller.viewDocument('d1')).resolves.toBe('https://v');
-    await expect(controller.downloadDocument('d1')).resolves.toBe('https://d');
+    await expect(controller.viewDocument('d1')).resolves.toEqual(link);
+    await expect(controller.downloadDocument('d1')).resolves.toMatchObject({ url: 'https://d', fileName: 'Arrêt.pdf' });
   });
 });

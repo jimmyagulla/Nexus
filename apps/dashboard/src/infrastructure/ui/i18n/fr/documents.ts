@@ -13,11 +13,10 @@ export const documents = {
       emitter: 'Émetteur',
     },
     sort: {
-      DATE: "date, récent d'abord",
-      SIZE: "taille, plus lourd d'abord",
-      NAME: 'nom, de Z à A',
-      CATEGORY: 'catégorie, de Z à A',
-      STATUS: 'statut, de Z à A',
+      label: 'Trier par {column} ({state})',
+      NONE: 'non trié',
+      ASC: 'ordre croissant',
+      DESC: 'ordre décroissant',
     },
     results: {
       one: '1 résultat sur {total} ·',
@@ -31,6 +30,12 @@ export const documents = {
       view: 'Visualiser',
       download: 'Télécharger',
     },
+  },
+  preview: {
+    loading: 'Ouverture du document…',
+    error: "Impossible d'ouvrir ce document pour le moment.",
+    unavailable:
+      "L'aperçu n'est pas disponible pour ce format. Téléchargez le fichier pour l'ouvrir.",
   },
   filters: {
     title: 'Filtres',

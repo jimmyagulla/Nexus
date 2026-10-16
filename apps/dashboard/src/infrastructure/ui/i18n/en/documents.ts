@@ -12,11 +12,10 @@ export const documents = {
       emitter: 'Issuer',
     },
     sort: {
-      DATE: 'date, newest first',
-      SIZE: 'size, largest first',
-      NAME: 'name, Z to A',
-      CATEGORY: 'category, Z to A',
-      STATUS: 'status, Z to A',
+      label: 'Sort by {column} ({state})',
+      NONE: 'not sorted',
+      ASC: 'ascending',
+      DESC: 'descending',
     },
     results: {
       one: '1 result out of {total} ·',
@@ -30,6 +29,11 @@ export const documents = {
       view: 'View',
       download: 'Download',
     },
+  },
+  preview: {
+    loading: 'Opening the document…',
+    error: 'This document cannot be opened right now.',
+    unavailable: 'No preview for this format. Download the file to open it.',
   },
   filters: {
     title: 'Filters',

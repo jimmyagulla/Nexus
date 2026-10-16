@@ -2,6 +2,7 @@ import {
   DOCUMENT_CATEGORIES,
   DOCUMENT_SORTS,
   DOCUMENT_STATUSES,
+  DocumentSortDirection,
   DocumentCategory,
   DocumentEmitter,
   DocumentList,
@@ -30,7 +31,8 @@ export interface DocumentsViewModel {
   canClearFilters: boolean;
   activeFilters: ActiveFilterModel[];
   filters: DocumentFiltersModel;
-  sort: DocumentSortModel;
+  /** Sort control of each orderable column. */
+  sort: Record<DocumentSort, SortColumnModel>;
   documents: DocumentRowModel[];
   /** Shown instead of rows when there is none. */
   emptyMessage: string;
@@ -55,11 +57,13 @@ export interface DocumentFiltersModel {
   to: string;
 }
 
-export interface DocumentSortModel {
-  current: DocumentSort;
-  /** Current ordering, e.g. "date, récent d'abord". */
+/** State of the sort icon of a column; a click moves to the next one. */
+export type SortState = 'neutral' | 'asc' | 'desc';
+
+export interface SortColumnModel {
+  state: SortState;
+  /** "Trier par Taille (ordre croissant)" */
   label: string;
-  options: { value: DocumentSort; label: string; selected: boolean }[];
 }
 
 export interface DocumentRowModel {
@@ -118,7 +122,7 @@ export class DocumentsPresenter {
       canClearFilters: activeFilters.length > 0,
       activeFilters,
       filters: this.presentFilters(list, state, activeFilters.length),
-      sort: this.presentSort(state.sort),
+      sort: this.presentSort(state),
       documents: list.items.map((item) => this.presentRow(item)),
       emptyMessage: list.total === 0 ? this.labels.list.emptyVault : this.labels.list.empty,
     };
@@ -199,8 +203,8 @@ export class DocumentsPresenter {
       });
     }
     const period = this.presentPeriod(
-      criteria.from === null ? '' : state.from.trim(),
-      criteria.to === null ? '' : state.to.trim(),
+      criteria.from === null ? '' : this.presentDay(criteria.from),
+      criteria.to === null ? '' : this.presentDay(criteria.to),
     );
     if (period !== null) {
       chips.push({ key: 'period', label: filters.period, value: period });
@@ -225,16 +229,31 @@ export class DocumentsPresenter {
     return null;
   }
 
-  private presentSort(current: DocumentSort): DocumentSortModel {
-    return {
-      current,
-      label: this.labels.list.sort[current],
-      options: DOCUMENT_SORTS.map((sort) => ({
-        value: sort,
-        label: this.labels.list.sort[sort],
-        selected: sort === current,
-      })),
+  private presentSort(state: DocumentsListState): Record<DocumentSort, SortColumnModel> {
+    const labels = this.labels.list;
+    const columns: Record<DocumentSort, string> = {
+      NAME: labels.columns.name,
+      CATEGORY: labels.columns.category,
+      DATE: labels.columns.date,
+      SIZE: labels.columns.size,
+      STATUS: this.i18n.messages.common.status,
     };
+    return Object.fromEntries(
+      DOCUMENT_SORTS.map((sort) => {
+        const sorted = state.sort === sort;
+        const direction = state.direction === DocumentSortDirection.ASC ? 'ASC' : 'DESC';
+        const sortState: SortState = !sorted ? 'neutral' : direction === 'ASC' ? 'asc' : 'desc';
+        return [
+          sort,
+          {
+            state: sortState,
+            label: labels.sort.label
+              .replace('{column}', columns[sort])
+              .replace('{state}', labels.sort[sorted ? direction : 'NONE']),
+          },
+        ];
+      }),
+    ) as Record<DocumentSort, SortColumnModel>;
   }
 
   private presentSummary(list: DocumentList, narrowed: boolean): string {
@@ -244,6 +263,12 @@ export class DocumentsPresenter {
       return (list.total === 1 ? results.allOne : results.allOther).replace('{total}', total);
     }
     return this.plural(list.items.length, results).replace('{total}', total);
+  }
+
+  /** `aaaa-mm-jj` → `jj/mm/aaaa`. */
+  private presentDay(day: string): string {
+    const [year, month, date] = day.split('-');
+    return `${date}/${month}/${year}`;
   }
 
   /** `jj/mm/aaaa`, in the time zone of the device. */

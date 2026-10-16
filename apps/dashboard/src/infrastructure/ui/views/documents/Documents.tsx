@@ -11,7 +11,6 @@ import { Sheet, SheetTrigger } from '../../shared/sheet';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { DocumentFiltersSheet } from './components/DocumentFiltersSheet';
 import { DocumentRow } from './components/DocumentRow';
-import { DocumentSortMenu } from './components/DocumentSortMenu';
 import { DocumentsEmptyRow } from './components/DocumentsEmptyRow';
 import { SortableHead } from './components/SortableHead';
 import type { DocumentsListHandlers } from './components/documents-list.handlers';
@@ -31,7 +30,10 @@ const columns = 'minmax(0,1.7fr) minmax(0,1fr) 92px 92px 96px 130px 100px';
 export function Documents({ model, search, handlers, onUpload }: DocumentsProps) {
   const labels = i18n.messages.documents.list;
   const common = i18n.messages.common;
-  const sortedBy = (sort: DocumentSort) => model.sort.current === sort;
+  const sortable = (sort: DocumentSort) => ({
+    model: model.sort[sort],
+    onSort: () => handlers.onCycleSort(sort),
+  });
 
   return (
     <PageContent>
@@ -63,8 +65,6 @@ export function Documents({ model, search, handlers, onUpload }: DocumentsProps)
           </SheetTrigger>
           <DocumentFiltersSheet model={model.filters} handlers={handlers} />
         </Sheet>
-        <span className="flex-1" />
-        <DocumentSortMenu model={model.sort} onSortChange={handlers.onSortChange} />
       </div>
       <ActiveFilters
         summary={model.resultSummary}
@@ -82,12 +82,12 @@ export function Documents({ model, search, handlers, onUpload }: DocumentsProps)
       </ActiveFilters>
       <Table columns={columns}>
         <TableHeader>
-          <SortableHead sorted={sortedBy(DocumentSort.NAME)}>{labels.columns.name}</SortableHead>
-          <SortableHead sorted={sortedBy(DocumentSort.CATEGORY)}>{labels.columns.category}</SortableHead>
-          <SortableHead sorted={sortedBy(DocumentSort.DATE)}>{labels.columns.date}</SortableHead>
-          <SortableHead sorted={sortedBy(DocumentSort.SIZE)}>{labels.columns.size}</SortableHead>
+          <SortableHead {...sortable(DocumentSort.NAME)}>{labels.columns.name}</SortableHead>
+          <SortableHead {...sortable(DocumentSort.CATEGORY)}>{labels.columns.category}</SortableHead>
+          <SortableHead {...sortable(DocumentSort.DATE)}>{labels.columns.date}</SortableHead>
+          <SortableHead {...sortable(DocumentSort.SIZE)}>{labels.columns.size}</SortableHead>
           <TableHead>{labels.columns.emitter}</TableHead>
-          <SortableHead sorted={sortedBy(DocumentSort.STATUS)}>{common.status}</SortableHead>
+          <SortableHead {...sortable(DocumentSort.STATUS)}>{common.status}</SortableHead>
           <TableHead className="justify-end">{common.actions}</TableHead>
         </TableHeader>
         {model.documents.map((document) => (

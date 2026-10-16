@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { DocumentFileLink } from '@hexagonal-monorepo-template/domain';
 import {
   IDocumentFileStorage,
   StoredFile,
@@ -43,7 +42,7 @@ export class SupabaseDocumentFileStorage implements IDocumentFileStorage {
   async linkTo(
     key: string,
     options: { downloadAs: string | null },
-  ): Promise<DocumentFileLink> {
+  ): Promise<string> {
     const { data, error } = await this.bucket().createSignedUrl(
       key,
       LINK_LIFETIME_SECONDS,
@@ -52,7 +51,7 @@ export class SupabaseDocumentFileStorage implements IDocumentFileStorage {
     if (error) {
       throw error;
     }
-    return { url: data.signedUrl };
+    return data.signedUrl;
   }
 
   private bucket() {

@@ -12,7 +12,7 @@ import { InMemoryDocumentRepository } from './in-memory-document.repository';
 
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-  from: null, to: null, sort: DocumentSort.DATE,
+  from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 function newDocument(name: string, sizeBytes: number, ownerId = 'u1'): NewDocument {
@@ -41,7 +41,7 @@ describe('InMemoryDocumentRepository', () => {
     const repository = new InMemoryDocumentRepository();
     await repository.insertAll([newDocument('Small', 1), newDocument('Large', 9), newDocument('Other', 5, 'u2')]);
 
-    const list = await repository.list({ companyId: 'c1', ownerId: 'u1' }, { ...everything, sort: DocumentSort.SIZE });
+    const list = await repository.list({ companyId: 'c1', ownerId: 'u1' }, { ...everything, sort: DocumentSort.SIZE, direction: 'DESC' as const });
 
     expect(list.items.map((item) => item.name)).toEqual(['Large', 'Small']);
     expect(list.total).toBe(2);

@@ -23,6 +23,7 @@ import {
 import {
   ActorContext,
   DEFAULT_DOCUMENT_SORT,
+  DEFAULT_DOCUMENT_SORT_DIRECTION,
   DOCUMENT_MAX_FILES_PER_DEPOSIT,
   DocumentDepositRequest,
   DocumentFileLink,
@@ -143,6 +144,7 @@ export class DocumentsController {
       from: query.from ?? null,
       to: query.to ?? null,
       sort: query.sort ?? DEFAULT_DOCUMENT_SORT,
+      direction: query.direction ?? DEFAULT_DOCUMENT_SORT_DIRECTION,
     };
   }
 

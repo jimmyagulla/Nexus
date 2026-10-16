@@ -185,7 +185,7 @@ describe('DocumentsController', () => {
 
     const view = await send('POST', `${DOCUMENTS_PATH}/${id}/view`);
 
-    expect(view).toMatchObject({ status: 201, payload: { data: { url: expect.stringMatching(/^memory:\/\/company-1\/user-1\//) } } });
+    expect(view).toMatchObject({ status: 201, payload: { data: { url: expect.stringMatching(/^data:application\/pdf;base64,/), fileName: 'À voir.pdf', contentType: 'application/pdf' } } });
     expect((await documents.findById(id))?.status).toBe('SEEN');
   });
 
@@ -195,7 +195,7 @@ describe('DocumentsController', () => {
 
     const download = await send('GET', `${DOCUMENTS_PATH}/${id}/download`);
 
-    expect(download).toMatchObject({ status: 200, payload: { data: { url: expect.stringContaining('download=Facture.pdf') } } });
+    expect(download).toMatchObject({ status: 200, payload: { data: { fileName: 'Facture.pdf', contentType: 'application/pdf' } } });
   });
 
   it('refuses the document of a colleague', async () => {

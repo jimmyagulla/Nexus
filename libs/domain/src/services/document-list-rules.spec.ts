@@ -36,7 +36,7 @@ const everything: DocumentListCriteria = {
   emitters: [],
   from: null,
   to: null,
-  sort: DocumentSort.DATE,
+  sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 describe('matchesDocumentListCriteria', () => {
@@ -80,7 +80,7 @@ describe('matchesDocumentListCriteria', () => {
 
 describe('compareDocuments', () => {
   const ids = (documents: Document[], sort: DocumentSort) =>
-    [...documents].sort(compareDocuments(sort)).map((document) => document.id);
+    [...documents].sort(compareDocuments(sort, 'DESC')).map((document) => document.id);
 
   it('puts the most recent first', () => {
     expect(ids([doc('old', { createdAt: '2026-01-01T00:00:00Z' }), doc('new', { createdAt: '2026-10-01T00:00:00Z' })], DocumentSort.DATE)).toEqual(['new', 'old']);
@@ -97,6 +97,12 @@ describe('compareDocuments', () => {
   it('sorts categories and statuses in descending order of their labels', () => {
     expect(ids([doc('sick', { category: DocumentCategory.SICK_LEAVE }), doc('proof', { category: DocumentCategory.PROOF })], DocumentSort.CATEGORY)).toEqual(['proof', 'sick']);
     expect(ids([doc('seen', { status: DocumentStatus.SEEN }), doc('done', { status: DocumentStatus.PROCESSED })], DocumentSort.STATUS)).toEqual(['done', 'seen']);
+  });
+
+  it('reverses the order when ascending, keeping the most recent first among equals', () => {
+    const documents = [doc('large', { sizeBytes: 9 }), doc('old', { sizeBytes: 1, createdAt: '2026-01-01T00:00:00Z' }), doc('new', { sizeBytes: 1, createdAt: '2026-02-01T00:00:00Z' })];
+
+    expect([...documents].sort(compareDocuments(DocumentSort.SIZE, 'ASC')).map((d) => d.id)).toEqual(['new', 'old', 'large']);
   });
 
   it('puts the most recent first among equals', () => {

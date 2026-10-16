@@ -1,12 +1,16 @@
 import {
   CalendarDate,
+  DEFAULT_DOCUMENT_SORT,
+  DEFAULT_DOCUMENT_SORT_DIRECTION,
   DOCUMENT_CATEGORIES,
   DOCUMENT_EMITTERS,
   DocumentCategory,
   DocumentEmitter,
   DocumentList,
   DocumentListCriteria,
+  DocumentFileLink,
   DocumentSort,
+  DocumentSortDirection,
   DocumentStatus,
   DocumentSummary,
 } from '@hexagonal-monorepo-template/domain';
@@ -24,10 +28,12 @@ export interface DocumentsListState {
   statuses: DocumentStatus[];
   /** null: every emitter. */
   emitter: DocumentEmitter | null;
-  /** As typed: `jj/mm/aaaa`. Ignored until it names a real day. */
+  /** Calendar days `aaaa-mm-jj`, or '' when none is chosen. */
   from: string;
   to: string;
-  sort: DocumentSort;
+  /** Column the list is ordered by; null keeps the default order. */
+  sort: DocumentSort | null;
+  direction: DocumentSortDirection;
 }
 
 /** Labels the search also matches, so that "maladie" finds the sick leaves. */
@@ -63,7 +69,8 @@ export class DocumentsController {
       emitters: state.emitter === null ? [] : [state.emitter],
       from: this.calendarDayOf(state.from),
       to: this.calendarDayOf(state.to),
-      sort: state.sort,
+      sort: state.sort ?? DEFAULT_DOCUMENT_SORT,
+      direction: state.sort === null ? DEFAULT_DOCUMENT_SORT_DIRECTION : state.direction,
     };
   }
 
@@ -85,22 +92,19 @@ export class DocumentsController {
     });
   }
 
-  async viewDocument(documentId: string): Promise<string> {
-    return (await this.viewFromSession.execute(documentId)).url;
+  /** Opens a document: its link, and it is marked as seen. */
+  viewDocument(documentId: string): Promise<DocumentFileLink> {
+    return this.viewFromSession.execute(documentId);
   }
 
-  async downloadDocument(documentId: string): Promise<string> {
-    return (await this.downloadFromSession.execute(documentId)).url;
+  downloadDocument(documentId: string): Promise<DocumentFileLink> {
+    return this.downloadFromSession.execute(documentId);
   }
 
-  /** `jj/mm/aaaa` → `aaaa-mm-jj` when it names a real day, null otherwise. */
-  private calendarDayOf(typed: string): string | null {
-    const [day, month, year] = typed.trim().split('/');
-    if (day?.length !== 2 || month?.length !== 2 || year?.length !== 4) {
-      return null;
-    }
+  /** The day when it is a real one, null otherwise. */
+  private calendarDayOf(day: string): string | null {
     try {
-      return CalendarDate.parse(`${year}-${month}-${day}`).value;
+      return day === '' ? null : CalendarDate.parse(day).value;
     } catch {
       return null;
     }

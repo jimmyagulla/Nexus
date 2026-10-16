@@ -46,7 +46,7 @@ export class InMemoryDocumentRepository implements IDocumentRepository {
     return {
       items: owned
         .filter((document) => matchesDocumentListCriteria(document, criteria))
-        .sort(compareDocuments(criteria.sort))
+        .sort(compareDocuments(criteria.sort, criteria.direction))
         .map(toDocumentSummary),
       total: owned.length,
       categoryCounts: this.countCategories(owned),

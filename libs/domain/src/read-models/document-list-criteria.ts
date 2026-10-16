@@ -1,6 +1,9 @@
 import { DocumentCategory } from '../value-objects/document-category';
 import { DocumentEmitter } from '../value-objects/document-emitter';
-import { DocumentSort } from '../value-objects/document-sort';
+import {
+  DocumentSort,
+  DocumentSortDirection,
+} from '../value-objects/document-sort';
 import { DocumentStatus } from '../value-objects/document-status';
 
 /**
@@ -20,6 +23,7 @@ export type DocumentListCriteria = {
   from: string | null;
   to: string | null;
   sort: DocumentSort;
+  direction: DocumentSortDirection;
 };
 
 /** The criteria a list is scoped to: one company, one owner. */

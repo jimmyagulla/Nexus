@@ -49,14 +49,32 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 /**
+ * Field of a modal body that takes the focus on opening: the chosen option of
+ * the first choice, else the first control.
+ */
+function firstBodyField(content: HTMLElement | null): HTMLElement | null {
+  return (
+    content?.querySelector<HTMLElement>(
+      "[data-modal-body] [role='radio'][data-state='checked']:not([disabled])"
+    ) ??
+    content?.querySelector<HTMLElement>(
+      "[data-modal-body] :is(input, textarea, select, button):not([disabled]):not([tabindex='-1'])"
+    ) ??
+    null
+  )
+}
+
+/**
  * Modal window of the app: the page behind is dimmed and lightly blurred, the
  * first field takes the focus, and a click outside never closes it, so that
  * no input is lost by mistake. Escape and the explicit close actions do.
+ * Compose it with DialogHeader, ModalBody and DialogFooter: only the header
+ * and the body are padded, the footer divider runs edge to edge.
  */
 const ModalContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, onInteractOutside, ...props }, ref) => (
+>(({ className, children, onInteractOutside, onOpenAutoFocus, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay className="backdrop-blur-xs" />
     <DialogPrimitive.Content
@@ -65,8 +83,16 @@ const ModalContent = React.forwardRef<
         event.preventDefault()
         onInteractOutside?.(event)
       }}
+      onOpenAutoFocus={(event) => {
+        onOpenAutoFocus?.(event)
+        const first = firstBodyField(event.target as HTMLElement | null)
+        if (!event.defaultPrevented && first) {
+          event.preventDefault()
+          first.focus()
+        }
+      }}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 flex max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-xl bg-background shadow-popover-strong duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+        "fixed left-1/2 top-1/2 z-50 flex max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl bg-card shadow-popover-strong duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         className
       )}
       {...props}
@@ -108,6 +134,19 @@ const DialogBody = ({
   />
 )
 DialogBody.displayName = "DialogBody"
+
+/** Scrolling middle part of a modal, between its header and its footer. */
+const ModalBody = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    data-modal-body=""
+    className={cn("min-h-0 flex-1 overflow-y-auto", className)}
+    {...props}
+  />
+)
+ModalBody.displayName = "ModalBody"
 
 const DialogFooter = ({
   className,
@@ -155,6 +194,7 @@ export {
   DialogClose,
   DialogContent,
   ModalContent,
+  ModalBody,
   DialogHeader,
   DialogBody,
   DialogFooter,

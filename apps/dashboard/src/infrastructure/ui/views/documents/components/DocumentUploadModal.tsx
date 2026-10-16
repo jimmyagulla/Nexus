@@ -77,7 +77,9 @@ export function DocumentUploadModal({
 
   return (
     <Dialog open={open} onOpenChange={(next) => (submitting ? undefined : onOpenChange(next))}>
-      <ModalContent className={cn(!desktop && 'inset-0 max-h-none max-w-none translate-0 rounded-none')}>
+      <ModalContent
+        className={cn(desktop ? 'w-190' : 'inset-0 max-h-none max-w-none translate-0 rounded-none')}
+      >
         <DocumentUpload
           desktop={desktop}
           fields={

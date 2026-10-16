@@ -15,13 +15,13 @@ import { ApiDocumentGateway } from './api-document.gateway';
 const authorized = { headers: { Authorization: 'Bearer token' } };
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-  from: null, to: null, sort: DocumentSort.DATE,
+  from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 describe('ApiDocumentGateway', () => {
   it('asks for the list with the default ordering only when nothing is chosen', async () => {
     const http = new InMemoryHttpClient();
-    http.reply('get', 'companies/c1/documents?sort=DATE', { status: 200, data: { items: [] } });
+    http.reply('get', 'companies/c1/documents?sort=DATE&direction=DESC', { status: 200, data: { items: [] } });
 
     await expect(new ApiDocumentGateway(http).list('c1', everything, 'token')).resolves.toEqual({ items: [] });
     expect(http.calls[0].config).toEqual(authorized);
@@ -31,7 +31,7 @@ describe('ApiDocumentGateway', () => {
     const http = new InMemoryHttpClient();
     const url =
       'companies/c1/documents?search=arr%C3%AAt&searchCategories=SICK_LEAVE&searchEmitters=SELF' +
-      '&categories=SICK_LEAVE%2CPROOF&statuses=NEW&emitters=HR&from=2026-10-01&to=2026-10-31&sort=SIZE';
+      '&categories=SICK_LEAVE%2CPROOF&statuses=NEW&emitters=HR&from=2026-10-01&to=2026-10-31&sort=SIZE&direction=DESC';
     http.reply('get', url, { status: 200, data: { items: [] } });
 
     await new ApiDocumentGateway(http).list(
@@ -45,7 +45,7 @@ describe('ApiDocumentGateway', () => {
         emitters: [DocumentEmitter.HR],
         from: '2026-10-01',
         to: '2026-10-31',
-        sort: DocumentSort.SIZE,
+        sort: DocumentSort.SIZE, direction: 'DESC' as const,
       },
       'token',
     );

@@ -15,7 +15,7 @@ beforeEach(() => {
 describe('documents list store', () => {
   it('starts with every document, the most recent first', () => {
     expect(useDocumentsListStore.getState()).toMatchObject({
-      search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE,
+      search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: null, direction: 'DESC',
     });
   });
 
@@ -29,11 +29,34 @@ describe('documents list store', () => {
     expect(useDocumentsListStore.getState().categories).toEqual([DocumentCategory.OTHER]);
   });
 
+  it('cycles a column through ascending, descending, then unsorted', () => {
+    const store = useDocumentsListStore.getState();
+    const seen: unknown[] = [];
+
+    for (let click = 0; click < 3; click += 1) {
+      store.cycleSort(DocumentSort.NAME);
+      const { sort, direction } = useDocumentsListStore.getState();
+      seen.push([sort, direction]);
+    }
+
+    expect(seen).toEqual([[DocumentSort.NAME, 'ASC'], [DocumentSort.NAME, 'DESC'], [null, 'DESC']]);
+  });
+
+  it('starts another column ascending', () => {
+    const store = useDocumentsListStore.getState();
+    store.cycleSort(DocumentSort.NAME);
+    store.cycleSort(DocumentSort.NAME);
+
+    store.cycleSort(DocumentSort.SIZE);
+
+    expect(useDocumentsListStore.getState()).toMatchObject({ sort: DocumentSort.SIZE, direction: 'ASC' });
+  });
+
   it('removes one filter group and keeps the others', () => {
     const store = useDocumentsListStore.getState();
     store.toggleStatus(DocumentStatus.NEW);
-    store.setFrom('01/10/2026');
-    store.setTo('31/10/2026');
+    store.setFrom('2026-10-01');
+    store.setTo('2026-10-31');
 
     store.removeFilter('period');
 
@@ -43,14 +66,14 @@ describe('documents list store', () => {
   it('clears every filter but keeps the search and the ordering', () => {
     const store = useDocumentsListStore.getState();
     store.setSearch('arrêt');
-    store.setSort(DocumentSort.SIZE);
+    store.cycleSort(DocumentSort.SIZE);
     store.toggleCategory(DocumentCategory.PROOF);
     store.setEmitter(DocumentEmitter.HR);
 
     store.clearFilters();
 
     expect(useDocumentsListStore.getState()).toMatchObject({
-      search: 'arrêt', sort: DocumentSort.SIZE, categories: [], emitter: null,
+      search: 'arrêt', sort: DocumentSort.SIZE, direction: 'ASC', categories: [], emitter: null,
     });
   });
 });

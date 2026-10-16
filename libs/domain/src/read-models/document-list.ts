@@ -13,7 +13,10 @@ export type DocumentList = {
   statusCounts: Readonly<Record<DocumentStatus, number>>;
 };
 
-/** Link opening the file of a document for a short while. */
+/** Link to the file of a document, valid for a short while. */
 export type DocumentFileLink = {
   url: string;
+  /** Name to save the file under, extension included. */
+  fileName: string;
+  contentType: string;
 };

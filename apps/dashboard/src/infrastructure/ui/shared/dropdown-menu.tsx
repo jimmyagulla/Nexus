@@ -38,7 +38,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-2 text-14 text-foreground outline-none transition-colors focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_i]:text-18 [&_i]:text-primary",
+      "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-2 text-14 text-foreground outline-none transition-colors focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_i]:text-18 [&_i]:text-primary",
       className
     )}
     {...props}

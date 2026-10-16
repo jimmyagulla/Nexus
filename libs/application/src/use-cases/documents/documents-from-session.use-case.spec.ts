@@ -19,7 +19,7 @@ import { ViewDocumentFromSessionUseCase } from './view-document-from-session.use
 const actor: ActorContext = { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE };
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-  from: null, to: null, sort: DocumentSort.DATE,
+  from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 const emptyList = {
   items: [], total: 0,
@@ -30,7 +30,7 @@ const pdf = Uint8Array.from([...'%PDF-1.7\n'].map((c) => c.charCodeAt(0)));
 
 function http(): InMemoryHttpClient {
   const client = new InMemoryHttpClient();
-  client.reply('get', 'companies/c1/documents?sort=DATE', { status: 200, data: emptyList });
+  client.reply('get', 'companies/c1/documents?sort=DATE&direction=DESC', { status: 200, data: emptyList });
   client.reply('post', 'companies/c1/documents', { status: 201, data: [] });
   client.reply('post', 'companies/c1/documents/d1/view', { status: 201, data: { url: 'https://files/view' } });
   client.reply('get', 'companies/c1/documents/d1/download', { status: 200, data: { url: 'https://files/download' } });

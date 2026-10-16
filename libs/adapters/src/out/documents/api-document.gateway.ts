@@ -95,6 +95,7 @@ export class ApiDocumentGateway implements IDocumentGateway {
       from: criteria.from ?? undefined,
       to: criteria.to ?? undefined,
       sort: criteria.sort,
+      direction: criteria.direction,
     };
   }
 

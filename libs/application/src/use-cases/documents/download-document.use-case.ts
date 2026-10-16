@@ -1,6 +1,7 @@
 import {
   ActorContext,
   DocumentFileLink,
+  documentFileFormatSpec,
   requireOwnedDocument,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -23,8 +24,12 @@ export class DownloadDocumentUseCase implements IDownloadDocument {
       await this.documents.findById(input.documentId),
       input.actor,
     );
-    return this.files.linkTo(document.storageKey, {
-      downloadAs: document.downloadName,
-    });
+    return {
+      url: await this.files.linkTo(document.storageKey, {
+        downloadAs: document.downloadName,
+      }),
+      fileName: document.downloadName,
+      contentType: documentFileFormatSpec(document.format).mimeType,
+    };
   }
 }

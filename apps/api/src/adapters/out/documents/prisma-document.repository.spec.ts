@@ -20,7 +20,7 @@ const row: PrismaDocumentRow = {
 
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-  from: null, to: null, sort: DocumentSort.DATE,
+  from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 type Recorded = { findMany: unknown[]; update: unknown[]; create: unknown[] };
@@ -76,7 +76,7 @@ describe('PrismaDocumentRepository', () => {
       {
         search: ' arrêt ', searchCategories: [DocumentCategory.SICK_LEAVE], searchEmitters: [DocumentEmitter.HR],
         categories: [DocumentCategory.SICK_LEAVE], statuses: [DocumentStatus.NEW], emitters: [DocumentEmitter.SELF],
-        from: '2026-10-01', to: '2026-10-31', sort: DocumentSort.SIZE,
+        from: '2026-10-01', to: '2026-10-31', sort: DocumentSort.SIZE, direction: 'DESC' as const,
       },
     );
 
@@ -99,6 +99,17 @@ describe('PrismaDocumentRepository', () => {
       },
       orderBy: [{ sizeBytes: 'desc' }, { createdAt: 'desc' }, { id: 'desc' }],
     }]);
+  });
+
+  it('orders ascending when asked, the most recent first among equals', async () => {
+    const { client, recorded } = fakePrisma();
+
+    await new PrismaDocumentRepository(client).list(
+      { companyId: 'c1', ownerId: 'u1' },
+      { ...everything, sort: DocumentSort.NAME, direction: 'ASC' as const },
+    );
+
+    expect(recorded.findMany).toMatchObject([{ orderBy: [{ name: 'asc' }, { createdAt: 'desc' }, { id: 'desc' }] }]);
   });
 
   it('records every document of a deposit in one transaction', async () => {

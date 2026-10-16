@@ -8,6 +8,7 @@ import {
   DocumentListCriteria,
   DocumentListScope,
   DocumentSort,
+  DocumentSortDirection,
   DocumentStatus,
   toDocumentSummary,
 } from '@hexagonal-monorepo-template/domain';
@@ -55,7 +56,7 @@ export class PrismaDocumentRepository implements IDocumentRepository {
     const [rows, perCategory, perStatus] = await Promise.all([
       this.prisma.document.findMany({
         where: { ...owned, AND: this.conditionsOf(scope, criteria) },
-        orderBy: this.orderOf(criteria.sort),
+        orderBy: this.orderOf(criteria.sort, criteria.direction),
       }),
       this.prisma.document.groupBy({ by: ['category'], where: owned, _count: { _all: true } }),
       this.prisma.document.groupBy({ by: ['status'], where: owned, _count: { _all: true } }),
@@ -114,23 +115,27 @@ export class PrismaDocumentRepository implements IDocumentRepository {
       : { uploadedById: { not: scope.ownerId } };
   }
 
-  /** Descending; the database enums are declared in the domain sort order. */
-  private orderOf(sort: DocumentSort): Prisma.DocumentOrderByWithRelationInput[] {
+  /** The database enums are declared in the domain sort order. */
+  private orderOf(
+    sort: DocumentSort,
+    direction: DocumentSortDirection,
+  ): Prisma.DocumentOrderByWithRelationInput[] {
+    const order = direction === DocumentSortDirection.ASC ? 'asc' : 'desc';
     const tieBreak: Prisma.DocumentOrderByWithRelationInput[] = [
       { createdAt: 'desc' },
       { id: 'desc' },
     ];
     switch (sort) {
       case DocumentSort.SIZE:
-        return [{ sizeBytes: 'desc' }, ...tieBreak];
+        return [{ sizeBytes: order }, ...tieBreak];
       case DocumentSort.NAME:
-        return [{ name: 'desc' }, ...tieBreak];
+        return [{ name: order }, ...tieBreak];
       case DocumentSort.CATEGORY:
-        return [{ category: 'desc' }, ...tieBreak];
+        return [{ category: order }, ...tieBreak];
       case DocumentSort.STATUS:
-        return [{ status: 'desc' }, ...tieBreak];
+        return [{ status: order }, ...tieBreak];
       default:
-        return tieBreak;
+        return [{ createdAt: order }, { id: order }];
     }
   }
 

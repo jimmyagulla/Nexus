@@ -28,7 +28,7 @@ import { useDepositDocuments } from './useDepositDocuments';
 import { getDocumentsQueryKey, useGetDocuments } from './useGetDocuments';
 
 const nothing: DocumentsListState = {
-  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE,
+  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 function listOf(names: string[]): DocumentList {
@@ -45,8 +45,8 @@ function listOf(names: string[]): DocumentList {
 
 function setUp() {
   const http = new InMemoryHttpClient();
-  http.reply('get', 'companies/c1/documents?sort=DATE', { status: 200, data: listOf(['Ancien']) });
-  http.reply('get', 'companies/c1/documents?sort=SIZE', { status: 200, data: listOf(['Lourd']) });
+  http.reply('get', 'companies/c1/documents?sort=DATE&direction=DESC', { status: 200, data: listOf(['Ancien']) });
+  http.reply('get', 'companies/c1/documents?sort=SIZE&direction=DESC', { status: 200, data: listOf(['Lourd']) });
   http.reply('post', 'companies/c1/documents', { status: 201, data: listOf(['Nouveau']).items });
   const sessions = new InMemorySessionGateway('token', { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE });
   const gateway = new ApiDocumentGateway(http);
@@ -87,7 +87,7 @@ describe('useGetDocuments', () => {
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    rerender({ state: { ...nothing, sort: DocumentSort.SIZE } });
+    rerender({ state: { ...nothing, sort: DocumentSort.SIZE, direction: 'DESC' as const } });
     await waitFor(() => expect(result.current.data?.documents.map((row) => row.name)).toEqual(['Lourd']));
     rerender({ state: nothing });
 
@@ -103,7 +103,7 @@ describe('useGetDocuments', () => {
       { wrapper },
     );
     await waitFor(() => expect(result.current.list.isSuccess).toBe(true));
-    http.reply('get', 'companies/c1/documents?sort=DATE', { status: 200, data: listOf(['Nouveau', 'Ancien']) });
+    http.reply('get', 'companies/c1/documents?sort=DATE&direction=DESC', { status: 200, data: listOf(['Nouveau', 'Ancien']) });
 
     await act(async () => {
       await result.current.deposit.mutateAsync({

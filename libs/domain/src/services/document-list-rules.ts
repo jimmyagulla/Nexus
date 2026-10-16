@@ -1,7 +1,10 @@
 import { Document } from '../entities/document';
 import { DocumentListCriteria } from '../read-models/document-list-criteria';
 import { DOCUMENT_CATEGORIES } from '../value-objects/document-category';
-import { DocumentSort } from '../value-objects/document-sort';
+import {
+  DocumentSort,
+  DocumentSortDirection,
+} from '../value-objects/document-sort';
 import { DOCUMENT_STATUSES } from '../value-objects/document-status';
 
 /**
@@ -22,14 +25,16 @@ export function matchesDocumentListCriteria(
 }
 
 /**
- * Descending order of a list; the most recent first among equals, then the
- * identifier, so that the order is stable.
+ * Order of a list along a column, in either direction; the most recent first
+ * among equals, then the identifier, so that the order is stable.
  */
 export function compareDocuments(
   sort: DocumentSort,
+  direction: DocumentSortDirection,
 ): (left: Document, right: Document) => number {
+  const sign = direction === DocumentSortDirection.ASC ? 1 : -1;
   return (left, right) =>
-    primaryOrder(sort, right, left) ||
+    sign * primaryOrder(sort, left, right) ||
     right.createdAt.getTime() - left.createdAt.getTime() ||
     right.id.localeCompare(left.id);
 }

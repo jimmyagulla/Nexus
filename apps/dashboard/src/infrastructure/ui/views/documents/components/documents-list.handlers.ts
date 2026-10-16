@@ -14,7 +14,7 @@ export interface DocumentsListHandlers {
   onEmitterChange: (emitter: DocumentEmitter | null) => void;
   onFromChange: (from: string) => void;
   onToChange: (to: string) => void;
-  onSortChange: (sort: DocumentSort) => void;
+  onCycleSort: (sort: DocumentSort) => void;
   onRemoveFilter: (key: DocumentFilterKey) => void;
   onClearFilters: () => void;
   onView: (documentId: string) => void;

@@ -16,7 +16,7 @@ import { ListDocumentsUseCase } from './list-documents.use-case';
 
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-  from: null, to: null, sort: DocumentSort.DATE,
+  from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 function doc(id: string, ownerId: string, companyId = 'c1', category: DocumentCategory = DocumentCategory.OTHER): Document {

@@ -10,11 +10,11 @@ import type { DocumentsListState } from '../../controllers/documents.controller'
 import { DocumentsPresenter } from './documents.presenter';
 
 const nothing: DocumentsListState = {
-  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE,
+  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
-  from: null, to: null, sort: DocumentSort.DATE,
+  from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 const list: DocumentList = {
@@ -64,7 +64,7 @@ describe('DocumentsPresenter', () => {
       categories: [DocumentCategory.PROOF, DocumentCategory.SICK_LEAVE],
       statuses: [DocumentStatus.NEW],
       emitter: DocumentEmitter.SELF,
-      from: '01/10/2026',
+      from: '2026-10-01',
     };
 
     const model = presenter.present(list, state, { ...everything, from: '2026-10-01' });
@@ -81,8 +81,8 @@ describe('DocumentsPresenter', () => {
     expect(model.canClearFilters).toBe(true);
   });
 
-  it('ignores a period typed only halfway', () => {
-    const model = presenter.present(list, { ...nothing, from: '01/1' }, everything);
+  it('ignores a period day that is not a real one', () => {
+    const model = presenter.present(list, { ...nothing, from: '2026-02-31' }, everything);
 
     expect(model.activeFilters).toEqual([]);
   });
@@ -101,11 +101,19 @@ describe('DocumentsPresenter', () => {
     ]);
   });
 
-  it('names the current ordering and offers the others', () => {
-    const model = presenter.present(list, { ...nothing, sort: DocumentSort.SIZE }, everything);
+  it('shows every column unsorted by default', () => {
+    const model = presenter.present(list, { ...nothing, sort: null }, everything);
 
-    expect(model.sort.label).toBe("taille, plus lourd d'abord");
-    expect(model.sort.options.filter((option) => option.selected).map((option) => option.value)).toEqual([DocumentSort.SIZE]);
+    expect(Object.values(model.sort).map((column) => column.state)).toEqual(['neutral', 'neutral', 'neutral', 'neutral', 'neutral']);
+    expect(model.sort.SIZE.label).toBe('Trier par Taille (non trié)');
+  });
+
+  it('marks the sorted column with its direction', () => {
+    const model = presenter.present(list, { ...nothing, sort: DocumentSort.SIZE, direction: 'ASC' }, everything);
+
+    expect(model.sort.SIZE).toEqual({ state: 'asc', label: 'Trier par Taille (ordre croissant)' });
+    expect(model.sort.DATE.state).toBe('neutral');
+    expect(presenter.present(list, { ...nothing, sort: DocumentSort.SIZE, direction: 'DESC' }, everything).sort.SIZE.state).toBe('desc');
   });
 
   it('tells an empty vault from an empty search', () => {

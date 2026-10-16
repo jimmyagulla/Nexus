@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { InMemoryDocumentFileStorage } from './in-memory-document-file.storage';
 
-const file = { folder: 'c1/u1', contentType: 'application/pdf', content: Uint8Array.from([1]) };
+const file = { folder: 'c1/u1', contentType: 'application/pdf', content: Uint8Array.from([0x25, 0x50, 0x44, 0x46]) };
 
 describe('InMemoryDocumentFileStorage', () => {
   it('keeps a file under a fresh key inside its folder', async () => {
@@ -24,10 +24,14 @@ describe('InMemoryDocumentFileStorage', () => {
     expect(storage.files.size).toBe(0);
   });
 
-  it('links to a file, saving it under a name when asked', async () => {
+  it('links to a file with a data URL carrying its content', async () => {
     const storage = new InMemoryDocumentFileStorage();
+    const key = await storage.store(file);
 
-    await expect(storage.linkTo('c1/u1/k', { downloadAs: null })).resolves.toEqual({ url: 'memory://c1/u1/k' });
-    await expect(storage.linkTo('c1/u1/k', { downloadAs: 'a b.pdf' })).resolves.toEqual({ url: 'memory://c1/u1/k?download=a%20b.pdf' });
+    await expect(storage.linkTo(key)).resolves.toBe('data:application/pdf;base64,JVBERg==');
+  });
+
+  it('refuses to link to a file it does not keep', async () => {
+    await expect(new InMemoryDocumentFileStorage().linkTo('c1/u1/missing')).rejects.toThrow();
   });
 });

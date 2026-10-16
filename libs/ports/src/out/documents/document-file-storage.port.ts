@@ -1,5 +1,3 @@
-import { DocumentFileLink } from '@hexagonal-monorepo-template/domain';
-
 export type StoredFile = {
   /** Folder the file is kept in, e.g. `<companyId>/<ownerId>`. */
   folder: string;
@@ -13,10 +11,10 @@ export interface IDocumentFileStorage {
   store(file: StoredFile): Promise<string>;
   remove(key: string): Promise<void>;
   /**
-   * A short-lived link to the file. With `downloadAs`, the link saves the
+   * A short-lived URL of the file. With `downloadAs`, following it saves the
    * file under that name instead of opening it.
    */
-  linkTo(key: string, options: { downloadAs: string | null }): Promise<DocumentFileLink>;
+  linkTo(key: string, options: { downloadAs: string | null }): Promise<string>;
 }
 
 export const IDocumentFileStorage = Symbol('IDocumentFileStorage');

@@ -13,11 +13,13 @@ import {
   DOCUMENT_CATEGORIES,
   DOCUMENT_EMITTERS,
   DOCUMENT_SEARCH_MAX_LENGTH,
+  DOCUMENT_SORT_DIRECTIONS,
   DOCUMENT_SORTS,
   DOCUMENT_STATUSES,
   DocumentCategory,
   DocumentEmitter,
   DocumentSort,
+  DocumentSortDirection,
   DocumentStatus,
 } from '@hexagonal-monorepo-template/domain';
 
@@ -81,8 +83,13 @@ export class ListDocumentsQueryDto {
   @Matches(CALENDAR_DATE_PATTERN)
   to?: string;
 
-  @ApiPropertyOptional({ enum: DOCUMENT_SORTS, description: 'Always descending' })
+  @ApiPropertyOptional({ enum: DOCUMENT_SORTS, description: 'Column to order by, the date by default' })
   @IsOptional()
   @IsIn(DOCUMENT_SORTS)
   sort?: DocumentSort;
+
+  @ApiPropertyOptional({ enum: DOCUMENT_SORT_DIRECTIONS, description: 'Descending by default' })
+  @IsOptional()
+  @IsIn(DOCUMENT_SORT_DIRECTIONS)
+  direction?: DocumentSortDirection;
 }
