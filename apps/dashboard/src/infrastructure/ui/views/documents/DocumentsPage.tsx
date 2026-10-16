@@ -1,15 +1,82 @@
+import { useMemo, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useShallow } from 'zustand/react/shallow';
 import type { DocumentsPageComposition } from '../../../composition/document/documents-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import { useDepositDocuments } from '../../hooks/useDepositDocuments';
+import { useDownloadDocument } from '../../hooks/useDownloadDocument';
 import { useGetDocuments } from '../../hooks/useGetDocuments';
+import { useToast } from '../../hooks/use-toast';
+import { useViewDocument } from '../../hooks/useViewDocument';
 import { i18n } from '../../i18n/i18n';
+import { AppRoutes } from '../../routes/app-routes';
+import { useDocumentsListStore } from '../../stores/documents-list.store';
 import { Documents } from './Documents';
+import { DocumentUploadModal } from './components/DocumentUploadModal';
+import type { DocumentsListHandlers } from './components/documents-list.handlers';
+import type { DocumentUploadValues } from '../../features/documents/document-upload.schema';
 
 interface DocumentsPageProps {
   deps: DocumentsPageComposition;
+  /** Reached through the upload address: the upload modal opens at once. */
+  uploadRoute?: boolean;
 }
 
-export function DocumentsPage({ deps }: DocumentsPageProps) {
-  const documents = useGetDocuments(deps);
+const SEARCH_DEBOUNCE_MS = 250;
+
+export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps) {
+  const navigate = useNavigate();
+  const { successToast, errorToast } = useToast();
+  const list = useDocumentsListStore(
+    useShallow(({ search, categories, statuses, emitter, from, to, sort }) => ({
+      search, categories, statuses, emitter, from, to, sort,
+    })),
+  );
+  const actions = useDocumentsListStore.getState();
+  const search = useDebouncedValue(list.search, SEARCH_DEBOUNCE_MS);
+  const documents = useGetDocuments(deps, { ...list, search });
+  const deposit = useDepositDocuments(deps);
+  const view = useViewDocument(deps);
+  const download = useDownloadDocument(deps);
+  const uploadModel = useMemo(() => deps.uploadPresenter.present(), [deps]);
+  const [uploadOpen, setUploadOpen] = useState(uploadRoute);
+
+  const showError = (error: unknown) => errorToast(deps.errorPresenter.present(error));
+
+  const handlers: DocumentsListHandlers = {
+    onSearchChange: actions.setSearch,
+    onToggleCategory: actions.toggleCategory,
+    onToggleStatus: actions.toggleStatus,
+    onEmitterChange: actions.setEmitter,
+    onFromChange: actions.setFrom,
+    onToChange: actions.setTo,
+    onSortChange: actions.setSort,
+    onRemoveFilter: actions.removeFilter,
+    onClearFilters: actions.clearFilters,
+    onView: (documentId) => view.view(documentId, { onError: showError }),
+    onDownload: (documentId) => download.mutate(documentId, { onError: showError }),
+  };
+
+  const changeUploadOpen = (open: boolean) => {
+    deposit.reset();
+    setUploadOpen(open);
+    if (!open && uploadRoute) {
+      void navigate({ to: AppRoutes.documents, replace: true });
+    }
+  };
+
+  const submitDeposit = async (values: DocumentUploadValues): Promise<boolean> => {
+    try {
+      const deposited = await deposit.mutateAsync(values);
+      successToast(deps.uploadPresenter.presentDeposited(deposited.length), {
+        title: i18n.messages.documents.sent.title,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   if (documents.isPending) {
     return <PageStatus>{i18n.messages.loading}</PageStatus>;
@@ -19,5 +86,24 @@ export function DocumentsPage({ deps }: DocumentsPageProps) {
     return <PageStatus>{i18n.messages.common.loadingError}</PageStatus>;
   }
 
-  return <Documents model={documents.data} />;
+  return (
+    <>
+      <Documents
+        model={documents.data}
+        search={list.search}
+        handlers={handlers}
+        onUpload={() => changeUploadOpen(true)}
+      />
+      <DocumentUploadModal
+        open={uploadOpen}
+        onOpenChange={changeUploadOpen}
+        model={uploadModel}
+        presenter={deps.uploadPresenter}
+        errorPresenter={deps.errorPresenter}
+        submitting={deposit.isPending}
+        submissionError={deposit.isError ? deps.errorPresenter.present(deposit.error) : null}
+        onSubmit={submitDeposit}
+      />
+    </>
+  );
 }

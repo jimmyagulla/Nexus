@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, PayloadTooLargeException } from '@nestjs/common';
 import { ErrorCode, isErrorCode } from '@hexagonal-monorepo-template/domain';
 import { ApiResult, ErrorEnvelope, SuccessEnvelope } from './api-response.types';
 
@@ -45,6 +45,9 @@ export function buildErrorEnvelope(
 }
 
 export function extractErrorMessage(exception: unknown): string {
+  if (exception instanceof PayloadTooLargeException) {
+    return ErrorCode.FILE_TOO_LARGE;
+  }
   if (exception instanceof HttpException) {
     const response = exception.getResponse();
     if (typeof response === 'object' && response !== null && 'message' in response) {
@@ -69,7 +72,18 @@ export function httpStatusForError(exception: unknown): number {
     return exception.getStatus();
   }
   if (exception instanceof Error && isErrorCode(exception.message)) {
-    return exception.message === ErrorCode.ACCESS_DENIED ? 403 : 400;
+    return statusForErrorCode(exception.message);
   }
   return 500;
+}
+
+function statusForErrorCode(code: ErrorCode): number {
+  switch (code) {
+    case ErrorCode.ACCESS_DENIED:
+      return 403;
+    case ErrorCode.FILE_TOO_LARGE:
+      return 413;
+    default:
+      return 400;
+  }
 }

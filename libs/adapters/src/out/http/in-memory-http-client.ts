@@ -1,5 +1,8 @@
 import { ErrorCode } from '@hexagonal-monorepo-template/domain';
-import { IHttpClient } from '@hexagonal-monorepo-template/ports';
+import {
+  IHttpClient,
+  MultipartBody,
+} from '@hexagonal-monorepo-template/ports';
 
 export type RecordedHttpCall = {
   method: string;
@@ -26,6 +29,14 @@ export class InMemoryHttpClient implements IHttpClient {
 
   post<T>(url: string, data?: unknown, config?: unknown): Promise<T> {
     return this.dispatch('post', url, data, config);
+  }
+
+  postMultipart<T>(
+    url: string,
+    body: MultipartBody,
+    config?: unknown,
+  ): Promise<T> {
+    return this.dispatch('post', url, body, config);
   }
 
   put<T>(url: string, data?: unknown, config?: unknown): Promise<T> {

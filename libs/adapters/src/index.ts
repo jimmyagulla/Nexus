@@ -12,3 +12,6 @@ export * from './out/session/client-session.gateway';
 export * from './out/session/in-memory-session.client';
 export * from './out/session/in-memory-session.gateway';
 export * from './out/session/local-dev-session';
+export * from './out/documents/api-document.gateway';
+export * from './out/documents/in-memory-document.repository';
+export * from './out/documents/in-memory-document-file.storage';

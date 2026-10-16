@@ -48,6 +48,35 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+/**
+ * Modal window of the app: the page behind is dimmed and lightly blurred, the
+ * first field takes the focus, and a click outside never closes it, so that
+ * no input is lost by mistake. Escape and the explicit close actions do.
+ */
+const ModalContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, onInteractOutside, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlay className="backdrop-blur-xs" />
+    <DialogPrimitive.Content
+      ref={ref}
+      onInteractOutside={(event) => {
+        event.preventDefault()
+        onInteractOutside?.(event)
+      }}
+      className={cn(
+        "fixed left-1/2 top-1/2 z-50 flex max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-xl bg-background shadow-popover-strong duration-200 focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </DialogPrimitive.Content>
+  </DialogPortal>
+))
+ModalContent.displayName = "ModalContent"
+
 const DialogHeader = ({
   className,
   children,
@@ -125,6 +154,7 @@ export {
   DialogTrigger,
   DialogClose,
   DialogContent,
+  ModalContent,
   DialogHeader,
   DialogBody,
   DialogFooter,

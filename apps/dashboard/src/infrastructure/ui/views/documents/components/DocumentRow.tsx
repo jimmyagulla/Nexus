@@ -1,18 +1,27 @@
-import { RowAction } from '../../../common/data/RowAction';
-import { i18n } from '../../../i18n/i18n';
+import { useState } from 'react';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
+import { DocumentActionsMenu } from './DocumentActionsMenu';
 import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentRowProps {
   model: DocumentRowModel;
+  onView: (documentId: string) => void;
+  onDownload: (documentId: string) => void;
 }
 
-export function DocumentRow({ model }: DocumentRowProps) {
-  const common = i18n.messages.common;
+/** A document of the list. A right click opens the same actions as "…". */
+export function DocumentRow({ model, onView, onDownload }: DocumentRowProps) {
+  const [actionsOpen, setActionsOpen] = useState(false);
 
   return (
-    <TableRow className="last:border-b">
+    <TableRow
+      className="last:border-b"
+      onContextMenu={(event) => {
+        event.preventDefault();
+        setActionsOpen(true);
+      }}
+    >
       <TableCell className="flex items-center gap-2.5">
         <i aria-hidden className={`${model.icon} shrink-0 text-20 text-primary`} />
         <span className="font-semibold text-foreground">
@@ -38,12 +47,12 @@ export function DocumentRow({ model }: DocumentRowProps) {
         </Badge>
       </TableCell>
       <TableCell className="flex justify-end gap-0.5 text-18 text-primary">
-        <RowAction label={common.view} icon={<i aria-hidden className="ri-eye-line" />} />
-        <RowAction
-          label={common.download}
-          icon={<i aria-hidden className="ri-download-2-line" />}
+        <DocumentActionsMenu
+          open={actionsOpen}
+          onOpenChange={setActionsOpen}
+          onView={() => onView(model.id)}
+          onDownload={() => onDownload(model.id)}
         />
-        <RowAction label={common.more} icon={<i aria-hidden className="ri-more-2-fill" />} />
       </TableCell>
     </TableRow>
   );

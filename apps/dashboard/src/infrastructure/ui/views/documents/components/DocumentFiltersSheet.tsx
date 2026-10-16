@@ -1,3 +1,9 @@
+import {
+  DocumentCategory,
+  DocumentEmitter,
+  DocumentStatus,
+  isDocumentEmitter,
+} from '@hexagonal-monorepo-template/domain';
 import { i18n } from '../../../i18n/i18n';
 import { Button } from '../../../shared/button';
 import {
@@ -13,14 +19,16 @@ import { ToggleGroup, ToggleGroupItem } from '../../../shared/toggle-group';
 import { FilterGroup } from './FilterGroup';
 import { FilterOption } from './FilterOption';
 import { PeriodField } from './PeriodField';
+import type { DocumentsListHandlers } from './documents-list.handlers';
 import type { DocumentFiltersModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentFiltersSheetProps {
   model: DocumentFiltersModel;
+  handlers: DocumentsListHandlers;
 }
 
-/** Floating "Filtres" panel of the documents list. */
-export function DocumentFiltersSheet({ model }: DocumentFiltersSheetProps) {
+/** Floating "Filtres" panel of the documents list. Filters apply as they change. */
+export function DocumentFiltersSheet({ model, handlers }: DocumentFiltersSheetProps) {
   const labels = i18n.messages.documents.filters;
 
   return (
@@ -34,22 +42,46 @@ export function DocumentFiltersSheet({ model }: DocumentFiltersSheetProps) {
       <SheetBody>
         <FilterGroup title={labels.category}>
           {model.categories.map((option) => (
-            <FilterOption key={option.id} model={option} />
+            <FilterOption
+              key={option.id}
+              model={option}
+              onToggle={() => handlers.onToggleCategory(option.id as DocumentCategory)}
+            />
           ))}
         </FilterGroup>
         <FilterGroup title={labels.status}>
           {model.statuses.map((option) => (
-            <FilterOption key={option.id} model={option} />
+            <FilterOption
+              key={option.id}
+              model={option}
+              onToggle={() => handlers.onToggleStatus(option.id as DocumentStatus)}
+            />
           ))}
         </FilterGroup>
         <FilterGroup title={labels.period}>
           <div className="flex gap-2.5">
-            <PeriodField label={labels.from} placeholder={labels.datePlaceholder} />
-            <PeriodField label={labels.to} placeholder={labels.datePlaceholder} />
+            <PeriodField
+              label={labels.from}
+              placeholder={labels.datePlaceholder}
+              value={model.from}
+              onValueChange={handlers.onFromChange}
+            />
+            <PeriodField
+              label={labels.to}
+              placeholder={labels.datePlaceholder}
+              value={model.to}
+              onValueChange={handlers.onToChange}
+            />
           </div>
         </FilterGroup>
         <FilterGroup title={labels.emitter}>
-          <ToggleGroup type="single" defaultValue={model.emitter}>
+          <ToggleGroup
+            type="single"
+            value={model.emitter}
+            onValueChange={(value: string) =>
+              handlers.onEmitterChange(isDocumentEmitter(value) ? (value as DocumentEmitter) : null)
+            }
+          >
             {model.emitters.map((emitter) => (
               <ToggleGroupItem key={emitter.value} value={emitter.value}>
                 {emitter.label}
@@ -59,7 +91,7 @@ export function DocumentFiltersSheet({ model }: DocumentFiltersSheetProps) {
         </FilterGroup>
       </SheetBody>
       <SheetFooter>
-        <Button variant="link" className="h-auto px-0">
+        <Button variant="link" className="h-auto px-0" onClick={handlers.onClearFilters}>
           {i18n.messages.common.reset}
         </Button>
         <SheetClose asChild>

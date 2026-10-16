@@ -19,10 +19,11 @@ import { createSessionGateway } from './session/create-session-gateway';
 
 const API_URL = loadDashboardConfig().apiUrl;
 const httpClient = new FetchHttpClient(API_URL);
+const sessions = createSessionGateway();
 
 export const companySettingsComposition = createCompanySettingsComposition(
   httpClient,
-  createSessionGateway(),
+  sessions,
 );
 export const companySettingsController = companySettingsComposition.controller;
 export const companySettingsPresenter = companySettingsComposition.presenter;
@@ -33,7 +34,10 @@ export const companySettingsErrorPresenter =
 export const authComposition = createAuthComposition();
 export const employeeDashboardComposition = createEmployeeDashboardComposition();
 export const payslipComposition = createPayslipComposition();
-export const documentComposition = createDocumentComposition();
+export const documentComposition = createDocumentComposition(
+  httpClient,
+  sessions,
+);
 export const personalInfoComposition = createPersonalInfoComposition();
 export const leaveComposition = createLeaveComposition();
 export const overtimeComposition = createOvertimeComposition();

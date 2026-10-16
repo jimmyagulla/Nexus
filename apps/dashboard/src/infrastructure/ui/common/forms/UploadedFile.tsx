@@ -8,11 +8,12 @@ interface UploadedFileProps {
   details: string;
   /** Defaults to the PDF glyph. */
   icon?: ReactNode;
+  onRemove?: () => void;
   className?: string;
 }
 
 /** Imported file row: type icon, name and size, success check, remove cross. */
-export function UploadedFile({ name, details, icon, className }: UploadedFileProps) {
+export function UploadedFile({ name, details, icon, onRemove, className }: UploadedFileProps) {
   return (
     <div
       className={cn(
@@ -29,6 +30,7 @@ export function UploadedFile({ name, details, icon, className }: UploadedFilePro
       <button
         type="button"
         aria-label={`${i18n.messages.common.removeFile} ${name}`}
+        onClick={onRemove}
         className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:shadow-focus"
       >
         <i aria-hidden className="ri-close-line text-20" />

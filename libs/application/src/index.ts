@@ -10,3 +10,11 @@ export * from './use-cases/company-public-holidays/add-company-public-holiday-fr
 export * from './use-cases/company-public-holidays/update-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday.use-case';
 export * from './use-cases/company-public-holidays/remove-company-public-holiday-from-session.use-case';
+export * from './use-cases/documents/list-documents.use-case';
+export * from './use-cases/documents/list-documents-from-session.use-case';
+export * from './use-cases/documents/deposit-documents.use-case';
+export * from './use-cases/documents/deposit-documents-from-session.use-case';
+export * from './use-cases/documents/view-document.use-case';
+export * from './use-cases/documents/view-document-from-session.use-case';
+export * from './use-cases/documents/download-document.use-case';
+export * from './use-cases/documents/download-document-from-session.use-case';

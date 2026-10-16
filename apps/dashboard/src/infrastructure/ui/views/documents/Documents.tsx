@@ -1,30 +1,37 @@
-import { Link } from '@tanstack/react-router';
+import { DOCUMENT_SEARCH_MAX_LENGTH, DocumentSort } from '@hexagonal-monorepo-template/domain';
 import { ActiveFilters } from '../../common/data/ActiveFilters';
 import { FilterButton } from '../../common/data/FilterButton';
 import { FilterChip } from '../../common/data/FilterChip';
 import { SearchField } from '../../common/data/SearchField';
-import { SortButton } from '../../common/data/SortButton';
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
-import { AppRoutes } from '../../routes/app-routes';
 import { Button } from '../../shared/button';
 import { Sheet, SheetTrigger } from '../../shared/sheet';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { DocumentFiltersSheet } from './components/DocumentFiltersSheet';
 import { DocumentRow } from './components/DocumentRow';
+import { DocumentSortMenu } from './components/DocumentSortMenu';
+import { DocumentsEmptyRow } from './components/DocumentsEmptyRow';
+import { SortableHead } from './components/SortableHead';
+import type { DocumentsListHandlers } from './components/documents-list.handlers';
 import type { DocumentsViewModel } from '../../../../adapters/presenters/documents/documents.presenter';
 
 interface DocumentsProps {
   model: DocumentsViewModel;
+  /** Text of the search box, as typed. */
+  search: string;
+  handlers: DocumentsListHandlers;
+  onUpload: () => void;
 }
 
 const columns = 'minmax(0,1.7fr) minmax(0,1fr) 92px 92px 96px 130px 100px';
 
 /** P2.1 — the employee's document vault. */
-export function Documents({ model }: DocumentsProps) {
+export function Documents({ model, search, handlers, onUpload }: DocumentsProps) {
   const labels = i18n.messages.documents.list;
   const common = i18n.messages.common;
+  const sortedBy = (sort: DocumentSort) => model.sort.current === sort;
 
   return (
     <PageContent>
@@ -37,46 +44,61 @@ export function Documents({ model }: DocumentsProps) {
           </>
         }
         actions={
-          <Button asChild>
-            <Link to={AppRoutes.documentUpload}>
-              <i aria-hidden className="ri-upload-cloud-2-line text-18" />
-              {labels.upload}
-            </Link>
+          <Button onClick={onUpload}>
+            <i aria-hidden className="ri-upload-cloud-2-line text-18" />
+            {labels.upload}
           </Button>
         }
       />
       <div className="flex items-center gap-2">
-        <SearchField placeholder={labels.searchPlaceholder} />
+        <SearchField
+          placeholder={labels.searchPlaceholder}
+          value={search}
+          maxLength={DOCUMENT_SEARCH_MAX_LENGTH}
+          onValueChange={handlers.onSearchChange}
+        />
         <Sheet>
           <SheetTrigger asChild>
             <FilterButton count={model.appliedFilterCount} />
           </SheetTrigger>
-          <DocumentFiltersSheet model={model.filters} />
+          <DocumentFiltersSheet model={model.filters} handlers={handlers} />
         </Sheet>
         <span className="flex-1" />
-        <SortButton label={labels.sortLabel} />
+        <DocumentSortMenu model={model.sort} onSortChange={handlers.onSortChange} />
       </div>
-      <ActiveFilters summary={model.resultSummary}>
+      <ActiveFilters
+        summary={model.resultSummary}
+        canClear={model.canClearFilters}
+        onClear={handlers.onClearFilters}
+      >
         {model.activeFilters.map((filter) => (
-          <FilterChip key={filter.label} label={filter.label} value={filter.value} />
+          <FilterChip
+            key={filter.key}
+            label={filter.label}
+            value={filter.value}
+            onRemove={() => handlers.onRemoveFilter(filter.key)}
+          />
         ))}
       </ActiveFilters>
       <Table columns={columns}>
         <TableHeader>
-          <TableHead>{labels.columns.name}</TableHead>
-          <TableHead>{labels.columns.category}</TableHead>
-          <TableHead>
-            {labels.columns.date}
-            <i aria-hidden className="ri-arrow-down-s-line text-heading" />
-          </TableHead>
-          <TableHead>{labels.columns.size}</TableHead>
+          <SortableHead sorted={sortedBy(DocumentSort.NAME)}>{labels.columns.name}</SortableHead>
+          <SortableHead sorted={sortedBy(DocumentSort.CATEGORY)}>{labels.columns.category}</SortableHead>
+          <SortableHead sorted={sortedBy(DocumentSort.DATE)}>{labels.columns.date}</SortableHead>
+          <SortableHead sorted={sortedBy(DocumentSort.SIZE)}>{labels.columns.size}</SortableHead>
           <TableHead>{labels.columns.emitter}</TableHead>
-          <TableHead>{common.status}</TableHead>
+          <SortableHead sorted={sortedBy(DocumentSort.STATUS)}>{common.status}</SortableHead>
           <TableHead className="justify-end">{common.actions}</TableHead>
         </TableHeader>
         {model.documents.map((document) => (
-          <DocumentRow key={document.id} model={document} />
+          <DocumentRow
+            key={document.id}
+            model={document}
+            onView={handlers.onView}
+            onDownload={handlers.onDownload}
+          />
         ))}
+        {model.documents.length === 0 && <DocumentsEmptyRow message={model.emptyMessage} />}
       </Table>
     </PageContent>
   );

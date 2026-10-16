@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { HttpException } from '@nestjs/common';
+import { HttpException, PayloadTooLargeException } from '@nestjs/common';
 import {
   buildSuccessEnvelope,
   buildErrorEnvelope,
   extractErrorMessage,
+  httpStatusForError,
 } from './api-response.mapper';
 
 describe('buildSuccessEnvelope', () => {
@@ -122,5 +123,25 @@ describe('extractErrorMessage', () => {
     const message = extractErrorMessage(new Error('ACCESS_DENIED'));
 
     expect(message).toBe('ACCESS_DENIED');
+  });
+});
+
+describe('oversized uploads', () => {
+  it('names the refusal of a file the upload parser found too large', () => {
+    expect(extractErrorMessage(new PayloadTooLargeException('File too large'))).toBe(
+      'FILE_TOO_LARGE',
+    );
+  });
+
+  it('answers 413 to a file too large for the domain', () => {
+    expect(httpStatusForError(new Error('FILE_TOO_LARGE'))).toBe(413);
+  });
+
+  it('answers 400 to a file of an unsupported format', () => {
+    expect(httpStatusForError(new Error('UNSUPPORTED_FILE_FORMAT'))).toBe(400);
+  });
+
+  it('keeps 403 for an access refusal', () => {
+    expect(httpStatusForError(new Error('ACCESS_DENIED'))).toBe(403);
   });
 });

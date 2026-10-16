@@ -2,8 +2,14 @@ import {
   ErrorCode,
   isErrorCode,
 } from '@hexagonal-monorepo-template/domain';
-import { sendJson } from '@hexagonal-monorepo-template/infrastructure';
-import { IHttpClient } from '@hexagonal-monorepo-template/ports';
+import {
+  sendJson,
+  sendMultipart,
+} from '@hexagonal-monorepo-template/infrastructure';
+import {
+  IHttpClient,
+  MultipartBody,
+} from '@hexagonal-monorepo-template/ports';
 
 export class FetchHttpClient implements IHttpClient {
   constructor(private readonly baseUrl: string) {}
@@ -14,6 +20,23 @@ export class FetchHttpClient implements IHttpClient {
 
   post<T>(url: string, data?: unknown, config?: unknown): Promise<T> {
     return this.send('POST', url, data, config);
+  }
+
+  async postMultipart<T>(
+    url: string,
+    body: MultipartBody,
+    config?: unknown,
+  ): Promise<T> {
+    const result = await sendMultipart({
+      url: this.joinUrl(url),
+      fields: body.fields,
+      files: body.files,
+      token: bearerToken(config),
+    });
+    if (!result.ok) {
+      throw new Error(readErrorCode(result.body));
+    }
+    return result.body as T;
   }
 
   put<T>(url: string, data?: unknown, config?: unknown): Promise<T> {

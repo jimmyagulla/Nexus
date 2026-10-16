@@ -59,5 +59,10 @@ export const en = {
     [ErrorCode.ACCESS_DENIED]: 'You do not have access to this item.',
     [ErrorCode.REQUIRED_INFORMATION]: 'Fill in the required information.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'A similar item already exists.',
+    [ErrorCode.INVALID_INFORMATION]:
+      'A piece of information is invalid or longer than allowed.',
+    [ErrorCode.FILE_TOO_LARGE]: 'This file is larger than the maximum size allowed.',
+    [ErrorCode.UNSUPPORTED_FILE_FORMAT]:
+      'This file is not accepted: its content must be a PDF, a JPG or PNG image, or an XLS, XLSX or CSV spreadsheet.',
   },
 } as const;

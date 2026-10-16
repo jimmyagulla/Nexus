@@ -64,6 +64,13 @@
         "cwd": "{workspaceRoot}"
       }
     },
+    "prisma-sql": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql",
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "prisma-pull": {
       "executor": "nx:run-commands",
       "options": {

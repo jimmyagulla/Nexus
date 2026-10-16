@@ -13,7 +13,6 @@ import {
 import { i18n } from '../i18n/i18n';
 import { ComingSoonPage } from '../views/coming-soon/ComingSoonPage';
 import { DocumentSentPage } from '../views/documents/DocumentSentPage';
-import { DocumentUploadPage } from '../views/documents/DocumentUploadPage';
 import { DocumentsPage } from '../views/documents/DocumentsPage';
 import { EmployeeDashboardPage } from '../views/employee-dashboard/EmployeeDashboardPage';
 import { ExpenseReportPage } from '../views/expense-reports/ExpenseReportPage';
@@ -50,7 +49,7 @@ export const employeeRoutes = employeeLayoutRoute.addChildren([
   createRoute({ getParentRoute: parent, path: AppRoutes.payslips, component: () => <PayslipsPage deps={payslipComposition.payslips} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.payslip, component: () => <PayslipPage deps={payslipComposition.payslip} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.documents, component: () => <DocumentsPage deps={documentComposition.documents} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.documentUpload, component: () => <DocumentUploadPage deps={documentComposition.documentUpload} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.documentUpload, component: () => <DocumentsPage deps={documentComposition.documents} uploadRoute /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.documentSent, component: () => <DocumentSentPage deps={documentComposition.documentSent} /> }),
   createRoute({
     getParentRoute: parent,
