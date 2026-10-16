@@ -1,6 +1,8 @@
--- Database-side guards of the documents feature that Prisma schemas cannot
--- express. Idempotent: run after every `prisma db push` with
---   pnpm prisma:sql
+-- Database-side guards of the documents feature that a Prisma schema cannot
+-- express, so `prisma db pull` never brings them back: CHECK constraints,
+-- Row Level Security and the Storage bucket (storage schema, owned by
+-- Supabase). Idempotent; `pnpm prisma:push` runs it right after the push,
+-- `pnpm prisma:sql` runs it alone.
 -- Limits mirror libs/domain/src/value-objects/document-limits.ts and
 -- document-file-format.ts; change both together.
 
