@@ -4,7 +4,7 @@ import { createCompanySettingsComposition } from './composition/company-settings
 import { createAuthComposition } from './composition/auth/auth.composition';
 import { createEmployeeDashboardComposition } from './composition/employee-dashboard/employee-dashboard.composition';
 import { createPayslipComposition } from './composition/payslip/payslip.composition';
-import { createDocumentComposition } from './composition/document/document.composition';
+import { createDocumentsPageComposition } from './composition/document/documents-page.composition';
 import { createPersonalInfoComposition } from './composition/personal-info/personal-info.composition';
 import { createLeaveComposition } from './composition/leave/leave.composition';
 import { createOvertimeComposition } from './composition/overtime/overtime.composition';
@@ -34,7 +34,7 @@ export const companySettingsErrorPresenter =
 export const authComposition = createAuthComposition();
 export const employeeDashboardComposition = createEmployeeDashboardComposition();
 export const payslipComposition = createPayslipComposition();
-export const documentComposition = createDocumentComposition(
+export const documentsPageComposition = createDocumentsPageComposition(
   httpClient,
   sessions,
 );

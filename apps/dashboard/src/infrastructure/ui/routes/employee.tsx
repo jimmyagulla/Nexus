@@ -1,6 +1,6 @@
 import { createRoute } from '@tanstack/react-router';
 import {
-  documentComposition,
+  documentsPageComposition,
   employeeDashboardComposition,
   expenseReportComposition,
   leaveComposition,
@@ -47,8 +47,8 @@ export const employeeRoutes = employeeLayoutRoute.addChildren([
   createRoute({ getParentRoute: parent, path: AppRoutes.home, component: () => <EmployeeDashboardPage deps={employeeDashboardComposition.employeeDashboard} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.payslips, component: () => <PayslipsPage deps={payslipComposition.payslips} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.payslip, component: () => <PayslipPage deps={payslipComposition.payslip} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.documents, component: () => <DocumentsPage deps={documentComposition.documents} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.documentUpload, component: () => <DocumentsPage deps={documentComposition.documents} uploadRoute /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.documents, component: () => <DocumentsPage deps={documentsPageComposition} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.documentUpload, component: () => <DocumentsPage deps={documentsPageComposition} uploadRoute /> }),
   createRoute({
     getParentRoute: parent,
     path: AppRoutes.documentsToSend,
