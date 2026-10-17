@@ -1,6 +1,6 @@
 import type { LoginPageComposition } from '../../../composition/auth/login-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetLogin } from '../../hooks/useGetLogin';
+import { useGetLogin } from '../../hooks/auth/useGetLogin';
 import { i18n } from '../../i18n/i18n';
 import { Login } from './Login';
 

@@ -15,7 +15,7 @@ beforeEach(() => {
 describe('documents list store', () => {
   it('starts with every document, the most recent first', () => {
     expect(useDocumentsListStore.getState()).toMatchObject({
-      search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: null, direction: 'DESC',
+      search: '', categories: [], statuses: [], emitters: [], from: null, to: null, sort: null, direction: 'DESC',
     });
   });
 
@@ -60,7 +60,7 @@ describe('documents list store', () => {
 
     store.removeFilter('period');
 
-    expect(useDocumentsListStore.getState()).toMatchObject({ statuses: [DocumentStatus.NEW], from: '', to: '' });
+    expect(useDocumentsListStore.getState()).toMatchObject({ statuses: [DocumentStatus.NEW], from: null, to: null });
   });
 
   it('clears every filter but keeps the search and the ordering', () => {
@@ -73,7 +73,26 @@ describe('documents list store', () => {
     store.clearFilters();
 
     expect(useDocumentsListStore.getState()).toMatchObject({
-      search: 'arrêt', sort: DocumentSort.SIZE, direction: 'ASC', categories: [], emitter: null,
+      search: 'arrêt', sort: DocumentSort.SIZE, direction: 'ASC', categories: [], emitters: [],
     });
+  });
+
+  it('keeps a single emitter, or every emitter', () => {
+    const store = useDocumentsListStore.getState();
+
+    store.setEmitter(DocumentEmitter.SELF);
+    expect(useDocumentsListStore.getState().emitters).toEqual([DocumentEmitter.SELF]);
+
+    store.setEmitter(null);
+    expect(useDocumentsListStore.getState().emitters).toEqual([]);
+  });
+
+  it('drops a period bound cleared in the date picker', () => {
+    const store = useDocumentsListStore.getState();
+    store.setFrom('2026-10-01');
+
+    store.setFrom('');
+
+    expect(useDocumentsListStore.getState().from).toBeNull();
   });
 });

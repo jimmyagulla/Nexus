@@ -15,6 +15,7 @@ import { CompanyModule } from './company/company.module';
 import { CompanyPublicHolidaysModule } from './company-public-holidays/company-public-holidays.module';
 import { CompanySettingsModule } from './company-settings/company-settings.module';
 import { DocumentsModule } from './documents/documents.module';
+import { IdGeneratorModule } from './id/id-generator.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 const persistence = loadApiConfig().persistence;
@@ -24,6 +25,7 @@ const persistence = loadApiConfig().persistence;
     ApiConfigModule,
     ...(persistence === 'postgres' ? [PrismaModule] : []),
     ClockModule,
+    IdGeneratorModule,
     AuditModule,
     CompanyModule,
     CompanySettingsModule,

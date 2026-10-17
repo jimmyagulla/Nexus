@@ -6,7 +6,7 @@ import { i18n } from '../../i18n/i18n';
 import { RadioGroup } from '../../shared/radio-group';
 import { Textarea } from '../../shared/textarea';
 import { DocumentFileEntry } from './DocumentFileEntry';
-import { FieldError } from './FieldError';
+import { FieldError } from '../../common/errors/FieldError';
 import { fileEntryError, filesError } from './document-upload.errors';
 import { DocumentTypeOption } from './DocumentTypeOption';
 import type { DocumentUploadFieldsProps } from './document-upload-fields.props';

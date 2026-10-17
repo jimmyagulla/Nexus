@@ -1,6 +1,5 @@
 import {
-  ApiCompanySettingsGateway,
-  InMemoryHttpClient,
+  InMemoryCompanySettingsGateway,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -27,11 +26,9 @@ const acme: CompanySettingsSnapshot = {
 function useCaseFor(
   session: InMemorySessionGateway,
 ): GetCompanySettingsFromSessionUseCase {
-  const http = new InMemoryHttpClient();
-  http.reply('get', 'companies/c1/settings', { status: 200, data: acme });
   return new GetCompanySettingsFromSessionUseCase(
     session,
-    new ApiCompanySettingsGateway(http),
+    new InMemoryCompanySettingsGateway(new Map([['c1', acme]])),
   );
 }
 

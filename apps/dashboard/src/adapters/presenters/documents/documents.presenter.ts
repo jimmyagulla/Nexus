@@ -1,28 +1,35 @@
 import {
-  DOCUMENT_CATEGORIES,
-  DOCUMENT_SORTS,
-  DOCUMENT_STATUSES,
-  DocumentSortDirection,
-  DocumentCategory,
-  DocumentEmitter,
   DocumentList,
   DocumentListCriteria,
-  DocumentSort,
-  DocumentStatus,
-  DocumentSummary,
 } from '@hexagonal-monorepo-template/domain';
 import {
   i18n as appI18n,
   type I18n,
 } from '../../../infrastructure/ui/i18n/i18n';
 import type { DocumentsListState } from '../../controllers/documents.controller';
-import type { StatusTone, StatusViewModel } from '../display.types';
+import { CountLabelPresenter } from './count-label.presenter';
+import {
+  DocumentActiveFiltersPresenter,
+  type ActiveFilterModel,
+} from './document-active-filters.presenter';
+import {
+  DocumentFiltersPresenter,
+  type DocumentFiltersModel,
+} from './document-filters.presenter';
+import {
+  DocumentRowPresenter,
+  type DocumentRowModel,
+} from './document-row.presenter';
+import {
+  DocumentSortPresenter,
+  type DocumentSortModel,
+} from './document-sort.presenter';
 
-/** Filter groups a chip can remove. */
-export type DocumentFilterKey = 'categories' | 'statuses' | 'period' | 'emitter';
-
-/** Value of the emitter toggle that keeps every emitter. */
-export const ALL_EMITTERS = 'all';
+export type { ActiveFilterModel, DocumentFilterKey } from './document-active-filters.presenter';
+export { ALL_EMITTERS } from './document-filters.presenter';
+export type { DocumentFiltersModel, FilterOptionModel } from './document-filters.presenter';
+export type { DocumentRowModel } from './document-row.presenter';
+export type { DocumentSortModel, SortColumnModel, SortState } from './document-sort.presenter';
 
 export interface DocumentsViewModel {
   appliedFilterCount: number;
@@ -31,270 +38,57 @@ export interface DocumentsViewModel {
   canClearFilters: boolean;
   activeFilters: ActiveFilterModel[];
   filters: DocumentFiltersModel;
-  /** Sort control of each orderable column. */
-  sort: Record<DocumentSort, SortColumnModel>;
+  sort: DocumentSortModel;
   documents: DocumentRowModel[];
   /** Shown instead of rows when there is none. */
   emptyMessage: string;
 }
 
-export interface ActiveFilterModel {
-  key: DocumentFilterKey;
-  label: string;
-  value: string;
-}
-
-export interface DocumentFiltersModel {
-  /** "2 filtres appliqués" */
-  appliedLabel: string;
-  /** "Afficher 2 résultats" */
-  showResultsLabel: string;
-  categories: FilterOptionModel[];
-  statuses: FilterOptionModel[];
-  emitters: { value: string; label: string }[];
-  emitter: string;
-  from: string;
-  to: string;
-}
-
-/** State of the sort icon of a column; a click moves to the next one. */
-export type SortState = 'neutral' | 'asc' | 'desc';
-
-export interface SortColumnModel {
-  state: SortState;
-  /** "Trier par Taille (ordre croissant)" */
-  label: string;
-}
-
-export interface DocumentRowModel {
-  id: string;
-  /** Remix Icon class of the document kind, e.g. `ri-file-text-line`. */
-  icon: string;
-  name: string;
-  category: string;
-  date: string;
-  format: string;
-  size: string;
-  emitter: string;
-  status: StatusViewModel;
-}
-
-export interface FilterOptionModel {
-  id: string;
-  label: string;
-  count: number;
-  checked: boolean;
-}
-
-const CATEGORY_ICONS: Record<DocumentCategory, string> = {
-  SICK_LEAVE: 'ri-first-aid-kit-line',
-  PROOF: 'ri-file-check-line',
-  ADMINISTRATIVE: 'ri-file-text-line',
-  OTHER: 'ri-file-line',
-};
-
-const STATUS_TONES: Record<DocumentStatus, StatusTone> = {
-  NEW: 'info',
-  SEEN: 'neutral',
-  PROCESSED: 'done',
-  PENDING: 'warning',
-};
-
-/** Order of the filter options: the order of the upload form. */
-const CATEGORY_OPTIONS: readonly DocumentCategory[] = ['SICK_LEAVE', 'PROOF', 'ADMINISTRATIVE', 'OTHER'];
-const STATUS_OPTIONS: readonly DocumentStatus[] = ['NEW', 'SEEN', 'PROCESSED', 'PENDING'];
-
-/** Presents the documents list of the signed-in employee. */
+/**
+ * Presents the documents list of the signed-in employee. Each part of the
+ * screen has its own presenter; this one assembles them.
+ */
 export class DocumentsPresenter {
-  constructor(private readonly i18n: I18n = appI18n) {}
+  private readonly rows: DocumentRowPresenter;
+  private readonly filters: DocumentFiltersPresenter;
+  private readonly activeFilters: DocumentActiveFiltersPresenter;
+  private readonly sort: DocumentSortPresenter;
+  private readonly counts = new CountLabelPresenter();
 
-  /** `criteria` are the ones `state` resolved to: a period half typed applies no filter. */
+  constructor(private readonly i18n: I18n = appI18n) {
+    this.rows = new DocumentRowPresenter(i18n);
+    this.filters = new DocumentFiltersPresenter(i18n);
+    this.activeFilters = new DocumentActiveFiltersPresenter(i18n);
+    this.sort = new DocumentSortPresenter(i18n);
+  }
+
+  /** `criteria` are the ones `state` resolved to, those the list was asked with. */
   present(
     list: DocumentList,
     state: DocumentsListState,
     criteria: DocumentListCriteria,
   ): DocumentsViewModel {
-    const activeFilters = this.presentActiveFilters(state, criteria);
-    const narrowed = activeFilters.length > 0 || state.search.trim() !== '';
+    const labels = this.i18n.messages.documents.list;
+    const activeFilters = this.activeFilters.present(criteria);
+    const narrowed = activeFilters.length > 0 || criteria.search !== '';
     return {
       appliedFilterCount: activeFilters.length,
       resultSummary: this.presentSummary(list, narrowed),
       canClearFilters: activeFilters.length > 0,
       activeFilters,
-      filters: this.presentFilters(list, state, activeFilters.length),
-      sort: this.presentSort(state),
-      documents: list.items.map((item) => this.presentRow(item)),
-      emptyMessage: list.total === 0 ? this.labels.list.emptyVault : this.labels.list.empty,
+      filters: this.filters.present(list, state, activeFilters.length),
+      sort: this.sort.present(state),
+      documents: list.items.map((item) => this.rows.present(item)),
+      emptyMessage: list.total === 0 ? labels.emptyVault : labels.empty,
     };
-  }
-
-  private get labels() {
-    return this.i18n.messages.documents;
-  }
-
-  private presentRow(item: DocumentSummary): DocumentRowModel {
-    return {
-      id: item.id,
-      icon: CATEGORY_ICONS[item.category],
-      name: item.name,
-      category: this.labels.categories[item.category],
-      date: this.presentDate(new Date(item.createdAt)),
-      format: this.labels.formats[item.format],
-      size: this.presentSize(item.sizeBytes),
-      emitter: this.labels.emitters[item.emitter],
-      status: { label: this.labels.statuses[item.status], tone: STATUS_TONES[item.status] },
-    };
-  }
-
-  private presentFilters(
-    list: DocumentList,
-    state: DocumentsListState,
-    appliedCount: number,
-  ): DocumentFiltersModel {
-    const filters = this.labels.filters;
-    return {
-      appliedLabel: this.plural(appliedCount, filters.applied),
-      showResultsLabel: this.plural(list.items.length, filters.showResults),
-      categories: CATEGORY_OPTIONS.map((category) => ({
-        id: category,
-        label: this.labels.categories[category],
-        count: list.categoryCounts[category],
-        checked: state.categories.includes(category),
-      })),
-      statuses: STATUS_OPTIONS.map((status) => ({
-        id: status,
-        label: this.labels.statuses[status],
-        count: list.statusCounts[status],
-        checked: state.statuses.includes(status),
-      })),
-      emitters: [
-        { value: ALL_EMITTERS, label: filters.emitterAll },
-        { value: DocumentEmitter.HR, label: this.labels.emitters.HR },
-        { value: DocumentEmitter.SELF, label: this.labels.emitters.SELF },
-      ],
-      emitter: state.emitter ?? ALL_EMITTERS,
-      from: state.from,
-      to: state.to,
-    };
-  }
-
-  private presentActiveFilters(
-    state: DocumentsListState,
-    criteria: DocumentListCriteria,
-  ): ActiveFilterModel[] {
-    const filters = this.labels.filters;
-    const chips: ActiveFilterModel[] = [];
-    if (state.categories.length > 0) {
-      chips.push({
-        key: 'categories',
-        label: filters.category,
-        value: DOCUMENT_CATEGORIES.filter((c) => state.categories.includes(c))
-          .map((c) => this.labels.categories[c])
-          .join(', '),
-      });
-    }
-    if (state.statuses.length > 0) {
-      chips.push({
-        key: 'statuses',
-        label: filters.status,
-        value: DOCUMENT_STATUSES.filter((s) => state.statuses.includes(s))
-          .map((s) => this.labels.statuses[s])
-          .join(', '),
-      });
-    }
-    const period = this.presentPeriod(
-      criteria.from === null ? '' : this.presentDay(criteria.from),
-      criteria.to === null ? '' : this.presentDay(criteria.to),
-    );
-    if (period !== null) {
-      chips.push({ key: 'period', label: filters.period, value: period });
-    }
-    if (state.emitter !== null) {
-      chips.push({ key: 'emitter', label: filters.emitter, value: this.labels.emitters[state.emitter] });
-    }
-    return chips;
-  }
-
-  private presentPeriod(from: string, to: string): string | null {
-    const values = this.labels.filters.periodValue;
-    if (from !== '' && to !== '') {
-      return values.between.replace('{from}', from).replace('{to}', to);
-    }
-    if (from !== '') {
-      return values.from.replace('{from}', from);
-    }
-    if (to !== '') {
-      return values.to.replace('{to}', to);
-    }
-    return null;
-  }
-
-  private presentSort(state: DocumentsListState): Record<DocumentSort, SortColumnModel> {
-    const labels = this.labels.list;
-    const columns: Record<DocumentSort, string> = {
-      NAME: labels.columns.name,
-      CATEGORY: labels.columns.category,
-      DATE: labels.columns.date,
-      SIZE: labels.columns.size,
-      STATUS: this.i18n.messages.common.status,
-    };
-    return Object.fromEntries(
-      DOCUMENT_SORTS.map((sort) => {
-        const sorted = state.sort === sort;
-        const direction = state.direction === DocumentSortDirection.ASC ? 'ASC' : 'DESC';
-        const sortState: SortState = !sorted ? 'neutral' : direction === 'ASC' ? 'asc' : 'desc';
-        return [
-          sort,
-          {
-            state: sortState,
-            label: labels.sort.label
-              .replace('{column}', columns[sort])
-              .replace('{state}', labels.sort[sorted ? direction : 'NONE']),
-          },
-        ];
-      }),
-    ) as Record<DocumentSort, SortColumnModel>;
   }
 
   private presentSummary(list: DocumentList, narrowed: boolean): string {
-    const results = this.labels.list.results;
+    const results = this.i18n.messages.documents.list.results;
     const total = String(list.total);
     if (!narrowed) {
       return (list.total === 1 ? results.allOne : results.allOther).replace('{total}', total);
     }
-    return this.plural(list.items.length, results).replace('{total}', total);
-  }
-
-  /** `aaaa-mm-jj` → `jj/mm/aaaa`. */
-  private presentDay(day: string): string {
-    const [year, month, date] = day.split('-');
-    return `${date}/${month}/${year}`;
-  }
-
-  /** `jj/mm/aaaa`, in the time zone of the device. */
-  private presentDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    return `${day}/${month}/${date.getFullYear()}`;
-  }
-
-  /** "188 Ko", "1,4 Mo". */
-  private presentSize(bytes: number): string {
-    const sizes = this.labels.sizes;
-    if (bytes < 1024) {
-      return sizes.bytes.replace('{size}', String(bytes));
-    }
-    if (bytes < 1024 * 1024) {
-      return sizes.kilobytes.replace('{size}', String(Math.round(bytes / 1024)));
-    }
-    const megabytes = (bytes / (1024 * 1024)).toFixed(1).replace('.0', '');
-    return sizes.megabytes.replace('{size}', megabytes.replace('.', ','));
-  }
-
-  private plural(count: number, forms: { one: string; other: string; none?: string }): string {
-    if (count === 0 && forms.none !== undefined) {
-      return forms.none;
-    }
-    return (count === 1 ? forms.one : forms.other).replace('{count}', String(count));
+    return this.counts.present(list.items.length, results).replace('{total}', total);
   }
 }

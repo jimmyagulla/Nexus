@@ -1,6 +1,7 @@
 import {
   InMemoryDocumentFileStorage,
   InMemoryDocumentRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -15,6 +16,8 @@ import {
 import { DownloadDocumentUseCase } from './download-document.use-case';
 import { ViewDocumentUseCase } from './view-document.use-case';
 
+const ids = new RandomUuidGenerator();
+
 const owner: ActorContext = { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE };
 
 function pending(storageKey: string): Document {
@@ -26,9 +29,9 @@ function pending(storageKey: string): Document {
 }
 
 async function setUp() {
-  const files = new InMemoryDocumentFileStorage();
+  const files = new InMemoryDocumentFileStorage(ids);
   const key = await files.store({ folder: 'c1/u1', contentType: 'application/pdf', content: Uint8Array.from([0x25, 0x50, 0x44, 0x46]) });
-  const documents = new InMemoryDocumentRepository();
+  const documents = new InMemoryDocumentRepository(ids);
   await documents.save(pending(key));
   return {
     documents,

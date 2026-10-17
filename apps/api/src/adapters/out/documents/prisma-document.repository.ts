@@ -6,11 +6,12 @@ import {
   DocumentEmitter,
   DocumentList,
   DocumentListCriteria,
-  DocumentListScope,
   DocumentSort,
   DocumentSortDirection,
   DocumentStatus,
+  documentPeriodBounds,
   toDocumentSummary,
+  OwnerScope,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IDocumentRepository,
@@ -19,8 +20,6 @@ import {
 import { Prisma } from '../../../infrastructure/prisma/prisma-client';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import { toDocument, toDocumentColumns } from './prisma-document.mapper';
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 export class PrismaDocumentRepository implements IDocumentRepository {
   constructor(private readonly prisma: PrismaDb) {}
@@ -49,7 +48,7 @@ export class PrismaDocumentRepository implements IDocumentRepository {
   }
 
   async list(
-    scope: DocumentListScope,
+    scope: OwnerScope,
     criteria: DocumentListCriteria,
   ): Promise<DocumentList> {
     const owned = { companyId: scope.companyId, ownerId: scope.ownerId };
@@ -71,7 +70,7 @@ export class PrismaDocumentRepository implements IDocumentRepository {
   }
 
   private conditionsOf(
-    scope: DocumentListScope,
+    scope: OwnerScope,
     criteria: DocumentListCriteria,
   ): Prisma.DocumentWhereInput[] {
     const conditions: Prisma.DocumentWhereInput[] = [];
@@ -94,20 +93,19 @@ export class PrismaDocumentRepository implements IDocumentRepository {
     if (criteria.emitters.length > 0) {
       conditions.push({ OR: criteria.emitters.map((emitter) => this.emittedBy(scope, emitter)) });
     }
-    if (criteria.from !== null) {
-      conditions.push({ createdAt: { gte: new Date(`${criteria.from}T00:00:00.000Z`) } });
+    const period = documentPeriodBounds(criteria.from, criteria.to);
+    if (period.start !== null) {
+      conditions.push({ createdAt: { gte: period.start } });
     }
-    if (criteria.to !== null) {
-      conditions.push({
-        createdAt: { lt: new Date(new Date(`${criteria.to}T00:00:00.000Z`).getTime() + DAY_MS) },
-      });
+    if (period.end !== null) {
+      conditions.push({ createdAt: { lt: period.end } });
     }
     return conditions;
   }
 
   /** The owner deposited the document themself, or someone from HR did. */
   private emittedBy(
-    scope: DocumentListScope,
+    scope: OwnerScope,
     emitter: DocumentEmitter,
   ): Prisma.DocumentWhereInput {
     return emitter === DocumentEmitter.SELF

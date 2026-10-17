@@ -5,6 +5,7 @@ import { InMemoryAuditLogRepository } from '@hexagonal-monorepo-template/adapter
 import { IAuditLogRepository } from '@hexagonal-monorepo-template/ports';
 import { PrismaAuditLogRepository } from '../../adapters/out/audit/prisma-audit-log.repository';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
+import { IdGeneratorModule } from '../id/id-generator.module';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { AuditModule } from './audit.module';
 
@@ -39,7 +40,7 @@ async function auditRepository(
   prisma?: PrismaDb,
 ): Promise<IAuditLogRepository> {
   const moduleRef = await Test.createTestingModule({
-    imports: [testGlobals(env, prisma), AuditModule],
+    imports: [testGlobals(env, prisma), IdGeneratorModule, AuditModule],
   }).compile();
 
   return moduleRef.get<IAuditLogRepository>(IAuditLogRepository);

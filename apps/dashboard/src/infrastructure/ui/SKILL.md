@@ -9,6 +9,13 @@ description: >-
 
 # Steering: UI Components (Infrastructure)
 
+## Where a component lives
+- `shared/`: the shadcn/ui primitives and the components built the shadcn way on top of them (`calendar.tsx`, `date-picker.tsx`), kebab-case file names.
+- `common/<kind>/`: app components shared by several screens or features (`common/forms/FormField.tsx`, `common/errors/FieldError.tsx`). Before creating one, look for an existing one in `common/` and `shared/`.
+- `features/<domain>/`: the forms of a domain and the pieces only those forms use.
+- `views/<domain>/components/`: the pieces of the screens of a domain that are not part of a form.
+- A component used by two domains, or by no domain in particular, never stays in `features/<domain>/` or `views/<domain>/`: it moves to `common/`.
+
 ## Rules
 - **Humble Objects**: Components must be as simple as possible. No business logic, no complex data transformation.
 - **Purely Declarative**: Components should only handle display and routing events.

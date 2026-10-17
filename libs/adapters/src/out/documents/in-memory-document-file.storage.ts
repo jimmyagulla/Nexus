@@ -1,5 +1,7 @@
+import { toDataUrl } from '@hexagonal-monorepo-template/infrastructure';
 import {
   IDocumentFileStorage,
+  IIdGenerator,
   StoredFile,
 } from '@hexagonal-monorepo-template/ports';
 
@@ -10,8 +12,10 @@ import {
 export class InMemoryDocumentFileStorage implements IDocumentFileStorage {
   readonly files = new Map<string, StoredFile>();
 
+  constructor(private readonly ids: IIdGenerator) {}
+
   async store(file: StoredFile): Promise<string> {
-    const key = `${file.folder}/${globalThis.crypto.randomUUID()}`;
+    const key = `${file.folder}/${this.ids.next()}`;
     this.files.set(key, file);
     return key;
   }
@@ -25,14 +29,6 @@ export class InMemoryDocumentFileStorage implements IDocumentFileStorage {
     if (file === undefined) {
       throw new Error(`No file is kept under ${key}`);
     }
-    return `data:${file.contentType};base64,${this.base64(file.content)}`;
-  }
-
-  private base64(content: Uint8Array): string {
-    let binary = '';
-    for (const byte of content) {
-      binary += String.fromCharCode(byte);
-    }
-    return btoa(binary);
+    return toDataUrl(file.contentType, file.content);
   }
 }

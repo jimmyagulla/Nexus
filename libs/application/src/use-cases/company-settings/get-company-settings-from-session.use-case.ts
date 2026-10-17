@@ -1,13 +1,10 @@
-import {
-  CompanyScopedSession,
-  CompanySettingsSnapshot,
-  requireCompanyScopedSession,
-} from '@hexagonal-monorepo-template/domain';
+import { CompanySettingsSnapshot } from '@hexagonal-monorepo-template/domain';
 import {
   ICompanySettingsGateway,
   IGetCompanySettingsFromSession,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
+import { currentCompanySession } from '../../session/current-company-session';
 
 export class GetCompanySettingsFromSessionUseCase
   implements IGetCompanySettingsFromSession
@@ -18,14 +15,7 @@ export class GetCompanySettingsFromSessionUseCase
   ) {}
 
   async execute(): Promise<CompanySettingsSnapshot> {
-    const session = await this.currentCompanySession();
+    const session = await currentCompanySession(this.sessions);
     return this.companySettings.get(session.companyId, session.token);
-  }
-
-  private async currentCompanySession(): Promise<CompanyScopedSession> {
-    return requireCompanyScopedSession(
-      await this.sessions.getAccessToken(),
-      await this.sessions.getActor(),
-    );
   }
 }

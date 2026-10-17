@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { Company, CompanyName } from '@hexagonal-monorepo-template/domain';
 import { InMemoryCompanyRepository } from './in-memory-company.repository';
+import { RandomUuidGenerator } from '../id/random-uuid-generator';
+
+const ids = new RandomUuidGenerator();
 
 const ASSIGNED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 describe('InMemoryCompanyRepository', () => {
   it('assigns an id when inserting a company', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
 
     const company = await companies.insert(CompanyName.parse('Acme'));
 
@@ -17,7 +20,7 @@ describe('InMemoryCompanyRepository', () => {
   });
 
   it('assigns a different id to each inserted company', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
 
     const first = await companies.insert(CompanyName.parse('Acme'));
     const second = await companies.insert(CompanyName.parse('Globex'));
@@ -28,7 +31,7 @@ describe('InMemoryCompanyRepository', () => {
   });
 
   it('saves and finds a company by id', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     const company = Company.create('c1', CompanyName.parse('Acme'));
 
     await companies.save(company);
@@ -38,13 +41,13 @@ describe('InMemoryCompanyRepository', () => {
   });
 
   it('finds nothing in an empty collection', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
 
     expect(await companies.findById('c1')).toBeNull();
   });
 
   it('replaces a company saved again under the same id', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     const company = Company.create('c1', CompanyName.parse('Acme'));
     const renamed = company.rename(CompanyName.parse('Acme Corp'));
 
@@ -55,7 +58,7 @@ describe('InMemoryCompanyRepository', () => {
   });
 
   it('keeps two companies apart', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     const first = Company.create('c1', CompanyName.parse('Acme'));
     const second = Company.create('c2', CompanyName.parse('Globex'));
 
@@ -68,14 +71,14 @@ describe('InMemoryCompanyRepository', () => {
 
   it('reads the companies seeded through the injected collection', async () => {
     const company = Company.create('c1', CompanyName.parse('Acme'));
-    const companies = new InMemoryCompanyRepository(new Map([['c1', company]]));
+    const companies = new InMemoryCompanyRepository(ids, new Map([['c1', company]]));
 
     expect(await companies.findById('c1')).toEqual(company);
   });
 
   it('keeps two collections independent', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const other = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const other = new InMemoryCompanyRepository(ids);
 
     await companies.save(Company.create('c1', CompanyName.parse('Acme')));
 

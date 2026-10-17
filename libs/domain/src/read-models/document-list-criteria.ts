@@ -25,9 +25,3 @@ export type DocumentListCriteria = {
   sort: DocumentSort;
   direction: DocumentSortDirection;
 };
-
-/** The criteria a list is scoped to: one company, one owner. */
-export type DocumentListScope = {
-  companyId: string;
-  ownerId: string;
-};

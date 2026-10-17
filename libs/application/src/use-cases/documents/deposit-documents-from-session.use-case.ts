@@ -1,15 +1,14 @@
 import {
-  CompanyScopedSession,
   DocumentDepositRequest,
   DocumentSummary,
   prepareDocumentDeposit,
-  requireCompanyScopedSession,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IDepositDocumentsFromSession,
   IDocumentGateway,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
+import { currentCompanySession } from '../../session/current-company-session';
 
 /**
  * Checks the deposit with the same rules as the API before sending it, so
@@ -25,14 +24,7 @@ export class DepositDocumentsFromSessionUseCase
 
   async execute(request: DocumentDepositRequest): Promise<DocumentSummary[]> {
     const deposit = prepareDocumentDeposit(request);
-    const session = await this.currentCompanySession();
+    const session = await currentCompanySession(this.sessions);
     return this.documents.deposit(session.companyId, deposit, session.token);
-  }
-
-  private async currentCompanySession(): Promise<CompanyScopedSession> {
-    return requireCompanyScopedSession(
-      await this.sessions.getAccessToken(),
-      await this.sessions.getActor(),
-    );
   }
 }

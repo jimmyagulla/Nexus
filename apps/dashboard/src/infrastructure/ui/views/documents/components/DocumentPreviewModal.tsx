@@ -10,7 +10,7 @@ import {
   ModalContent,
 } from '../../../shared/dialog';
 import { DocumentViewer } from './DocumentViewer';
-import type { DocumentPreview } from '../../../hooks/useViewDocument';
+import type { DocumentPreview } from '../../../hooks/documents/useViewDocument';
 
 interface DocumentPreviewModalProps {
   open: boolean;

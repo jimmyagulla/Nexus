@@ -2,8 +2,8 @@ import {
   Document,
   DocumentList,
   DocumentListCriteria,
-  DocumentListScope,
   DocumentProps,
+  OwnerScope,
 } from '@hexagonal-monorepo-template/domain';
 
 /** A document about to be recorded: everything but its identifier. */
@@ -15,7 +15,7 @@ export interface IDocumentRepository {
   save(document: Document): Promise<void>;
   findById(documentId: string): Promise<Document | null>;
   list(
-    scope: DocumentListScope,
+    scope: OwnerScope,
     criteria: DocumentListCriteria,
   ): Promise<DocumentList>;
 }

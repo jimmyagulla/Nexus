@@ -1,6 +1,6 @@
-import { randomUUID } from 'node:crypto';
 import {
   IDocumentFileStorage,
+  IIdGenerator,
   StoredFile,
 } from '@hexagonal-monorepo-template/ports';
 import {
@@ -16,12 +16,15 @@ const LINK_LIFETIME_SECONDS = 60;
 export class SupabaseDocumentFileStorage implements IDocumentFileStorage {
   private readonly admin: ReturnType<typeof createSupabaseAdmin>;
 
-  constructor(config: SupabaseServerConfig) {
+  constructor(
+    config: SupabaseServerConfig,
+    private readonly ids: IIdGenerator,
+  ) {
     this.admin = createSupabaseAdmin(config);
   }
 
   async store(file: StoredFile): Promise<string> {
-    const key = `${file.folder}/${randomUUID()}`;
+    const key = `${file.folder}/${this.ids.next()}`;
     const { error } = await this.bucket().upload(key, file.content, {
       contentType: file.contentType,
       upsert: false,

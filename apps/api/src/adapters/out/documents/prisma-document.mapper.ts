@@ -1,29 +1,12 @@
 import {
   Document,
-  DocumentCategory,
   DocumentComment,
-  DocumentFileFormat,
   DocumentName,
   DocumentProps,
-  DocumentStatus,
 } from '@hexagonal-monorepo-template/domain';
+import type { Document as DocumentRecord } from '../../../infrastructure/prisma/prisma-client';
 
-export type PrismaDocumentRow = {
-  id: string;
-  companyId: string;
-  ownerId: string;
-  uploadedById: string;
-  name: string;
-  category: DocumentCategory;
-  status: DocumentStatus;
-  format: DocumentFileFormat;
-  sizeBytes: number;
-  comment: string | null;
-  storageKey: string;
-  createdAt: Date;
-};
-
-export function toDocument(row: PrismaDocumentRow): Document {
+export function toDocument(row: DocumentRecord): Document {
   return new Document({
     id: row.id,
     companyId: row.companyId,
@@ -43,7 +26,7 @@ export function toDocument(row: PrismaDocumentRow): Document {
 /** Columns of a document, from a document or a document about to be recorded. */
 export function toDocumentColumns(
   document: Omit<DocumentProps, 'id'>,
-): Omit<PrismaDocumentRow, 'id'> {
+): Omit<DocumentRecord, 'id'> {
   return {
     companyId: document.companyId,
     ownerId: document.ownerId,

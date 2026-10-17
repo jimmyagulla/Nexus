@@ -1,6 +1,6 @@
 import type { ExpenseReportPageComposition } from '../../../composition/expense-report/expense-report-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetExpenseReport } from '../../hooks/useGetExpenseReport';
+import { useGetExpenseReport } from '../../hooks/expense-reports/useGetExpenseReport';
 import { i18n } from '../../i18n/i18n';
 import { ExpenseReport } from './ExpenseReport';
 

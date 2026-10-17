@@ -11,6 +11,7 @@ import {
   FixedClock,
   InMemoryDocumentFileStorage,
   InMemoryDocumentRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -28,6 +29,8 @@ import { AuthenticatedRequest } from '../common/guards/authenticated-request';
 import { SuccessResponseInterceptor } from '../common/interceptors/success-response.interceptor';
 import { createValidationPipe } from '../common/pipes/create-validation.pipe';
 import { DocumentsController } from './documents.controller';
+
+const ids = new RandomUuidGenerator();
 
 const employee: ActorContext = { userId: 'user-1', companyId: 'company-1', role: UserRole.EMPLOYEE };
 const DOCUMENTS_PATH = '/companies/company-1/documents';
@@ -63,8 +66,8 @@ function depositForm(
 }
 
 beforeAll(async () => {
-  documents = new InMemoryDocumentRepository();
-  files = new InMemoryDocumentFileStorage();
+  documents = new InMemoryDocumentRepository(ids);
+  files = new InMemoryDocumentFileStorage(ids);
   const moduleRef = await Test.createTestingModule({
     controllers: [DocumentsController],
     providers: [

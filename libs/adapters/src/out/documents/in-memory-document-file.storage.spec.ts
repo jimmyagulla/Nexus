@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { InMemoryDocumentFileStorage } from './in-memory-document-file.storage';
+import { RandomUuidGenerator } from '../id/random-uuid-generator';
+
+const ids = new RandomUuidGenerator();
 
 const file = { folder: 'c1/u1', contentType: 'application/pdf', content: Uint8Array.from([0x25, 0x50, 0x44, 0x46]) };
 
 describe('InMemoryDocumentFileStorage', () => {
   it('keeps a file under a fresh key inside its folder', async () => {
-    const storage = new InMemoryDocumentFileStorage();
+    const storage = new InMemoryDocumentFileStorage(ids);
 
     const first = await storage.store(file);
     const second = await storage.store(file);
@@ -16,7 +19,7 @@ describe('InMemoryDocumentFileStorage', () => {
   });
 
   it('forgets a removed file', async () => {
-    const storage = new InMemoryDocumentFileStorage();
+    const storage = new InMemoryDocumentFileStorage(ids);
     const key = await storage.store(file);
 
     await storage.remove(key);
@@ -25,13 +28,13 @@ describe('InMemoryDocumentFileStorage', () => {
   });
 
   it('links to a file with a data URL carrying its content', async () => {
-    const storage = new InMemoryDocumentFileStorage();
+    const storage = new InMemoryDocumentFileStorage(ids);
     const key = await storage.store(file);
 
     await expect(storage.linkTo(key)).resolves.toBe('data:application/pdf;base64,JVBERg==');
   });
 
   it('refuses to link to a file it does not keep', async () => {
-    await expect(new InMemoryDocumentFileStorage().linkTo('c1/u1/missing')).rejects.toThrow();
+    await expect(new InMemoryDocumentFileStorage(ids).linkTo('c1/u1/missing')).rejects.toThrow();
   });
 });

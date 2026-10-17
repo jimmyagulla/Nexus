@@ -6,15 +6,10 @@ import {
   createDocumentsPageComposition,
   type DocumentsPageComposition,
 } from './documents-page.composition';
-import {
-  createDocumentSentPageComposition,
-  type DocumentSentPageComposition,
-} from './document-sent-page.composition';
 
 /** Compositions of the document pages. The upload form opens over the list. */
 export type DocumentComposition = {
   documents: DocumentsPageComposition;
-  documentSent: DocumentSentPageComposition;
 };
 
 export function createDocumentComposition(
@@ -23,6 +18,5 @@ export function createDocumentComposition(
 ): DocumentComposition {
   return {
     documents: createDocumentsPageComposition(httpClient, sessions),
-    documentSent: createDocumentSentPageComposition(),
   };
 }

@@ -1,6 +1,5 @@
 import {
-  ApiCompanySettingsGateway,
-  InMemoryHttpClient,
+  InMemoryCompanySettingsGateway,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -17,9 +16,9 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-const renamed: CompanySettingsSnapshot = {
+const acme: CompanySettingsSnapshot = {
   id: 'c1',
-  name: 'Nexus',
+  name: 'Acme',
   nonWorkingWeekdays: [],
   publicHolidays: [],
 };
@@ -27,11 +26,9 @@ const renamed: CompanySettingsSnapshot = {
 function useCaseFor(
   session: InMemorySessionGateway,
 ): RenameCompanyFromSessionUseCase {
-  const http = new InMemoryHttpClient();
-  http.reply('patch', 'companies/c1/name', { status: 200, data: renamed });
   return new RenameCompanyFromSessionUseCase(
     session,
-    new ApiCompanySettingsGateway(http),
+    new InMemoryCompanySettingsGateway(new Map([['c1', acme]])),
   );
 }
 
@@ -39,7 +36,7 @@ describe('RenameCompanyFromSessionUseCase', () => {
   it('renames the company of the signed-in actor', async () => {
     const useCase = useCaseFor(new InMemorySessionGateway('token', actor));
 
-    await expect(useCase.execute('Nexus')).resolves.toEqual(renamed);
+    await expect(useCase.execute('Nexus')).resolves.toEqual({ ...acme, name: 'Nexus' });
   });
 
   it('refuses when the session carries no company', async () => {

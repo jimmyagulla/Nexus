@@ -7,7 +7,6 @@ export const AppRoutes = {
   payslip: '/bulletins/$payslipId',
   documents: '/documents',
   documentUpload: '/documents/deposer',
-  documentSent: '/documents/transmis',
   documentsToSend: '/documents-a-transmettre',
   leaves: '/conges',
   leaveRequest: '/conges/nouvelle-demande',

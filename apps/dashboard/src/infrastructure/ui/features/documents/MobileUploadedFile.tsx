@@ -1,7 +1,7 @@
 import type { UseFormRegisterReturn } from 'react-hook-form';
 import { i18n } from '../../i18n/i18n';
 import { Input } from '../../shared/input';
-import { FieldError } from './FieldError';
+import { FieldError } from '../../common/errors/FieldError';
 
 interface MobileUploadedFileProps {
   id: string;

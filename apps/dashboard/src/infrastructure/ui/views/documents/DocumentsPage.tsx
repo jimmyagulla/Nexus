@@ -4,18 +4,18 @@ import { useShallow } from 'zustand/react/shallow';
 import type { DocumentsPageComposition } from '../../../composition/document/documents-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
-import { useDepositDocuments } from '../../hooks/useDepositDocuments';
-import { useDownloadDocument } from '../../hooks/useDownloadDocument';
-import { useGetDocuments } from '../../hooks/useGetDocuments';
+import { useDepositDocuments } from '../../hooks/documents/useDepositDocuments';
+import { useDownloadDocument } from '../../hooks/documents/useDownloadDocument';
+import { useGetDocuments } from '../../hooks/documents/useGetDocuments';
 import { useToast } from '../../hooks/use-toast';
-import { useViewDocument } from '../../hooks/useViewDocument';
+import { useViewDocument } from '../../hooks/documents/useViewDocument';
 import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { useDocumentsListStore } from '../../stores/documents-list.store';
 import { Documents } from './Documents';
 import { DocumentPreviewModal } from './components/DocumentPreviewModal';
 import { DocumentUploadModal } from './components/DocumentUploadModal';
-import { saveFile } from '../../../network/document-files';
+import { saveFile } from '../../lib/save-file';
 import type { DocumentsListHandlers } from './components/documents-list.handlers';
 import type { DocumentUploadValues } from '../../features/documents/document-upload.schema';
 
@@ -31,8 +31,8 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
   const navigate = useNavigate();
   const { successToast, errorToast } = useToast();
   const list = useDocumentsListStore(
-    useShallow(({ search, categories, statuses, emitter, from, to, sort, direction }) => ({
-      search, categories, statuses, emitter, from, to, sort, direction,
+    useShallow(({ search, categories, statuses, emitters, from, to, sort, direction }) => ({
+      search, categories, statuses, emitters, from, to, sort, direction,
     })),
   );
   const actions = useDocumentsListStore.getState();

@@ -15,6 +15,7 @@ import {
   IDocumentFileStorage,
   IDocumentRepository,
   IDownloadDocument,
+  IIdGenerator,
   IListDocuments,
   IViewDocument,
 } from '@hexagonal-monorepo-template/ports';
@@ -29,29 +30,32 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
   providers: [
     {
       provide: IDocumentRepository,
-      useFactory: (config: ApiConfig, prisma?: PrismaDb) => {
+      useFactory: (config: ApiConfig, ids: IIdGenerator, prisma?: PrismaDb) => {
         if (config.persistence === 'postgres' && prisma !== undefined) {
           return new PrismaDocumentRepository(prisma);
         }
-        return new InMemoryDocumentRepository();
+        return new InMemoryDocumentRepository(ids);
       },
-      inject: [API_CONFIG, { token: IPrismaDb, optional: true }],
+      inject: [API_CONFIG, IIdGenerator, { token: IPrismaDb, optional: true }],
     },
     {
       provide: IDocumentFileStorage,
-      useFactory: (config: ApiConfig) => {
+      useFactory: (config: ApiConfig, ids: IIdGenerator) => {
         if (
           config.supabaseUrl !== undefined &&
           config.supabaseServiceRoleKey !== undefined
         ) {
-          return new SupabaseDocumentFileStorage({
-            url: config.supabaseUrl,
-            serviceRoleKey: config.supabaseServiceRoleKey,
-          });
+          return new SupabaseDocumentFileStorage(
+            {
+              url: config.supabaseUrl,
+              serviceRoleKey: config.supabaseServiceRoleKey,
+            },
+            ids,
+          );
         }
-        return new InMemoryDocumentFileStorage();
+        return new InMemoryDocumentFileStorage(ids);
       },
-      inject: [API_CONFIG],
+      inject: [API_CONFIG, IIdGenerator],
     },
     {
       provide: IListDocuments,

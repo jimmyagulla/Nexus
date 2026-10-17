@@ -1,5 +1,6 @@
 import {
   InMemoryCompanyRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -10,9 +11,11 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { GetCompanySettingsUseCase } from './get-company-settings.use-case';
 
+const ids = new RandomUuidGenerator();
+
 describe('GetCompanySettingsUseCase', () => {
   it('returns the recorded name and calendar', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     const company = Company.create('c1', CompanyName.parse('Acme'));
     await companies.save(company);
     const actor: ActorContext = {
@@ -35,7 +38,7 @@ describe('GetCompanySettingsUseCase', () => {
   });
 
   it('refuses another company like an unknown company', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(Company.create('c1', CompanyName.parse('Acme')));
     const actor: ActorContext = {
       userId: 'user-2',

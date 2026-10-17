@@ -1,5 +1,5 @@
 import { i18n } from '../../../i18n/i18n';
-import type { DocumentPreview } from '../../../hooks/useViewDocument';
+import type { DocumentPreview } from '../../../hooks/documents/useViewDocument';
 
 interface DocumentViewerProps {
   preview: DocumentPreview;

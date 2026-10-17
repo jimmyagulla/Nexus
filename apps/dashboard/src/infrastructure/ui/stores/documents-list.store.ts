@@ -14,7 +14,9 @@ interface DocumentsListStore extends DocumentsListState {
   setSearch: (search: string) => void;
   toggleCategory: (category: DocumentCategory) => void;
   toggleStatus: (status: DocumentStatus) => void;
+  /** One emitter, or null for every emitter. */
   setEmitter: (emitter: DocumentEmitter | null) => void;
+  /** Calendar day `aaaa-mm-jj`, or '' to drop that bound. */
   setFrom: (from: string) => void;
   setTo: (to: string) => void;
   /** Neutral → ascending → descending → neutral; another column starts ascending. */
@@ -23,18 +25,22 @@ interface DocumentsListStore extends DocumentsListState {
   clearFilters: () => void;
 }
 
-const noFilter = {
-  categories: [] as DocumentCategory[],
-  statuses: [] as DocumentStatus[],
-  emitter: null as DocumentEmitter | null,
-  from: '',
-  to: '',
+const noFilter: Pick<DocumentsListState, 'categories' | 'statuses' | 'emitters' | 'from' | 'to'> = {
+  categories: [],
+  statuses: [],
+  emitters: [],
+  from: null,
+  to: null,
 };
 
 function toggled<T>(values: readonly T[], value: T): T[] {
   return values.includes(value)
     ? values.filter((item) => item !== value)
     : [...values, value];
+}
+
+function dayOrNull(day: string): string | null {
+  return day === '' ? null : day;
 }
 
 /** Search, filters and ordering of the documents list; kept while navigating. */
@@ -49,9 +55,9 @@ export const useDocumentsListStore = create<DocumentsListStore>((set) => ({
     set((state) => ({ categories: toggled(state.categories, category) })),
   toggleStatus: (status) =>
     set((state) => ({ statuses: toggled(state.statuses, status) })),
-  setEmitter: (emitter) => set({ emitter }),
-  setFrom: (from) => set({ from }),
-  setTo: (to) => set({ to }),
+  setEmitter: (emitter) => set({ emitters: emitter === null ? [] : [emitter] }),
+  setFrom: (from) => set({ from: dayOrNull(from) }),
+  setTo: (to) => set({ to: dayOrNull(to) }),
   cycleSort: (sort) =>
     set((state) => {
       if (state.sort !== sort) {
@@ -68,9 +74,9 @@ export const useDocumentsListStore = create<DocumentsListStore>((set) => ({
       case 'statuses':
         return set({ statuses: [] });
       case 'period':
-        return set({ from: '', to: '' });
+        return set({ from: null, to: null });
       case 'emitter':
-        return set({ emitter: null });
+        return set({ emitters: [] });
     }
   },
   clearFilters: () => set(noFilter),

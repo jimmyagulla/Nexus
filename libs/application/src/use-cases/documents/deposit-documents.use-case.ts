@@ -6,8 +6,9 @@ import {
   documentFileFormatSpec,
   DocumentStatus,
   DocumentSummary,
+  OwnerScope,
   prepareDocumentDeposit,
-  requireDocumentOwnerScope,
+  requireOwnerScope,
   toDocumentSummary,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -17,8 +18,6 @@ import {
   IDocumentRepository,
   NewDocument,
 } from '@hexagonal-monorepo-template/ports';
-
-type OwnerScope = { companyId: string; ownerId: string };
 
 export class DepositDocumentsUseCase implements IDepositDocuments {
   constructor(
@@ -31,7 +30,7 @@ export class DepositDocumentsUseCase implements IDepositDocuments {
     actor: ActorContext;
     request: DocumentDepositRequest;
   }): Promise<DocumentSummary[]> {
-    const scope = requireDocumentOwnerScope(input.actor);
+    const scope = requireOwnerScope(input.actor);
     const deposit = prepareDocumentDeposit(input.request);
     const keys = await this.storeFiles(scope, deposit);
     const recorded = await this.recordDocuments(scope, deposit, keys);

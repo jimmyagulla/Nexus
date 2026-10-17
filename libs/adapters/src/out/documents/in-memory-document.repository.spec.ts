@@ -9,6 +9,9 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { NewDocument } from '@hexagonal-monorepo-template/ports';
 import { InMemoryDocumentRepository } from './in-memory-document.repository';
+import { RandomUuidGenerator } from '../id/random-uuid-generator';
+
+const ids = new RandomUuidGenerator();
 
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
@@ -25,7 +28,7 @@ function newDocument(name: string, sizeBytes: number, ownerId = 'u1'): NewDocume
 
 describe('InMemoryDocumentRepository', () => {
   it('gives every inserted document its own identifier', async () => {
-    const repository = new InMemoryDocumentRepository();
+    const repository = new InMemoryDocumentRepository(ids);
 
     const [first, second] = await repository.insertAll([newDocument('A', 1), newDocument('B', 2)]);
 
@@ -34,11 +37,11 @@ describe('InMemoryDocumentRepository', () => {
   });
 
   it('hands back nothing for an unknown identifier', async () => {
-    await expect(new InMemoryDocumentRepository().findById('missing')).resolves.toBeNull();
+    await expect(new InMemoryDocumentRepository(ids).findById('missing')).resolves.toBeNull();
   });
 
   it('lists the documents of one owner in the chosen order', async () => {
-    const repository = new InMemoryDocumentRepository();
+    const repository = new InMemoryDocumentRepository(ids);
     await repository.insertAll([newDocument('Small', 1), newDocument('Large', 9), newDocument('Other', 5, 'u2')]);
 
     const list = await repository.list({ companyId: 'c1', ownerId: 'u1' }, { ...everything, sort: DocumentSort.SIZE, direction: 'DESC' as const });
@@ -48,7 +51,7 @@ describe('InMemoryDocumentRepository', () => {
   });
 
   it('replaces a saved document', async () => {
-    const repository = new InMemoryDocumentRepository();
+    const repository = new InMemoryDocumentRepository(ids);
     const [document] = await repository.insertAll([newDocument('A', 1)]);
 
     await repository.save(document.view());

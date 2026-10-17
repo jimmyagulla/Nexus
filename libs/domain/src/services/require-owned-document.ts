@@ -15,14 +15,3 @@ export function requireOwnedDocument(
   }
   return document;
 }
-
-/** The scope of the documents an actor may list: their own, in their company. */
-export function requireDocumentOwnerScope(actor: ActorContext): {
-  companyId: string;
-  ownerId: string;
-} {
-  if (actor.companyId === null) {
-    throw new Error(ErrorCode.ACCESS_DENIED);
-  }
-  return { companyId: actor.companyId, ownerId: actor.userId };
-}

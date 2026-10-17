@@ -1,4 +1,4 @@
-import { FetchHttpClient } from '@hexagonal-monorepo-template/adapters';
+import { FetchHttpClient } from './network/fetch-http-client';
 import { loadDashboardConfig } from './config/load-dashboard-config';
 import { createCompanySettingsComposition } from './composition/company-settings.composition';
 import { createAuthComposition } from './composition/auth/auth.composition';

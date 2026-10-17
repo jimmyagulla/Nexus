@@ -2,7 +2,7 @@ import {
   ActorContext,
   DocumentList,
   DocumentListCriteria,
-  requireDocumentOwnerScope,
+  requireOwnerScope,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IDocumentRepository,
@@ -17,7 +17,7 @@ export class ListDocumentsUseCase implements IListDocuments {
     criteria: DocumentListCriteria;
   }): Promise<DocumentList> {
     return this.documents.list(
-      requireDocumentOwnerScope(input.actor),
+      requireOwnerScope(input.actor),
       input.criteria,
     );
   }

@@ -1,7 +1,7 @@
 import {
-  ApiCompanyPublicHolidaysGateway,
-  InMemoryHttpClient,
+  InMemoryCompanyPublicHolidaysGateway,
   InMemorySessionGateway,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -17,26 +17,22 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-const retained: CompanySettingsSnapshot = {
+const acme: CompanySettingsSnapshot = {
   id: 'c1',
   name: 'Acme',
   nonWorkingWeekdays: [],
-  publicHolidays: [
-    { id: 'ph-1', date: '2026-07-14', label: 'Bastille Day' },
-  ],
+  publicHolidays: [],
 };
 
 function useCaseFor(
   session: InMemorySessionGateway,
 ): AddCompanyPublicHolidayFromSessionUseCase {
-  const http = new InMemoryHttpClient();
-  http.reply('post', 'companies/c1/calendar/public-holidays', {
-    status: 200,
-    data: retained,
-  });
   return new AddCompanyPublicHolidayFromSessionUseCase(
     session,
-    new ApiCompanyPublicHolidaysGateway(http),
+    new InMemoryCompanyPublicHolidaysGateway(
+      new RandomUuidGenerator(),
+      new Map([['c1', acme]]),
+    ),
   );
 }
 
@@ -46,7 +42,12 @@ describe('AddCompanyPublicHolidayFromSessionUseCase', () => {
 
     await expect(
       useCase.execute({ date: '2026-07-14', label: 'Bastille Day' }),
-    ).resolves.toEqual(retained);
+    ).resolves.toEqual({
+      ...acme,
+      publicHolidays: [
+        { id: expect.any(String), date: '2026-07-14', label: 'Bastille Day' },
+      ],
+    });
   });
 
   it('refuses when the session carries no company', async () => {

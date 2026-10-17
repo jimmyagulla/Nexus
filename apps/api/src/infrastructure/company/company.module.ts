@@ -14,6 +14,7 @@ import {
   ICompanyIdentityBinder,
   ICompanyRepository,
   ICreateCompany,
+  IIdGenerator,
   IRenameCompany,
 } from '@hexagonal-monorepo-template/ports';
 import { CompanyController } from '../../adapters/http/company/company.controller';
@@ -29,19 +30,20 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
   providers: [
     {
       provide: ICompanyRepository,
-      useFactory: (config: ApiConfig, prisma?: PrismaDb) => {
+      useFactory: (config: ApiConfig, ids: IIdGenerator, prisma?: PrismaDb) => {
         if (config.persistence === 'postgres' && prisma !== undefined) {
           return new PrismaCompanyRepository(prisma);
         }
         if (config.authDisabled) {
           const company = localDevCompany();
           return new InMemoryCompanyRepository(
+            ids,
             new Map([[company.id, company]]),
           );
         }
-        return new InMemoryCompanyRepository();
+        return new InMemoryCompanyRepository(ids);
       },
-      inject: [API_CONFIG, { token: IPrismaDb, optional: true }],
+      inject: [API_CONFIG, IIdGenerator, { token: IPrismaDb, optional: true }],
     },
     {
       provide: ICompanyIdentityBinder,

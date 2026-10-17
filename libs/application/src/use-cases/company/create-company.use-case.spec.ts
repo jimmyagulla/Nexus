@@ -1,6 +1,7 @@
 import {
   InMemoryCompanyIdentityBinder,
   InMemoryCompanyRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -10,6 +11,8 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { CreateCompanyUseCase } from './create-company.use-case';
 
+const ids = new RandomUuidGenerator();
+
 const founder: ActorContext = {
   userId: 'user-1',
   companyId: null,
@@ -18,7 +21,7 @@ const founder: ActorContext = {
 
 describe('CreateCompanyUseCase', () => {
   it('rejects an empty company name', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     const identity = new InMemoryCompanyIdentityBinder();
     const useCase = new CreateCompanyUseCase(
       companies,
@@ -33,7 +36,7 @@ describe('CreateCompanyUseCase', () => {
 
   it('refuses an actor already bound to a company, without creating it nor rebinding', async () => {
     const stored = new Map<string, Company>();
-    const companies = new InMemoryCompanyRepository(stored);
+    const companies = new InMemoryCompanyRepository(ids, stored);
     const identity = new InMemoryCompanyIdentityBinder();
     await identity.bindEmployer('user-1', 'company-a');
     const useCase = new CreateCompanyUseCase(
@@ -52,7 +55,7 @@ describe('CreateCompanyUseCase', () => {
   });
 
   it('creates a company and binds the founder as employer', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     const identity = new InMemoryCompanyIdentityBinder();
     const useCase = new CreateCompanyUseCase(
       companies,
@@ -68,7 +71,7 @@ describe('CreateCompanyUseCase', () => {
 
   it('trims the company name', async () => {
     const useCase = new CreateCompanyUseCase(
-      new InMemoryCompanyRepository(),
+      new InMemoryCompanyRepository(ids),
       new InMemoryCompanyIdentityBinder(),
     );
 

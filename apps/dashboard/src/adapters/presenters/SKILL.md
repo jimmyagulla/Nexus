@@ -23,7 +23,9 @@ description: >-
 
 ## Layout
 - One folder per domain: `adapters/presenters/<domain>/`.
-- **One presenter per view model**: `<screen>.presenter.ts` declares the screen's `<Screen>ViewModel`, the sub-models it is made of (rows, items, cards), and the class `<Screen>Presenter` whose `present(): <Screen>ViewModel` produces it.
+- **One presenter per view model (mandatory)**: every view model — the screen model, each sub-model (a row, a card, a filter panel, a sort header) and each formatted value shared by several presenters (a file size, a count label) — has its own file `<model>.presenter.ts`, declaring the model and the class that presents it. A presenter has one responsibility and stays short: a file of several hundred lines, or formatting several models, is a defect.
+- **Parent presenter**: `<screen>.presenter.ts` declares `<Screen>ViewModel` and the class `<Screen>Presenter` whose `present(): <Screen>ViewModel` assembles the output of its child presenters. It builds its children itself (they are parts of it, from the same folder, not injected services), keeps none of their formatting, and re-exports their model types so that views import from one place. It may expose a one-line delegating method for a child model the view needs at render time (`presentFile` → `UploadedFilePresenter`).
+- Constants shared by the presenters of one domain (icons, display orders, tones) live in `<domain>/<domain>-display.ts`.
 - A sub-model shared by several screens is declared in one presenter file and imported by the others. Views and fixtures import view-model types from the presenter files; they never declare them.
 - Types that only the UI uses (static lists built by a view, legend tones…) stay in their component.
 - The display vocabulary shared by all view models (status tones, flow tones, progress steps, navigation targets) lives in `display.types.ts`. View models never import UI types.

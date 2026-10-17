@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from '../../shared/select';
 import { Textarea } from '../../shared/textarea';
-import { RequestFieldLabel } from './RequestFieldLabel';
 import { ExpenseTypeCard } from './ExpenseTypeCard';
 import type { ProfessionalExpenseFormModel } from '../../../../adapters/presenters/professional-expenses/professional-expense-request.presenter';
 
@@ -24,10 +23,12 @@ export function ProfessionalExpenseForm({
 
   return (
     <>
-      <div className="flex flex-col gap-2.5 border-b border-border px-6 py-4">
-        <span id="expense-type-label" className="text-14 font-bold">
-          <RequestFieldLabel text={labels.type} required />
-        </span>
+      <FormField
+        label={labels.type}
+        required
+        labelId="expense-type-label"
+        className="gap-2.5 border-b border-border px-6 py-4"
+      >
         <RadioGroup
           aria-labelledby="expense-type-label"
           defaultValue={request.type}
@@ -37,10 +38,11 @@ export function ProfessionalExpenseForm({
             <ExpenseTypeCard key={option.value} option={option} />
           ))}
         </RadioGroup>
-      </div>
+      </FormField>
       <div className="grid grid-cols-[1fr_2fr] gap-6 border-b border-border px-6 py-4">
         <FormField
-          label={<RequestFieldLabel text={labels.period} required />}
+          label={labels.period}
+          required
           htmlFor="expense-period"
         >
           <Select defaultValue={request.period}>
@@ -57,7 +59,8 @@ export function ProfessionalExpenseForm({
           </Select>
         </FormField>
         <FormField
-          label={<RequestFieldLabel text={labels.calculation} required />}
+          label={labels.calculation}
+          required
           htmlFor="expense-days"
           hint={labels.calculationHint}
         >
@@ -86,12 +89,8 @@ export function ProfessionalExpenseForm({
       </div>
       <div className="grid grid-cols-2 gap-6 px-6 py-4">
         <FormField
-          label={
-            <RequestFieldLabel
-              text={labels.description4}
-              note={i18n.messages.common.optional}
-            />
-          }
+          label={labels.description4}
+          optional
           htmlFor="expense-description"
         >
           <Textarea
@@ -101,7 +100,8 @@ export function ProfessionalExpenseForm({
           />
         </FormField>
         <FormField
-          label={<RequestFieldLabel text={labels.proof} note={labels.proofHint} />}
+          label={labels.proof}
+          note={labels.proofHint}
         >
           <div className="flex h-16 items-center justify-center gap-2 rounded-lg border border-dashed border-disabled bg-blue-25 text-13 text-muted-foreground">
             <i aria-hidden className="ri-upload-cloud-2-line text-20 text-link" />

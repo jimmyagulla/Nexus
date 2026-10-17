@@ -1,5 +1,6 @@
 import {
   InMemoryDocumentRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   Document,
@@ -13,6 +14,8 @@ import {
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { ListDocumentsUseCase } from './list-documents.use-case';
+
+const ids = new RandomUuidGenerator();
 
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
@@ -28,7 +31,7 @@ function doc(id: string, ownerId: string, companyId = 'c1', category: DocumentCa
 }
 
 async function repositoryWith(...documents: Document[]): Promise<InMemoryDocumentRepository> {
-  const repository = new InMemoryDocumentRepository();
+  const repository = new InMemoryDocumentRepository(ids);
   for (const document of documents) {
     await repository.save(document);
   }

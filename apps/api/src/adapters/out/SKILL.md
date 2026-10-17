@@ -12,6 +12,8 @@ Prisma repositories live only in the API so the frontend and shared libs are not
 - Implement existing out ports from `@hexagonal-monorepo-template/ports`.
 - Map Prisma rows to domain types.
 - Use the Prisma client types from `apps/api/src/infrastructure/prisma`.
+- Type a row of a single model with the generated model type (`import type { Document as DocumentRecord } from '…/prisma-client'`), never with a hand-written copy of its columns.
+- Draw identifiers (storage keys…) through an injected `IIdGenerator` — skill `single-technical-entry`.
 
 ## Forbidden
 

@@ -5,6 +5,9 @@ import {
   AuditSubject,
 } from '@hexagonal-monorepo-template/domain';
 import { InMemoryAuditLogRepository } from './in-memory-audit-log.repository';
+import { RandomUuidGenerator } from '../id/random-uuid-generator';
+
+const ids = new RandomUuidGenerator();
 
 const occurredAt = new Date('2026-10-06T10:00:00.000Z');
 
@@ -43,7 +46,7 @@ const ASSIGNED_ID =
 
 describe('InMemoryAuditLogRepository', () => {
   it('assigns an id when appending an event', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
 
     await audits.append({
       companyId: 'c1',
@@ -68,7 +71,7 @@ describe('InMemoryAuditLogRepository', () => {
   });
 
   it('assigns a different id to each appended event', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
     const draft = {
       companyId: 'c1',
       actorId: 'user-1',
@@ -88,7 +91,7 @@ describe('InMemoryAuditLogRepository', () => {
   });
 
   it('lists an appended event back under its company', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
     const event = eventOf('a1', 'c1', 'Acme');
 
     await audits.append(event);
@@ -97,7 +100,7 @@ describe('InMemoryAuditLogRepository', () => {
   });
 
   it('lists every event of the same company', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
     const first = eventOf('a1', 'c1', 'Acme');
     const second = eventOf('a2', 'c1', 'Acme Corp');
 
@@ -111,13 +114,13 @@ describe('InMemoryAuditLogRepository', () => {
   });
 
   it('lists nothing from an empty log', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
 
     expect(await audits.listByCompany('c1')).toEqual([]);
   });
 
   it('lists nothing for a company that carries no event', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
 
     await audits.append(eventOf('a1', 'c1', 'Acme'));
 
@@ -125,7 +128,7 @@ describe('InMemoryAuditLogRepository', () => {
   });
 
   it('keeps the events of two companies apart', async () => {
-    const audits = new InMemoryAuditLogRepository();
+    const audits = new InMemoryAuditLogRepository(ids);
     const ofFirst = eventOf('a1', 'c1', 'Acme');
     const ofSecond = eventOf('a2', 'c2', 'Globex');
 
@@ -138,7 +141,7 @@ describe('InMemoryAuditLogRepository', () => {
 
   it('lists the events seeded through the injected collection', async () => {
     const seeded = eventOf('a1', 'c1', 'Acme');
-    const audits = new InMemoryAuditLogRepository(new Map([['a1', seeded]]));
+    const audits = new InMemoryAuditLogRepository(ids, new Map([['a1', seeded]]));
 
     expect(await audits.listByCompany('c1')).toEqual([seeded]);
   });

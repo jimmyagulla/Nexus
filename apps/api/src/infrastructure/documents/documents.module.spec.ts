@@ -16,6 +16,7 @@ import {
 import { PrismaDocumentRepository } from '../../adapters/out/documents/prisma-document.repository';
 import { SupabaseDocumentFileStorage } from '../../adapters/out/documents/supabase-document-file.storage';
 import { ClockModule } from '../clock/clock.module';
+import { IdGeneratorModule } from '../id/id-generator.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { DocumentsModule } from './documents.module';
@@ -38,7 +39,7 @@ function testGlobals(env: Record<string, string | undefined>, prisma?: PrismaDb)
 
 function compile(env: Record<string, string | undefined>, prisma?: PrismaDb): Promise<TestingModule> {
   return Test.createTestingModule({
-    imports: [testGlobals(env, prisma), ClockModule, DocumentsModule],
+    imports: [testGlobals(env, prisma), ClockModule, IdGeneratorModule, DocumentsModule],
   }).compile();
 }
 

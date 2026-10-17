@@ -4,8 +4,10 @@ import {
   DocumentStatus,
   isDocumentEmitter,
 } from '@hexagonal-monorepo-template/domain';
+import { FormField } from '../../../common/forms/FormField';
 import { i18n } from '../../../i18n/i18n';
 import { Button } from '../../../shared/button';
+import { DatePicker } from '../../../shared/date-picker';
 import {
   SheetBody,
   SheetClose,
@@ -18,7 +20,6 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '../../../shared/toggle-group';
 import { FilterGroup } from './FilterGroup';
 import { FilterOption } from './FilterOption';
-import { PeriodField } from './PeriodField';
 import type { DocumentsListHandlers } from './documents-list.handlers';
 import type { DocumentFiltersModel } from '../../../../../adapters/presenters/documents/documents.presenter';
 
@@ -26,6 +27,10 @@ interface DocumentFiltersSheetProps {
   model: DocumentFiltersModel;
   handlers: DocumentsListHandlers;
 }
+
+/** "Du" / "Au" of the period: a small grey label over the date picker. */
+const PERIOD_FIELD = 'min-w-0 flex-1 gap-1';
+const PERIOD_LABEL = 'text-12 font-normal text-muted-foreground';
 
 /** Floating "Filtres" panel of the documents list. Filters apply as they change. */
 export function DocumentFiltersSheet({ model, handlers }: DocumentFiltersSheetProps) {
@@ -60,18 +65,32 @@ export function DocumentFiltersSheet({ model, handlers }: DocumentFiltersSheetPr
         </FilterGroup>
         <FilterGroup title={labels.period}>
           <div className="flex gap-2.5">
-            <PeriodField
+            <FormField
               label={labels.from}
-              placeholder={labels.datePlaceholder}
-              value={model.from}
-              onValueChange={handlers.onFromChange}
-            />
-            <PeriodField
+              htmlFor="documents-period-from"
+              className={PERIOD_FIELD}
+              labelClassName={PERIOD_LABEL}
+            >
+              <DatePicker
+                id="documents-period-from"
+                placeholder={labels.datePlaceholder}
+                value={model.from}
+                onValueChange={handlers.onFromChange}
+              />
+            </FormField>
+            <FormField
               label={labels.to}
-              placeholder={labels.datePlaceholder}
-              value={model.to}
-              onValueChange={handlers.onToChange}
-            />
+              htmlFor="documents-period-to"
+              className={PERIOD_FIELD}
+              labelClassName={PERIOD_LABEL}
+            >
+              <DatePicker
+                id="documents-period-to"
+                placeholder={labels.datePlaceholder}
+                value={model.to}
+                onValueChange={handlers.onToChange}
+              />
+            </FormField>
           </div>
         </FilterGroup>
         <FilterGroup title={labels.emitter}>

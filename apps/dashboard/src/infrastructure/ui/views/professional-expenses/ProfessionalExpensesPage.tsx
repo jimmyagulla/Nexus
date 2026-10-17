@@ -1,6 +1,6 @@
 import type { ProfessionalExpensesPageComposition } from '../../../composition/professional-expense/professional-expenses-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetProfessionalExpenses } from '../../hooks/useGetProfessionalExpenses';
+import { useGetProfessionalExpenses } from '../../hooks/professional-expenses/useGetProfessionalExpenses';
 import { i18n } from '../../i18n/i18n';
 import { ProfessionalExpenses } from './ProfessionalExpenses';
 

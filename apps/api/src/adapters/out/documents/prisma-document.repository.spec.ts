@@ -10,9 +10,9 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import { PrismaDocumentRepository } from './prisma-document.repository';
-import { PrismaDocumentRow } from './prisma-document.mapper';
+import type { Document as DocumentRecord } from '../../../infrastructure/prisma/prisma-client';
 
-const row: PrismaDocumentRow = {
+const row: DocumentRecord = {
   id: 'd1', companyId: 'c1', ownerId: 'u1', uploadedById: 'u1', name: 'Arrêt', category: DocumentCategory.SICK_LEAVE,
   status: DocumentStatus.PENDING, format: DocumentFileFormat.PDF, sizeBytes: 12, comment: null,
   storageKey: 'c1/u1/k', createdAt: new Date('2026-10-03T10:24:00Z'),
@@ -30,7 +30,7 @@ function fakePrisma(): { client: PrismaDb; recorded: Recorded } {
   const client = {
     $transaction: async (operations: Promise<unknown>[]) => Promise.all(operations),
     document: {
-      create: async (args: { data: Omit<PrismaDocumentRow, 'id'> }) => {
+      create: async (args: { data: Omit<DocumentRecord, 'id'> }) => {
         recorded.create.push(args);
         return { ...args.data, id: `id-${recorded.create.length}` };
       },

@@ -1,11 +1,19 @@
 import { Document } from '../entities/document';
 import { DocumentListCriteria } from '../read-models/document-list-criteria';
-import { DOCUMENT_CATEGORIES } from '../value-objects/document-category';
+import { DocumentList } from '../read-models/document-list';
+import { toDocumentSummary } from '../read-models/document-summary';
+import {
+  DOCUMENT_CATEGORIES,
+  DocumentCategory,
+} from '../value-objects/document-category';
 import {
   DocumentSort,
   DocumentSortDirection,
 } from '../value-objects/document-sort';
-import { DOCUMENT_STATUSES } from '../value-objects/document-status';
+import {
+  DOCUMENT_STATUSES,
+  DocumentStatus,
+} from '../value-objects/document-status';
 
 /**
  * Whether a document belongs to a list. The search matches the name
@@ -22,6 +30,35 @@ export function matchesDocumentListCriteria(
     includedIn(criteria.emitters, document.emitter) &&
     withinPeriod(document.createdAt, criteria.from, criteria.to)
   );
+}
+
+/**
+ * The list of one owner's documents for the criteria: the matching ones in
+ * order, and the counts the filters show, which ignore the criteria.
+ */
+export function toDocumentList(
+  owned: readonly Document[],
+  criteria: DocumentListCriteria,
+): DocumentList {
+  return {
+    items: owned
+      .filter((document) => matchesDocumentListCriteria(document, criteria))
+      .sort(compareDocuments(criteria.sort, criteria.direction))
+      .map(toDocumentSummary),
+    total: owned.length,
+    categoryCounts: countBy(DOCUMENT_CATEGORIES, owned, (document) => document.category),
+    statusCounts: countBy(DOCUMENT_STATUSES, owned, (document) => document.status),
+  };
+}
+
+function countBy<K extends DocumentCategory | DocumentStatus>(
+  keys: readonly K[],
+  documents: readonly Document[],
+  keyOf: (document: Document) => K,
+): Record<K, number> {
+  return Object.fromEntries(
+    keys.map((key) => [key, documents.filter((document) => keyOf(document) === key).length]),
+  ) as Record<K, number>;
 }
 
 /**
@@ -68,8 +105,30 @@ function includedIn<T>(allowed: readonly T[], value: T): boolean {
   return allowed.length === 0 || allowed.includes(value);
 }
 
-/** `from` and `to` are inclusive calendar days, compared in UTC. */
+/** Instants covered by a period: from `start` included to `end` excluded; null is unbounded. */
+export type DocumentPeriodBounds = { start: Date | null; end: Date | null };
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * `from` and `to` are inclusive calendar days (YYYY-MM-DD), in UTC: the period
+ * starts at midnight of `from` and ends at midnight of the day after `to`.
+ */
+export function documentPeriodBounds(
+  from: string | null,
+  to: string | null,
+): DocumentPeriodBounds {
+  return {
+    start: from === null ? null : startOfDay(from),
+    end: to === null ? null : new Date(startOfDay(to).getTime() + DAY_MS),
+  };
+}
+
+function startOfDay(day: string): Date {
+  return new Date(`${day}T00:00:00.000Z`);
+}
+
 function withinPeriod(createdAt: Date, from: string | null, to: string | null): boolean {
-  const day = createdAt.toISOString().slice(0, 10);
-  return (from === null || day >= from) && (to === null || day <= to);
+  const { start, end } = documentPeriodBounds(from, to);
+  return (start === null || createdAt >= start) && (end === null || createdAt < end);
 }

@@ -10,8 +10,6 @@ import {
   DocumentListCriteria,
   DocumentFileLink,
   DocumentSort,
-  DocumentSortDirection,
-  DocumentStatus,
   DocumentSummary,
 } from '@hexagonal-monorepo-template/domain';
 import {
@@ -21,20 +19,19 @@ import {
   IViewDocumentFromSession,
 } from '@hexagonal-monorepo-template/ports';
 
-/** What the documents screen shows, as the person sets it. */
-export interface DocumentsListState {
-  search: string;
-  categories: DocumentCategory[];
-  statuses: DocumentStatus[];
-  /** null: every emitter. */
-  emitter: DocumentEmitter | null;
-  /** Calendar days `aaaa-mm-jj`, or '' when none is chosen. */
-  from: string;
-  to: string;
+/**
+ * What the documents screen shows, as the person sets it: the domain criteria
+ * themselves, but for the categories and emitters the search matches (the
+ * controller resolves them from the labels) and an ordering that stays
+ * unchosen until a column is sorted.
+ */
+export type DocumentsListState = Omit<
+  DocumentListCriteria,
+  'searchCategories' | 'searchEmitters' | 'sort'
+> & {
   /** Column the list is ordered by; null keeps the default order. */
   sort: DocumentSort | null;
-  direction: DocumentSortDirection;
-}
+};
 
 /** Labels the search also matches, so that "maladie" finds the sick leaves. */
 export interface DocumentSearchVocabulary {
@@ -66,7 +63,7 @@ export class DocumentsController {
       searchEmitters: this.matching(DOCUMENT_EMITTERS, this.vocabulary.emitters, search),
       categories: [...state.categories].sort(),
       statuses: [...state.statuses].sort(),
-      emitters: state.emitter === null ? [] : [state.emitter],
+      emitters: [...state.emitters].sort(),
       from: this.calendarDayOf(state.from),
       to: this.calendarDayOf(state.to),
       sort: state.sort ?? DEFAULT_DOCUMENT_SORT,
@@ -102,9 +99,9 @@ export class DocumentsController {
   }
 
   /** The day when it is a real one, null otherwise. */
-  private calendarDayOf(day: string): string | null {
+  private calendarDayOf(day: string | null): string | null {
     try {
-      return day === '' ? null : CalendarDate.parse(day).value;
+      return day === null ? null : CalendarDate.parse(day).value;
     } catch {
       return null;
     }

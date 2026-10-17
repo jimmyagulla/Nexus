@@ -1,6 +1,6 @@
 import type { EmployeeAttendancePageComposition } from '../../../composition/employee/employee-attendance-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetEmployeeAttendance } from '../../hooks/useGetEmployeeAttendance';
+import { useGetEmployeeAttendance } from '../../hooks/employees/useGetEmployeeAttendance';
 import { i18n } from '../../i18n/i18n';
 import { EmployeeAttendance } from './EmployeeAttendance';
 

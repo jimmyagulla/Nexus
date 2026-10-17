@@ -1,8 +1,4 @@
-import {
-  ApiDocumentGateway,
-  InMemoryHttpClient,
-  InMemorySessionGateway,
-} from '@hexagonal-monorepo-template/adapters';
+import { InMemorySessionGateway } from '@hexagonal-monorepo-template/adapters';
 import {
   DepositDocumentsFromSessionUseCase,
   DownloadDocumentFromSessionUseCase,
@@ -16,10 +12,12 @@ import {
   DocumentStatus,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
+import { ApiDocumentGateway } from '../gateways/api-document.gateway';
+import { InMemoryHttpClient } from '../../infrastructure/network/in-memory-http-client';
 import { DocumentsController, DocumentsListState } from './documents.controller';
 
 const nothing: DocumentsListState = {
-  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE, direction: 'DESC' as const,
+  search: '', categories: [], statuses: [], emitters: [], from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 
 function controllerWith(http = new InMemoryHttpClient()): DocumentsController {
@@ -67,7 +65,7 @@ describe('DocumentsController', () => {
     const controller = controllerWith();
 
     expect(controller.criteriaFor({ ...nothing, from: '2026-10-01', to: '2026-10-31' })).toMatchObject({ from: '2026-10-01', to: '2026-10-31' });
-    expect(controller.criteriaFor({ ...nothing, from: '', to: '2026-02-31' })).toMatchObject({ from: null, to: null });
+    expect(controller.criteriaFor({ ...nothing, from: null, to: '2026-02-31' })).toMatchObject({ from: null, to: null });
   });
 
   it('keeps the most recent first while no column is sorted, and follows a sorted column otherwise', () => {
@@ -78,7 +76,7 @@ describe('DocumentsController', () => {
   });
 
   it('keeps one emitter when one is chosen', () => {
-    expect(controllerWith().criteriaFor({ ...nothing, emitter: DocumentEmitter.SELF }).emitters).toEqual([DocumentEmitter.SELF]);
+    expect(controllerWith().criteriaFor({ ...nothing, emitters: [DocumentEmitter.SELF] }).emitters).toEqual([DocumentEmitter.SELF]);
   });
 
   it('sends the bytes of each picked file with its name', async () => {

@@ -1,14 +1,13 @@
 import {
-  CompanyScopedSession,
   DocumentList,
   DocumentListCriteria,
-  requireCompanyScopedSession,
 } from '@hexagonal-monorepo-template/domain';
 import {
   IDocumentGateway,
   IListDocumentsFromSession,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
+import { currentCompanySession } from '../../session/current-company-session';
 
 export class ListDocumentsFromSessionUseCase
   implements IListDocumentsFromSession
@@ -19,14 +18,7 @@ export class ListDocumentsFromSessionUseCase
   ) {}
 
   async execute(criteria: DocumentListCriteria): Promise<DocumentList> {
-    const session = await this.currentCompanySession();
+    const session = await currentCompanySession(this.sessions);
     return this.documents.list(session.companyId, criteria, session.token);
-  }
-
-  private async currentCompanySession(): Promise<CompanyScopedSession> {
-    return requireCompanyScopedSession(
-      await this.sessions.getAccessToken(),
-      await this.sessions.getActor(),
-    );
   }
 }

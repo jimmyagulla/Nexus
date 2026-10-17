@@ -1,4 +1,5 @@
 import type { UseFormRegisterReturn } from 'react-hook-form';
+import { FieldError } from '../../common/errors/FieldError';
 import { UploadedFile } from '../../common/forms/UploadedFile';
 import { i18n } from '../../i18n/i18n';
 import { Input } from '../../shared/input';
@@ -42,11 +43,7 @@ export function DocumentFileEntry({
         aria-invalid={error !== null}
         {...nameField}
       />
-      {error !== null && (
-        <p role="alert" className="text-12 text-destructive">
-          {error}
-        </p>
-      )}
+      <FieldError message={error} />
     </div>
   );
 }

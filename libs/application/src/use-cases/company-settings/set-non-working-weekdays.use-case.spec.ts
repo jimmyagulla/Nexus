@@ -2,6 +2,7 @@ import {
   FixedClock,
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -13,6 +14,8 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { SetNonWorkingWeekdaysUseCase } from './set-non-working-weekdays.use-case';
 
+const ids = new RandomUuidGenerator();
+
 const actor: ActorContext = {
   userId: 'user-1',
   companyId: 'c1',
@@ -21,8 +24,8 @@ const actor: ActorContext = {
 
 describe('SetNonWorkingWeekdaysUseCase', () => {
   it('replaces habitual non-working weekdays and records the change', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const audits = new InMemoryAuditLogRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const audits = new InMemoryAuditLogRepository(ids);
     await companies.save(Company.create('c1', CompanyName.parse('Acme')));
 
     const settings = await new SetNonWorkingWeekdaysUseCase(
@@ -46,12 +49,12 @@ describe('SetNonWorkingWeekdaysUseCase', () => {
   });
 
   it('keeps a single entry per weekday', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(Company.create('c1', CompanyName.parse('Acme')));
 
     const settings = await new SetNonWorkingWeekdaysUseCase(
       companies,
-      new InMemoryAuditLogRepository(),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(new Date('2026-10-06T10:00:00.000Z')),
     ).execute({
       actor,
@@ -63,8 +66,8 @@ describe('SetNonWorkingWeekdaysUseCase', () => {
   });
 
   it('refuses another company and leaves its calendar untouched', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const audits = new InMemoryAuditLogRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const audits = new InMemoryAuditLogRepository(ids);
     await companies.save(Company.create('c2', CompanyName.parse('Other')));
     const useCase = new SetNonWorkingWeekdaysUseCase(
       companies,

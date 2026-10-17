@@ -4,15 +4,16 @@ import {
   ListDocumentsFromSessionUseCase,
   ViewDocumentFromSessionUseCase,
 } from '@hexagonal-monorepo-template/application';
-import { ApiDocumentGateway } from '@hexagonal-monorepo-template/adapters';
 import {
   IHttpClient,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
+import { ApiDocumentGateway } from '../../../adapters/gateways/api-document.gateway';
 import { DocumentsController } from '../../../adapters/controllers/documents.controller';
 import { DocumentUploadPresenter } from '../../../adapters/presenters/documents/document-upload.presenter';
 import { DocumentsPresenter } from '../../../adapters/presenters/documents/documents.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
+import { RemoteFileReader } from '../../network/remote-file-reader';
 import { i18n } from '../../ui/i18n/i18n';
 
 export type DocumentsPageComposition = {
@@ -20,6 +21,8 @@ export type DocumentsPageComposition = {
   presenter: DocumentsPresenter;
   uploadPresenter: DocumentUploadPresenter;
   errorPresenter: ErrorPresenter;
+  /** Reads the file behind the link of a viewed or downloaded document. */
+  files: RemoteFileReader;
 };
 
 export function createDocumentsPageComposition(
@@ -40,5 +43,6 @@ export function createDocumentsPageComposition(
     presenter: new DocumentsPresenter(),
     uploadPresenter: new DocumentUploadPresenter(),
     errorPresenter: new ErrorPresenter(),
+    files: new RemoteFileReader(httpClient),
   };
 }

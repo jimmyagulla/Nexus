@@ -6,7 +6,7 @@ import { DocumentFileFormat } from '../value-objects/document-file-format';
 import { DocumentName } from '../value-objects/document-name';
 import { DocumentSort } from '../value-objects/document-sort';
 import { DocumentStatus } from '../value-objects/document-status';
-import { compareDocuments, matchesDocumentListCriteria } from './document-list-rules';
+import { compareDocuments, documentPeriodBounds, matchesDocumentListCriteria } from './document-list-rules';
 
 function doc(id: string, overrides: Partial<{
   name: string; category: DocumentCategory; status: DocumentStatus; sizeBytes: number; createdAt: string; uploadedById: string;
@@ -107,5 +107,18 @@ describe('compareDocuments', () => {
 
   it('puts the most recent first among equals', () => {
     expect(ids([doc('old', { sizeBytes: 5, createdAt: '2026-01-01T00:00:00Z' }), doc('new', { sizeBytes: 5, createdAt: '2026-02-01T00:00:00Z' })], DocumentSort.SIZE)).toEqual(['new', 'old']);
+  });
+});
+
+describe('documentPeriodBounds', () => {
+  it('covers the inclusive days, from midnight UTC to the midnight after the last day', () => {
+    expect(documentPeriodBounds('2026-10-01', '2026-10-03')).toEqual({
+      start: new Date('2026-10-01T00:00:00.000Z'),
+      end: new Date('2026-10-04T00:00:00.000Z'),
+    });
+  });
+
+  it('leaves a missing side unbounded', () => {
+    expect(documentPeriodBounds(null, null)).toEqual({ start: null, end: null });
   });
 });

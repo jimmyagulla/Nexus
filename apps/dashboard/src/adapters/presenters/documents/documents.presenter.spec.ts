@@ -10,7 +10,7 @@ import type { DocumentsListState } from '../../controllers/documents.controller'
 import { DocumentsPresenter } from './documents.presenter';
 
 const nothing: DocumentsListState = {
-  search: '', categories: [], statuses: [], emitter: null, from: '', to: '', sort: DocumentSort.DATE, direction: 'DESC' as const,
+  search: '', categories: [], statuses: [], emitters: [], from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
 };
 const everything: DocumentListCriteria = {
   search: '', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
@@ -63,11 +63,17 @@ describe('DocumentsPresenter', () => {
       ...nothing,
       categories: [DocumentCategory.PROOF, DocumentCategory.SICK_LEAVE],
       statuses: [DocumentStatus.NEW],
-      emitter: DocumentEmitter.SELF,
+      emitters: [DocumentEmitter.SELF],
       from: '2026-10-01',
     };
 
-    const model = presenter.present(list, state, { ...everything, from: '2026-10-01' });
+    const model = presenter.present(list, state, {
+      ...everything,
+      categories: [DocumentCategory.PROOF, DocumentCategory.SICK_LEAVE],
+      statuses: [DocumentStatus.NEW],
+      emitters: [DocumentEmitter.SELF],
+      from: '2026-10-01',
+    });
 
     expect(model.activeFilters).toEqual([
       { key: 'categories', label: 'Catégorie', value: 'Arrêt maladie, Justificatif' },

@@ -2,6 +2,7 @@ import {
   FixedClock,
   InMemoryDocumentFileStorage,
   InMemoryDocumentRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -15,6 +16,8 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { DepositDocumentsUseCase } from './deposit-documents.use-case';
 
+const ids = new RandomUuidGenerator();
+
 const employee: ActorContext = { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE };
 const pdf = Uint8Array.from([...'%PDF-1.7\n'].map((c) => c.charCodeAt(0)));
 const png = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
@@ -24,8 +27,8 @@ const everything = {
 };
 
 function setUp() {
-  const documents = new InMemoryDocumentRepository();
-  const files = new InMemoryDocumentFileStorage();
+  const documents = new InMemoryDocumentRepository(ids);
+  const files = new InMemoryDocumentFileStorage(ids);
   const useCase = new DepositDocumentsUseCase(
     documents,
     files,

@@ -143,11 +143,5 @@ export const documents = {
   },
   sent: {
     title: 'Document transmis',
-    type: 'Type',
-    file: 'Fichier',
-    sentAt: 'Transmis le',
-    recipient: 'Destinataire',
-    seeDocuments: 'Voir mes documents',
-    backHome: "Retour à l'accueil",
   },
 } as const;
