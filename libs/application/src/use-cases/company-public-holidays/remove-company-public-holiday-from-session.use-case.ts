@@ -1,13 +1,10 @@
-import {
-  CompanyScopedSession,
-  CompanySettingsSnapshot,
-  requireCompanyScopedSession,
-} from '@hexagonal-monorepo-template/domain';
+import { CompanySettingsSnapshot } from '@hexagonal-monorepo-template/domain';
 import {
   ICompanyPublicHolidaysGateway,
   IRemoveCompanyPublicHolidayFromSession,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
+import { currentCompanySession } from '../../session/current-company-session';
 
 export class RemoveCompanyPublicHolidayFromSessionUseCase
   implements IRemoveCompanyPublicHolidayFromSession
@@ -18,18 +15,11 @@ export class RemoveCompanyPublicHolidayFromSessionUseCase
   ) {}
 
   async execute(publicHolidayId: string): Promise<CompanySettingsSnapshot> {
-    const session = await this.currentCompanySession();
+    const session = await currentCompanySession(this.sessions);
     return this.publicHolidays.remove(
       session.companyId,
       publicHolidayId,
       session.token,
-    );
-  }
-
-  private async currentCompanySession(): Promise<CompanyScopedSession> {
-    return requireCompanyScopedSession(
-      await this.sessions.getAccessToken(),
-      await this.sessions.getActor(),
     );
   }
 }

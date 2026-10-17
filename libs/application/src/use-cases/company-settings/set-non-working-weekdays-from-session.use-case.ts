@@ -1,14 +1,13 @@
 import {
-  CompanyScopedSession,
   CompanySettingsSnapshot,
   DayOfWeek,
-  requireCompanyScopedSession,
 } from '@hexagonal-monorepo-template/domain';
 import {
   ICompanySettingsGateway,
   ISessionGateway,
   ISetNonWorkingWeekdaysFromSession,
 } from '@hexagonal-monorepo-template/ports';
+import { currentCompanySession } from '../../session/current-company-session';
 
 export class SetNonWorkingWeekdaysFromSessionUseCase
   implements ISetNonWorkingWeekdaysFromSession
@@ -21,18 +20,11 @@ export class SetNonWorkingWeekdaysFromSessionUseCase
   async execute(
     weekdays: readonly DayOfWeek[],
   ): Promise<CompanySettingsSnapshot> {
-    const session = await this.currentCompanySession();
+    const session = await currentCompanySession(this.sessions);
     return this.companySettings.setNonWorkingWeekdays(
       session.companyId,
       weekdays,
       session.token,
-    );
-  }
-
-  private async currentCompanySession(): Promise<CompanyScopedSession> {
-    return requireCompanyScopedSession(
-      await this.sessions.getAccessToken(),
-      await this.sessions.getActor(),
     );
   }
 }

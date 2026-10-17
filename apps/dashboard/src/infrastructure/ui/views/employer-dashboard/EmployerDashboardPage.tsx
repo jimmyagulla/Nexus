@@ -1,6 +1,6 @@
 import type { EmployerDashboardPageComposition } from '../../../composition/employer-dashboard/employer-dashboard-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetEmployerDashboard } from '../../hooks/useGetEmployerDashboard';
+import { useGetEmployerDashboard } from '../../hooks/employer-dashboard/useGetEmployerDashboard';
 import { i18n } from '../../i18n/i18n';
 import { EmployerDashboard } from './EmployerDashboard';
 

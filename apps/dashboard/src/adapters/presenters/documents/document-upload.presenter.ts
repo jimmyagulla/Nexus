@@ -1,41 +1,50 @@
+import {
+  ACCEPTED_DOCUMENT_EXTENSIONS,
+  ACCEPTED_DOCUMENT_MIME_TYPES,
+  DOCUMENT_COMMENT_MAX_LENGTH,
+  DOCUMENT_FILE_FORMATS,
+  DOCUMENT_MAX_FILE_SIZE_BYTES,
+  DOCUMENT_NAME_MAX_LENGTH,
+  DocumentCategory,
+} from '@hexagonal-monorepo-template/domain';
+import {
+  i18n as appI18n,
+  type I18n,
+} from '../../../infrastructure/ui/i18n/i18n';
+
+/** The constraints and wordings of the upload form; its type cards have their own presenter. */
 export interface DocumentUploadViewModel {
-  form: DocumentUploadFormModel;
-  mobileForm: MobileDocumentUploadFormModel;
+  defaultType: DocumentCategory;
+  /** `accept` attribute of the file inputs: extensions and media types. */
+  accept: string;
+  /** "PDF, JPG, PNG, XLS, XLSX, CSV · 10 Mo max." */
+  dropzoneHint: string;
+  nameMaxLength: number;
+  commentMaxLength: number;
 }
 
-export interface DocumentTypeOptionModel {
-  value: string;
-  /** Remix Icon class, e.g. `ri-first-aid-kit-line`. */
-  icon: string;
-  label: string;
-  /** Label of the compact mobile chip ("Administratif"). */
-  shortLabel: string;
-  description: string;
-}
-
-export interface DocumentUploadFormModel {
-  types: DocumentTypeOptionModel[];
-  selectedType: string;
-  /** Reminder tied to the selected type. */
-  note: string;
-  file: { name: string; details: string };
-  comment: string;
-}
-
-export interface MobileDocumentUploadFormModel {
-  types: DocumentTypeOptionModel[];
-  selectedType: string;
-  note: string;
-  file: { name: string; details: string };
-}
-
-/**
- * Presents the document upload form.
- * Until its use case exists, it receives placeholder data already shaped as
- * the view model, and returns it as is.
- */
+/** Presents the document upload form. */
 export class DocumentUploadPresenter {
-  present(documentUpload: DocumentUploadViewModel): DocumentUploadViewModel {
-    return documentUpload;
+  constructor(private readonly i18n: I18n = appI18n) {}
+
+  present(): DocumentUploadViewModel {
+    return {
+      defaultType: DocumentCategory.SICK_LEAVE,
+      accept: [
+        ...ACCEPTED_DOCUMENT_EXTENSIONS.map((extension) => `.${extension}`),
+        ...ACCEPTED_DOCUMENT_MIME_TYPES,
+      ].join(','),
+      dropzoneHint: this.presentDropzoneHint(),
+      nameMaxLength: DOCUMENT_NAME_MAX_LENGTH,
+      commentMaxLength: DOCUMENT_COMMENT_MAX_LENGTH,
+    };
+  }
+
+  private presentDropzoneHint(): string {
+    const labels = this.i18n.messages.documents;
+    const formats = DOCUMENT_FILE_FORMATS.map((spec) => labels.formats[spec.format]).join(', ');
+    return labels.upload.dropzoneHint
+      .replace('{formats}', formats)
+      .replace('{size}', String(DOCUMENT_MAX_FILE_SIZE_BYTES / (1024 * 1024)));
   }
 }

@@ -10,6 +10,7 @@ import {
 } from '@hexagonal-monorepo-template/ports';
 import { PrismaPublicHolidayRepository } from '../../adapters/out/public-holiday/prisma-public-holiday.repository';
 import { ClockModule } from '../clock/clock.module';
+import { IdGeneratorModule } from '../id/id-generator.module';
 import { API_CONFIG, loadApiConfig } from '../config/load-api-config';
 import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
 import { CompanyPublicHolidaysModule } from './company-public-holidays.module';
@@ -48,6 +49,7 @@ function compile(
     imports: [
       testGlobals(env, prisma),
       ClockModule,
+      IdGeneratorModule,
       CompanyPublicHolidaysModule,
     ],
   }).compile();

@@ -1,71 +1,80 @@
-import { InfoNote } from '../../common/feedback/InfoNote';
-import { FileDropzone } from '../../common/forms/FileDropzone';
-import { FormField } from '../../common/forms/FormField';
-import { UploadedFile } from '../../common/forms/UploadedFile';
-import { i18n } from '../../i18n/i18n';
-import { RadioGroup } from '../../shared/radio-group';
-import { Textarea } from '../../shared/textarea';
-import { DocumentTypeOption } from './DocumentTypeOption';
-import type { DocumentUploadFormModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { DocumentName } from '@hexagonal-monorepo-template/domain';
+import { DocumentUploadFields } from './DocumentUploadFields';
+import { MobileDocumentUploadFields } from './MobileDocumentUploadFields';
+import {
+  documentUploadSchema,
+  type DocumentUploadValues,
+} from './document-upload.schema';
+import type { DocumentUploadFieldsProps } from './document-upload-fields.props';
+import type { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
 
-interface DocumentUploadFormProps {
-  model: DocumentUploadFormModel;
+/** Id of the upload <form>, for a submit button placed outside of it (`form` attribute). */
+export const DOCUMENT_UPLOAD_FORM_ID = 'document-upload-form';
+
+interface DocumentUploadFormProps
+  extends Pick<DocumentUploadFieldsProps, 'model' | 'types' | 'uploadedFilePresenter' | 'counterPresenter'> {
+  /** Desktop fields (P2.2) or mobile fields (M.3). */
+  desktop: boolean;
+  errorPresenter: ErrorPresenter;
+  submitting: boolean;
+  onSubmit: (values: DocumentUploadValues) => void | Promise<void>;
 }
 
-/** Fields of the P2.2 upload form: type, file, comment. */
-export function DocumentUploadForm({ model }: DocumentUploadFormProps) {
-  const labels = i18n.messages.documents.upload;
+/**
+ * The upload form: its state, its validation and its <form> element. The
+ * layout around it (header, footer, submit button) belongs to the view.
+ */
+export function DocumentUploadForm({
+  desktop,
+  model,
+  types,
+  uploadedFilePresenter,
+  counterPresenter,
+  errorPresenter,
+  submitting,
+  onSubmit,
+}: DocumentUploadFormProps) {
+  const form = useForm<DocumentUploadValues>({
+    resolver: zodResolver(documentUploadSchema),
+    defaultValues: { category: model.defaultType, files: [], comment: '' },
+  });
+  const files = useFieldArray({ control: form.control, name: 'files' });
+
+  const fieldsProps: DocumentUploadFieldsProps = {
+    form,
+    fileKeys: files.fields.map((field) => field.id),
+    model,
+    types,
+    uploadedFilePresenter,
+    counterPresenter,
+    describeError: (code) => (code === undefined ? null : errorPresenter.present(code)),
+    onAddFiles: (picked) => {
+      if (picked.length === 0) {
+        return;
+      }
+      files.append(picked.map((file) => ({ file, name: DocumentName.proposedFor(file.name) })));
+      void form.trigger('files');
+    },
+    onRemoveFile: (index) => {
+      files.remove(index);
+      void form.trigger('files');
+    },
+  };
 
   return (
-    <form className="flex flex-col">
-      <FormField
-        label={labels.type}
-        required
-        className="gap-3 border-b border-border px-6 py-5"
-      >
-        <RadioGroup
-          aria-label={labels.type}
-          defaultValue={model.selectedType}
-          className="grid-cols-4 gap-2.5"
-        >
-          {model.types.map((type) => (
-            <DocumentTypeOption key={type.value} model={type} />
-          ))}
-        </RadioGroup>
-        <InfoNote
-          className="border border-purple-100 bg-purple-25 px-3 py-2.5"
-          icon={
-            <i aria-hidden className="ri-information-line text-18 text-purple-600" />
-          }
-        >
-          <span className="block text-purple-800">{model.note}</span>
-        </InfoNote>
-      </FormField>
-      <FormField
-        label={labels.file}
-        required
-        className="gap-3 border-b border-border px-6 py-5"
-      >
-        <FileDropzone
-          prompt={labels.dropzonePrompt}
-          action={labels.dropzoneAction}
-          hint={labels.dropzoneHint}
-          className="[&>span]:contents"
-        />
-        <UploadedFile name={model.file.name} details={model.file.details} />
-      </FormField>
-      <FormField
-        label={labels.comment}
-        optional
-        htmlFor="document-comment"
-        className="gap-2 px-6 py-5"
-      >
-        <Textarea
-          id="document-comment"
-          defaultValue={model.comment}
-          className="h-14 min-h-0"
-        />
-      </FormField>
+    <form
+      id={DOCUMENT_UPLOAD_FORM_ID}
+      noValidate
+      aria-busy={submitting}
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
+      {desktop ? (
+        <DocumentUploadFields {...fieldsProps} />
+      ) : (
+        <MobileDocumentUploadFields {...fieldsProps} />
+      )}
     </form>
   );
 }

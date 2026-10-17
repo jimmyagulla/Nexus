@@ -10,6 +10,7 @@ import {
   IAuditLogRepository,
   IClock,
   ICompanyRepository,
+  IIdGenerator,
   IPublicHolidayRepository,
   IRemoveCompanyPublicHoliday,
   IUpdateCompanyPublicHoliday,
@@ -27,13 +28,13 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
   providers: [
     {
       provide: IPublicHolidayRepository,
-      useFactory: (config: ApiConfig, prisma?: PrismaDb) => {
+      useFactory: (config: ApiConfig, ids: IIdGenerator, prisma?: PrismaDb) => {
         if (config.persistence === 'postgres' && prisma !== undefined) {
           return new PrismaPublicHolidayRepository(prisma);
         }
-        return new InMemoryPublicHolidayRepository();
+        return new InMemoryPublicHolidayRepository(ids);
       },
-      inject: [API_CONFIG, { token: IPrismaDb, optional: true }],
+      inject: [API_CONFIG, IIdGenerator, { token: IPrismaDb, optional: true }],
     },
     {
       provide: IAddCompanyPublicHoliday,
@@ -51,6 +52,7 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         ),
       inject: [
         ICompanyRepository,
+  IIdGenerator,
         IPublicHolidayRepository,
         IAuditLogRepository,
         IClock,
@@ -72,6 +74,7 @@ import { IPrismaDb, type PrismaDb } from '../prisma/prisma-db.port';
         ),
       inject: [
         ICompanyRepository,
+  IIdGenerator,
         IPublicHolidayRepository,
         IAuditLogRepository,
         IClock,

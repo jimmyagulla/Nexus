@@ -6,6 +6,9 @@ export const API_ROUTES = {
     nonWorkingWeekdays: ':companyId/calendar/non-working-weekdays',
     publicHolidays: ':companyId/calendar/public-holidays',
     publicHoliday: ':companyId/calendar/public-holidays/:publicHolidayId',
+    documents: ':companyId/documents',
+    documentView: ':companyId/documents/:documentId/view',
+    documentDownload: ':companyId/documents/:documentId/download',
   },
 } as const;
 

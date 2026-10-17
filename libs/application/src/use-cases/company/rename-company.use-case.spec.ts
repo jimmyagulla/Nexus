@@ -2,6 +2,7 @@ import {
   FixedClock,
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -14,6 +15,8 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { RenameCompanyUseCase } from './rename-company.use-case';
 
+const ids = new RandomUuidGenerator();
+
 const actor: ActorContext = {
   userId: 'user-1',
   companyId: 'c1',
@@ -24,8 +27,8 @@ const now = new Date('2026-10-06T10:00:00.000Z');
 
 describe('RenameCompanyUseCase', () => {
   it('renames the company and records before and after', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const audits = new InMemoryAuditLogRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const audits = new InMemoryAuditLogRepository(ids);
     await companies.save(Company.create('c1', CompanyName.parse('Acme')));
 
     const settings = await new RenameCompanyUseCase(
@@ -53,8 +56,8 @@ describe('RenameCompanyUseCase', () => {
   });
 
   it('refuses a blank name and leaves the company untouched', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const audits = new InMemoryAuditLogRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const audits = new InMemoryAuditLogRepository(ids);
     await companies.save(Company.create('c1', CompanyName.parse('Acme')));
     const useCase = new RenameCompanyUseCase(
       companies,
@@ -71,8 +74,8 @@ describe('RenameCompanyUseCase', () => {
 
   it('refuses an unknown company', async () => {
     const useCase = new RenameCompanyUseCase(
-      new InMemoryCompanyRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryCompanyRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -82,11 +85,11 @@ describe('RenameCompanyUseCase', () => {
   });
 
   it('refuses another company', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(Company.create('c2', CompanyName.parse('Other')));
     const useCase = new RenameCompanyUseCase(
       companies,
-      new InMemoryAuditLogRepository(),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 

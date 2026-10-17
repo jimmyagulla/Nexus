@@ -2,6 +2,7 @@ import {
   FixedClock,
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -16,6 +17,8 @@ import {
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { RemoveCompanyPublicHolidayUseCase } from './remove-company-public-holiday.use-case';
+
+const ids = new RandomUuidGenerator();
 
 const actor: ActorContext = {
   userId: 'user-1',
@@ -42,12 +45,12 @@ function companyWithRetainedHoliday(): Company {
 
 describe('RemoveCompanyPublicHolidayUseCase', () => {
   it('drops the retained public holiday from the calendar', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWithRetainedHoliday());
 
     const settings = await new RemoveCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryAuditLogRepository(),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     ).execute({ actor, companyId: 'c1', publicHolidayId: 'ph-1' });
 
@@ -56,8 +59,8 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
   });
 
   it('records the removed public holiday', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const audits = new InMemoryAuditLogRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const audits = new InMemoryAuditLogRepository(ids);
     await companies.save(companyWithRetainedHoliday());
 
     await new RemoveCompanyPublicHolidayUseCase(
@@ -87,11 +90,11 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
   });
 
   it('refuses a public holiday the company never retained', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWithRetainedHoliday());
     const useCase = new RemoveCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryAuditLogRepository(),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -110,11 +113,11 @@ describe('RemoveCompanyPublicHolidayUseCase', () => {
   });
 
   it('refuses another company', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(Company.create('c2', CompanyName.parse('Other')));
     const useCase = new RemoveCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryAuditLogRepository(),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 

@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  InMemoryHttpClient,
-  InMemorySessionGateway,
-} from '@hexagonal-monorepo-template/adapters';
+import { InMemorySessionGateway } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
   CompanySettingsSnapshot,
@@ -10,6 +7,7 @@ import {
   ErrorCode,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
+import { InMemoryHttpClient } from '../network/in-memory-http-client';
 import { i18n } from '../ui/i18n/i18n';
 import {
   CompanySettingsComposition,

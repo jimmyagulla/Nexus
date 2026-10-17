@@ -16,4 +16,10 @@ description: >-
 - **DI for Stores**: Stores MUST use Dependency Injection for external resources. Example: `createSettingsStore(storage: KeyValueStorage)`.
 - **Storage**: All storage persistence MUST use the `KeyValueStorage` port.
 - May depend on `adapters`, `application`, and `domain`.
+
+## Network (mandatory)
+- `IHttpClient` is the only way to the network, for everything: API calls, multipart forms, files behind a signed link (`getBytes`).
+- `network/fetch-http-client.ts` is the only file of the app that calls `fetch`; `network/in-memory-http-client.ts` is its in-memory counterpart. A new need (a body kind, a reading mode) is a new method of `IHttpClient`, implemented in both.
+- Network helpers live in `network/` and go through `IHttpClient` (`RemoteFileReader`), or touch no network at all (`build-url`, `unwrap-response`).
+- The transport belongs to this app, not to the shared libs: only its port is shared — skill `single-technical-entry`.
 - **Forbidden**: Business logic must not reside here.

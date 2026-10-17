@@ -1,6 +1,6 @@
 import type { AccountingFirmPageComposition } from '../../../composition/accounting-firm/accounting-firm-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetAccountingFirm } from '../../hooks/useGetAccountingFirm';
+import { useGetAccountingFirm } from '../../hooks/accounting-firm/useGetAccountingFirm';
 import { i18n } from '../../i18n/i18n';
 import { AccountingFirm } from './AccountingFirm';
 

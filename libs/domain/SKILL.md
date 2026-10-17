@@ -16,6 +16,12 @@ description: >-
 - Implement business behaviors and invariants.
 - **Business Logic Placement**: For tasks not requiring external calls, implement them here.
 
+## Shared concepts
+
+A concept that several entities will use is declared once, under a name that belongs to none of them: `OwnerScope` (what one person owns in one company) and `requireOwnerScope`, not a `DocumentOwnerScope`.
+
+A business rule that a repository must also apply in its query (e.g. the instants a period of calendar days covers, `documentPeriodBounds`) is a domain function the repository calls; the adapter only translates its result into its query language.
+
 ## Validation rules
 
 A validation pattern is a business rule. It lives here and nowhere else.

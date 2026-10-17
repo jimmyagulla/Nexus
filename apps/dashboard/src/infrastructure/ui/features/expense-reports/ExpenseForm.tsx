@@ -3,7 +3,6 @@ import { FormField } from '../../common/forms/FormField';
 import { i18n } from '../../i18n/i18n';
 import { Input } from '../../shared/input';
 import { ToggleGroup, ToggleGroupItem } from '../../shared/toggle-group';
-import { ExpenseFieldLabel } from './ExpenseFieldLabel';
 import { ExpenseProof } from './ExpenseProof';
 import { ExpenseSelect } from './ExpenseSelect';
 import type { ExpenseFormModel } from '../../../../adapters/presenters/expense-reports/expense-report.presenter';
@@ -20,7 +19,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
     <>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label={<ExpenseFieldLabel text={labels.date} required />}
+          label={labels.date}
+          required
           htmlFor="expense-date"
           className={FIELD}
           labelClassName={LABEL}
@@ -34,7 +34,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
           />
         </FormField>
         <FormField
-          label={<ExpenseFieldLabel text={labels.category} required />}
+          label={labels.category}
+          required
           htmlFor="expense-category"
           className={FIELD}
           labelClassName={LABEL}
@@ -48,7 +49,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label={<ExpenseFieldLabel text={labels.amount} required />}
+          label={labels.amount}
+          required
           htmlFor="expense-amount"
           className={FIELD}
           labelClassName={LABEL}
@@ -63,7 +65,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
           />
         </FormField>
         <FormField
-          label={<ExpenseFieldLabel text={labels.vat} note={labels.vatHint} />}
+          label={labels.vat}
+          note={labels.vatHint}
           htmlFor="expense-vat"
           className={FIELD}
           labelClassName={LABEL}
@@ -76,7 +79,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
         </FormField>
       </div>
       <FormField
-        label={<ExpenseFieldLabel text={labels.paymentMethod} required />}
+        label={labels.paymentMethod}
+        required
         className={FIELD}
         labelClassName={LABEL}
       >
@@ -93,7 +97,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
         </ToggleGroup>
       </FormField>
       <FormField
-        label={<ExpenseFieldLabel text={labels.description} required />}
+        label={labels.description}
+        required
         htmlFor="expense-description"
         className={FIELD}
         labelClassName={LABEL}
@@ -106,12 +111,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
         />
       </FormField>
       <FormField
-        label={
-          <ExpenseFieldLabel
-            text={labels.project}
-            note={i18n.messages.common.optional}
-          />
-        }
+        label={labels.project}
+        optional
         htmlFor="expense-project"
         className={FIELD}
         labelClassName={LABEL}
@@ -123,7 +124,8 @@ export function ExpenseForm({ expense }: { expense: ExpenseFormModel }) {
         />
       </FormField>
       <FormField
-        label={<ExpenseFieldLabel text={labels.proof} required />}
+        label={labels.proof}
+        required
         className={FIELD}
         labelClassName={LABEL}
       >

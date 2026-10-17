@@ -23,7 +23,12 @@ description: >-
 
 ## Layout
 - One folder per domain: `adapters/presenters/<domain>/`.
-- **One presenter per view model**: `<screen>.presenter.ts` declares the screen's `<Screen>ViewModel`, the sub-models it is made of (rows, items, cards), and the class `<Screen>Presenter` whose `present(): <Screen>ViewModel` produces it.
+- **One presenter per view model (mandatory)**: every view model — the screen model, each sub-model (a row, a card, a filter panel, a sort header) and each formatted value shared by several presenters (a file size, a count label) — has its own file `<model>.presenter.ts`, declaring the model and the class that presents it. A presenter has one responsibility and stays short: a file of several hundred lines, or formatting several models, is a defect.
+- **No parent presenter**: a presenter never builds, wraps, or delegates to another presenter that produces a view model, and never assembles several view models into one. Each presenter is instantiated and linked in the composition root — skill `dashboard-composition`. The query hook calls each presenter and hands each model to the view, which takes them as separate props.
+- **Value presenters**: a presenter that formats a value shared by several presenters (`FileSizePresenter`, `CountLabelPresenter`) is received through the constructor of the presenters that use it, wired by the composition root. It is a dependency, not a child view model.
+- A number several presenters need (e.g. how many filters apply) is computed by the domain (`countAppliedDocumentFilters`), never by a presenter reading another presenter's output.
+- View-model types are imported from the presenter file that declares them; there is no barrel presenter re-exporting them.
+- Constants shared by the presenters of one domain (icons, display orders, tones) live in `<domain>/<domain>-display.ts`.
 - A sub-model shared by several screens is declared in one presenter file and imported by the others. Views and fixtures import view-model types from the presenter files; they never declare them.
 - Types that only the UI uses (static lists built by a view, legend tones…) stay in their component.
 - The display vocabulary shared by all view models (status tones, flow tones, progress steps, navigation targets) lives in `display.types.ts`. View models never import UI types.

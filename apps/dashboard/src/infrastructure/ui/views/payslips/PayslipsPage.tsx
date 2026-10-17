@@ -1,6 +1,6 @@
 import type { PayslipsPageComposition } from '../../../composition/payslip/payslips-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetPayslips } from '../../hooks/useGetPayslips';
+import { useGetPayslips } from '../../hooks/payslips/useGetPayslips';
 import { i18n } from '../../i18n/i18n';
 import { Payslips } from './Payslips';
 

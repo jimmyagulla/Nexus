@@ -30,6 +30,7 @@ The shared libs own the core. Every app — backend or frontend — consumes it,
 
 - An adapter is app-agnostic as soon as nothing in it depends on one app's delivery model. It then belongs to the shared libs so every app reuses it.
 - An adapter is app-specific when it is bound to one app's delivery model: presenters, frontend controllers, and anything tied to one app's transport or UI.
+- The HTTP transport (`IHttpClient` implementation) and the HTTP gateways that call our API through it are app-specific: they live in the app that calls the API (`apps/dashboard/src/infrastructure/network/`, `apps/dashboard/src/adapters/gateways/`). The shared libs keep their ports and the in-memory implementations of those ports.
 - Duplicating a use case, a domain rule, or a port inside an app is a defect, even temporarily. Move it to the shared libs and import it.
 - A use case must stay runnable from backend and frontend code alike — skill `application-boundaries`.
 
