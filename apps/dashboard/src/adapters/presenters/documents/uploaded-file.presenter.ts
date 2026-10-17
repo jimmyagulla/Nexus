@@ -6,7 +6,7 @@ import {
   i18n as appI18n,
   type I18n,
 } from '../../../infrastructure/ui/i18n/i18n';
-import { FileSizePresenter } from './file-size.presenter';
+import type { FileSizePresenter } from './file-size.presenter';
 
 export interface UploadedFileModel {
   /** "1,2 Mo · Importé" */
@@ -26,11 +26,10 @@ const FILE_ICONS: Record<DocumentFileFormat, string> = {
 
 /** Presents a file picked by the person, before it is sent. */
 export class UploadedFilePresenter {
-  private readonly sizes: FileSizePresenter;
-
-  constructor(private readonly i18n: I18n = appI18n) {
-    this.sizes = new FileSizePresenter(i18n);
-  }
+  constructor(
+    private readonly sizes: FileSizePresenter,
+    private readonly i18n: I18n = appI18n,
+  ) {}
 
   present(file: { name: string; size: number }): UploadedFileModel {
     const format = documentFileFormatOfName(file.name);

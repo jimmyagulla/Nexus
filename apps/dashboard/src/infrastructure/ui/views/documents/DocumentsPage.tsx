@@ -41,7 +41,8 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
   const deposit = useDepositDocuments(deps);
   const view = useViewDocument(deps);
   const download = useDownloadDocument(deps);
-  const uploadModel = useMemo(() => deps.uploadPresenter.present(), [deps]);
+  const uploadModel = useMemo(() => deps.uploadPresenters.form.present(), [deps]);
+  const uploadTypes = useMemo(() => deps.uploadPresenters.typeOptions.present(), [deps]);
   const [uploadOpen, setUploadOpen] = useState(uploadRoute);
   /** Document shown in the in-app viewer. */
   const [previewed, setPreviewed] = useState<{ id: string; name: string } | null>(null);
@@ -59,7 +60,7 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
     onRemoveFilter: actions.removeFilter,
     onClearFilters: actions.clearFilters,
     onView: (documentId) => {
-      const row = documents.data?.documents.find((document) => document.id === documentId);
+      const row = documents.data?.rows.find((document) => document.id === documentId);
       setPreviewed({ id: documentId, name: row?.name ?? '' });
       view.mutate(documentId);
     },
@@ -85,7 +86,7 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
   const submitDeposit = async (values: DocumentUploadValues): Promise<boolean> => {
     try {
       const deposited = await deposit.mutateAsync(values);
-      successToast(deps.uploadPresenter.presentDeposited(deposited.length), {
+      successToast(deps.uploadPresenters.confirmation.present(deposited.length), {
         title: i18n.messages.documents.sent.title,
       });
       return true;
@@ -105,7 +106,11 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
   return (
     <>
       <Documents
-        model={documents.data}
+        summary={documents.data.summary}
+        activeFilters={documents.data.activeFilters}
+        filters={documents.data.filters}
+        sort={documents.data.sort}
+        rows={documents.data.rows}
         search={list.search}
         handlers={handlers}
         onUpload={() => changeUploadOpen(true)}
@@ -114,7 +119,8 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
         open={uploadOpen}
         onOpenChange={changeUploadOpen}
         model={uploadModel}
-        presenter={deps.uploadPresenter}
+        types={uploadTypes}
+        presenters={deps.uploadPresenters}
         errorPresenter={deps.errorPresenter}
         submitting={deposit.isPending}
         submissionError={deposit.isError ? deps.errorPresenter.present(deposit.error) : null}

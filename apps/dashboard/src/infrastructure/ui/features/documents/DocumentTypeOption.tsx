@@ -1,5 +1,5 @@
 import { RadioGroupItem } from '../../shared/radio-group';
-import type { DocumentTypeOptionModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
+import type { DocumentTypeOptionModel } from '../../../../adapters/presenters/documents/document-type-options.presenter';
 
 interface DocumentTypeOptionProps {
   model: DocumentTypeOptionModel;

@@ -1,4 +1,4 @@
-import { FormEventHandler, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { SubmissionError } from '../../common/errors/SubmissionError';
 import { i18n } from '../../i18n/i18n';
 import { cn } from '../../lib/utils';
@@ -15,9 +15,10 @@ import {
 interface DocumentUploadProps {
   /** Desktop layout (P2.2) or mobile layout (M.3). */
   desktop: boolean;
-  /** The fields of the matching layout. */
-  fields: ReactNode;
-  onSubmit: FormEventHandler<HTMLFormElement>;
+  /** The upload form, shown in the body. */
+  children: ReactNode;
+  /** Id of that form: the footer's submit button sends it from outside. */
+  formId: string;
   submitting: boolean;
   submissionError: string | null;
 }
@@ -25,15 +26,15 @@ interface DocumentUploadProps {
 /** P2.2 — upload a document to HR, in a modal: header, body, footer. M.3 below `md`. */
 export function DocumentUpload({
   desktop,
-  fields,
-  onSubmit,
+  children,
+  formId,
   submitting,
   submissionError,
 }: DocumentUploadProps) {
   const labels = i18n.messages.documents.upload;
 
   return (
-    <form noValidate onSubmit={onSubmit} aria-busy={submitting} className="contents">
+    <>
       <DialogHeader className="items-start">
         <div className="flex min-w-0 flex-col gap-1">
           <DialogTitle className={desktop ? 'text-24 leading-8' : 'text-18'}>
@@ -45,7 +46,7 @@ export function DocumentUpload({
         </div>
       </DialogHeader>
       <ModalBody className={cn(!desktop && 'p-5')}>
-        {fields}
+        {children}
         <div className={cn('empty:hidden', desktop ? 'px-6 pb-5' : 'pt-4')}>
           <SubmissionError message={submissionError} />
         </div>
@@ -60,6 +61,7 @@ export function DocumentUpload({
         )}
         <Button
           type="submit"
+          form={formId}
           disabled={submitting}
           className={desktop ? 'px-5' : 'h-13 w-full text-16'}
         >
@@ -70,6 +72,6 @@ export function DocumentUpload({
           {labels.submit}
         </Button>
       </DialogFooter>
-    </form>
+    </>
   );
 }

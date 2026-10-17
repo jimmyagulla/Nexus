@@ -21,7 +21,7 @@ import { ToggleGroup, ToggleGroupItem } from '../../../shared/toggle-group';
 import { FilterGroup } from './FilterGroup';
 import { FilterOption } from './FilterOption';
 import type { DocumentsListHandlers } from './documents-list.handlers';
-import type { DocumentFiltersModel } from '../../../../../adapters/presenters/documents/documents.presenter';
+import type { DocumentFiltersModel } from '../../../../../adapters/presenters/documents/document-filters.presenter';
 
 interface DocumentFiltersSheetProps {
   model: DocumentFiltersModel;

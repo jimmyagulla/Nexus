@@ -1,13 +1,15 @@
 import {
+  countAppliedDocumentFilters,
   DocumentEmitter,
   DocumentList,
+  DocumentListCriteria,
 } from '@hexagonal-monorepo-template/domain';
 import {
   i18n as appI18n,
   type I18n,
 } from '../../../infrastructure/ui/i18n/i18n';
 import type { DocumentsListState } from '../../controllers/documents.controller';
-import { CountLabelPresenter } from './count-label.presenter';
+import type { CountLabelPresenter } from './count-label.presenter';
 import {
   DOCUMENT_CATEGORY_DISPLAY_ORDER,
   DOCUMENT_STATUS_DISPLAY_ORDER,
@@ -39,18 +41,20 @@ export interface DocumentFiltersModel {
 
 /** Presents the "Filtres" panel of the documents list. */
 export class DocumentFiltersPresenter {
-  private readonly counts = new CountLabelPresenter();
+  constructor(
+    private readonly counts: CountLabelPresenter,
+    private readonly i18n: I18n = appI18n,
+  ) {}
 
-  constructor(private readonly i18n: I18n = appI18n) {}
-
+  /** `state` holds the controls as set, `criteria` what the list was asked with. */
   present(
     list: DocumentList,
     state: DocumentsListState,
-    appliedCount: number,
+    criteria: DocumentListCriteria,
   ): DocumentFiltersModel {
     const labels = this.i18n.messages.documents;
     return {
-      appliedLabel: this.counts.present(appliedCount, labels.filters.applied),
+      appliedLabel: this.counts.present(countAppliedDocumentFilters(criteria), labels.filters.applied),
       showResultsLabel: this.counts.present(list.items.length, labels.filters.showResults),
       categories: DOCUMENT_CATEGORY_DISPLAY_ORDER.map((category) => ({
         id: category,

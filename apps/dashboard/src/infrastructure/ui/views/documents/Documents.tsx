@@ -14,10 +14,18 @@ import { DocumentRow } from './components/DocumentRow';
 import { DocumentsEmptyRow } from './components/DocumentsEmptyRow';
 import { SortableHead } from './components/SortableHead';
 import type { DocumentsListHandlers } from './components/documents-list.handlers';
-import type { DocumentsViewModel } from '../../../../adapters/presenters/documents/documents.presenter';
+import type { ActiveFilterModel } from '../../../../adapters/presenters/documents/document-active-filters.presenter';
+import type { DocumentFiltersModel } from '../../../../adapters/presenters/documents/document-filters.presenter';
+import type { DocumentListSummaryModel } from '../../../../adapters/presenters/documents/document-list-summary.presenter';
+import type { DocumentRowModel } from '../../../../adapters/presenters/documents/document-row.presenter';
+import type { DocumentSortModel } from '../../../../adapters/presenters/documents/document-sort.presenter';
 
 interface DocumentsProps {
-  model: DocumentsViewModel;
+  summary: DocumentListSummaryModel;
+  activeFilters: ActiveFilterModel[];
+  filters: DocumentFiltersModel;
+  sort: DocumentSortModel;
+  rows: DocumentRowModel[];
   /** Text of the search box, as typed. */
   search: string;
   handlers: DocumentsListHandlers;
@@ -27,12 +35,21 @@ interface DocumentsProps {
 const columns = 'minmax(0,1.7fr) minmax(0,1fr) 92px 92px 96px 130px 100px';
 
 /** P2.1 — the employee's document vault. */
-export function Documents({ model, search, handlers, onUpload }: DocumentsProps) {
+export function Documents({
+  summary,
+  activeFilters,
+  filters,
+  sort,
+  rows,
+  search,
+  handlers,
+  onUpload,
+}: DocumentsProps) {
   const labels = i18n.messages.documents.list;
   const common = i18n.messages.common;
-  const sortable = (sort: DocumentSort) => ({
-    model: model.sort[sort],
-    onSort: () => handlers.onCycleSort(sort),
+  const sortable = (column: DocumentSort) => ({
+    model: sort[column],
+    onSort: () => handlers.onCycleSort(column),
   });
 
   return (
@@ -61,17 +78,17 @@ export function Documents({ model, search, handlers, onUpload }: DocumentsProps)
         />
         <Sheet>
           <SheetTrigger asChild>
-            <FilterButton count={model.appliedFilterCount} />
+            <FilterButton count={summary.appliedFilterCount} />
           </SheetTrigger>
-          <DocumentFiltersSheet model={model.filters} handlers={handlers} />
+          <DocumentFiltersSheet model={filters} handlers={handlers} />
         </Sheet>
       </div>
       <ActiveFilters
-        summary={model.resultSummary}
-        canClear={model.canClearFilters}
+        summary={summary.resultSummary}
+        canClear={summary.canClearFilters}
         onClear={handlers.onClearFilters}
       >
-        {model.activeFilters.map((filter) => (
+        {activeFilters.map((filter) => (
           <FilterChip
             key={filter.key}
             label={filter.label}
@@ -90,7 +107,7 @@ export function Documents({ model, search, handlers, onUpload }: DocumentsProps)
           <SortableHead {...sortable(DocumentSort.STATUS)}>{common.status}</SortableHead>
           <TableHead className="justify-end">{common.actions}</TableHead>
         </TableHeader>
-        {model.documents.map((document) => (
+        {rows.map((document) => (
           <DocumentRow
             key={document.id}
             model={document}
@@ -98,7 +115,7 @@ export function Documents({ model, search, handlers, onUpload }: DocumentsProps)
             onDownload={handlers.onDownload}
           />
         ))}
-        {model.documents.length === 0 && <DocumentsEmptyRow message={model.emptyMessage} />}
+        {rows.length === 0 && <DocumentsEmptyRow message={summary.emptyMessage} />}
       </Table>
     </PageContent>
   );

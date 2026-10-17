@@ -3,26 +3,14 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { InMemorySessionGateway } from '@hexagonal-monorepo-template/adapters';
 import {
-  DepositDocumentsFromSessionUseCase,
-  DownloadDocumentFromSessionUseCase,
-  ListDocumentsFromSessionUseCase,
-  ViewDocumentFromSessionUseCase,
-} from '@hexagonal-monorepo-template/application';
-import {
   DocumentCategory,
   DocumentList,
   DocumentSort,
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
-import { ApiDocumentGateway } from '../../../../adapters/gateways/api-document.gateway';
+import type { DocumentsListState } from '../../../../adapters/controllers/documents.controller';
+import { createDocumentsPageComposition } from '../../../composition/document/documents-page.composition';
 import { InMemoryHttpClient } from '../../../network/in-memory-http-client';
-import { RemoteFileReader } from '../../../network/remote-file-reader';
-import { DocumentsController, DocumentsListState } from '../../../../adapters/controllers/documents.controller';
-import { DocumentUploadPresenter } from '../../../../adapters/presenters/documents/document-upload.presenter';
-import { DocumentsPresenter } from '../../../../adapters/presenters/documents/documents.presenter';
-import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
-import type { DocumentsPageComposition } from '../../../composition/document/documents-page.composition';
-import { i18n } from '../../i18n/i18n';
 import { useDepositDocuments } from './useDepositDocuments';
 import { getDocumentsQueryKey, useGetDocuments } from './useGetDocuments';
 
@@ -48,21 +36,7 @@ function setUp() {
   http.reply('get', 'companies/c1/documents?sort=SIZE&direction=DESC', { status: 200, data: listOf(['Lourd']) });
   http.reply('post', 'companies/c1/documents', { status: 201, data: listOf(['Nouveau']).items });
   const sessions = new InMemorySessionGateway('token', { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE });
-  const gateway = new ApiDocumentGateway(http);
-  const labels = i18n.messages.documents;
-  const deps: DocumentsPageComposition = {
-    controller: new DocumentsController(
-      new ListDocumentsFromSessionUseCase(sessions, gateway),
-      new DepositDocumentsFromSessionUseCase(sessions, gateway),
-      new ViewDocumentFromSessionUseCase(sessions, gateway),
-      new DownloadDocumentFromSessionUseCase(sessions, gateway),
-      { categories: labels.categories, emitters: labels.emitters },
-    ),
-    presenter: new DocumentsPresenter(),
-    uploadPresenter: new DocumentUploadPresenter(),
-    errorPresenter: new ErrorPresenter(),
-    files: new RemoteFileReader(http),
-  };
+  const deps = createDocumentsPageComposition(http, sessions);
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -76,7 +50,7 @@ describe('useGetDocuments', () => {
 
     const { result } = renderHook(() => useGetDocuments(deps, nothing), { wrapper });
 
-    await waitFor(() => expect(result.current.data?.documents.map((row) => row.name)).toEqual(['Ancien']));
+    await waitFor(() => expect(result.current.data?.rows.map((row) => row.name)).toEqual(['Ancien']));
   });
 
   it('keeps one cache entry per ordering and serves it again without asking', async () => {
@@ -88,10 +62,10 @@ describe('useGetDocuments', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     rerender({ state: { ...nothing, sort: DocumentSort.SIZE, direction: 'DESC' as const } });
-    await waitFor(() => expect(result.current.data?.documents.map((row) => row.name)).toEqual(['Lourd']));
+    await waitFor(() => expect(result.current.data?.rows.map((row) => row.name)).toEqual(['Lourd']));
     rerender({ state: nothing });
 
-    expect(result.current.data?.documents.map((row) => row.name)).toEqual(['Ancien']);
+    expect(result.current.data?.rows.map((row) => row.name)).toEqual(['Ancien']);
     expect(http.calls.filter((call) => call.method === 'get')).toHaveLength(2);
     expect(client.getQueryCache().findAll({ queryKey: getDocumentsQueryKey() })).toHaveLength(2);
   });
@@ -113,6 +87,6 @@ describe('useGetDocuments', () => {
       });
     });
 
-    await waitFor(() => expect(result.current.list.data?.documents.map((row) => row.name)).toEqual(['Nouveau', 'Ancien']));
+    await waitFor(() => expect(result.current.list.data?.rows.map((row) => row.name)).toEqual(['Nouveau', 'Ancien']));
   });
 });

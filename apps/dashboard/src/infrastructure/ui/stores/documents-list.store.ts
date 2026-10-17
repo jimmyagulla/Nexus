@@ -8,7 +8,7 @@ import {
   DocumentStatus,
 } from '@hexagonal-monorepo-template/domain';
 import type { DocumentsListState } from '../../../adapters/controllers/documents.controller';
-import type { DocumentFilterKey } from '../../../adapters/presenters/documents/documents.presenter';
+import type { DocumentFilterKey } from '../../../adapters/presenters/documents/document-active-filters.presenter';
 
 interface DocumentsListStore extends DocumentsListState {
   setSearch: (search: string) => void;

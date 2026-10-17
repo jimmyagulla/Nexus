@@ -33,6 +33,19 @@ export function matchesDocumentListCriteria(
 }
 
 /**
+ * How many filter groups narrow a list: categories, statuses, emitters, and
+ * the period (one group, whichever bound is set). The search is not a filter.
+ */
+export function countAppliedDocumentFilters(criteria: DocumentListCriteria): number {
+  return [
+    criteria.categories.length > 0,
+    criteria.statuses.length > 0,
+    criteria.emitters.length > 0,
+    criteria.from !== null || criteria.to !== null,
+  ].filter(Boolean).length;
+}
+
+/**
  * The list of one owner's documents for the criteria: the matching ones in
  * order, and the counts the filters show, which ignore the criteria.
  */

@@ -1,28 +1,23 @@
-import { useEffect } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { DocumentName } from '@hexagonal-monorepo-template/domain';
-import { DocumentUploadForm } from '../../../features/documents/DocumentUploadForm';
-import { MobileDocumentUploadForm } from '../../../features/documents/MobileDocumentUploadForm';
 import {
-  documentUploadSchema,
-  type DocumentUploadValues,
-} from '../../../features/documents/document-upload.schema';
+  DOCUMENT_UPLOAD_FORM_ID,
+  DocumentUploadForm,
+} from '../../../features/documents/DocumentUploadForm';
+import type { DocumentUploadValues } from '../../../features/documents/document-upload.schema';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { cn } from '../../../lib/utils';
 import { Dialog, ModalContent } from '../../../shared/dialog';
 import { DocumentUpload } from '../DocumentUpload';
+import type { DocumentUploadPresenters } from '../../../../composition/document/documents-page.composition';
 import type { ErrorPresenter } from '../../../../../adapters/presenters/error.presenter';
-import type {
-  DocumentUploadPresenter,
-  DocumentUploadViewModel,
-} from '../../../../../adapters/presenters/documents/document-upload.presenter';
+import type { DocumentTypeOptionModel } from '../../../../../adapters/presenters/documents/document-type-options.presenter';
+import type { DocumentUploadViewModel } from '../../../../../adapters/presenters/documents/document-upload.presenter';
 
 interface DocumentUploadModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   model: DocumentUploadViewModel;
-  presenter: DocumentUploadPresenter;
+  types: DocumentTypeOptionModel[];
+  presenters: Pick<DocumentUploadPresenters, 'uploadedFile' | 'counter'>;
   errorPresenter: ErrorPresenter;
   submitting: boolean;
   submissionError: string | null;
@@ -30,50 +25,22 @@ interface DocumentUploadModalProps {
   onSubmit: (values: DocumentUploadValues) => Promise<boolean>;
 }
 
-/** The upload form, in a modal over the documents list. */
+/**
+ * The upload form, in a modal over the documents list. Closing the modal
+ * unmounts the form, so that it forgets what was typed in it.
+ */
 export function DocumentUploadModal({
   open,
   onOpenChange,
   model,
-  presenter,
+  types,
+  presenters,
   errorPresenter,
   submitting,
   submissionError,
   onSubmit,
 }: DocumentUploadModalProps) {
   const desktop = useMediaQuery('(min-width: 768px)');
-  const form = useForm<DocumentUploadValues>({
-    resolver: zodResolver(documentUploadSchema),
-    defaultValues: { category: model.defaultType, files: [], comment: '' },
-  });
-  const files = useFieldArray({ control: form.control, name: 'files' });
-
-  // A closed modal forgets what was typed in it.
-  useEffect(() => {
-    if (!open) {
-      form.reset();
-    }
-  }, [open, form]);
-
-  const fieldsProps = {
-    form,
-    fileKeys: files.fields.map((field) => field.id),
-    model,
-    presenter,
-    describeError: (code: string | undefined) =>
-      code === undefined ? null : errorPresenter.present(code),
-    onAddFiles: (picked: File[]) => {
-      if (picked.length === 0) {
-        return;
-      }
-      files.append(picked.map((file) => ({ file, name: DocumentName.proposedFor(file.name) })));
-      void form.trigger('files');
-    },
-    onRemoveFile: (index: number) => {
-      files.remove(index);
-      void form.trigger('files');
-    },
-  };
 
   return (
     <Dialog open={open} onOpenChange={(next) => (submitting ? undefined : onOpenChange(next))}>
@@ -82,21 +49,25 @@ export function DocumentUploadModal({
       >
         <DocumentUpload
           desktop={desktop}
-          fields={
-            desktop ? (
-              <DocumentUploadForm {...fieldsProps} />
-            ) : (
-              <MobileDocumentUploadForm {...fieldsProps} />
-            )
-          }
-          onSubmit={form.handleSubmit(async (values) => {
-            if (await onSubmit(values)) {
-              onOpenChange(false);
-            }
-          })}
+          formId={DOCUMENT_UPLOAD_FORM_ID}
           submitting={submitting}
           submissionError={submissionError}
-        />
+        >
+          <DocumentUploadForm
+            desktop={desktop}
+            model={model}
+            types={types}
+            uploadedFilePresenter={presenters.uploadedFile}
+            counterPresenter={presenters.counter}
+            errorPresenter={errorPresenter}
+            submitting={submitting}
+            onSubmit={async (values) => {
+              if (await onSubmit(values)) {
+                onOpenChange(false);
+              }
+            }}
+          />
+        </DocumentUpload>
       </ModalContent>
     </Dialog>
   );

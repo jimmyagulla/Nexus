@@ -3,7 +3,10 @@ import {
   i18n as appI18n,
   type I18n,
 } from '../../../infrastructure/ui/i18n/i18n';
-import { DOCUMENT_CATEGORY_ICONS } from './document-display';
+import {
+  DOCUMENT_CATEGORY_DISPLAY_ORDER,
+  DOCUMENT_CATEGORY_ICONS,
+} from './document-display';
 
 export interface DocumentTypeOptionModel {
   value: DocumentCategory;
@@ -18,11 +21,15 @@ export interface DocumentTypeOptionModel {
   mobileNote: string;
 }
 
-/** Presents one type card of the upload form. */
-export class DocumentTypeOptionPresenter {
+/** Presents the type cards of the upload form, in the order of the mockup. */
+export class DocumentTypeOptionsPresenter {
   constructor(private readonly i18n: I18n = appI18n) {}
 
-  present(category: DocumentCategory): DocumentTypeOptionModel {
+  present(): DocumentTypeOptionModel[] {
+    return DOCUMENT_CATEGORY_DISPLAY_ORDER.map((category) => this.presentOption(category));
+  }
+
+  private presentOption(category: DocumentCategory): DocumentTypeOptionModel {
     const labels = this.i18n.messages.documents;
     const type = labels.upload.types[category];
     return {

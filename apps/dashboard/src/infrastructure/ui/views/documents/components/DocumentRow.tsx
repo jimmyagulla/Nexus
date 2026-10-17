@@ -3,7 +3,7 @@ import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
 import { DocumentActionsMenu } from './DocumentActionsMenu';
 import { DocumentContextMenu } from './DocumentContextMenu';
-import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.presenter';
+import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/document-row.presenter';
 
 interface DocumentRowProps {
   model: DocumentRowModel;

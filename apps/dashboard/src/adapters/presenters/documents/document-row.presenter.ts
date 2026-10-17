@@ -8,7 +8,7 @@ import {
   DOCUMENT_CATEGORY_ICONS,
   DOCUMENT_STATUS_TONES,
 } from './document-display';
-import { FileSizePresenter } from './file-size.presenter';
+import type { FileSizePresenter } from './file-size.presenter';
 
 export interface DocumentRowModel {
   id: string;
@@ -25,11 +25,10 @@ export interface DocumentRowModel {
 
 /** Presents one row of the documents list. */
 export class DocumentRowPresenter {
-  private readonly sizes: FileSizePresenter;
-
-  constructor(private readonly i18n: I18n = appI18n) {
-    this.sizes = new FileSizePresenter(i18n);
-  }
+  constructor(
+    private readonly sizes: FileSizePresenter,
+    private readonly i18n: I18n = appI18n,
+  ) {}
 
   present(item: DocumentSummary): DocumentRowModel {
     const labels = this.i18n.messages.documents;

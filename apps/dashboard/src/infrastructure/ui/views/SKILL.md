@@ -13,6 +13,9 @@ description: >-
 Every screen is split into at least three distinct files, however small the screen is.
 
 1. **Form** — the form and its validation schema, in their own files colocated with the screen. Rules: skill `dashboard-forms`.
+   *   `<Name>Form.tsx` owns `useForm` and the `<form>` element — nothing else renders a `<form>`.
+   *   The pieces of a form that hold no form state of their own are `<Name>Fields.tsx` (e.g. a desktop and a mobile layout of the same fields). A component named `…Form` always renders the `<form>`.
+   *   When the layout puts the submit button outside the form (a modal footer), the form file exports its id (`DOCUMENT_UPLOAD_FORM_ID`), the form sets it, and the view gives the button `type="submit" form={formId}`. The view stays layout only.
 2. **View** (`*.tsx`) — the JSX layout and nothing else.
    *   Receives everything by props: data, callbacks, controllers, presenters.
    *   Expects data to be present and valid (Happy Path). No loading spinner, no fetch error message.

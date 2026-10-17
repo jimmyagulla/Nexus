@@ -3,7 +3,7 @@ import { FieldError } from '../../common/errors/FieldError';
 import { UploadedFile } from '../../common/forms/UploadedFile';
 import { i18n } from '../../i18n/i18n';
 import { Input } from '../../shared/input';
-import type { UploadedFileModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
+import type { UploadedFileModel } from '../../../../adapters/presenters/documents/uploaded-file.presenter';
 
 interface DocumentFileEntryProps {
   id: string;

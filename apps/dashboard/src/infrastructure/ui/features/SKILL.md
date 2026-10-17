@@ -12,6 +12,7 @@ description: >-
 - **Form Management**: All forms MUST use `react-hook-form` for state management.
 - **Validation**: All forms MUST use `zod` for schema definition and validation, integrated with `react-hook-form` via `@hookform/resolvers/zod`.
 - **One field wrapper**: a label over any control is `common/forms/FormField` (label, `required`, `optional`, `note`, `hint`, `labelId`, the control as children). Never write a `<X>Field` or `<X>FieldLabel` component that re-implements it; pass `className` / `labelClassName` for a variant.
+- **Form file**: `<Name>Form.tsx` owns `useForm`, `useFieldArray` and the `<form>`; field layouts without state are `<Name>Fields.tsx` — skill `dashboard-screens`.
 - **Field errors**: the refusal under a field is `common/errors/FieldError`; the refusal of the whole form is `common/errors/SubmissionError`.
 - **Consistency**: Use `FormControl`, `FormItem`, `FormLabel`, and `FormMessage` from shadcn/ui if available to ensure consistent styling and error messaging.
 - **Domain Constraints**: Zod schemas MUST reflect domain constraints (e.g., `amount` must be positive, `date` must be valid).

@@ -4,7 +4,7 @@ import type {
   DocumentSort,
   DocumentStatus,
 } from '@hexagonal-monorepo-template/domain';
-import type { DocumentFilterKey } from '../../../../../adapters/presenters/documents/documents.presenter';
+import type { DocumentFilterKey } from '../../../../../adapters/presenters/documents/document-active-filters.presenter';
 
 /** What the documents screen lets the person do. */
 export interface DocumentsListHandlers {

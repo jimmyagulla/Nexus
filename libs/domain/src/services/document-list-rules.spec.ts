@@ -6,7 +6,7 @@ import { DocumentFileFormat } from '../value-objects/document-file-format';
 import { DocumentName } from '../value-objects/document-name';
 import { DocumentSort } from '../value-objects/document-sort';
 import { DocumentStatus } from '../value-objects/document-status';
-import { compareDocuments, documentPeriodBounds, matchesDocumentListCriteria } from './document-list-rules';
+import { compareDocuments, countAppliedDocumentFilters, documentPeriodBounds, matchesDocumentListCriteria } from './document-list-rules';
 
 function doc(id: string, overrides: Partial<{
   name: string; category: DocumentCategory; status: DocumentStatus; sizeBytes: number; createdAt: string; uploadedById: string;
@@ -120,5 +120,29 @@ describe('documentPeriodBounds', () => {
 
   it('leaves a missing side unbounded', () => {
     expect(documentPeriodBounds(null, null)).toEqual({ start: null, end: null });
+  });
+});
+
+describe('countAppliedDocumentFilters', () => {
+  const none: DocumentListCriteria = {
+    search: 'arrêt', searchCategories: [], searchEmitters: [], categories: [], statuses: [], emitters: [],
+    from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC',
+  };
+
+  it('ignores the search', () => {
+    expect(countAppliedDocumentFilters(none)).toBe(0);
+  });
+
+  it('counts one per narrowing group, the period being one group', () => {
+    expect(
+      countAppliedDocumentFilters({
+        ...none,
+        categories: [DocumentCategory.PROOF, DocumentCategory.OTHER],
+        statuses: [DocumentStatus.NEW],
+        emitters: [DocumentEmitter.SELF],
+        from: '2026-10-01',
+        to: '2026-10-31',
+      }),
+    ).toBe(4);
   });
 });

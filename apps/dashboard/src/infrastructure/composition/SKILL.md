@@ -24,6 +24,12 @@ description: >-
 - **Group (parent) composition**: `composition/<group>/<group>.composition.ts` exports `<Group>Composition` and `create<Group>Composition()`, one key per page: e.g. `professionalExpense = { professionalExpenses, professionalExpenseRequest }`.
 - `di.ts` instantiates the parent compositions only. The route passes the page's slice to the page as `deps` (`deps={professionalExpenseComposition.professionalExpenseRequest}`); the page hands `deps` to its query hook (`useGet<Screen>`), which calls `presenter.present(…)` and returns the view model the page gives to its view.
 
+## One presenter per view model, linked here
+
+- A page composition instantiates every presenter of the page, one per view model, and links them here: a presenter that needs a value presenter (`FileSizePresenter`…) receives it through its constructor, from this file.
+- A page with many presenters groups them per part of the screen, e.g. `listPresenters: { summary, activeFilters, filters, sort, row }` and `uploadPresenters: { form, typeOptions, uploadedFile, counter, confirmation }`.
+- Never a parent presenter assembling the others — skill `dashboard-presenters`.
+
 ## Presenters are wired here, never built by the view
 
 - Presenters are passed to the component as props, exactly like the controller.

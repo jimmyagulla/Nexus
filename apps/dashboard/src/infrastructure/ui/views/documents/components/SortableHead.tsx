@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { cn } from '../../../lib/utils';
 import { TableHead } from '../../../shared/table';
-import type { SortColumnModel, SortState } from '../../../../../adapters/presenters/documents/documents.presenter';
+import type { SortColumnModel, SortState } from '../../../../../adapters/presenters/documents/document-sort.presenter';
 
 interface SortableHeadProps {
   model: SortColumnModel;

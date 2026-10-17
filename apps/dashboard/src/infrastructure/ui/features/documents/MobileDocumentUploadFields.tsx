@@ -11,12 +11,14 @@ import { MobileUploadedFile } from './MobileUploadedFile';
 import { fileEntryError, filesError } from './document-upload.errors';
 import type { DocumentUploadFieldsProps } from './document-upload-fields.props';
 
-/** Fields of the M.3 mobile upload form. */
-export function MobileDocumentUploadForm({
+/** Fields of the M.3 mobile upload form. The <form> itself is DocumentUploadForm. */
+export function MobileDocumentUploadFields({
   form,
   fileKeys,
   model,
-  presenter,
+  types,
+  uploadedFilePresenter,
+  counterPresenter,
   describeError,
   onAddFiles,
   onRemoveFile,
@@ -25,7 +27,7 @@ export function MobileDocumentUploadForm({
   const category = form.watch('category');
   const comment = form.watch('comment');
   const files = form.watch('files');
-  const note = model.types.find((type) => type.value === category)?.mobileNote ?? '';
+  const note = types.find((type) => type.value === category)?.mobileNote ?? '';
 
   return (
     <div className="flex flex-col gap-4.5">
@@ -40,7 +42,7 @@ export function MobileDocumentUploadForm({
               onValueChange={field.onChange}
               className="grid grid-cols-2 gap-2"
             >
-              {model.types.map((type) => (
+              {types.map((type) => (
                 <MobileDocumentTypeOption key={type.value} model={type} />
               ))}
             </RadioGroupPrimitive.Root>
@@ -59,7 +61,7 @@ export function MobileDocumentUploadForm({
         </div>
         {fileKeys.map((key, index) => {
           const file = files[index]?.file ?? { name: '', size: 0 };
-          const described = presenter.presentFile(file);
+          const described = uploadedFilePresenter.present(file);
           return (
             <MobileUploadedFile
               key={key}
@@ -88,7 +90,7 @@ export function MobileDocumentUploadForm({
         label={labels.comment}
         optional
         htmlFor="mobile-document-comment"
-        hint={presenter.presentCounter(comment.length, model.commentMaxLength)}
+        hint={counterPresenter.present(comment.length, model.commentMaxLength)}
         className="gap-2"
       >
         <Textarea
