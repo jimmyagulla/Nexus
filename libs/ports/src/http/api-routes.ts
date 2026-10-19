@@ -18,6 +18,7 @@ export const API_ROUTES = {
     expenseReportProof: ':companyId/expense-reports/:expenseReportId/proof',
     expenseReportStatus: ':companyId/expense-reports/:expenseReportId/status',
     employeeExpenseReports: ':companyId/employees/:employeeId/expense-reports',
+    employeePersonalInfo: ':companyId/employees/:employeeId/personal-info',
   },
 } as const;
 

@@ -6,7 +6,7 @@ import {
   leaveComposition,
   overtimeComposition,
   payslipComposition,
-  personalInfoComposition,
+  personalInfoPageComposition,
   professionalExpenseComposition,
   shellComposition,
 } from '../../di';
@@ -22,9 +22,7 @@ import { OvertimeDeclarationPage } from '../views/overtime/OvertimeDeclarationPa
 import { OvertimePage } from '../views/overtime/OvertimePage';
 import { PayslipPage } from '../views/payslips/PayslipPage';
 import { PayslipsPage } from '../views/payslips/PayslipsPage';
-import { PersonalInfoEditPage } from '../views/personal-info/PersonalInfoEditPage';
 import { PersonalInfoPage } from '../views/personal-info/PersonalInfoPage';
-import { PersonalInfoUpdatedPage } from '../views/personal-info/PersonalInfoUpdatedPage';
 import { ProfessionalExpenseRequestPage } from '../views/professional-expenses/ProfessionalExpenseRequestPage';
 import { ProfessionalExpensesPage } from '../views/professional-expenses/ProfessionalExpensesPage';
 import { EmployeeShellPage } from '../views/shell/EmployeeShellPage';
@@ -66,7 +64,6 @@ export const employeeRoutes = employeeLayoutRoute.addChildren([
   createRoute({ getParentRoute: parent, path: AppRoutes.expenseReportNew, component: () => <ExpenseReportsPage deps={expenseReportsPageComposition} newRoute /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.professionalExpenses, component: () => <ProfessionalExpensesPage deps={professionalExpenseComposition.professionalExpenses} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.professionalExpenseRequest, component: () => <ProfessionalExpenseRequestPage deps={professionalExpenseComposition.professionalExpenseRequest} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.personalInfo, component: () => <PersonalInfoPage deps={personalInfoComposition.personalInfo} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.personalInfoEdit, component: () => <PersonalInfoEditPage deps={personalInfoComposition.personalInfoEdit} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.personalInfoUpdated, component: () => <PersonalInfoUpdatedPage deps={personalInfoComposition.personalInfoUpdated} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.personalInfo, component: () => <PersonalInfoPage deps={personalInfoPageComposition} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.personalInfoEdit, component: () => <PersonalInfoPage deps={personalInfoPageComposition} editRoute /> }),
 ]);

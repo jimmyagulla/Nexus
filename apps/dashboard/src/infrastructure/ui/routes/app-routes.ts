@@ -20,7 +20,6 @@ export const AppRoutes = {
   professionalExpenseRequest: '/frais-professionnels/nouvelle-demande',
   personalInfo: '/informations',
   personalInfoEdit: '/informations/modifier',
-  personalInfoUpdated: '/informations/mise-a-jour',
 
   employer: '/employeur',
   employees: '/employeur/salaries',

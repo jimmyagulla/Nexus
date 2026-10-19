@@ -36,3 +36,7 @@ export * from './use-cases/expense-reports/revise-expense-report-from-session.us
 export * from './use-cases/expense-reports/view-expense-report-proof.use-case';
 export * from './use-cases/expense-reports/view-expense-report-proof-from-session.use-case';
 export * from './use-cases/expense-reports/change-expense-report-status.use-case';
+export * from './use-cases/personal-info/get-personal-info.use-case';
+export * from './use-cases/personal-info/get-personal-info-from-session.use-case';
+export * from './use-cases/personal-info/update-personal-contact.use-case';
+export * from './use-cases/personal-info/update-personal-contact-from-session.use-case';

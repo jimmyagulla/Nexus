@@ -18,6 +18,7 @@ import { DocumentsModule } from './documents/documents.module';
 import { ExpenseReportsModule } from './expense-reports/expense-reports.module';
 import { IdGeneratorModule } from './id/id-generator.module';
 import { PayslipsModule } from './payslips/payslips.module';
+import { PersonalInfoModule } from './personal-info/personal-info.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 const persistence = loadApiConfig().persistence;
@@ -35,6 +36,7 @@ const persistence = loadApiConfig().persistence;
     DocumentsModule,
     PayslipsModule,
     ExpenseReportsModule,
+    PersonalInfoModule,
   ],
   providers: [
     {

@@ -1,10 +1,5 @@
-import { ErrorCode } from '../errors/error-code';
+import { requireText } from './text-rules';
 
 export function requirePublicHolidayLabel(raw: string): string {
-  const label = raw.trim();
-  if (label === '') {
-    throw new Error(ErrorCode.REQUIRED_INFORMATION);
-  }
-
-  return label;
+  return requireText(raw);
 }

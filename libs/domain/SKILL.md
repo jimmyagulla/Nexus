@@ -29,6 +29,11 @@ A validation pattern is a business rule. It lives here and nowhere else.
 - Export every validation regular expression as a named constant: one rule, one constant, one place.
 - Request validators on the API side and form schemas on the frontend side reference that constant. They never restate the pattern.
 - An inline regular expression, or the same pattern written twice, is a defect. Move it here and import it.
+- The rule holds for every regular expression of the domain, not only validation ones: a parsing or formatting pattern (e.g. `SOCIAL_SECURITY_NUMBER_PARTS_PATTERN` used to mask a number) is a named constant too, in a `*.patterns.ts` file of `value-objects/`, with a comment saying what it matches.
+
+## Shared rules
+
+A check that several entities, value objects or services repeat is a domain function written once, never a private helper copied per file: `requireText` (filled, trimmed, else `REQUIRED_INFORMATION`) and `requireValid` (else `INVALID_INFORMATION`) in `services/text-rules.ts`. Before writing a check, look there; a new generic one joins that file. A check tied to one concept only stays private to it.
 
 ## Forbidden
 

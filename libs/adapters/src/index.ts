@@ -22,3 +22,5 @@ export * from './out/expense-reports/in-memory-expense-report-proof.storage';
 export * from './out/expense-reports/in-memory-expense-report.gateway';
 export * from './out/storage/in-memory-key-value.storage';
 export * from './out/files/zip-file-archiver';
+export * from './out/personal-info/in-memory-personal-info.repository';
+export * from './out/personal-info/in-memory-personal-info.gateway';
