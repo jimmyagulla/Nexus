@@ -25,7 +25,7 @@ export const employeeShellFixture: ShellViewModel = {
       title: nav.myDocuments,
       items: [
         { label: nav.documents, to: AppRoutes.documents, icon: 'ri-folder-shield-2-line', badge: '3' },
-        { label: nav.payslips, to: AppRoutes.payslips, icon: 'ri-file-paper-2-line', badge: '1' },
+        { label: nav.payslips, to: AppRoutes.payslips, icon: 'ri-file-paper-2-line', counter: 'unseenPayslips' },
         { label: nav.documentsToSend, to: AppRoutes.documentsToSend, icon: 'ri-upload-cloud-2-line' },
       ],
     },

@@ -1,6 +1,7 @@
 import { DocumentCategory } from '../value-objects/document-category';
 import { DocumentStatus } from '../value-objects/document-status';
 import { DocumentSummary } from './document-summary';
+import { FileLink } from './file-link';
 
 /** A page of the documents list, with the counts the filters display. */
 export type DocumentList = {
@@ -14,9 +15,4 @@ export type DocumentList = {
 };
 
 /** Link to the file of a document, valid for a short while. */
-export type DocumentFileLink = {
-  url: string;
-  /** Name to save the file under, extension included. */
-  fileName: string;
-  contentType: string;
-};
+export type DocumentFileLink = FileLink;

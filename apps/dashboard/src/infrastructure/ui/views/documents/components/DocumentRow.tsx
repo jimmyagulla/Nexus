@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { FileActionsMenu } from '../../../common/data/FileActionsMenu';
+import { FileContextMenu } from '../../../common/data/FileContextMenu';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-import { DocumentActionsMenu } from './DocumentActionsMenu';
-import { DocumentContextMenu } from './DocumentContextMenu';
 import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/document-row.presenter';
 
 interface DocumentRowProps {
@@ -54,8 +54,8 @@ export function DocumentRow({ model, onView, onDownload }: DocumentRowProps) {
         </Badge>
       </TableCell>
       <TableCell className="flex justify-end gap-0.5 text-18 text-primary">
-        <DocumentActionsMenu onView={view} onDownload={download} />
-        <DocumentContextMenu
+        <FileActionsMenu onView={view} onDownload={download} />
+        <FileContextMenu
           point={contextPoint}
           onClose={() => setContextPoint(null)}
           onView={view}

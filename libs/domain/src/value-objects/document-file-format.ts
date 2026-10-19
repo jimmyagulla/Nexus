@@ -49,6 +49,21 @@ export function documentFileFormatSpec(
   return spec;
 }
 
+/**
+ * File name a download saves: the name as given when it already ends with an
+ * extension of its format, the name followed by that extension otherwise.
+ */
+export function fileNameWithExtension(
+  name: string,
+  format: DocumentFileFormat,
+): string {
+  const extensions = documentFileFormatSpec(format).extensions;
+  const hasExtension = extensions.some((extension) =>
+    name.toLowerCase().endsWith(`.${extension}`),
+  );
+  return hasExtension ? name : `${name}.${extensions[0]}`;
+}
+
 /** Extension of a file name, lower-cased and without the dot ('' when none). */
 export function fileExtensionOf(fileName: string): string {
   const dot = fileName.lastIndexOf('.');

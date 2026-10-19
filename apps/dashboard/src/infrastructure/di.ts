@@ -16,10 +16,14 @@ import { createLeaveApprovalComposition } from './composition/leave-approval/lea
 import { createAccountingFirmComposition } from './composition/accounting-firm/accounting-firm.composition';
 import { createShellComposition } from './composition/shell/shell.composition';
 import { createSessionGateway } from './session/create-session-gateway';
+import { BrowserKeyValueStorage } from './storage/browser-key-value-storage';
+import { createSeenPayslipsStore } from './ui/stores/seen-payslips.store';
 
 const API_URL = loadDashboardConfig().apiUrl;
 const httpClient = new FetchHttpClient(API_URL);
 const sessions = createSessionGateway();
+/** Shared by the payslips screen and the shell badge. */
+const seenPayslips = createSeenPayslipsStore(new BrowserKeyValueStorage());
 
 export const companySettingsComposition = createCompanySettingsComposition(
   httpClient,
@@ -33,7 +37,11 @@ export const companySettingsErrorPresenter =
 // Screens (placeholder data until their use cases exist)
 export const authComposition = createAuthComposition();
 export const employeeDashboardComposition = createEmployeeDashboardComposition();
-export const payslipComposition = createPayslipComposition();
+export const payslipComposition = createPayslipComposition(
+  httpClient,
+  sessions,
+  seenPayslips,
+);
 export const documentsPageComposition = createDocumentsPageComposition(
   httpClient,
   sessions,
@@ -47,4 +55,8 @@ export const employerDashboardComposition = createEmployerDashboardComposition()
 export const employeeComposition = createEmployeeComposition();
 export const leaveApprovalComposition = createLeaveApprovalComposition();
 export const accountingFirmComposition = createAccountingFirmComposition();
-export const shellComposition = createShellComposition();
+export const shellComposition = createShellComposition(
+  httpClient,
+  sessions,
+  seenPayslips,
+);

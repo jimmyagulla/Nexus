@@ -1,15 +1,22 @@
-import { Link } from '@tanstack/react-router';
-import { i18n } from '../../../i18n/i18n';
+import { useState } from 'react';
+import { FileActionsMenu } from '../../../common/data/FileActionsMenu';
+import { FileContextMenu } from '../../../common/data/FileContextMenu';
 import { cn } from '../../../lib/utils';
-import { AppRoutes } from '../../../routes/app-routes';
 import { Badge } from '../../../shared/badge';
-import { Button } from '../../../shared/button';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslips.presenter';
+import type { PayslipRowModel } from '../../../../../adapters/presenters/payslips/payslip-row.presenter';
 
-/** One payslip line of the P1.5 table. */
-export function PayslipRow({ payslip }: { payslip: PayslipRowModel }) {
-  const common = i18n.messages.common;
+interface PayslipRowProps {
+  payslip: PayslipRowModel;
+  onView: (payslipId: string) => void;
+  onDownload: (payslipId: string) => void;
+}
+
+/** One payslip line of the P1.5 table; a right click opens its actions under the cursor. */
+export function PayslipRow({ payslip, onView, onDownload }: PayslipRowProps) {
+  const [contextPoint, setContextPoint] = useState<{ x: number; y: number } | null>(null);
+  const view = () => onView(payslip.id);
+  const download = () => onDownload(payslip.id);
 
   return (
     <TableRow
@@ -17,6 +24,10 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowModel }) {
         'gap-4 px-5 py-1.75 last:border-b',
         payslip.isNew && 'bg-blue-50',
       )}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        setContextPoint({ x: event.clientX, y: event.clientY });
+      }}
     >
       <TableCell className="flex items-center gap-3 font-semibold text-foreground">
         <i aria-hidden className="ri-file-paper-2-line text-20 text-primary" />
@@ -27,22 +38,14 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowModel }) {
       <TableCell>
         <Badge tone={payslip.status.tone}>{payslip.status.label}</Badge>
       </TableCell>
-      <TableCell className="flex justify-end gap-2">
-        <Button asChild variant="outline" size="xs" className="gap-1.5">
-          <Link to={AppRoutes.payslip} params={{ payslipId: payslip.id }}>
-            <i aria-hidden className="ri-eye-line" />
-            {common.view}
-          </Link>
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          size="icon"
-          aria-label={common.download}
-          className="rounded-lg text-18"
-        >
-          <i aria-hidden className="ri-download-2-line" />
-        </Button>
+      <TableCell className="flex justify-end gap-0.5 text-18 text-primary">
+        <FileActionsMenu onView={view} onDownload={download} />
+        <FileContextMenu
+          point={contextPoint}
+          onClose={() => setContextPoint(null)}
+          onView={view}
+          onDownload={download}
+        />
       </TableCell>
     </TableRow>
   );

@@ -1,4 +1,9 @@
 import {
+  IHttpClient,
+  ISessionGateway,
+} from '@hexagonal-monorepo-template/ports';
+import type { SeenPayslipsStore } from '../../ui/stores/seen-payslips.store';
+import {
   createEmployeeShellPageComposition,
   type EmployeeShellPageComposition,
 } from './employee-shell-page.composition';
@@ -13,9 +18,13 @@ export type ShellComposition = {
   employerShell: EmployerShellPageComposition;
 };
 
-export function createShellComposition(): ShellComposition {
+export function createShellComposition(
+  httpClient: IHttpClient,
+  sessions: ISessionGateway,
+  seenPayslips: SeenPayslipsStore,
+): ShellComposition {
   return {
-    employeeShell: createEmployeeShellPageComposition(),
+    employeeShell: createEmployeeShellPageComposition(httpClient, sessions, seenPayslips),
     employerShell: createEmployerShellPageComposition(),
   };
 }

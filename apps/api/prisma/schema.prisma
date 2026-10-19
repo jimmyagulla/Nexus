@@ -68,6 +68,7 @@ model Company {
   publicHolidays     CompanyPublicHoliday[]
   auditEvents        AuditEvent[]
   documents          Document[]
+  payslips           Payslip[]
 }
 
 model CompanyNonWorkingWeekday {
@@ -148,4 +149,27 @@ model Document {
   company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@index([companyId, ownerId, createdAt(sort: Desc)])
+}
+
+// Metadata of a payslip made available by the employer; the file itself lives
+// in the private `payslips` storage bucket under `storageKey`. Ranges and
+// length limits are also enforced by CHECK constraints: see prisma/sql/payslips.sql.
+model Payslip {
+  id           String             @id @default(uuid())
+  companyId    String
+  employeeId   String             @db.VarChar(64)
+  uploadedById String             @db.VarChar(64)
+  employerName String             @db.VarChar(100)
+  year         Int                @db.SmallInt
+  month        Int                @db.SmallInt
+  netPayCents  Int
+  fileName     String             @db.VarChar(50)
+  format       DocumentFileFormat
+  sizeBytes    Int
+  storageKey   String             @unique @db.VarChar(255)
+  availableAt  DateTime           @db.Timestamptz(3)
+  createdAt    DateTime           @default(now()) @db.Timestamptz(3)
+  company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, employeeId, year, month])
 }

@@ -25,15 +25,6 @@ export const documents = {
     },
     empty: 'No document matches your search.',
     emptyVault: 'You have no document yet.',
-    actions: {
-      view: 'View',
-      download: 'Download',
-    },
-  },
-  preview: {
-    loading: 'Opening the document…',
-    error: 'This document cannot be opened right now.',
-    unavailable: 'No preview for this format. Download the file to open it.',
   },
   filters: {
     title: 'Filters',

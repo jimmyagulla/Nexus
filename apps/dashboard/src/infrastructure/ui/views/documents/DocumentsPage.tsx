@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useShallow } from 'zustand/react/shallow';
 import type { DocumentsPageComposition } from '../../../composition/document/documents-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
+import { FilePreviewModal } from '../../common/files/FilePreviewModal';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { useDepositDocuments } from '../../hooks/documents/useDepositDocuments';
 import { useDownloadDocument } from '../../hooks/documents/useDownloadDocument';
@@ -13,7 +14,6 @@ import { i18n } from '../../i18n/i18n';
 import { AppRoutes } from '../../routes/app-routes';
 import { useDocumentsListStore } from '../../stores/documents-list.store';
 import { Documents } from './Documents';
-import { DocumentPreviewModal } from './components/DocumentPreviewModal';
 import { DocumentUploadModal } from './components/DocumentUploadModal';
 import { saveFile } from '../../lib/save-file';
 import type { DocumentsListHandlers } from './components/documents-list.handlers';
@@ -126,7 +126,7 @@ export function DocumentsPage({ deps, uploadRoute = false }: DocumentsPageProps)
         submissionError={deposit.isError ? deps.errorPresenter.present(deposit.error) : null}
         onSubmit={submitDeposit}
       />
-      <DocumentPreviewModal
+      <FilePreviewModal
         open={previewed !== null}
         onOpenChange={(open) => (open ? undefined : closePreview())}
         title={view.data?.fileName ?? previewed?.name ?? ''}

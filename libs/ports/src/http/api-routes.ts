@@ -9,6 +9,10 @@ export const API_ROUTES = {
     documents: ':companyId/documents',
     documentView: ':companyId/documents/:documentId/view',
     documentDownload: ':companyId/documents/:documentId/download',
+    payslips: ':companyId/payslips',
+    payslipExport: ':companyId/payslips/export',
+    payslipView: ':companyId/payslips/:payslipId/view',
+    payslipDownload: ':companyId/payslips/:payslipId/download',
   },
 } as const;
 

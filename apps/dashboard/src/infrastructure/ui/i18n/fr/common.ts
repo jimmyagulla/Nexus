@@ -23,4 +23,13 @@ export const common = {
     'Cette rubrique sera disponible dans une prochaine version de My Docs.',
   backToDashboard: 'Retour au tableau de bord',
   loadingError: "Impossible d'afficher cet écran pour le moment.",
+  fileActions: {
+    view: 'Visualiser',
+    download: 'Télécharger',
+  },
+  preview: {
+    loading: 'Ouverture du document…',
+    unavailable:
+      "L'aperçu n'est pas disponible pour ce format. Téléchargez le fichier pour l'ouvrir.",
+  },
 } as const;

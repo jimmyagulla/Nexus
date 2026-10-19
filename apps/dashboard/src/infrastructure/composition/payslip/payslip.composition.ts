@@ -1,4 +1,9 @@
 import {
+  IHttpClient,
+  ISessionGateway,
+} from '@hexagonal-monorepo-template/ports';
+import type { SeenPayslipsStore } from '../../ui/stores/seen-payslips.store';
+import {
   createPayslipsPageComposition,
   type PayslipsPageComposition,
 } from './payslips-page.composition';
@@ -13,9 +18,13 @@ export type PayslipComposition = {
   payslip: PayslipPageComposition;
 };
 
-export function createPayslipComposition(): PayslipComposition {
+export function createPayslipComposition(
+  httpClient: IHttpClient,
+  sessions: ISessionGateway,
+  seenPayslips: SeenPayslipsStore,
+): PayslipComposition {
   return {
-    payslips: createPayslipsPageComposition(),
+    payslips: createPayslipsPageComposition(httpClient, sessions, seenPayslips),
     payslip: createPayslipPageComposition(),
   };
 }
