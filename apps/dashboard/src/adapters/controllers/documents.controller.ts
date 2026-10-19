@@ -33,6 +33,21 @@ export type DocumentsListState = Omit<
   sort: DocumentSort | null;
 };
 
+/**
+ * Nothing searched, filtered nor sorted: every document of the person, as
+ * the screen opens and as the badge of unseen documents reads them.
+ */
+export const EVERY_DOCUMENT: DocumentsListState = {
+  search: '',
+  categories: [],
+  statuses: [],
+  emitters: [],
+  from: null,
+  to: null,
+  sort: null,
+  direction: DEFAULT_DOCUMENT_SORT_DIRECTION,
+};
+
 /** Labels the search also matches, so that "maladie" finds the sick leaves. */
 export interface DocumentSearchVocabulary {
   categories: Readonly<Record<DocumentCategory, string>>;

@@ -1,12 +1,12 @@
-import { i18n } from '../../../i18n/i18n';
-import type { DocumentPreview } from '../../../hooks/documents/useViewDocument';
+import { i18n } from '../../i18n/i18n';
+import type { FilePreview } from '../../lib/file-preview';
 
-interface DocumentViewerProps {
-  preview: DocumentPreview;
+interface FileViewerProps {
+  preview: FilePreview;
 }
 
-/** Shows a document inside the app: PDF, image or text; a notice otherwise. */
-export function DocumentViewer({ preview }: DocumentViewerProps) {
+/** Shows a file inside the app: PDF, image or text; a notice otherwise. */
+export function FileViewer({ preview }: FileViewerProps) {
   if (preview.contentType === 'application/pdf') {
     return (
       <iframe
@@ -40,7 +40,7 @@ export function DocumentViewer({ preview }: DocumentViewerProps) {
   return (
     <div className="flex flex-col items-center gap-3 px-6 py-12 text-center text-14 text-muted-foreground">
       <i aria-hidden className="ri-file-excel-2-line text-32 text-primary" />
-      {i18n.messages.documents.preview.unavailable}
+      {i18n.messages.common.preview.unavailable}
     </div>
   );
 }

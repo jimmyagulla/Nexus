@@ -59,7 +59,6 @@ export function Payslip({ model }: PayslipProps) {
               <PayslipDetailRow label={labels.availableOn} value={model.availableOn} />
               <PayslipDetailRow label={labels.issuer} value={model.issuer} />
               <PayslipDetailRow label={labels.size} value={model.size} />
-              <PayslipDetailRow label={labels.netPay} value={model.netPay} total />
             </div>
             <Button type="button" className="h-11">
               <i aria-hidden className="ri-download-2-line" />

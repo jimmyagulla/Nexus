@@ -23,4 +23,12 @@ export const common = {
     'This section will be available in an upcoming release of My Docs.',
   backToDashboard: 'Back to dashboard',
   loadingError: 'This screen cannot be displayed right now.',
+  fileActions: {
+    view: 'View',
+    download: 'Download',
+  },
+  preview: {
+    loading: 'Opening the document…',
+    unavailable: 'No preview for this format. Download the file to open it.',
+  },
 } as const;

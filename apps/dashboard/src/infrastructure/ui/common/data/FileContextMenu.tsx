@@ -2,10 +2,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '../../../shared/dropdown-menu';
-import { DocumentActionsItems } from './DocumentActionsItems';
+} from '../../shared/dropdown-menu';
+import { FileActionsItems } from './FileActionsItems';
 
-interface DocumentContextMenuProps {
+interface FileContextMenuProps {
   /** Where the right click happened, in viewport pixels; null while closed. */
   point: { x: number; y: number } | null;
   onClose: () => void;
@@ -14,7 +14,7 @@ interface DocumentContextMenuProps {
 }
 
 /** The actions of a row, opened under the cursor by a right click. */
-export function DocumentContextMenu({ point, onClose, onView, onDownload }: DocumentContextMenuProps) {
+export function FileContextMenu({ point, onClose, onView, onDownload }: FileContextMenuProps) {
   return (
     <DropdownMenu
       modal={false}
@@ -35,7 +35,7 @@ export function DocumentContextMenu({ point, onClose, onView, onDownload }: Docu
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" side="bottom" sideOffset={2}>
-        <DocumentActionsItems onView={onView} onDownload={onDownload} />
+        <FileActionsItems onView={onView} onDownload={onDownload} />
       </DropdownMenuContent>
     </DropdownMenu>
   );

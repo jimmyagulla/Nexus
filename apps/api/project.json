@@ -60,14 +60,14 @@
     "prisma-push": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "prisma db push --schema apps/api/prisma/schema.prisma && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql",
+        "command": "prisma db push --schema apps/api/prisma/schema.prisma && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/payslips.sql",
         "cwd": "{workspaceRoot}"
       }
     },
     "prisma-sql": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql",
+        "command": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/payslips.sql",
         "cwd": "{workspaceRoot}"
       }
     },

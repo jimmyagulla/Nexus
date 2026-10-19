@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { EmptyTableRow } from '../../common/data/EmptyTableRow';
 import { PageContent } from '../../common/page/PageContent';
 import { PageHeader } from '../../common/page/PageHeader';
 import { i18n } from '../../i18n/i18n';
@@ -7,67 +8,98 @@ import { Button } from '../../shared/button';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { MobilePayslipRow } from './components/MobilePayslipRow';
 import { PayslipRow } from './components/PayslipRow';
-import type { PayslipsViewModel } from '../../../../adapters/presenters/payslips/payslips.presenter';
+import { PayslipYearMenu } from './components/PayslipYearMenu';
+import type { PayslipsListHandlers } from './components/payslips-list.handlers';
+import type { PayslipListSummaryModel } from '../../../../adapters/presenters/payslips/payslip-list-summary.presenter';
+import type { PayslipRowModel } from '../../../../adapters/presenters/payslips/payslip-row.presenter';
+import type { PayslipYearModel } from '../../../../adapters/presenters/payslips/payslip-year.presenter';
 
 interface PayslipsProps {
-  model: PayslipsViewModel;
+  summary: PayslipListSummaryModel;
+  year: PayslipYearModel;
+  rows: PayslipRowModel[];
+  handlers: PayslipsListHandlers;
+  /** The archive of the year is being prepared. */
+  exporting: boolean;
 }
 
-const COLUMNS = 'minmax(0, 1fr) 140px 150px 160px 200px';
+const COLUMNS = 'minmax(0, 1fr) 140px 160px 200px';
 
-/** P1.5 — payslips of a year; M.2 below the `md` breakpoint. */
-export function Payslips({ model }: PayslipsProps) {
+/** P1.5 — payslips of a year, January to December; M.2 below the `md` breakpoint. */
+export function Payslips({ summary, year, rows, handlers, exporting }: PayslipsProps) {
   const labels = i18n.messages.payslips.list;
   const common = i18n.messages.common;
+  const choosePrevious = () => year.previousYear !== null && handlers.onChooseYear(year.previousYear);
+  const chooseNext = () => year.nextYear !== null && handlers.onChooseYear(year.nextYear);
 
   return (
     <>
       <PageContent className="hidden md:flex md:py-6">
-        <PageHeader title={labels.title} description={model.summary} />
+        <PageHeader title={labels.title} description={summary.summary} />
         <Table columns={COLUMNS} className="overflow-hidden">
           <div className="flex items-center gap-3 border-b border-border px-4 py-2.5">
             <div className="flex h-9 items-center rounded-lg border border-input bg-card">
               <button
                 type="button"
                 aria-label={labels.previousYear}
-                className="box-content flex h-8.5 w-9 items-center justify-center border-r border-border text-20 text-primary outline-none focus-visible:shadow-focus"
+                disabled={year.previousYear === null}
+                onClick={choosePrevious}
+                className="box-content flex h-8.5 w-9 items-center justify-center border-r border-border text-20 text-primary outline-none focus-visible:shadow-focus disabled:text-grey-300"
               >
                 <i aria-hidden className="ri-arrow-left-s-line" />
               </button>
-              <button
-                type="button"
-                aria-label={labels.chooseYear}
-                className="flex items-center gap-1.5 px-3.5 text-15 font-bold text-heading outline-none focus-visible:shadow-focus"
-              >
-                {model.year}
-                <i aria-hidden className="ri-arrow-down-s-line text-16 text-primary" />
-              </button>
+              <PayslipYearMenu options={year.options} onChoose={handlers.onChooseYear}>
+                <button
+                  type="button"
+                  aria-label={labels.chooseYear}
+                  className="flex items-center gap-1.5 px-3.5 text-15 font-bold text-heading outline-none focus-visible:shadow-focus"
+                >
+                  {year.year}
+                  <i aria-hidden className="ri-arrow-down-s-line text-16 text-primary" />
+                </button>
+              </PayslipYearMenu>
               <button
                 type="button"
                 aria-label={labels.nextYear}
-                disabled={!model.hasNextYear}
+                disabled={year.nextYear === null}
+                onClick={chooseNext}
                 className="box-content flex h-8.5 w-9 items-center justify-center border-l border-border text-20 text-primary outline-none focus-visible:shadow-focus disabled:text-grey-300"
               >
                 <i aria-hidden className="ri-arrow-right-s-line" />
               </button>
             </div>
-            <span className="text-13 text-muted-foreground">{model.yearSummary}</span>
+            <span className="text-13 text-muted-foreground">{year.yearSummary}</span>
             <span className="flex-1" />
-            <Button type="button" variant="outline" size="xs" className="gap-1.5">
-              <i aria-hidden className="ri-download-cloud-2-line" />
-              {`${labels.downloadAll} (${model.year})`}
+            <Button
+              type="button"
+              variant="outline"
+              size="xs"
+              className="gap-1.5"
+              disabled={!year.canDownloadAll || exporting}
+              onClick={handlers.onDownloadAll}
+            >
+              <i
+                aria-hidden
+                className={exporting ? 'ri-loader-4-line animate-spin' : 'ri-download-cloud-2-line'}
+              />
+              {year.downloadAllLabel}
             </Button>
           </div>
           <TableHeader className="gap-4 px-5 py-2.5">
             <TableHead>{labels.period}</TableHead>
             <TableHead>{labels.availableOn}</TableHead>
-            <TableHead>{labels.netPay}</TableHead>
             <TableHead>{common.status}</TableHead>
             <TableHead className="justify-end">{common.actions}</TableHead>
           </TableHeader>
-          {model.payslips.map((payslip) => (
-            <PayslipRow key={payslip.id} payslip={payslip} />
+          {rows.map((payslip) => (
+            <PayslipRow
+              key={payslip.id}
+              payslip={payslip}
+              onView={handlers.onView}
+              onDownload={handlers.onDownload}
+            />
           ))}
+          {rows.length === 0 && <EmptyTableRow message={summary.emptyMessage} />}
         </Table>
       </PageContent>
 
@@ -86,31 +118,44 @@ export function Payslips({ model }: PayslipsProps) {
           <button
             type="button"
             aria-label={labels.previousYear}
-            className="flex size-11 items-center justify-center rounded-lg border border-input text-22 text-primary outline-none focus-visible:shadow-focus"
+            disabled={year.previousYear === null}
+            onClick={choosePrevious}
+            className="flex size-11 items-center justify-center rounded-lg border border-input text-22 text-primary outline-none focus-visible:shadow-focus disabled:text-grey-300"
           >
             <i aria-hidden className="ri-arrow-left-s-line" />
           </button>
-          <button
-            type="button"
-            aria-label={labels.chooseYear}
-            className="flex items-center gap-1.5 text-18 font-bold text-heading outline-none focus-visible:shadow-focus"
-          >
-            {model.year}
-            <i aria-hidden className="ri-arrow-down-s-line text-18 text-primary" />
-          </button>
+          <PayslipYearMenu options={year.options} onChoose={handlers.onChooseYear}>
+            <button
+              type="button"
+              aria-label={labels.chooseYear}
+              className="flex items-center gap-1.5 text-18 font-bold text-heading outline-none focus-visible:shadow-focus"
+            >
+              {year.year}
+              <i aria-hidden className="ri-arrow-down-s-line text-18 text-primary" />
+            </button>
+          </PayslipYearMenu>
           <button
             type="button"
             aria-label={labels.nextYear}
-            disabled={!model.hasNextYear}
+            disabled={year.nextYear === null}
+            onClick={chooseNext}
             className="flex size-11 items-center justify-center rounded-lg border border-border text-22 text-primary outline-none focus-visible:shadow-focus disabled:text-grey-300"
           >
             <i aria-hidden className="ri-arrow-right-s-line" />
           </button>
         </div>
         <div className="flex flex-col gap-2.5 px-5 py-4">
-          {model.payslips.map((payslip) => (
-            <MobilePayslipRow key={payslip.id} payslip={payslip} />
+          {rows.map((payslip) => (
+            <MobilePayslipRow
+              key={payslip.id}
+              payslip={payslip}
+              onView={handlers.onView}
+              onDownload={handlers.onDownload}
+            />
           ))}
+          {rows.length === 0 && (
+            <p className="py-6 text-center text-14 text-muted-foreground">{summary.emptyMessage}</p>
+          )}
         </div>
       </div>
     </>

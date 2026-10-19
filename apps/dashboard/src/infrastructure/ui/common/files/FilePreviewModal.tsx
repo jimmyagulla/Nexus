@@ -1,6 +1,6 @@
-import { PageStatus } from '../../../common/feedback/PageStatus';
-import { i18n } from '../../../i18n/i18n';
-import { Button } from '../../../shared/button';
+import { i18n } from '../../i18n/i18n';
+import type { FilePreview } from '../../lib/file-preview';
+import { Button } from '../../shared/button';
 import {
   Dialog,
   DialogDescription,
@@ -8,24 +8,24 @@ import {
   DialogTitle,
   ModalBody,
   ModalContent,
-} from '../../../shared/dialog';
-import { DocumentViewer } from './DocumentViewer';
-import type { DocumentPreview } from '../../../hooks/documents/useViewDocument';
+} from '../../shared/dialog';
+import { PageStatus } from '../feedback/PageStatus';
+import { FileViewer } from './FileViewer';
 
-interface DocumentPreviewModalProps {
+interface FilePreviewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Name of the document, shown while it loads. */
+  /** Name of the file, shown while it loads. */
   title: string;
-  preview: DocumentPreview | undefined;
+  preview: FilePreview | undefined;
   loading: boolean;
-  /** Translated failure, if the document could not be opened. */
+  /** Translated failure, if the file could not be opened. */
   error: string | null;
   onDownload: () => void;
 }
 
-/** In-app document reader: name and download at the top, the document below. */
-export function DocumentPreviewModal({
+/** In-app file reader: name and download at the top, the file below. */
+export function FilePreviewModal({
   open,
   onOpenChange,
   title,
@@ -33,8 +33,8 @@ export function DocumentPreviewModal({
   loading,
   error,
   onDownload,
-}: DocumentPreviewModalProps) {
-  const labels = i18n.messages.documents;
+}: FilePreviewModalProps) {
+  const labels = i18n.messages.common;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -46,13 +46,13 @@ export function DocumentPreviewModal({
           </div>
           <Button type="button" variant="outline" onClick={onDownload} disabled={preview === undefined}>
             <i aria-hidden className="ri-download-2-line text-18" />
-            {labels.list.actions.download}
+            {labels.download}
           </Button>
         </DialogHeader>
         <ModalBody className="flex flex-col">
           {loading && <PageStatus>{labels.preview.loading}</PageStatus>}
           {error !== null && <PageStatus>{error}</PageStatus>}
-          {preview !== undefined && <DocumentViewer preview={preview} />}
+          {preview !== undefined && <FileViewer preview={preview} />}
         </ModalBody>
       </ModalContent>
     </Dialog>

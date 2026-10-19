@@ -1,33 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { DocumentsPageComposition } from '../../../composition/document/documents-page.composition';
+import { previewOf, type FilePreview } from '../../lib/file-preview';
 import { getDocumentsQueryKey } from './useGetDocuments';
 
-/** A document read for the in-app viewer. */
-export interface DocumentPreview {
-  /** Local URL of the file; revoke it once the viewer closes. */
-  objectUrl: string;
-  fileName: string;
-  contentType: string;
-  /** Content of a text file (CSV), null otherwise. */
-  text: string | null;
-}
-
-/** Reads a document for the in-app viewer; viewing marks it as seen. */
-export function useViewDocument({ controller, files }: DocumentsPageComposition) {
+/**
+ * Reads a document for the in-app viewer; viewing marks it as seen, by the
+ * API and on this device.
+ */
+export function useViewDocument({ controller, files, seenDocuments }: DocumentsPageComposition) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (documentId: string): Promise<DocumentPreview> => {
+    mutationFn: async (documentId: string): Promise<FilePreview> => {
       const link = await controller.viewDocument(documentId);
-      const file = await files.read(link.url, link.contentType);
-      return {
-        objectUrl: URL.createObjectURL(file),
-        fileName: link.fileName,
-        contentType: link.contentType,
-        text: link.contentType.startsWith('text/') ? await file.text() : null,
-      };
+      return previewOf(await files.read(link.url, link.contentType), link);
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: getDocumentsQueryKey() }),
+    onSuccess: (_preview, documentId) => {
+      seenDocuments.getState().markSeen([documentId]);
+      return queryClient.invalidateQueries({ queryKey: getDocumentsQueryKey() });
+    },
   });
 }

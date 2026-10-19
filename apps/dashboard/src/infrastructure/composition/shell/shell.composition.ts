@@ -1,6 +1,11 @@
 import {
+  IHttpClient,
+  ISessionGateway,
+} from '@hexagonal-monorepo-template/ports';
+import {
   createEmployeeShellPageComposition,
   type EmployeeShellPageComposition,
+  type SeenStores,
 } from './employee-shell-page.composition';
 import {
   createEmployerShellPageComposition,
@@ -13,9 +18,13 @@ export type ShellComposition = {
   employerShell: EmployerShellPageComposition;
 };
 
-export function createShellComposition(): ShellComposition {
+export function createShellComposition(
+  httpClient: IHttpClient,
+  sessions: ISessionGateway,
+  seen: SeenStores,
+): ShellComposition {
   return {
-    employeeShell: createEmployeeShellPageComposition(),
+    employeeShell: createEmployeeShellPageComposition(httpClient, sessions, seen),
     employerShell: createEmployerShellPageComposition(),
   };
 }

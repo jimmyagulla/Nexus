@@ -14,3 +14,8 @@ export * from './out/session/local-dev-session';
 export * from './out/documents/in-memory-document.gateway';
 export * from './out/documents/in-memory-document.repository';
 export * from './out/documents/in-memory-document-file.storage';
+export * from './out/payslips/in-memory-payslip.repository';
+export * from './out/payslips/in-memory-payslip-file.storage';
+export * from './out/payslips/in-memory-payslip.gateway';
+export * from './out/storage/in-memory-key-value.storage';
+export * from './out/files/zip-file-archiver';

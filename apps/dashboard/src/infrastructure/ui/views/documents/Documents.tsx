@@ -1,5 +1,6 @@
 import { DOCUMENT_SEARCH_MAX_LENGTH, DocumentSort } from '@hexagonal-monorepo-template/domain';
 import { ActiveFilters } from '../../common/data/ActiveFilters';
+import { EmptyTableRow } from '../../common/data/EmptyTableRow';
 import { FilterButton } from '../../common/data/FilterButton';
 import { FilterChip } from '../../common/data/FilterChip';
 import { SearchField } from '../../common/data/SearchField';
@@ -11,7 +12,6 @@ import { Sheet, SheetTrigger } from '../../shared/sheet';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { DocumentFiltersSheet } from './components/DocumentFiltersSheet';
 import { DocumentRow } from './components/DocumentRow';
-import { DocumentsEmptyRow } from './components/DocumentsEmptyRow';
 import { SortableHead } from './components/SortableHead';
 import type { DocumentsListHandlers } from './components/documents-list.handlers';
 import type { ActiveFilterModel } from '../../../../adapters/presenters/documents/document-active-filters.presenter';
@@ -115,7 +115,7 @@ export function Documents({
             onDownload={handlers.onDownload}
           />
         ))}
-        {rows.length === 0 && <DocumentsEmptyRow message={summary.emptyMessage} />}
+        {rows.length === 0 && <EmptyTableRow message={summary.emptyMessage} />}
       </Table>
     </PageContent>
   );

@@ -1,14 +1,7 @@
 import {
-  DepositDocumentsFromSessionUseCase,
-  DownloadDocumentFromSessionUseCase,
-  ListDocumentsFromSessionUseCase,
-  ViewDocumentFromSessionUseCase,
-} from '@hexagonal-monorepo-template/application';
-import {
   IHttpClient,
   ISessionGateway,
 } from '@hexagonal-monorepo-template/ports';
-import { ApiDocumentGateway } from '../../../adapters/gateways/api-document.gateway';
 import { DocumentsController } from '../../../adapters/controllers/documents.controller';
 import { CharacterCounterPresenter } from '../../../adapters/presenters/documents/character-counter.presenter';
 import { CountLabelPresenter } from '../../../adapters/presenters/documents/count-label.presenter';
@@ -24,7 +17,8 @@ import { FileSizePresenter } from '../../../adapters/presenters/documents/file-s
 import { UploadedFilePresenter } from '../../../adapters/presenters/documents/uploaded-file.presenter';
 import { ErrorPresenter } from '../../../adapters/presenters/error.presenter';
 import { RemoteFileReader } from '../../network/remote-file-reader';
-import { i18n } from '../../ui/i18n/i18n';
+import type { SeenItemsStore } from '../../ui/stores/seen-items.store';
+import { createDocumentsController } from './documents-controller.composition';
 
 /** Presenters of the documents list: one per view model. */
 export type DocumentsListPresenters = {
@@ -51,25 +45,20 @@ export type DocumentsPageComposition = {
   errorPresenter: ErrorPresenter;
   /** Reads the file behind the link of a viewed or downloaded document. */
   files: RemoteFileReader;
+  /** Documents opened or downloaded on this device. */
+  seenDocuments: SeenItemsStore;
 };
 
 export function createDocumentsPageComposition(
   httpClient: IHttpClient,
   sessions: ISessionGateway,
+  seenDocuments: SeenItemsStore,
 ): DocumentsPageComposition {
-  const documents = new ApiDocumentGateway(httpClient);
-  const labels = i18n.messages.documents;
   const sizes = new FileSizePresenter();
   const counts = new CountLabelPresenter();
 
   return {
-    controller: new DocumentsController(
-      new ListDocumentsFromSessionUseCase(sessions, documents),
-      new DepositDocumentsFromSessionUseCase(sessions, documents),
-      new ViewDocumentFromSessionUseCase(sessions, documents),
-      new DownloadDocumentFromSessionUseCase(sessions, documents),
-      { categories: labels.categories, emitters: labels.emitters },
-    ),
+    controller: createDocumentsController(httpClient, sessions),
     listPresenters: {
       summary: new DocumentListSummaryPresenter(counts),
       activeFilters: new DocumentActiveFiltersPresenter(),
@@ -86,5 +75,6 @@ export function createDocumentsPageComposition(
     },
     errorPresenter: new ErrorPresenter(),
     files: new RemoteFileReader(httpClient),
+    seenDocuments,
   };
 }

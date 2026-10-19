@@ -26,16 +26,6 @@ export const documents = {
     },
     empty: 'Aucun document ne correspond à votre recherche.',
     emptyVault: "Vous n'avez encore aucun document.",
-    actions: {
-      view: 'Visualiser',
-      download: 'Télécharger',
-    },
-  },
-  preview: {
-    loading: 'Ouverture du document…',
-    error: "Impossible d'ouvrir ce document pour le moment.",
-    unavailable:
-      "L'aperçu n'est pas disponible pour ce format. Téléchargez le fichier pour l'ouvrir.",
   },
   filters: {
     title: 'Filtres',

@@ -3,7 +3,7 @@ import { DocumentComment } from '../value-objects/document-comment';
 import { DocumentEmitter } from '../value-objects/document-emitter';
 import {
   DocumentFileFormat,
-  documentFileFormatSpec,
+  fileNameWithExtension,
 } from '../value-objects/document-file-format';
 import { DocumentName } from '../value-objects/document-name';
 import { DocumentStatus } from '../value-objects/document-status';
@@ -79,12 +79,7 @@ export class Document {
 
   /** File name a download saves: the document name, with its extension. */
   get downloadName(): string {
-    const extensions = documentFileFormatSpec(this.props.format).extensions;
-    const name = this.props.name.value;
-    const hasExtension = extensions.some((extension) =>
-      name.toLowerCase().endsWith(`.${extension}`),
-    );
-    return hasExtension ? name : `${name}.${extensions[0]}`;
+    return fileNameWithExtension(this.props.name.value, this.props.format);
   }
 
   get emitter(): DocumentEmitter {
