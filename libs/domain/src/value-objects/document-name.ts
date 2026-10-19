@@ -1,18 +1,12 @@
-import { ErrorCode } from '../errors/error-code';
+import { requireText, requireValid } from '../services/text-rules';
 import { DOCUMENT_NAME_MAX_LENGTH } from './document-limits';
 
 export class DocumentName {
   private constructor(readonly value: string) {}
 
   static parse(raw: string): DocumentName {
-    const value = raw.trim();
-    if (value === '') {
-      throw new Error(ErrorCode.REQUIRED_INFORMATION);
-    }
-    if (value.length > DOCUMENT_NAME_MAX_LENGTH) {
-      throw new Error(ErrorCode.INVALID_INFORMATION);
-    }
-    return new DocumentName(value);
+    const value = requireText(raw);
+    return new DocumentName(requireValid(value, value.length <= DOCUMENT_NAME_MAX_LENGTH));
   }
 
   /**

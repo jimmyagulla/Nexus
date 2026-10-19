@@ -61,6 +61,19 @@ enum DocumentFileFormat {
   CSV
 }
 
+enum EmploymentContractType {
+  PERMANENT
+  FIXED_TERM
+  APPRENTICESHIP
+  PROFESSIONALISATION
+  INTERNSHIP
+}
+
+enum WorkingTime {
+  FULL_TIME
+  PART_TIME
+}
+
 model Company {
   id                 String                     @id @default(uuid())
   name               String
@@ -69,6 +82,7 @@ model Company {
   auditEvents        AuditEvent[]
   documents          Document[]
   payslips           Payslip[]
+  personalInfos      PersonalInfo[]
 }
 
 model CompanyNonWorkingWeekday {
@@ -171,4 +185,31 @@ model Payslip {
   company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@unique([companyId, employeeId, year, month])
+}
+
+// Personal information of an employee in a company: the contact details the
+// employee keeps up to date, and what the employer records. Formats and
+// length limits are also enforced by CHECK constraints: see
+// prisma/sql/personal-info.sql.
+model PersonalInfo {
+  companyId            String
+  employeeId           String                 @db.VarChar(64)
+  address              String                 @db.VarChar(150)
+  postalCodeAndCity    String                 @db.VarChar(100)
+  phone                String                 @db.VarChar(20)
+  email                String                 @db.VarChar(254)
+  lastName             String                 @db.VarChar(100)
+  firstName            String                 @db.VarChar(100)
+  birthDate            DateTime               @db.Date
+  socialSecurityNumber String                 @db.VarChar(15)
+  jobTitle             String                 @db.VarChar(100)
+  department           String                 @db.VarChar(100)
+  contractType         EmploymentContractType
+  workingTime          WorkingTime
+  startDate            DateTime               @db.Date
+  iban                 String                 @db.VarChar(34)
+  updatedAt            DateTime               @db.Timestamptz(3)
+  company              Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@id([companyId, employeeId])
 }

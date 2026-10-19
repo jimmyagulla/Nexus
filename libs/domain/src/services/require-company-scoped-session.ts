@@ -4,6 +4,8 @@ import { ActorContext } from '../identity/actor-context';
 export type CompanyScopedSession = {
   token: string;
   companyId: string;
+  /** The signed-in person. */
+  userId: string;
 };
 
 export function requireCompanyScopedSession(
@@ -14,5 +16,5 @@ export function requireCompanyScopedSession(
     throw new Error(ErrorCode.ACCESS_DENIED);
   }
 
-  return { token, companyId: actor.companyId };
+  return { token, companyId: actor.companyId, userId: actor.userId };
 }

@@ -17,6 +17,7 @@ import { CompanySettingsModule } from './company-settings/company-settings.modul
 import { DocumentsModule } from './documents/documents.module';
 import { IdGeneratorModule } from './id/id-generator.module';
 import { PayslipsModule } from './payslips/payslips.module';
+import { PersonalInfoModule } from './personal-info/personal-info.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 const persistence = loadApiConfig().persistence;
@@ -33,6 +34,7 @@ const persistence = loadApiConfig().persistence;
     CompanyPublicHolidaysModule,
     DocumentsModule,
     PayslipsModule,
+    PersonalInfoModule,
   ],
   providers: [
     {
