@@ -24,6 +24,13 @@ This folder is the only home for use cases — skill `hexagonal-monorepo`.
 - Dependencies arrive through the constructor, and only as ports.
 - A use case ignores which implementation of a port it is handed, so substituting one is never a reason to touch it — skill `no-test-doubles`.
 
+## Shared steps
+
+A step that several use cases repeat and that is not a use case on its own — e.g. reading the company session, `currentCompanySession(sessions)` — is a plain function of this layer, in `src/<topic>/`, taking its ports as arguments.
+
+- Never a private method copied in each use case.
+- Never a use case injected into another one: a use case does not depend on another use case.
+
 ## Runtime neutrality
 
 The same use case must run unchanged from backend code and from frontend code.

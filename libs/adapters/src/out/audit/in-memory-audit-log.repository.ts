@@ -2,15 +2,19 @@ import { AuditEvent } from '@hexagonal-monorepo-template/domain';
 import {
   AuditEventDraft,
   IAuditLogRepository,
+  IIdGenerator,
 } from '@hexagonal-monorepo-template/ports';
 
 export class InMemoryAuditLogRepository implements IAuditLogRepository {
-  constructor(private readonly events = new Map<string, AuditEvent>()) {}
+  constructor(
+    private readonly ids: IIdGenerator,
+    private readonly events = new Map<string, AuditEvent>(),
+  ) {}
 
   async append(event: AuditEventDraft): Promise<void> {
     const stored: AuditEvent = {
       ...event,
-      id: globalThis.crypto.randomUUID(),
+      id: this.ids.next(),
     };
     this.events.set(stored.id, stored);
   }

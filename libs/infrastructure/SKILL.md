@@ -17,6 +17,7 @@ description: Technical client boundaries for libs/infrastructure.
 - Import domain, ports, application, or adapter layers.
 - Implement business types or management logic.
 - Import NestJS.
+- Reach the network (`fetch`, `FormData` requests, HTTP libraries): the transport is the app's `IHttpClient` adapter — skill `single-technical-entry`.
 - Assemble app-shaped config (PORT, auth flags, HTTP prefix). That belongs in the app composition root.
 
 ## Dependencies

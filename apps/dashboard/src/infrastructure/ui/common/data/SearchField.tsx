@@ -3,6 +3,9 @@ import { cn } from '../../lib/utils';
 interface SearchFieldProps {
   placeholder: string;
   defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  maxLength?: number;
   className?: string;
 }
 
@@ -10,6 +13,9 @@ interface SearchFieldProps {
 export function SearchField({
   placeholder,
   defaultValue,
+  value,
+  onValueChange,
+  maxLength,
   className,
 }: SearchFieldProps) {
   return (
@@ -25,6 +31,9 @@ export function SearchField({
         aria-label={placeholder}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        value={value}
+        maxLength={maxLength}
+        onChange={(event) => onValueChange?.(event.target.value)}
         className="min-w-0 flex-1 bg-transparent text-14 text-foreground outline-none placeholder:text-placeholder"
       />
     </label>

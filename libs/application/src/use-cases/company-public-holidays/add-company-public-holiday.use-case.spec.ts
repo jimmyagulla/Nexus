@@ -3,6 +3,7 @@ import {
   InMemoryAuditLogRepository,
   InMemoryCompanyRepository,
   InMemoryPublicHolidayRepository,
+  RandomUuidGenerator,
 } from '@hexagonal-monorepo-template/adapters';
 import {
   ActorContext,
@@ -17,6 +18,8 @@ import {
   UserRole,
 } from '@hexagonal-monorepo-template/domain';
 import { AddCompanyPublicHolidayUseCase } from './add-company-public-holiday.use-case';
+
+const ids = new RandomUuidGenerator();
 
 const actor: ActorContext = {
   userId: 'user-1',
@@ -46,12 +49,12 @@ function companyWith(
 
 describe('AddCompanyPublicHolidayUseCase', () => {
   it('retains a public holiday on the company calendar', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWith('c1', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryPublicHolidayRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -72,12 +75,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('records the addition in the audit log', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const audits = new InMemoryAuditLogRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const audits = new InMemoryAuditLogRepository(ids);
     await companies.save(companyWith('c1', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
+      new InMemoryPublicHolidayRepository(ids),
       audits,
       new FixedClock(now),
     );
@@ -109,8 +112,8 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('reuses a public holiday already observed by another company', async () => {
-    const companies = new InMemoryCompanyRepository();
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const companies = new InMemoryCompanyRepository(ids);
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
     const shared = new PublicHoliday(
       'ph-shared',
       CalendarDate.parse('2026-07-14'),
@@ -122,7 +125,7 @@ describe('AddCompanyPublicHolidayUseCase', () => {
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
       publicHolidays,
-      new InMemoryAuditLogRepository(),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -137,12 +140,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('trims the label before retaining the public holiday', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWith('c1', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryPublicHolidayRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -157,12 +160,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('rejects a blank label', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWith('c1', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryPublicHolidayRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -173,12 +176,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('rejects a malformed date', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWith('c1', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryPublicHolidayRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 
@@ -194,12 +197,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('rejects a second holiday on the same date', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWith('c1', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryPublicHolidayRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
     await useCase.execute({
@@ -225,12 +228,12 @@ describe('AddCompanyPublicHolidayUseCase', () => {
   });
 
   it('refuses another company', async () => {
-    const companies = new InMemoryCompanyRepository();
+    const companies = new InMemoryCompanyRepository(ids);
     await companies.save(companyWith('c2', []));
     const useCase = new AddCompanyPublicHolidayUseCase(
       companies,
-      new InMemoryPublicHolidayRepository(),
-      new InMemoryAuditLogRepository(),
+      new InMemoryPublicHolidayRepository(ids),
+      new InMemoryAuditLogRepository(ids),
       new FixedClock(now),
     );
 

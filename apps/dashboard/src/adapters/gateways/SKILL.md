@@ -25,10 +25,21 @@ The suffix follows the **nature of the access**, and nothing else:
 
 Never the opposite suffix, and never a name derived from a technology, a vendor, or a library.
 
+## Location (mandatory)
+
+- The HTTP gateways of the dashboard live **here**, never in the shared libs: they call our API through this app's transport. Only their ports are shared (`libs/ports/src/out/<entity>/`).
+- Their in-memory implementations (`InMemory<Entity>Gateway`) live in the shared adapters, so that use-case specs run without HTTP — skill `no-test-doubles`.
+
+## Shared request helpers
+
+- `gateway-request.ts` holds what every gateway repeats: `joinedParam` (a list as one query parameter), `optionalParam` (an empty text left out), `authorizedBy` (the bearer config of a request). Never re-declare them as private methods.
+- A payload answered by several endpoints has one `<name>.payload.ts` (type and mapping), imported by every gateway that reads it — e.g. `company-settings.payload.ts`.
+- Network only through the injected `IHttpClient` — skill `single-technical-entry`.
+
 ## Rules
 - **Data Access Implementation.** Implement an out port declared in the shared ports folder; never declare the contract here (skill `ports-location`, naming in skill `ports-boundaries`).
 - Handle mapping between technical data formats (JSON, DB records) and Domain Entities.
 - May depend on the shared `application`, `domain`, and ports layers, and on `infrastructure` (e.g., API client).
 - **Query Params**: Use a generic method to build URLs from a flat object.
-- **Formatting**: Private internal methods must handle data transformation (e.g., dates to strings) before passing params to the generic builder.
+- **Formatting**: Private internal methods handle the transformation specific to the gateway (e.g., criteria to query params) before passing params to the generic builder; generic transformations are the shared helpers above.
 - **Forbidden**: NO UI concerns, NO business logic orchestration (that's for Use Cases).

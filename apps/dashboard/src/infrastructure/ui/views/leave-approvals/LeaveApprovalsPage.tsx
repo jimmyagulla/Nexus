@@ -1,6 +1,6 @@
 import type { LeaveApprovalsPageComposition } from '../../../composition/leave-approval/leave-approvals-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetLeaveApprovals } from '../../hooks/useGetLeaveApprovals';
+import { useGetLeaveApprovals } from '../../hooks/leave-approvals/useGetLeaveApprovals';
 import { i18n } from '../../i18n/i18n';
 import { LeaveApprovals } from './LeaveApprovals';
 

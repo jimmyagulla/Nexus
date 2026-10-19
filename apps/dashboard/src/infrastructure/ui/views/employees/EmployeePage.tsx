@@ -1,6 +1,6 @@
 import type { EmployeePageComposition } from '../../../composition/employee/employee-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetEmployee } from '../../hooks/useGetEmployee';
+import { useGetEmployee } from '../../hooks/employees/useGetEmployee';
 import { i18n } from '../../i18n/i18n';
 import { Employee } from './Employee';
 

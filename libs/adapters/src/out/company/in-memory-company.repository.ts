@@ -1,11 +1,17 @@
 import { Company, CompanyName } from '@hexagonal-monorepo-template/domain';
-import { ICompanyRepository } from '@hexagonal-monorepo-template/ports';
+import {
+  ICompanyRepository,
+  IIdGenerator,
+} from '@hexagonal-monorepo-template/ports';
 
 export class InMemoryCompanyRepository implements ICompanyRepository {
-  constructor(private readonly companies = new Map<string, Company>()) {}
+  constructor(
+    private readonly ids: IIdGenerator,
+    private readonly companies = new Map<string, Company>(),
+  ) {}
 
   async insert(name: CompanyName): Promise<Company> {
-    const company = Company.create(globalThis.crypto.randomUUID(), name);
+    const company = Company.create(this.ids.next(), name);
     this.companies.set(company.id, company);
     return company;
   }

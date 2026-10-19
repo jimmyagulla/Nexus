@@ -60,7 +60,14 @@
     "prisma-push": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "prisma db push --schema apps/api/prisma/schema.prisma",
+        "command": "prisma db push --schema apps/api/prisma/schema.prisma && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "prisma-sql": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql",
         "cwd": "{workspaceRoot}"
       }
     },

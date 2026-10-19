@@ -1,10 +1,10 @@
 import { ErrorPresenter } from '../../../../adapters/presenters/error.presenter';
 import { CompanySettingsComposition } from '../../../composition/company-settings.composition';
-import { useAddPublicHoliday } from '../../hooks/useAddPublicHoliday';
-import { useGetCompanySettings } from '../../hooks/useGetCompanySettings';
-import { useRemovePublicHoliday } from '../../hooks/useRemovePublicHoliday';
-import { useRenameCompany } from '../../hooks/useRenameCompany';
-import { useSetNonWorkingWeekdays } from '../../hooks/useSetNonWorkingWeekdays';
+import { useAddPublicHoliday } from '../../hooks/company-settings/useAddPublicHoliday';
+import { useGetCompanySettings } from '../../hooks/company-settings/useGetCompanySettings';
+import { useRemovePublicHoliday } from '../../hooks/company-settings/useRemovePublicHoliday';
+import { useRenameCompany } from '../../hooks/company-settings/useRenameCompany';
+import { useSetNonWorkingWeekdays } from '../../hooks/company-settings/useSetNonWorkingWeekdays';
 import { i18n } from '../../i18n/i18n';
 import { Settings } from './Settings';
 

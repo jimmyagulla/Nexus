@@ -14,7 +14,8 @@
     "graph": "nx graph",
     "postinstall": "pnpm prisma:generate",
     "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
-    "prisma:push": "prisma db push --schema apps/api/prisma/schema.prisma",
+    "prisma:push": "prisma db push --schema apps/api/prisma/schema.prisma && pnpm prisma:sql",
+    "prisma:sql": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql",
     "prisma:pull": "prisma db pull --schema apps/api/prisma/schema.prisma"
   },
   "private": true,
@@ -106,6 +107,7 @@
     "jose": "^6.2.12",
     "lucide-react": "^1.46.0",
     "react": "^19.0.0",
+    "react-day-picker": "^9.14.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.88.0",
     "reflect-metadata": "^0.2.0",

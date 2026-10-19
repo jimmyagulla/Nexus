@@ -16,6 +16,7 @@ export const common = {
   back: 'Back',
   close: 'Close',
   reset: 'Reset',
+  clearDate: 'Clear date',
   saveDraft: 'Save as draft',
   comingSoonTitle: 'Screen in progress',
   comingSoonDescription:

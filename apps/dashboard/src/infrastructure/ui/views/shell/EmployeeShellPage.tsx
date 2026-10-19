@@ -1,7 +1,7 @@
 import { Outlet } from '@tanstack/react-router';
 import type { EmployeeShellPageComposition } from '../../../composition/shell/employee-shell-page.composition';
 import { AppShell } from '../../common/layout/AppShell';
-import { useGetEmployeeShell } from '../../hooks/useGetEmployeeShell';
+import { useGetEmployeeShell } from '../../hooks/shell/useGetEmployeeShell';
 
 interface EmployeeShellPageProps {
   deps: EmployeeShellPageComposition;

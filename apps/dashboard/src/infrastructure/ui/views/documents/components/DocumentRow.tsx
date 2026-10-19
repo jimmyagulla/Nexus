@@ -1,23 +1,39 @@
-import { RowAction } from '../../../common/data/RowAction';
-import { i18n } from '../../../i18n/i18n';
+import { useState } from 'react';
 import { Badge } from '../../../shared/badge';
 import { TableCell, TableRow } from '../../../shared/table';
-import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/documents.presenter';
+import { DocumentActionsMenu } from './DocumentActionsMenu';
+import { DocumentContextMenu } from './DocumentContextMenu';
+import type { DocumentRowModel } from '../../../../../adapters/presenters/documents/document-row.presenter';
 
 interface DocumentRowProps {
   model: DocumentRowModel;
+  onView: (documentId: string) => void;
+  onDownload: (documentId: string) => void;
 }
 
-export function DocumentRow({ model }: DocumentRowProps) {
-  const common = i18n.messages.common;
+/** A document of the list. Its name opens it; a right click opens its actions under the cursor. */
+export function DocumentRow({ model, onView, onDownload }: DocumentRowProps) {
+  const [contextPoint, setContextPoint] = useState<{ x: number; y: number } | null>(null);
+  const view = () => onView(model.id);
+  const download = () => onDownload(model.id);
 
   return (
-    <TableRow className="last:border-b">
+    <TableRow
+      className="last:border-b"
+      onContextMenu={(event) => {
+        event.preventDefault();
+        setContextPoint({ x: event.clientX, y: event.clientY });
+      }}
+    >
       <TableCell className="flex items-center gap-2.5">
         <i aria-hidden className={`${model.icon} shrink-0 text-20 text-primary`} />
-        <span className="font-semibold text-foreground">
+        <button
+          type="button"
+          onClick={view}
+          className="min-w-0 truncate text-left font-semibold text-foreground hover:text-link hover:underline focus-visible:outline-none focus-visible:shadow-focus"
+        >
           <span>{model.name}</span>
-        </span>
+        </button>
       </TableCell>
       <TableCell className="text-muted-foreground">
         <span>{model.category}</span>
@@ -38,12 +54,13 @@ export function DocumentRow({ model }: DocumentRowProps) {
         </Badge>
       </TableCell>
       <TableCell className="flex justify-end gap-0.5 text-18 text-primary">
-        <RowAction label={common.view} icon={<i aria-hidden className="ri-eye-line" />} />
-        <RowAction
-          label={common.download}
-          icon={<i aria-hidden className="ri-download-2-line" />}
+        <DocumentActionsMenu onView={view} onDownload={download} />
+        <DocumentContextMenu
+          point={contextPoint}
+          onClose={() => setContextPoint(null)}
+          onView={view}
+          onDownload={download}
         />
-        <RowAction label={common.more} icon={<i aria-hidden className="ri-more-2-fill" />} />
       </TableCell>
     </TableRow>
   );

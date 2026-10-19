@@ -1,6 +1,6 @@
 import type { OvertimePageComposition } from '../../../composition/overtime/overtime-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetOvertime } from '../../hooks/useGetOvertime';
+import { useGetOvertime } from '../../hooks/overtime/useGetOvertime';
 import { i18n } from '../../i18n/i18n';
 import { Overtime } from './Overtime';
 

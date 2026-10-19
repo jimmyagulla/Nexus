@@ -1,6 +1,6 @@
 import type { PersonalInfoEditPageComposition } from '../../../composition/personal-info/personal-info-edit-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetPersonalInfoEdit } from '../../hooks/useGetPersonalInfoEdit';
+import { useGetPersonalInfoEdit } from '../../hooks/personal-info/useGetPersonalInfoEdit';
 import { i18n } from '../../i18n/i18n';
 import { PersonalInfoEdit } from './PersonalInfoEdit';
 

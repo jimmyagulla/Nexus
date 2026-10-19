@@ -1,59 +1,77 @@
-import { Link } from '@tanstack/react-router';
-import { PageContent } from '../../common/page/PageContent';
-import { PageHeader } from '../../common/page/PageHeader';
-import { DocumentUploadForm } from '../../features/documents/DocumentUploadForm';
-import { MobileDocumentUploadForm } from '../../features/documents/MobileDocumentUploadForm';
+import { ReactNode } from 'react';
+import { SubmissionError } from '../../common/errors/SubmissionError';
 import { i18n } from '../../i18n/i18n';
-import { AppRoutes } from '../../routes/app-routes';
+import { cn } from '../../lib/utils';
 import { Button } from '../../shared/button';
-import { Card, CardFooter } from '../../shared/card';
-import type { DocumentUploadViewModel } from '../../../../adapters/presenters/documents/document-upload.presenter';
+import {
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  ModalBody,
+} from '../../shared/dialog';
 
 interface DocumentUploadProps {
-  model: DocumentUploadViewModel;
+  /** Desktop layout (P2.2) or mobile layout (M.3). */
+  desktop: boolean;
+  /** The upload form, shown in the body. */
+  children: ReactNode;
+  /** Id of that form: the footer's submit button sends it from outside. */
+  formId: string;
+  submitting: boolean;
+  submissionError: string | null;
 }
 
-/** P2.2 — upload a document to HR (desktop), M.3 below `md`. */
-export function DocumentUpload({ model }: DocumentUploadProps) {
+/** P2.2 — upload a document to HR, in a modal: header, body, footer. M.3 below `md`. */
+export function DocumentUpload({
+  desktop,
+  children,
+  formId,
+  submitting,
+  submissionError,
+}: DocumentUploadProps) {
   const labels = i18n.messages.documents.upload;
 
   return (
     <>
-      <PageContent className="hidden items-center md:flex md:pb-5.5 md:pt-6">
-        <PageHeader
-          size="form"
-          title={labels.title}
-          description={labels.description}
-          className="w-190"
-        />
-        <Card className="flex w-190 flex-col">
-          <DocumentUploadForm model={model.form} />
-          <CardFooter>
-            <Button asChild variant="outline">
-              <Link to={AppRoutes.documents}>{i18n.messages.common.cancel}</Link>
-            </Button>
-            <Button asChild className="px-5">
-              <Link to={AppRoutes.documentSent}>
-                <i aria-hidden className="ri-send-plane-line" />
-                {labels.submit}
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      </PageContent>
-      <div className="flex flex-1 flex-col md:hidden">
-        <div className="flex-1 p-5">
-          <MobileDocumentUploadForm model={model.mobileForm} />
+      <DialogHeader className="items-start">
+        <div className="flex min-w-0 flex-col gap-1">
+          <DialogTitle className={desktop ? 'text-24 leading-8' : 'text-18'}>
+            {labels.title}
+          </DialogTitle>
+          <DialogDescription className="text-14 text-muted-foreground">
+            {labels.description}
+          </DialogDescription>
         </div>
-        <div className="border-t border-border bg-card px-5 pb-7 pt-3">
-          <Button asChild className="h-13 w-full text-16">
-            <Link to={AppRoutes.documentSent}>
-              <i aria-hidden className="ri-send-plane-line" />
-              {labels.submit}
-            </Link>
-          </Button>
+      </DialogHeader>
+      <ModalBody className={cn(!desktop && 'p-5')}>
+        {children}
+        <div className={cn('empty:hidden', desktop ? 'px-6 pb-5' : 'pt-4')}>
+          <SubmissionError message={submissionError} />
         </div>
-      </div>
+      </ModalBody>
+      <DialogFooter className={cn(!desktop && 'px-5 pb-7 pt-3')}>
+        {desktop && (
+          <DialogClose asChild>
+            <Button type="button" variant="outline">
+              {i18n.messages.common.cancel}
+            </Button>
+          </DialogClose>
+        )}
+        <Button
+          type="submit"
+          form={formId}
+          disabled={submitting}
+          className={desktop ? 'px-5' : 'h-13 w-full text-16'}
+        >
+          <i
+            aria-hidden
+            className={submitting ? 'ri-loader-4-line animate-spin' : 'ri-send-plane-line'}
+          />
+          {labels.submit}
+        </Button>
+      </DialogFooter>
     </>
   );
 }

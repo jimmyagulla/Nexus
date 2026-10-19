@@ -167,6 +167,27 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 
+  /* Tailwind v4 leaves buttons with the default cursor: every control a click
+     acts on shows the pointer (buttons, checkboxes, radios, date fields,
+     menu items, chip crosses, file pickers). */
+  :where(
+    button,
+    [role="button"],
+    [role="checkbox"],
+    [role="radio"],
+    [role="menuitem"],
+    [role="option"],
+    [role="tab"],
+    summary,
+    select,
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="file"],
+    label:has(input[type="file"])
+  ):not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    cursor: pointer;
+  }
+
   a {
     color: inherit;
     text-decoration: none;

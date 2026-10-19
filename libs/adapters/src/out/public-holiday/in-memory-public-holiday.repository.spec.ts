@@ -4,6 +4,9 @@ import {
   PublicHoliday,
 } from '@hexagonal-monorepo-template/domain';
 import { InMemoryPublicHolidayRepository } from './in-memory-public-holiday.repository';
+import { RandomUuidGenerator } from '../id/random-uuid-generator';
+
+const ids = new RandomUuidGenerator();
 
 const bastilleDay = new PublicHoliday(
   'ph-1',
@@ -16,7 +19,7 @@ const ASSIGNED_ID =
 
 describe('InMemoryPublicHolidayRepository', () => {
   it('assigns an id when inserting a public holiday', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     const holiday = await publicHolidays.insert(
       CalendarDate.parse('2026-07-14'),
@@ -30,7 +33,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('assigns a different id to each inserted public holiday', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     const first = await publicHolidays.insert(
       CalendarDate.parse('2026-07-14'),
@@ -45,7 +48,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('saves and finds a public holiday by id', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     await publicHolidays.save(bastilleDay);
 
@@ -53,7 +56,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('finds nothing for an unknown id', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     await publicHolidays.save(bastilleDay);
 
@@ -61,13 +64,13 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('finds nothing by id in an empty collection', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     expect(await publicHolidays.findById('ph-1')).toBeNull();
   });
 
   it('replaces a public holiday saved again under the same id', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
     const renamed = new PublicHoliday(
       'ph-1',
       CalendarDate.parse('2026-07-14'),
@@ -81,7 +84,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('finds a public holiday by date and label', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     await publicHolidays.save(bastilleDay);
 
@@ -94,7 +97,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('finds nothing when the label differs from the stored one', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     await publicHolidays.save(bastilleDay);
 
@@ -107,7 +110,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('finds nothing when the date differs from the stored one', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     await publicHolidays.save(bastilleDay);
 
@@ -120,7 +123,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('finds nothing by date and label in an empty collection', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
 
     expect(
       await publicHolidays.findByDateAndLabel(
@@ -131,7 +134,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('singles out the public holiday matching both the date and the label', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository();
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids);
     const sameDate = new PublicHoliday(
       'ph-2',
       CalendarDate.parse('2026-07-14'),
@@ -156,7 +159,7 @@ describe('InMemoryPublicHolidayRepository', () => {
   });
 
   it('reads the public holidays seeded through the injected collection', async () => {
-    const publicHolidays = new InMemoryPublicHolidayRepository(
+    const publicHolidays = new InMemoryPublicHolidayRepository(ids, 
       new Map([['ph-1', bastilleDay]]),
     );
 

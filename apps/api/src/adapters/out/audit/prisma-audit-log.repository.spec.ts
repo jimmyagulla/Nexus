@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { RandomUuidGenerator } from '@hexagonal-monorepo-template/adapters';
 import {
   AuditAction,
   AuditEvent,
@@ -7,6 +8,8 @@ import {
 } from '@hexagonal-monorepo-template/domain';
 import { PrismaDb } from '../../../infrastructure/prisma/prisma-db.port';
 import { PrismaAuditLogRepository } from './prisma-audit-log.repository';
+
+const ids = new RandomUuidGenerator();
 
 const ASSIGNED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -61,7 +64,7 @@ type FakePrisma = {
 
 function toSnapshotRow(snapshot: SnapshotCreate): SnapshotRow {
   return {
-    id: snapshot.id ?? globalThis.crypto.randomUUID(),
+    id: snapshot.id ?? ids.next(),
     side: snapshot.side,
     companyName: snapshot.companyName ?? null,
     publicHolidayId: snapshot.publicHolidayId ?? null,
@@ -82,7 +85,7 @@ function createFakePrisma(): FakePrisma {
         const { snapshots, id, ...event } = args.data;
         rows.push({
           ...event,
-          id: id ?? globalThis.crypto.randomUUID(),
+          id: id ?? ids.next(),
           snapshots: snapshots.create.map(toSnapshotRow),
         });
       },

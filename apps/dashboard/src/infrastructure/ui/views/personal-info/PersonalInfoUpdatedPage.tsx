@@ -1,6 +1,6 @@
 import type { PersonalInfoUpdatedPageComposition } from '../../../composition/personal-info/personal-info-updated-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetPersonalInfoUpdated } from '../../hooks/useGetPersonalInfoUpdated';
+import { useGetPersonalInfoUpdated } from '../../hooks/personal-info/useGetPersonalInfoUpdated';
 import { i18n } from '../../i18n/i18n';
 import { PersonalInfoUpdated } from './PersonalInfoUpdated';
 

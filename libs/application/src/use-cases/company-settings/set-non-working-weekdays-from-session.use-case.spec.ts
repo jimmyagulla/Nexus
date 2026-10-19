@@ -1,6 +1,5 @@
 import {
-  ApiCompanySettingsGateway,
-  InMemoryHttpClient,
+  InMemoryCompanySettingsGateway,
   InMemorySessionGateway,
 } from '@hexagonal-monorepo-template/adapters';
 import {
@@ -18,24 +17,19 @@ const actor: ActorContext = {
   role: UserRole.EMPLOYER,
 };
 
-const updated: CompanySettingsSnapshot = {
+const acme: CompanySettingsSnapshot = {
   id: 'c1',
   name: 'Acme',
-  nonWorkingWeekdays: [DayOfWeek.SUNDAY],
+  nonWorkingWeekdays: [],
   publicHolidays: [],
 };
 
 function useCaseFor(
   session: InMemorySessionGateway,
 ): SetNonWorkingWeekdaysFromSessionUseCase {
-  const http = new InMemoryHttpClient();
-  http.reply('put', 'companies/c1/calendar/non-working-weekdays', {
-    status: 200,
-    data: updated,
-  });
   return new SetNonWorkingWeekdaysFromSessionUseCase(
     session,
-    new ApiCompanySettingsGateway(http),
+    new InMemoryCompanySettingsGateway(new Map([['c1', acme]])),
   );
 }
 
@@ -43,7 +37,10 @@ describe('SetNonWorkingWeekdaysFromSessionUseCase', () => {
   it('stores the weekdays on the company of the signed-in actor', async () => {
     const useCase = useCaseFor(new InMemorySessionGateway('token', actor));
 
-    await expect(useCase.execute([DayOfWeek.SUNDAY])).resolves.toEqual(updated);
+    await expect(useCase.execute([DayOfWeek.SUNDAY])).resolves.toEqual({
+      ...acme,
+      nonWorkingWeekdays: [DayOfWeek.SUNDAY],
+    });
   });
 
   it('refuses when the session carries no company', async () => {

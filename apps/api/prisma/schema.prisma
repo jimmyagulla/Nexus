@@ -36,18 +36,44 @@ enum AuditSide {
   AFTER
 }
 
+// Declaration order is the descending sort order of the documents list
+// (alphabetical order of the French labels); keep it in step with the domain.
+enum DocumentCategory {
+  SICK_LEAVE
+  OTHER
+  ADMINISTRATIVE
+  PROOF
+}
+
+enum DocumentStatus {
+  SEEN
+  PENDING
+  NEW
+  PROCESSED
+}
+
+enum DocumentFileFormat {
+  PDF
+  JPEG
+  PNG
+  XLS
+  XLSX
+  CSV
+}
+
 model Company {
-  id                   String                   @id @default(uuid())
-  name                 String
-  nonWorkingWeekdays   CompanyNonWorkingWeekday[]
-  publicHolidays       CompanyPublicHoliday[]
-  auditEvents          AuditEvent[]
+  id                 String                     @id @default(uuid())
+  name               String
+  nonWorkingWeekdays CompanyNonWorkingWeekday[]
+  publicHolidays     CompanyPublicHoliday[]
+  auditEvents        AuditEvent[]
+  documents          Document[]
 }
 
 model CompanyNonWorkingWeekday {
   companyId String
   dayOfWeek DayOfWeek
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@id([companyId, dayOfWeek])
 }
@@ -82,14 +108,14 @@ model AuditEvent {
 }
 
 model AuditSnapshot {
-  id              String                 @id @default(uuid())
+  id              String                   @id @default(uuid())
   eventId         String
   side            AuditSide
   companyName     String?
   publicHolidayId String?
   holidayDate     String?
   holidayLabel    String?
-  event           AuditEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event           AuditEvent               @relation(fields: [eventId], references: [id], onDelete: Cascade)
   daysOfWeek      AuditSnapshotDayOfWeek[]
 
   @@unique([eventId, side])
@@ -101,4 +127,25 @@ model AuditSnapshotDayOfWeek {
   snapshot   AuditSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
 
   @@id([snapshotId, dayOfWeek])
+}
+
+// Metadata of a deposited document; the file itself lives in the private
+// `documents` storage bucket under `storageKey`. Size and length limits are
+// also enforced by CHECK constraints: see prisma/sql/documents.sql.
+model Document {
+  id           String             @id @default(uuid())
+  companyId    String
+  ownerId      String             @db.VarChar(64)
+  uploadedById String             @db.VarChar(64)
+  name         String             @db.VarChar(50)
+  category     DocumentCategory
+  status       DocumentStatus
+  format       DocumentFileFormat
+  sizeBytes    Int
+  comment      String?            @db.VarChar(250)
+  storageKey   String             @unique @db.VarChar(255)
+  createdAt    DateTime           @default(now()) @db.Timestamptz(3)
+  company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, ownerId, createdAt(sort: Desc)])
 }

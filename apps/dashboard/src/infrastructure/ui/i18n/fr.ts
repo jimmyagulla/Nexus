@@ -60,5 +60,11 @@ export const fr = {
     [ErrorCode.REQUIRED_INFORMATION]:
       'Renseignez les informations obligatoires.',
     [ErrorCode.POTENTIAL_DUPLICATE]: 'Un élément semblable existe déjà.',
+    [ErrorCode.INVALID_INFORMATION]:
+      "Une information n'est pas valide ou dépasse la longueur autorisée.",
+    [ErrorCode.FILE_TOO_LARGE]:
+      'Ce fichier dépasse la taille maximale autorisée.',
+    [ErrorCode.UNSUPPORTED_FILE_FORMAT]:
+      "Ce fichier n'est pas accepté : son contenu doit être un PDF, une image JPG ou PNG, ou un tableur XLS, XLSX ou CSV.",
   },
 } as const;

@@ -1,6 +1,6 @@
 import type { LeaveRequestSentPageComposition } from '../../../composition/leave/leave-request-sent-page.composition';
 import { PageStatus } from '../../common/feedback/PageStatus';
-import { useGetLeaveRequestSent } from '../../hooks/useGetLeaveRequestSent';
+import { useGetLeaveRequestSent } from '../../hooks/leaves/useGetLeaveRequestSent';
 import { i18n } from '../../i18n/i18n';
 import { LeaveRequestSent } from './LeaveRequestSent';
 
