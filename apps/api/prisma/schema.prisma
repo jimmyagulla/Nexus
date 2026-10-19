@@ -61,6 +61,30 @@ enum DocumentFileFormat {
   CSV
 }
 
+// Declaration order is the sort order of the expense reports list
+// (alphabetical order of the French labels); keep it in step with the domain.
+enum ExpenseReportCategory {
+  OTHER
+  FUEL
+  TRAVEL
+  HOTEL
+  PARKING
+  MEAL
+}
+
+enum ExpenseReportPaymentMethod {
+  PERSONAL_CARD
+  COMPANY_CARD
+  CASH
+}
+
+enum ExpenseReportStatus {
+  IN_PROGRESS
+  REJECTED
+  REFUNDED
+  SUBMITTED
+}
+
 enum EmploymentContractType {
   PERMANENT
   FIXED_TERM
@@ -82,6 +106,7 @@ model Company {
   auditEvents        AuditEvent[]
   documents          Document[]
   payslips           Payslip[]
+  expenseReports     ExpenseReport[]
   personalInfos      PersonalInfo[]
 }
 
@@ -185,6 +210,35 @@ model Payslip {
   company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@unique([companyId, employeeId, year, month])
+}
+
+// An expense of an employee, submitted for refund. Amounts are kept as text
+// with a dot and two decimals ("68.00"), never as floating numbers. The
+// receipt, when there is one, lives in the private `expense-report-proofs`
+// storage bucket under `proofStorageKey`. Formats, ranges and length limits
+// are also enforced by CHECK constraints: see prisma/sql/expense-reports.sql.
+model ExpenseReport {
+  id              String                     @id @default(uuid())
+  companyId       String
+  ownerId         String                     @db.VarChar(64)
+  date            DateTime                   @db.Date
+  category        ExpenseReportCategory
+  paymentMethod   ExpenseReportPaymentMethod
+  amount          String                     @db.VarChar(12)
+  vatRate         Int?                       @db.SmallInt
+  vatAmount       String?                    @db.VarChar(12)
+  description     String                     @db.VarChar(250)
+  project         String?                    @db.VarChar(50)
+  proofFileName   String?                    @db.VarChar(255)
+  proofFormat     DocumentFileFormat?
+  proofSizeBytes  Int?
+  proofStorageKey String?                    @unique @db.VarChar(255)
+  status          ExpenseReportStatus
+  submittedAt     DateTime                   @db.Timestamptz(3)
+  processedAt     DateTime?                  @db.Timestamptz(3)
+  company         Company                    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, ownerId, date(sort: Desc)])
 }
 
 // Personal information of an employee in a company: the contact details the

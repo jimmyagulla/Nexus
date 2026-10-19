@@ -13,6 +13,11 @@ export const API_ROUTES = {
     payslipExport: ':companyId/payslips/export',
     payslipView: ':companyId/payslips/:payslipId/view',
     payslipDownload: ':companyId/payslips/:payslipId/download',
+    expenseReports: ':companyId/expense-reports',
+    expenseReport: ':companyId/expense-reports/:expenseReportId',
+    expenseReportProof: ':companyId/expense-reports/:expenseReportId/proof',
+    expenseReportStatus: ':companyId/expense-reports/:expenseReportId/status',
+    employeeExpenseReports: ':companyId/employees/:employeeId/expense-reports',
     employeePersonalInfo: ':companyId/employees/:employeeId/personal-info',
   },
 } as const;

@@ -47,6 +47,14 @@ export class InMemoryHttpClient implements IHttpClient {
     return this.dispatch('put', url, data, config);
   }
 
+  putMultipart<T>(
+    url: string,
+    body: MultipartBody,
+    config?: unknown,
+  ): Promise<T> {
+    return this.dispatch('put', url, body, config);
+  }
+
   patch<T>(url: string, data?: unknown, config?: unknown): Promise<T> {
     return this.dispatch('patch', url, data, config);
   }

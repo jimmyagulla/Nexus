@@ -32,18 +32,24 @@ export class FetchHttpClient implements IHttpClient {
     return this.sendJson('POST', url, data, config);
   }
 
-  /** The browser sets the multipart boundary itself: no content type is forced. */
-  async postMultipart<T>(
+  postMultipart<T>(
     url: string,
     body: MultipartBody,
     config?: unknown,
   ): Promise<T> {
-    const response = await this.send('POST', url, this.toFormData(body), this.authorization(config));
-    return this.readJson<T>(response);
+    return this.sendMultipart('POST', url, body, config);
   }
 
   put<T>(url: string, data?: unknown, config?: unknown): Promise<T> {
     return this.sendJson('PUT', url, data, config);
+  }
+
+  putMultipart<T>(
+    url: string,
+    body: MultipartBody,
+    config?: unknown,
+  ): Promise<T> {
+    return this.sendMultipart('PUT', url, body, config);
   }
 
   patch<T>(url: string, data?: unknown, config?: unknown): Promise<T> {
@@ -66,6 +72,17 @@ export class FetchHttpClient implements IHttpClient {
       data === undefined ? undefined : JSON.stringify(data),
       { 'Content-Type': 'application/json', ...this.authorization(config) },
     );
+    return this.readJson<T>(response);
+  }
+
+  /** The browser sets the multipart boundary itself: no content type is forced. */
+  private async sendMultipart<T>(
+    method: string,
+    url: string,
+    body: MultipartBody,
+    config: unknown,
+  ): Promise<T> {
+    const response = await this.send(method, url, this.toFormData(body), this.authorization(config));
     return this.readJson<T>(response);
   }
 

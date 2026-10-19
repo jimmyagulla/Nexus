@@ -2,7 +2,7 @@ import { createRoute } from '@tanstack/react-router';
 import {
   documentsPageComposition,
   employeeDashboardComposition,
-  expenseReportComposition,
+  expenseReportsPageComposition,
   leaveComposition,
   overtimeComposition,
   payslipComposition,
@@ -14,8 +14,6 @@ import { i18n } from '../i18n/i18n';
 import { ComingSoonPage } from '../views/coming-soon/ComingSoonPage';
 import { DocumentsPage } from '../views/documents/DocumentsPage';
 import { EmployeeDashboardPage } from '../views/employee-dashboard/EmployeeDashboardPage';
-import { ExpenseReportPage } from '../views/expense-reports/ExpenseReportPage';
-import { ExpenseReportSubmittedPage } from '../views/expense-reports/ExpenseReportSubmittedPage';
 import { ExpenseReportsPage } from '../views/expense-reports/ExpenseReportsPage';
 import { LeaveRequestPage } from '../views/leaves/LeaveRequestPage';
 import { LeaveRequestSentPage } from '../views/leaves/LeaveRequestSentPage';
@@ -62,9 +60,8 @@ export const employeeRoutes = employeeLayoutRoute.addChildren([
     path: AppRoutes.attendance,
     component: () => <ComingSoonPage title={nav.attendance} backTo={AppRoutes.home} />,
   }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.expenseReports, component: () => <ExpenseReportsPage deps={expenseReportComposition.expenseReports} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.expenseReportSubmitted, component: () => <ExpenseReportSubmittedPage deps={expenseReportComposition.expenseReportSubmitted} /> }),
-  createRoute({ getParentRoute: parent, path: AppRoutes.expenseReport, component: () => <ExpenseReportPage deps={expenseReportComposition.expenseReport} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.expenseReports, component: () => <ExpenseReportsPage deps={expenseReportsPageComposition} /> }),
+  createRoute({ getParentRoute: parent, path: AppRoutes.expenseReportNew, component: () => <ExpenseReportsPage deps={expenseReportsPageComposition} newRoute /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.professionalExpenses, component: () => <ProfessionalExpensesPage deps={professionalExpenseComposition.professionalExpenses} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.professionalExpenseRequest, component: () => <ProfessionalExpenseRequestPage deps={professionalExpenseComposition.professionalExpenseRequest} /> }),
   createRoute({ getParentRoute: parent, path: AppRoutes.personalInfo, component: () => <PersonalInfoPage deps={personalInfoPageComposition} /> }),

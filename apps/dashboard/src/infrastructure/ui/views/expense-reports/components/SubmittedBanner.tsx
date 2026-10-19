@@ -3,10 +3,11 @@ import { i18n } from '../../../i18n/i18n';
 interface SubmittedBannerProps {
   title: string;
   description: string;
+  onDismiss: () => void;
 }
 
 /** Green success banner shown once a note is submitted. */
-export function SubmittedBanner({ title, description }: SubmittedBannerProps) {
+export function SubmittedBanner({ title, description, onDismiss }: SubmittedBannerProps) {
   return (
     <div
       role="status"
@@ -20,6 +21,7 @@ export function SubmittedBanner({ title, description }: SubmittedBannerProps) {
       <button
         type="button"
         aria-label={i18n.messages.expenseReports.submitted.dismiss}
+        onClick={onDismiss}
         className="flex text-green-700 focus-visible:outline-none focus-visible:shadow-focus"
       >
         <i aria-hidden className="ri-close-line text-20" />

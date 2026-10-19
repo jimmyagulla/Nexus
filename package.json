@@ -15,7 +15,7 @@
     "postinstall": "pnpm prisma:generate",
     "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
     "prisma:push": "prisma db push --schema apps/api/prisma/schema.prisma && pnpm prisma:sql",
-    "prisma:sql": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/payslips.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/personal-info.sql",
+    "prisma:sql": "prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/documents.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/payslips.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/personal-info.sql && prisma db execute --schema apps/api/prisma/schema.prisma --file apps/api/prisma/sql/expense-reports.sql",
     "prisma:pull": "prisma db pull --schema apps/api/prisma/schema.prisma"
   },
   "private": true,

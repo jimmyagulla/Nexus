@@ -38,7 +38,7 @@ export function EmployeeDashboard({ model }: EmployeeDashboardProps) {
       id: 'expense-report',
       icon: 'ri-receipt-line',
       label: labels.quickActions.expenseReport,
-      link: { to: AppRoutes.expenseReport, params: { expenseReportId: '2026-09' } },
+      link: { to: AppRoutes.expenseReportNew },
     },
     {
       id: 'document-upload',

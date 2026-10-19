@@ -13,7 +13,8 @@ export type MultipartBody = {
 
 /**
  * The only way the code reaches the network. Requests and answers are JSON,
- * except `postMultipart` (a form sent) and `getBytes` (a file read).
+ * except `postMultipart` and `putMultipart` (a form sent) and `getBytes` (a
+ * file read).
  */
 export interface IHttpClient {
   get<T>(url: string, config?: unknown): Promise<T>;
@@ -22,6 +23,7 @@ export interface IHttpClient {
   post<T>(url: string, data?: unknown, config?: unknown): Promise<T>;
   postMultipart<T>(url: string, body: MultipartBody, config?: unknown): Promise<T>;
   put<T>(url: string, data?: unknown, config?: unknown): Promise<T>;
+  putMultipart<T>(url: string, body: MultipartBody, config?: unknown): Promise<T>;
   patch<T>(url: string, data?: unknown, config?: unknown): Promise<T>;
   delete<T>(url: string, config?: unknown): Promise<T>;
 }

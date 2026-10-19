@@ -66,5 +66,7 @@ export const fr = {
       'Ce fichier dépasse la taille maximale autorisée.',
     [ErrorCode.UNSUPPORTED_FILE_FORMAT]:
       "Ce fichier n'est pas accepté : son contenu doit être un PDF, une image JPG ou PNG, ou un tableur XLS, XLSX ou CSV.",
+    [ErrorCode.ALREADY_PROCESSED]:
+      'Cet élément est déjà pris en charge : il ne peut plus être modifié.',
   },
 } as const;

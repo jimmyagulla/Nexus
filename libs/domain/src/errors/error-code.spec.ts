@@ -8,6 +8,7 @@ describe('isErrorCode', () => {
     expect(isErrorCode('INVALID_INFORMATION')).toBe(true);
     expect(isErrorCode('FILE_TOO_LARGE')).toBe(true);
     expect(isErrorCode('UNSUPPORTED_FILE_FORMAT')).toBe(true);
+    expect(isErrorCode('ALREADY_PROCESSED')).toBe(true);
   });
 
   it('refuses a code outside the business vocabulary', () => {
