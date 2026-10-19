@@ -14,6 +14,7 @@ describe('currentCompanySession', () => {
     await expect(currentCompanySession(sessions)).resolves.toEqual({
       token: 'token-1',
       companyId: 'c1',
+      userId: 'u1',
     });
   });
 

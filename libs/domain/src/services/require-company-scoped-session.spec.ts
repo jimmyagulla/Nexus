@@ -13,6 +13,7 @@ describe('requireCompanyScopedSession', () => {
     expect(requireCompanyScopedSession('token', actor)).toEqual({
       token: 'token',
       companyId: 'c1',
+      userId: 'user-1',
     });
   });
 

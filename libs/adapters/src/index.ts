@@ -19,3 +19,5 @@ export * from './out/payslips/in-memory-payslip-file.storage';
 export * from './out/payslips/in-memory-payslip.gateway';
 export * from './out/storage/in-memory-key-value.storage';
 export * from './out/files/zip-file-archiver';
+export * from './out/personal-info/in-memory-personal-info.repository';
+export * from './out/personal-info/in-memory-personal-info.gateway';

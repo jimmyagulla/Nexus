@@ -1,7 +1,6 @@
-import { Link } from '@tanstack/react-router';
+import { SubmissionError } from '../../../common/errors/SubmissionError';
 import { InfoNote } from '../../../common/feedback/InfoNote';
 import { i18n } from '../../../i18n/i18n';
-import { AppRoutes } from '../../../routes/app-routes';
 import { Button } from '../../../shared/button';
 import {
   DialogBody,
@@ -13,14 +12,23 @@ import {
   DialogTitle,
 } from '../../../shared/dialog';
 import { ChangeRow } from './ChangeRow';
-import type { ConfirmChangesModel } from '../../../../../adapters/presenters/personal-info/personal-info-edit.presenter';
+import type { ConfirmChangesModel } from '../../../../../adapters/presenters/personal-info/confirm-changes.presenter';
 
 interface ConfirmChangesDialogProps {
   model: ConfirmChangesModel;
+  submitting: boolean;
+  submissionError: string | null;
+  /** "Confirmer": saves the changes. */
+  onConfirm: () => void;
 }
 
-/** P3.3 — recap of the changed fields, rendered inside a Dialog. */
-export function ConfirmChangesDialog({ model }: ConfirmChangesDialogProps) {
+/** P3.3 — recap of the changed fields, rendered inside a Dialog over the edition modal. */
+export function ConfirmChangesDialog({
+  model,
+  submitting,
+  submissionError,
+  onConfirm,
+}: ConfirmChangesDialogProps) {
   const labels = i18n.messages.personalInfo.confirm;
 
   return (
@@ -41,13 +49,17 @@ export function ConfirmChangesDialog({ model }: ConfirmChangesDialogProps) {
         >
           <span className="block text-heading">{model.emailNotice}</span>
         </InfoNote>
+        <SubmissionError message={submissionError} />
       </DialogBody>
       <DialogFooter>
         <DialogClose asChild>
-          <Button variant="outline">{labels.back}</Button>
+          <Button variant="outline" disabled={submitting}>
+            {labels.back}
+          </Button>
         </DialogClose>
-        <Button asChild className="px-5">
-          <Link to={AppRoutes.personalInfoUpdated}>{labels.confirm}</Link>
+        <Button className="px-5" disabled={submitting} onClick={onConfirm}>
+          {submitting && <i aria-hidden className="ri-loader-4-line animate-spin" />}
+          {labels.confirm}
         </Button>
       </DialogFooter>
     </DialogContent>

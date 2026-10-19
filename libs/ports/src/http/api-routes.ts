@@ -13,6 +13,7 @@ export const API_ROUTES = {
     payslipExport: ':companyId/payslips/export',
     payslipView: ':companyId/payslips/:payslipId/view',
     payslipDownload: ':companyId/payslips/:payslipId/download',
+    employeePersonalInfo: ':companyId/employees/:employeeId/personal-info',
   },
 } as const;
 

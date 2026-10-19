@@ -26,3 +26,7 @@ export * from './use-cases/payslips/download-payslip.use-case';
 export * from './use-cases/payslips/download-payslip-from-session.use-case';
 export * from './use-cases/payslips/export-payslips.use-case';
 export * from './use-cases/payslips/export-payslips-from-session.use-case';
+export * from './use-cases/personal-info/get-personal-info.use-case';
+export * from './use-cases/personal-info/get-personal-info-from-session.use-case';
+export * from './use-cases/personal-info/update-personal-contact.use-case';
+export * from './use-cases/personal-info/update-personal-contact-from-session.use-case';
