@@ -15,7 +15,7 @@ function stored(id: string, employeeId: string, month: number) {
   return {
     payslip: new Payslip({
       id, companyId: 'c1', employeeId, uploadedById: 'hr1', employerName: PayslipEmployerName.parse('Atelier Moreau'),
-      period: PayslipPeriod.of(2026, month), netPayCents: 200000, fileName: PayslipFileName.parse(`Bulletin_${id}`),
+      period: PayslipPeriod.of(2026, month), fileName: PayslipFileName.parse(`Bulletin_${id}`),
       format: DocumentFileFormat.PDF, sizeBytes: pdf.length, storageKey: `c1/${employeeId}/${id}`,
       availableAt: new Date('2026-01-31T00:00:00Z'), createdAt: new Date('2026-01-31T00:00:00Z'),
     }),

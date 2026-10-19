@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { InMemorySessionGateway } from '@hexagonal-monorepo-template/adapters';
+import { InMemoryKeyValueStorage, InMemorySessionGateway } from '@hexagonal-monorepo-template/adapters';
 import {
   DocumentCategory,
   DocumentList,
@@ -11,8 +11,11 @@ import {
 import type { DocumentsListState } from '../../../../adapters/controllers/documents.controller';
 import { createDocumentsPageComposition } from '../../../composition/document/documents-page.composition';
 import { InMemoryHttpClient } from '../../../network/in-memory-http-client';
+import { createSeenItemsStore, SEEN_DOCUMENTS_KEY } from '../../stores/seen-items.store';
 import { useDepositDocuments } from './useDepositDocuments';
 import { getDocumentsQueryKey, useGetDocuments } from './useGetDocuments';
+import { useGetUnseenDocumentCount } from './useGetUnseenDocumentCount';
+import { useViewDocument } from './useViewDocument';
 
 const nothing: DocumentsListState = {
   search: '', categories: [], statuses: [], emitters: [], from: null, to: null, sort: DocumentSort.DATE, direction: 'DESC' as const,
@@ -35,14 +38,24 @@ function setUp() {
   http.reply('get', 'companies/c1/documents?sort=DATE&direction=DESC', { status: 200, data: listOf(['Ancien']) });
   http.reply('get', 'companies/c1/documents?sort=SIZE&direction=DESC', { status: 200, data: listOf(['Lourd']) });
   http.reply('post', 'companies/c1/documents', { status: 201, data: listOf(['Nouveau']).items });
+  http.reply('post', 'companies/c1/documents/d0/view', {
+    status: 201,
+    data: { url: 'https://storage/d0', fileName: 'Ancien.pdf', contentType: 'application/pdf' },
+  });
+  http.reply('get', 'https://storage/d0', Uint8Array.from([0x25, 0x50, 0x44, 0x46]));
   const sessions = new InMemorySessionGateway('token', { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE });
-  const deps = createDocumentsPageComposition(http, sessions);
+  const deps = createDocumentsPageComposition(http, sessions, createSeenItemsStore(new InMemoryKeyValueStorage(), SEEN_DOCUMENTS_KEY));
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
   return { http, deps, client, wrapper };
 }
+
+beforeAll(() => {
+  // jsdom reads no file into a local URL: the viewer only needs one to show.
+  URL.createObjectURL = () => 'blob:http://app/document';
+});
 
 describe('useGetDocuments', () => {
   it('presents the list asked for', async () => {
@@ -88,5 +101,20 @@ describe('useGetDocuments', () => {
     });
 
     await waitFor(() => expect(result.current.list.data?.rows.map((row) => row.name)).toEqual(['Nouveau', 'Ancien']));
+  });
+
+  it('counts one fewer unseen document once it is opened', async () => {
+    const { deps, wrapper } = setUp();
+    const { result } = renderHook(
+      () => ({ unseen: useGetUnseenDocumentCount(deps), view: useViewDocument(deps) }),
+      { wrapper },
+    );
+    await waitFor(() => expect(result.current.unseen.data).toBe(1));
+
+    await act(async () => {
+      await result.current.view.mutateAsync('d0');
+    });
+
+    await waitFor(() => expect(result.current.unseen.data).toBe(0));
   });
 });

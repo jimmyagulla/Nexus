@@ -23,7 +23,7 @@ interface PayslipsProps {
   exporting: boolean;
 }
 
-const COLUMNS = 'minmax(0, 1fr) 140px 150px 160px 200px';
+const COLUMNS = 'minmax(0, 1fr) 140px 160px 200px';
 
 /** P1.5 — payslips of a year, January to December; M.2 below the `md` breakpoint. */
 export function Payslips({ summary, year, rows, handlers, exporting }: PayslipsProps) {
@@ -88,7 +88,6 @@ export function Payslips({ summary, year, rows, handlers, exporting }: PayslipsP
           <TableHeader className="gap-4 px-5 py-2.5">
             <TableHead>{labels.period}</TableHead>
             <TableHead>{labels.availableOn}</TableHead>
-            <TableHead>{labels.netPay}</TableHead>
             <TableHead>{common.status}</TableHead>
             <TableHead className="justify-end">{common.actions}</TableHead>
           </TableHeader>

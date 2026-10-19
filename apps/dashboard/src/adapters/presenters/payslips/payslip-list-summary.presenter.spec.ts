@@ -4,7 +4,7 @@ import { PayslipListSummaryPresenter } from './payslip-list-summary.presenter';
 
 function itemOf(month: number): PayslipSummary {
   return {
-    id: `p${month}`, year: 2026, month, employerName: 'Atelier Moreau', netPayCents: 200000, fileName: 'b.pdf',
+    id: `p${month}`, year: 2026, month, employerName: 'Atelier Moreau', fileName: 'b.pdf',
     format: 'PDF', sizeBytes: 1, availableAt: '2026-01-31T08:00:00.000Z',
   };
 }

@@ -17,11 +17,6 @@ ALTER TABLE "Payslip"
   ADD CONSTRAINT "Payslip_sizeBytes_check"
   CHECK ("sizeBytes" > 0 AND "sizeBytes" <= 10485760);
 
-ALTER TABLE "Payslip" DROP CONSTRAINT IF EXISTS "Payslip_netPayCents_check";
-ALTER TABLE "Payslip"
-  ADD CONSTRAINT "Payslip_netPayCents_check"
-  CHECK ("netPayCents" >= 0);
-
 ALTER TABLE "Payslip" DROP CONSTRAINT IF EXISTS "Payslip_fileName_check";
 ALTER TABLE "Payslip"
   ADD CONSTRAINT "Payslip_fileName_check"

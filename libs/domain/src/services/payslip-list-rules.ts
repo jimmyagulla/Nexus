@@ -64,11 +64,3 @@ export function adjacentPayslipYears(
     next: after.length === 0 ? null : Math.min(...after),
   };
 }
-
-/** How many of the payslips the employee has neither opened nor downloaded yet. */
-export function countUnseenPayslips(
-  payslips: readonly { id: string }[],
-  seenIds: ReadonlySet<string>,
-): number {
-  return payslips.filter((payslip) => !seenIds.has(payslip.id)).length;
-}

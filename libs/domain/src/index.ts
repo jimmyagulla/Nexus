@@ -53,3 +53,4 @@ export * from './read-models/payslip-list';
 export * from './services/payslip-list-rules';
 export * from './services/require-owned-payslip';
 export * from './services/distinct-file-names';
+export * from './services/count-unseen';

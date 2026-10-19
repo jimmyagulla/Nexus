@@ -6,7 +6,7 @@ import type { Payslip as PayslipRecord } from '../../../infrastructure/prisma/pr
 
 const row: PayslipRecord = {
   id: 'p1', companyId: 'c1', employeeId: 'u1', uploadedById: 'hr1', employerName: 'Atelier Moreau', year: 2026, month: 9,
-  netPayCents: 218437, fileName: 'Bulletin_2026-09.pdf', format: DocumentFileFormat.PDF, sizeBytes: 217088,
+  fileName: 'Bulletin_2026-09.pdf', format: DocumentFileFormat.PDF, sizeBytes: 217088,
   storageKey: 'c1/u1/k', availableAt: new Date('2026-09-30T08:00:00Z'), createdAt: new Date('2026-09-30T08:00:00Z'),
 };
 
@@ -41,7 +41,7 @@ describe('PrismaPayslipRepository', () => {
 
     expect(list).toEqual({
       items: [{
-        id: 'p1', year: 2026, month: 9, employerName: 'Atelier Moreau', netPayCents: 218437, fileName: 'Bulletin_2026-09.pdf',
+        id: 'p1', year: 2026, month: 9, employerName: 'Atelier Moreau', fileName: 'Bulletin_2026-09.pdf',
         format: 'PDF', sizeBytes: 217088, availableAt: '2026-09-30T08:00:00.000Z',
       }],
       total: 21,

@@ -12,7 +12,7 @@ interface PayslipRowProps {
   onDownload: (payslipId: string) => void;
 }
 
-/** One payslip line of the P1.5 table; a right click opens its actions under the cursor. */
+/** One payslip line of the P1.5 table. Its period opens it; a right click opens its actions under the cursor. */
 export function PayslipRow({ payslip, onView, onDownload }: PayslipRowProps) {
   const [contextPoint, setContextPoint] = useState<{ x: number; y: number } | null>(null);
   const view = () => onView(payslip.id);
@@ -31,10 +31,15 @@ export function PayslipRow({ payslip, onView, onDownload }: PayslipRowProps) {
     >
       <TableCell className="flex items-center gap-3 font-semibold text-foreground">
         <i aria-hidden className="ri-file-paper-2-line text-20 text-primary" />
-        <span>{payslip.period}</span>
+        <button
+          type="button"
+          onClick={view}
+          className="min-w-0 truncate text-left font-semibold text-foreground hover:text-link hover:underline focus-visible:outline-none focus-visible:shadow-focus"
+        >
+          <span>{payslip.period}</span>
+        </button>
       </TableCell>
       <TableCell className="text-muted-foreground">{payslip.availableOn}</TableCell>
-      <TableCell>{payslip.netPay}</TableCell>
       <TableCell>
         <Badge tone={payslip.status.tone}>{payslip.status.label}</Badge>
       </TableCell>

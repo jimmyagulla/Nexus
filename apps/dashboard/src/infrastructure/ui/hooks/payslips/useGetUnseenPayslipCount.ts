@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useStore } from 'zustand';
-import { countUnseenPayslips } from '@hexagonal-monorepo-template/domain';
+import { countUnseen } from '@hexagonal-monorepo-template/domain';
 import { EVERY_PAYSLIP } from '../../../../adapters/controllers/payslips.controller';
 import type { PayslipsPageComposition } from '../../../composition/payslip/payslips-page.composition';
 import { getPayslipsQueryKey, PAYSLIPS_STALE_TIME_MS } from './useGetPayslips';
@@ -18,7 +18,7 @@ export function useGetUnseenPayslipCount({
   return useQuery({
     queryKey: getPayslipsQueryKey(EVERY_PAYSLIP),
     queryFn: () => controller.listPayslips(EVERY_PAYSLIP),
-    select: (list) => countUnseenPayslips(list.items, seenIds),
+    select: (list) => countUnseen(list.items, seenIds),
     staleTime: PAYSLIPS_STALE_TIME_MS,
   });
 }

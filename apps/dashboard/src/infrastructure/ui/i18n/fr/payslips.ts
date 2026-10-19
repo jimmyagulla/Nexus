@@ -7,7 +7,6 @@ export const payslips = {
     downloadAll: 'Tout télécharger',
     period: 'Période',
     availableOn: 'Mis à disposition',
-    netPay: 'Net à payer',
     summary: {
       none: "Aucun bulletin dans votre coffre pour le moment.",
       one: "1 bulletin conservé dans votre coffre jusqu'à vos 75 ans.",
@@ -49,7 +48,6 @@ export const payslips = {
     availableOn: 'Mis à disposition',
     issuer: 'Émetteur',
     size: 'Taille',
-    netPay: 'Net à payer',
     print: 'Imprimer',
     retention:
       "Ce bulletin est conservé dans votre coffre jusqu'à vos 75 ans, conformément à la réglementation.",

@@ -7,7 +7,10 @@ import {
   DocumentSortDirection,
   DocumentStatus,
 } from '@hexagonal-monorepo-template/domain';
-import type { DocumentsListState } from '../../../adapters/controllers/documents.controller';
+import {
+  EVERY_DOCUMENT,
+  type DocumentsListState,
+} from '../../../adapters/controllers/documents.controller';
 import type { DocumentFilterKey } from '../../../adapters/presenters/documents/document-active-filters.presenter';
 
 interface DocumentsListStore extends DocumentsListState {
@@ -45,10 +48,7 @@ function dayOrNull(day: string): string | null {
 
 /** Search, filters and ordering of the documents list; kept while navigating. */
 export const useDocumentsListStore = create<DocumentsListStore>((set) => ({
-  search: '',
-  ...noFilter,
-  sort: null,
-  direction: DEFAULT_DOCUMENT_SORT_DIRECTION,
+  ...EVERY_DOCUMENT,
 
   setSearch: (search) => set({ search }),
   toggleCategory: (category) =>

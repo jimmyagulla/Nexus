@@ -14,7 +14,6 @@ export function toPayslip(row: PayslipRecord): Payslip {
     uploadedById: row.uploadedById,
     employerName: PayslipEmployerName.parse(row.employerName),
     period: PayslipPeriod.of(row.year, row.month),
-    netPayCents: row.netPayCents,
     fileName: PayslipFileName.parse(row.fileName),
     format: row.format,
     sizeBytes: row.sizeBytes,

@@ -162,7 +162,6 @@ model Payslip {
   employerName String             @db.VarChar(100)
   year         Int                @db.SmallInt
   month        Int                @db.SmallInt
-  netPayCents  Int
   fileName     String             @db.VarChar(50)
   format       DocumentFileFormat
   sizeBytes    Int

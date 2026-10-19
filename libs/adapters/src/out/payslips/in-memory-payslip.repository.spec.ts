@@ -12,7 +12,7 @@ import { InMemoryPayslipRepository } from './in-memory-payslip.repository';
 function payslipOf(id: string, employeeId: string, year: number, month: number): Payslip {
   return new Payslip({
     id, companyId: 'c1', employeeId, uploadedById: 'hr1', employerName: PayslipEmployerName.parse('Atelier Moreau'),
-    period: PayslipPeriod.of(year, month), netPayCents: 200000, fileName: PayslipFileName.parse(`Bulletin_${id}.pdf`),
+    period: PayslipPeriod.of(year, month), fileName: PayslipFileName.parse(`Bulletin_${id}.pdf`),
     format: DocumentFileFormat.PDF, sizeBytes: 10, storageKey: `c1/${employeeId}/${id}`,
     availableAt: new Date('2026-01-31T00:00:00Z'), createdAt: new Date('2026-01-31T00:00:00Z'),
   });

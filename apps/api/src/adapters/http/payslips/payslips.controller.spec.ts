@@ -50,7 +50,7 @@ async function send(path: string): Promise<{ status: number; payload: Envelope }
 function payslipOf(id: string, year: number, month: number, employeeId = 'user-1'): Payslip {
   return new Payslip({
     id, companyId: 'company-1', employeeId, uploadedById: 'hr-1', employerName: PayslipEmployerName.parse('Atelier Moreau'),
-    period: PayslipPeriod.of(year, month), netPayCents: 218437, fileName: PayslipFileName.parse(`Bulletin_${year}-${month}`),
+    period: PayslipPeriod.of(year, month), fileName: PayslipFileName.parse(`Bulletin_${year}-${month}`),
     format: DocumentFileFormat.PDF, sizeBytes: pdf.content.length, storageKey: `key-${id}`,
     availableAt: new Date(Date.UTC(year, month - 1, 28)), createdAt: new Date(Date.UTC(year, month - 1, 28)),
   });
@@ -97,7 +97,7 @@ describe('PayslipsController', () => {
     expect(response.status).toBe(200);
     expect(response.payload.data).toMatchObject({
       items: [
-        { id: 'jan', year: 2026, month: 1, netPayCents: 218437, employerName: 'Atelier Moreau', format: 'PDF' },
+        { id: 'jan', year: 2026, month: 1, employerName: 'Atelier Moreau', format: 'PDF' },
         { id: 'feb', year: 2026, month: 2 },
       ],
       total: 3,

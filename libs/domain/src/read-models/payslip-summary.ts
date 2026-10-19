@@ -8,8 +8,6 @@ export type PayslipSummary = {
   /** 1 = January. */
   month: number;
   employerName: string;
-  /** Net pay, in euro cents. */
-  netPayCents: number;
   fileName: string;
   format: DocumentFileFormat;
   sizeBytes: number;
@@ -23,7 +21,6 @@ export function toPayslipSummary(payslip: Payslip): PayslipSummary {
     year: payslip.period.year,
     month: payslip.period.month,
     employerName: payslip.employerName.value,
-    netPayCents: payslip.netPayCents,
     fileName: payslip.fileName.value,
     format: payslip.format,
     sizeBytes: payslip.sizeBytes,

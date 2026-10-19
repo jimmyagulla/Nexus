@@ -15,8 +15,6 @@ export type PayslipProps = {
   uploadedById: string;
   employerName: PayslipEmployerName;
   period: PayslipPeriod;
-  /** Net pay, in euro cents. */
-  netPayCents: number;
   fileName: PayslipFileName;
   format: DocumentFileFormat;
   sizeBytes: number;
@@ -52,10 +50,6 @@ export class Payslip {
 
   get period(): PayslipPeriod {
     return this.props.period;
-  }
-
-  get netPayCents(): number {
-    return this.props.netPayCents;
   }
 
   get fileName(): PayslipFileName {

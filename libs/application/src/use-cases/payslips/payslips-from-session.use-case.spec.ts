@@ -22,7 +22,7 @@ const actor: ActorContext = { userId: 'u1', companyId: 'c1', role: UserRole.EMPL
 function gateway(): InMemoryPayslipGateway {
   const payslip = new Payslip({
     id: 'jan', companyId: 'c1', employeeId: 'u1', uploadedById: 'hr1', employerName: PayslipEmployerName.parse('Atelier Moreau'),
-    period: PayslipPeriod.of(2026, 1), netPayCents: 218437, fileName: PayslipFileName.parse('Bulletin_2026-01.pdf'),
+    period: PayslipPeriod.of(2026, 1), fileName: PayslipFileName.parse('Bulletin_2026-01.pdf'),
     format: DocumentFileFormat.PDF, sizeBytes: 4, storageKey: 'k',
     availableAt: new Date('2026-01-31T00:00:00Z'), createdAt: new Date('2026-01-31T00:00:00Z'),
   });

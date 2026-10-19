@@ -1,7 +1,7 @@
 export type ShellRole = 'employee' | 'employer';
 
 /** Live counts a navigation item can show as its badge. */
-export type ShellCounter = 'unseenPayslips';
+export type ShellCounter = 'unseenPayslips' | 'unseenDocuments';
 
 export type ShellCounters = Readonly<Partial<Record<ShellCounter, number>>>;
 

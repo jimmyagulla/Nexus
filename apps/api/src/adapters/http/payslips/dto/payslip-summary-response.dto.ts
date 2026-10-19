@@ -14,9 +14,6 @@ export class PayslipSummaryResponseDto {
   @ApiProperty()
   employerName!: string;
 
-  @ApiProperty({ description: 'Net pay, in euro cents' })
-  netPayCents!: number;
-
   @ApiProperty()
   fileName!: string;
 

@@ -6,7 +6,6 @@ import { PayslipPeriod } from '../value-objects/payslip-period';
 import { distinctFileNames } from './distinct-file-names';
 import {
   adjacentPayslipYears,
-  countUnseenPayslips,
   defaultPayslipYear,
   payslipListOfYear,
   toPayslipList,
@@ -20,7 +19,6 @@ function payslipOf(id: string, year: number, month: number): Payslip {
     uploadedById: 'hr1',
     employerName: PayslipEmployerName.parse('Atelier Moreau'),
     period: PayslipPeriod.of(year, month),
-    netPayCents: 200000,
     fileName: PayslipFileName.parse(`Bulletin_${year}-${month}.pdf`),
     format: DocumentFileFormat.PDF,
     sizeBytes: 1000,
@@ -57,7 +55,6 @@ describe('toPayslipList', () => {
         year: 2026,
         month: 1,
         employerName: 'Atelier Moreau',
-        netPayCents: 200000,
         fileName: 'Bulletin_2026-1.pdf',
         format: 'PDF',
         sizeBytes: 1000,
@@ -96,12 +93,6 @@ describe('adjacentPayslipYears', () => {
 
   it('finds the neighbours of a year that has no payslip', () => {
     expect(adjacentPayslipYears([2024, 2026], 2025)).toEqual({ previous: 2024, next: 2026 });
-  });
-});
-
-describe('countUnseenPayslips', () => {
-  it('counts the payslips neither opened nor downloaded', () => {
-    expect(countUnseenPayslips([{ id: 'a' }, { id: 'b' }, { id: 'c' }], new Set(['b', 'z']))).toBe(2);
   });
 });
 

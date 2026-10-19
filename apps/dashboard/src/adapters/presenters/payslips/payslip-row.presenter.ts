@@ -12,14 +12,10 @@ export interface PayslipRowModel {
   period: string;
   /** `jj/mm/aaaa` */
   availableOn: string;
-  /** "2 184,37 €" */
-  netPay: string;
   status: StatusViewModel;
   /** Neither opened nor downloaded yet: the row stands out. */
   isNew: boolean;
 }
-
-const EUROS = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
 
 /** Presents one row of the payslips list. */
 export class PayslipRowPresenter {
@@ -32,7 +28,6 @@ export class PayslipRowPresenter {
       id: item.id,
       period: this.presentPeriod(item.year, item.month),
       availableOn: this.presentDate(new Date(item.availableAt)),
-      netPay: EUROS.format(item.netPayCents / 100),
       status: {
         label: this.i18n.messages.payslips.list.statuses[state],
         tone: PAYSLIP_READ_STATE_TONES[state],

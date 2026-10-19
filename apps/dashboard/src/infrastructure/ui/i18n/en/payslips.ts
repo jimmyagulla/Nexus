@@ -7,7 +7,6 @@ export const payslips = {
     downloadAll: 'Download all',
     period: 'Period',
     availableOn: 'Made available',
-    netPay: 'Net pay',
     summary: {
       none: 'No payslip in your vault yet.',
       one: '1 payslip kept in your vault until you turn 75.',
@@ -49,7 +48,6 @@ export const payslips = {
     availableOn: 'Made available',
     issuer: 'Issuer',
     size: 'Size',
-    netPay: 'Net pay',
     print: 'Print',
     retention:
       'This payslip is kept in your vault until you turn 75, as required by law.',

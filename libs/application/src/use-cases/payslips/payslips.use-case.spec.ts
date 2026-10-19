@@ -24,7 +24,7 @@ const pdfUrl = 'data:application/pdf;base64,JVBERg==';
 function payslipOf(id: string, year: number, month: number, employeeId = 'u1'): Payslip {
   return new Payslip({
     id, companyId: 'c1', employeeId, uploadedById: 'hr1', employerName: PayslipEmployerName.parse('Atelier Moreau'),
-    period: PayslipPeriod.of(year, month), netPayCents: 218437, fileName: PayslipFileName.parse(`Bulletin_${year}-${month}`),
+    period: PayslipPeriod.of(year, month), fileName: PayslipFileName.parse(`Bulletin_${year}-${month}`),
     format: DocumentFileFormat.PDF, sizeBytes: 4, storageKey: `k-${id}`,
     availableAt: new Date(Date.UTC(year, month - 1, 28)), createdAt: new Date(Date.UTC(year, month - 1, 28)),
   });

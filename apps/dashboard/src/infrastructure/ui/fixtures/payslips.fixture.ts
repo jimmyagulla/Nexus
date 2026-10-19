@@ -10,7 +10,6 @@ export const payslipFixture: PayslipViewModel = {
   availableOn: '30/09/2026',
   issuer: 'Service RH',
   size: 'PDF · 212 Ko',
-  netPay: '2 184,37 €',
   previous: { id: '2026-08', label: 'Août 2026' },
   next: { label: 'Octobre 2026' },
   downloadedFileName: 'Bulletin_2026-09.pdf',

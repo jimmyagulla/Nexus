@@ -14,7 +14,6 @@ function payslipNamed(fileName: string, format: DocumentFileFormat = DocumentFil
     uploadedById: 'hr1',
     employerName: PayslipEmployerName.parse('Atelier Moreau'),
     period: PayslipPeriod.of(2026, 9),
-    netPayCents: 218437,
     fileName: PayslipFileName.parse(fileName),
     format,
     sizeBytes: 217_088,

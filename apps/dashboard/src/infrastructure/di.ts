@@ -17,13 +17,19 @@ import { createAccountingFirmComposition } from './composition/accounting-firm/a
 import { createShellComposition } from './composition/shell/shell.composition';
 import { createSessionGateway } from './session/create-session-gateway';
 import { BrowserKeyValueStorage } from './storage/browser-key-value-storage';
-import { createSeenPayslipsStore } from './ui/stores/seen-payslips.store';
+import {
+  createSeenItemsStore,
+  SEEN_DOCUMENTS_KEY,
+  SEEN_PAYSLIPS_KEY,
+} from './ui/stores/seen-items.store';
 
 const API_URL = loadDashboardConfig().apiUrl;
 const httpClient = new FetchHttpClient(API_URL);
 const sessions = createSessionGateway();
-/** Shared by the payslips screen and the shell badge. */
-const seenPayslips = createSeenPayslipsStore(new BrowserKeyValueStorage());
+/** Opened or downloaded on this device; shared by each screen and the shell badges. */
+const deviceStorage = new BrowserKeyValueStorage();
+const seenPayslips = createSeenItemsStore(deviceStorage, SEEN_PAYSLIPS_KEY);
+const seenDocuments = createSeenItemsStore(deviceStorage, SEEN_DOCUMENTS_KEY);
 
 export const companySettingsComposition = createCompanySettingsComposition(
   httpClient,
@@ -45,6 +51,7 @@ export const payslipComposition = createPayslipComposition(
 export const documentsPageComposition = createDocumentsPageComposition(
   httpClient,
   sessions,
+  seenDocuments,
 );
 export const personalInfoComposition = createPersonalInfoComposition();
 export const leaveComposition = createLeaveComposition();
@@ -55,8 +62,7 @@ export const employerDashboardComposition = createEmployerDashboardComposition()
 export const employeeComposition = createEmployeeComposition();
 export const leaveApprovalComposition = createLeaveApprovalComposition();
 export const accountingFirmComposition = createAccountingFirmComposition();
-export const shellComposition = createShellComposition(
-  httpClient,
-  sessions,
-  seenPayslips,
-);
+export const shellComposition = createShellComposition(httpClient, sessions, {
+  payslips: seenPayslips,
+  documents: seenDocuments,
+});

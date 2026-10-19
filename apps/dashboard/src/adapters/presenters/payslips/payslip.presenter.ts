@@ -7,7 +7,6 @@ export interface PayslipViewModel {
   availableOn: string;
   issuer: string;
   size: string;
-  netPay: string;
   previous?: { id: string; label: string };
   /** Following month, shown disabled when not yet available. */
   next: { id?: string; label: string };

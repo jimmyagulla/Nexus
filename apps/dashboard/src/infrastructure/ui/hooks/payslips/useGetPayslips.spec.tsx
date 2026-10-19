@@ -8,7 +8,7 @@ import {
 import { PayslipList, UserRole } from '@hexagonal-monorepo-template/domain';
 import { createPayslipsPageComposition } from '../../../composition/payslip/payslips-page.composition';
 import { InMemoryHttpClient } from '../../../network/in-memory-http-client';
-import { createSeenPayslipsStore } from '../../stores/seen-payslips.store';
+import { createSeenItemsStore, SEEN_PAYSLIPS_KEY } from '../../stores/seen-items.store';
 import { getPayslipsQueryKey, useGetPayslips } from './useGetPayslips';
 import { useGetUnseenPayslipCount } from './useGetUnseenPayslipCount';
 import { useViewPayslip } from './useViewPayslip';
@@ -16,7 +16,7 @@ import { useViewPayslip } from './useViewPayslip';
 function listOf(year: number, months: number[], years = [year]): PayslipList {
   return {
     items: months.map((month) => ({
-      id: `${year}-${month}`, year, month, employerName: 'Atelier Moreau', netPayCents: 200000,
+      id: `${year}-${month}`, year, month, employerName: 'Atelier Moreau', 
       fileName: `Bulletin_${year}-${month}.pdf`, format: 'PDF', sizeBytes: 10, availableAt: `${year}-0${month}-28T08:00:00.000Z`,
     })),
     total: months.length,
@@ -35,7 +35,7 @@ function setUp() {
   });
   http.reply('get', 'https://storage/2026-1', Uint8Array.from([0x25, 0x50, 0x44, 0x46]));
   const sessions = new InMemorySessionGateway('token', { userId: 'u1', companyId: 'c1', role: UserRole.EMPLOYEE });
-  const deps = createPayslipsPageComposition(http, sessions, createSeenPayslipsStore(new InMemoryKeyValueStorage()));
+  const deps = createPayslipsPageComposition(http, sessions, createSeenItemsStore(new InMemoryKeyValueStorage(), SEEN_PAYSLIPS_KEY));
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>

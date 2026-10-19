@@ -12,7 +12,7 @@ import { PayslipListSummaryPresenter } from '../../../adapters/presenters/paysli
 import { PayslipRowPresenter } from '../../../adapters/presenters/payslips/payslip-row.presenter';
 import { PayslipYearPresenter } from '../../../adapters/presenters/payslips/payslip-year.presenter';
 import { RemoteFileReader } from '../../network/remote-file-reader';
-import type { SeenPayslipsStore } from '../../ui/stores/seen-payslips.store';
+import type { SeenItemsStore } from '../../ui/stores/seen-items.store';
 import { createPayslipsController } from './payslips-controller.composition';
 
 /** Presenters of the payslips list: one per view model. */
@@ -32,13 +32,13 @@ export type PayslipsPageComposition = {
   /** Packs the payslips of a year into the archive "Tout télécharger" saves. */
   archiver: IFileArchiver;
   /** Payslips opened or downloaded on this device. */
-  seenPayslips: SeenPayslipsStore;
+  seenPayslips: SeenItemsStore;
 };
 
 export function createPayslipsPageComposition(
   httpClient: IHttpClient,
   sessions: ISessionGateway,
-  seenPayslips: SeenPayslipsStore,
+  seenPayslips: SeenItemsStore,
 ): PayslipsPageComposition {
   const counts = new CountLabelPresenter();
 
