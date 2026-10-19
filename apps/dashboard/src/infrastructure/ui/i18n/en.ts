@@ -64,5 +64,7 @@ export const en = {
     [ErrorCode.FILE_TOO_LARGE]: 'This file is larger than the maximum size allowed.',
     [ErrorCode.UNSUPPORTED_FILE_FORMAT]:
       'This file is not accepted: its content must be a PDF, a JPG or PNG image, or an XLS, XLSX or CSV spreadsheet.',
+    [ErrorCode.ALREADY_PROCESSED]:
+      'This item is already being handled: it can no longer be changed.',
   },
 } as const;

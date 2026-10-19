@@ -1,37 +1,41 @@
-import { Link } from '@tanstack/react-router';
+import { EXPENSE_REPORT_SEARCH_MAX_LENGTH } from '@hexagonal-monorepo-template/domain';
 import { FilterButton } from '../../../common/data/FilterButton';
 import { SearchField } from '../../../common/data/SearchField';
 import { i18n } from '../../../i18n/i18n';
-import { AppRoutes } from '../../../routes/app-routes';
+import { Sheet, SheetTrigger } from '../../../shared/sheet';
+import { ExpenseReportFiltersSheet } from './ExpenseReportFiltersSheet';
+import type { ExpenseReportsListHandlers } from './expense-reports-list.handlers';
+import type { ExpenseReportFiltersModel } from '../../../../../adapters/presenters/expense-reports/expense-report-filters.presenter';
 
 interface ExpenseReportsToolbarProps {
-  /** Shows the "Frais professionnels" redirection on the right. */
-  withProfessionalExpensesHint?: boolean;
+  /** Text of the search box, as typed. */
+  search: string;
+  appliedFilterCount: number;
+  filters: ExpenseReportFiltersModel;
+  handlers: ExpenseReportsListHandlers;
 }
 
+/** Search box and "Filtres" panel of the expense reports list. */
 export function ExpenseReportsToolbar({
-  withProfessionalExpensesHint,
+  search,
+  appliedFilterCount,
+  filters,
+  handlers,
 }: ExpenseReportsToolbarProps) {
-  const labels = i18n.messages.expenseReports.list;
-
   return (
     <div className="flex items-center gap-2">
-      <SearchField placeholder={labels.search} />
-      <FilterButton className="border-primary" />
-      {withProfessionalExpensesHint && (
-        <>
-          <span className="flex-1" />
-          <span className="text-13 text-muted-foreground">
-            {`${labels.professionalExpensesHint} `}
-            <Link
-              to={AppRoutes.professionalExpenses}
-              className="font-semibold text-link hover:text-link-hover hover:underline"
-            >
-              {labels.professionalExpensesLink}
-            </Link>
-          </span>
-        </>
-      )}
+      <SearchField
+        placeholder={i18n.messages.expenseReports.list.search}
+        value={search}
+        maxLength={EXPENSE_REPORT_SEARCH_MAX_LENGTH}
+        onValueChange={handlers.onSearchChange}
+      />
+      <Sheet>
+        <SheetTrigger asChild>
+          <FilterButton count={appliedFilterCount} />
+        </SheetTrigger>
+        <ExpenseReportFiltersSheet model={filters} handlers={handlers} />
+      </Sheet>
     </div>
   );
 }

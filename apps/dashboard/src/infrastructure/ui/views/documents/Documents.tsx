@@ -12,7 +12,7 @@ import { Sheet, SheetTrigger } from '../../shared/sheet';
 import { Table, TableHead, TableHeader } from '../../shared/table';
 import { DocumentFiltersSheet } from './components/DocumentFiltersSheet';
 import { DocumentRow } from './components/DocumentRow';
-import { SortableHead } from './components/SortableHead';
+import { SortableHead } from '../../common/data/SortableHead';
 import type { DocumentsListHandlers } from './components/documents-list.handlers';
 import type { ActiveFilterModel } from '../../../../adapters/presenters/documents/document-active-filters.presenter';
 import type { DocumentFiltersModel } from '../../../../adapters/presenters/documents/document-filters.presenter';

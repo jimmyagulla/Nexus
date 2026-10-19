@@ -141,6 +141,10 @@ describe('oversized uploads', () => {
     expect(httpStatusForError(new Error('UNSUPPORTED_FILE_FORMAT'))).toBe(400);
   });
 
+  it('answers 409 to a change of an item already processed', () => {
+    expect(httpStatusForError(new Error('ALREADY_PROCESSED'))).toBe(409);
+  });
+
   it('keeps 403 for an access refusal', () => {
     expect(httpStatusForError(new Error('ACCESS_DENIED'))).toBe(403);
   });

@@ -17,5 +17,8 @@ export * from './out/documents/in-memory-document-file.storage';
 export * from './out/payslips/in-memory-payslip.repository';
 export * from './out/payslips/in-memory-payslip-file.storage';
 export * from './out/payslips/in-memory-payslip.gateway';
+export * from './out/expense-reports/in-memory-expense-report.repository';
+export * from './out/expense-reports/in-memory-expense-report-proof.storage';
+export * from './out/expense-reports/in-memory-expense-report.gateway';
 export * from './out/storage/in-memory-key-value.storage';
 export * from './out/files/zip-file-archiver';

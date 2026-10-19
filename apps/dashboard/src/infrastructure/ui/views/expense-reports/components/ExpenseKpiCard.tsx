@@ -1,6 +1,6 @@
 import { IconTile } from '../../../common/data/IconTile';
 import { Card } from '../../../shared/card';
-import type { ExpenseKpiModel } from '../../../../../adapters/presenters/expense-reports/expense-reports.presenter';
+import type { ExpenseKpiModel } from '../../../../../adapters/presenters/expense-reports/expense-report-kpis.presenter';
 
 /** Key figure card of the expense reports list. */
 export function ExpenseKpiCard({ kpi }: { kpi: ExpenseKpiModel }) {

@@ -5,6 +5,7 @@ export const ErrorCode = {
   INVALID_INFORMATION: 'INVALID_INFORMATION',
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
   UNSUPPORTED_FILE_FORMAT: 'UNSUPPORTED_FILE_FORMAT',
+  ALREADY_PROCESSED: 'ALREADY_PROCESSED',
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

@@ -18,8 +18,8 @@ import {
   SheetTitle,
 } from '../../../shared/sheet';
 import { ToggleGroup, ToggleGroupItem } from '../../../shared/toggle-group';
-import { FilterGroup } from './FilterGroup';
-import { FilterOption } from './FilterOption';
+import { FilterGroup } from '../../../common/data/FilterGroup';
+import { FilterOption } from '../../../common/data/FilterOption';
 import type { DocumentsListHandlers } from './documents-list.handlers';
 import type { DocumentFiltersModel } from '../../../../../adapters/presenters/documents/document-filters.presenter';
 

@@ -261,6 +261,24 @@ describe('FetchHttpClient', () => {
     expect(new Uint8Array(await file.arrayBuffer())).toEqual(Uint8Array.from([0x25, 0x50]));
   });
 
+  it('puts a form the same way, for a change carrying a file', async () => {
+    const sent = stubFetch(ok({ status: 200, data: {} }));
+
+    await new FetchHttpClient('https://api.test').putMultipart(
+      'expense-reports/e1',
+      {
+        fields: [{ name: 'keepProof', value: 'true' }],
+        files: [{ field: 'proof', fileName: 'ticket.png', contentType: 'image/png', content: Uint8Array.from([0x89]) }],
+      },
+      { headers: { Authorization: 'Bearer t1' } },
+    );
+
+    const form = sent[0]?.body as FormData;
+    expect([sent[0]?.method, sent[0]?.headers, form.get('keepProof'), (form.get('proof') as File).name]).toEqual([
+      'PUT', { Authorization: 'Bearer t1' }, 'true', 'ticket.png',
+    ]);
+  });
+
   it('translates the error code of a refused form', async () => {
     stubFetch(failing(413, { message: ErrorCode.FILE_TOO_LARGE }));
 

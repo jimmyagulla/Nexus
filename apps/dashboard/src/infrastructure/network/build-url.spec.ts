@@ -29,4 +29,10 @@ describe('buildUrl', () => {
       '/companies',
     );
   });
+
+  it('repeats a list parameter once per value and leaves an empty list out', () => {
+    expect(buildUrl('/reports', { projects: ['Salon, Bordeaux', 'Valette'], tags: [] })).toBe(
+      '/reports?projects=Salon%2C+Bordeaux&projects=Valette',
+    );
+  });
 });

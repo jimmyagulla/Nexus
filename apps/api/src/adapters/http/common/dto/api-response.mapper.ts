@@ -83,6 +83,8 @@ function statusForErrorCode(code: ErrorCode): number {
       return 403;
     case ErrorCode.FILE_TOO_LARGE:
       return 413;
+    case ErrorCode.ALREADY_PROCESSED:
+      return 409;
     default:
       return 400;
   }

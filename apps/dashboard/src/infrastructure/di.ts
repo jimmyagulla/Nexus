@@ -8,7 +8,7 @@ import { createDocumentsPageComposition } from './composition/document/documents
 import { createPersonalInfoComposition } from './composition/personal-info/personal-info.composition';
 import { createLeaveComposition } from './composition/leave/leave.composition';
 import { createOvertimeComposition } from './composition/overtime/overtime.composition';
-import { createExpenseReportComposition } from './composition/expense-report/expense-report.composition';
+import { createExpenseReportsPageComposition } from './composition/expense-report/expense-reports-page.composition';
 import { createProfessionalExpenseComposition } from './composition/professional-expense/professional-expense.composition';
 import { createEmployerDashboardComposition } from './composition/employer-dashboard/employer-dashboard.composition';
 import { createEmployeeComposition } from './composition/employee/employee.composition';
@@ -53,10 +53,13 @@ export const documentsPageComposition = createDocumentsPageComposition(
   sessions,
   seenDocuments,
 );
+export const expenseReportsPageComposition = createExpenseReportsPageComposition(
+  httpClient,
+  sessions,
+);
 export const personalInfoComposition = createPersonalInfoComposition();
 export const leaveComposition = createLeaveComposition();
 export const overtimeComposition = createOvertimeComposition();
-export const expenseReportComposition = createExpenseReportComposition();
 export const professionalExpenseComposition = createProfessionalExpenseComposition();
 export const employerDashboardComposition = createEmployerDashboardComposition();
 export const employeeComposition = createEmployeeComposition();
