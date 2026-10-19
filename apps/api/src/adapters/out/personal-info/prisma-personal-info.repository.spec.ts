@@ -53,10 +53,13 @@ describe('PrismaPersonalInfoRepository', () => {
     const { client, recorded } = fakePrisma();
     const repository = new PrismaPersonalInfoRepository(client);
     const info = await repository.findByEmployee({ companyId: 'c1', ownerId: 'u1' });
+    if (info === null) {
+      throw new Error('missing seed');
+    }
     const at = new Date('2026-10-03T08:41:00.000Z');
-    const contact = PersonalContact.parse({ ...info!.contact.toValues(), address: '8 avenue de Lodève' });
+    const contact = PersonalContact.parse({ ...info.contact.toValues(), address: '8 avenue de Lodève' });
 
-    await repository.save(info!.withContact(contact, at));
+    await repository.save(info.withContact(contact, at));
 
     expect(recorded.update).toEqual([{
       where: { companyId_employeeId: { companyId: 'c1', employeeId: 'u1' } },

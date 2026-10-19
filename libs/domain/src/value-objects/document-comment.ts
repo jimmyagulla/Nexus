@@ -1,4 +1,4 @@
-import { ErrorCode } from '../errors/error-code';
+import { requireValid } from '../services/text-rules';
 import { DOCUMENT_COMMENT_MAX_LENGTH } from './document-limits';
 
 export class DocumentComment {
@@ -10,9 +10,6 @@ export class DocumentComment {
     if (value === '') {
       return null;
     }
-    if (value.length > DOCUMENT_COMMENT_MAX_LENGTH) {
-      throw new Error(ErrorCode.INVALID_INFORMATION);
-    }
-    return new DocumentComment(value);
+    return new DocumentComment(requireValid(value, value.length <= DOCUMENT_COMMENT_MAX_LENGTH));
   }
 }

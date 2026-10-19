@@ -1,3 +1,9 @@
+import {
+  IBAN_GROUP_PATTERN,
+  SOCIAL_SECURITY_NUMBER_PARTS_PATTERN,
+  SPACES_PATTERN,
+} from '../value-objects/sensitive-number.patterns';
+
 const HIDDEN = '•';
 
 function hide(group: string): string {
@@ -10,8 +16,8 @@ function hide(group: string): string {
  * hidden altogether.
  */
 export function maskSocialSecurityNumber(raw: string): string {
-  const digits = raw.replace(/\s/g, '');
-  const groups = /^(\d)(\d{2})(\d{2})(\w{2})(\d{3})(\d{3})(\d{2})$/.exec(digits);
+  const digits = raw.replace(SPACES_PATTERN, '');
+  const groups = SOCIAL_SECURITY_NUMBER_PARTS_PATTERN.exec(digits);
   if (groups === null) {
     return hide(digits);
   }
@@ -24,7 +30,7 @@ export function maskSocialSecurityNumber(raw: string): string {
  * left readable: `FR76 •••• •••• •••• •••• •••• 189`.
  */
 export function maskIban(raw: string): string {
-  const groups = raw.replace(/\s/g, '').toUpperCase().match(/.{1,4}/g) ?? [];
+  const groups = raw.replace(SPACES_PATTERN, '').toUpperCase().match(IBAN_GROUP_PATTERN) ?? [];
   if (groups.length < 3) {
     return groups.map(hide).join(' ');
   }

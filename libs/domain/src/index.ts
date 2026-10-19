@@ -59,5 +59,7 @@ export * from './value-objects/personal-contact';
 export * from './value-objects/employment-contract';
 export * from './entities/personal-info';
 export * from './read-models/personal-info-snapshot';
+export * from './value-objects/sensitive-number.patterns';
+export * from './services/text-rules';
 export * from './services/mask-sensitive-numbers';
 export * from './services/require-personal-info-access';
